@@ -8,7 +8,7 @@ namespace OnBoarding
         {
             //1. JQuery JS
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
-                        "~/Assets/jquery/jquery.validate.js"));
+                        "~/Assets/jquery/jquery.validate*"));
 
             //2. Bundled bootstrap admin CSS
             bundles.Add(new StyleBundle("~/bundles/bootstrapadmincss").Include(
@@ -47,33 +47,31 @@ namespace OnBoarding
 
             //4. Bundled bootstrap admin js
             bundles.Add(new ScriptBundle("~/bundles/bootstrapadminjs").Include(
-                    "~/Assets/jquery/jquery-3.4.1.min.js",
-                    "~/Assets/jquery/jquery-ui-1.12.1.min.js",
-                    "~/Assets/jtable/jquery.jtable.min.js",
-                    "~/Assets/bootstrap/js/bootstrap.min.js",
-                    "~/Assets/nicescroll/jquery.nicescroll.min.js",
-                    "~/Assets/scroll-up-bar/dist/scroll-up-bar.min.js",
-                    "~/Assets/summernote/summernote-lite.js",
-                    "~/Assets/jquery/jquery.validate.js",
-                    "~/Assets/fwizard/form-wizard.js",
-                    "~/Assets/toastr/build/toastr.min.js",
-                    "~/Assets/select2/select2.js",
-                     "~/Assets/datatables/datatables.min.js",
-                    "~/Assets/datatables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js",
-                    "~/Assets/datepicker/bootstrap-datepicker.js",
-                    
-                    //Scripts JS
-                    "~/Scripts/js/app.js",
-                    "~/Scripts/js/popper.js",
-                    "~/Scripts/js/tooltip.js",
-                    "~/Scripts/js/sa-functions.js",
-                    "~/Scripts/js/chart.min.js",
-                    "~/Scripts/js/fileSaver.js",
-                    "~/Scripts/js/scripts.js",
-                    "~/Scripts/js/custom.js",
-                    "~/Scripts/js/demo.js",
-                    "~/Scripts/js/jquery.accordion-wizard.js",
-                    "~/Scripts/js/additional-methods.min.js"));
+                        "~/Assets/jquery/jquery-3.4.1.min.js",
+                        "~/Assets/jquery/jquery-ui-1.12.1.min.js",
+                        "~/Assets/jtable/jquery.jtable.min.js",
+                        "~/Assets/chart.min.js",
+                        "~/Scripts/js/popper.js",
+                         "~/Scripts/js/tooltip.js",
+                         "~/Assets/bootstrap/js/bootstrap.min.js",
+                         "~/Assets/nicescroll/jquery.nicescroll.min.js",
+                         "~/Assets/scroll-up-bar/dist/scroll-up-bar.min.js",
+                         "~/Scripts/js/sa-functions.js",
+                         "~/Scripts/js/chart.min.js",
+                         "~/Assets/summernote/summernote-lite.js",
+                         "~/Assets/jquery/jquery.validate.js",
+                         "~/Scripts/js/fileSaver.js",
+                         "~/Scripts/js/scripts.js",
+                         "~/Scripts/js/custom.js",
+                         "~/Scripts/js/demo.js",
+                         "~/Scripts/js/jquery.accordion-wizard.js",
+                          "~/Assets/fwizard/form-wizard.js",
+                         "~/Assets/toastr/build/toastr.min.js",
+                         "~/Assets/select2/select2.js",
+                         "~/Scripts/js/additional-methods.min.js",
+                         "~/Assets/datatables/datatables.min.js",
+                         "~/Assets/datatables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js",
+                         "~/Assets/datepicker/bootstrap-datepicker.js"));
 
             foreach (var bundle in BundleTable.Bundles)
             {
