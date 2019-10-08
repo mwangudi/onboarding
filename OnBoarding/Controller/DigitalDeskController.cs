@@ -217,6 +217,8 @@ namespace OnBoarding.Controllers
             {
                 try
                 {
+                    var currentUserId = User.Identity.GetUserId();
+
                     //ReSend Email
                     var EmailMessage = (model.ResendMessage).Trim();
                     var Action = "ResendNotification";
@@ -225,7 +227,9 @@ namespace OnBoarding.Controllers
                     if (EmailResent == true)
                     {
                         //Log email sent notification
+                        int lastInsertId = db.Notifications.Max(p => p.Id);
                         LogNotification.AddSucsessNotification(MailHelper.EmailFrom, EmailMessage, model.ResendEmail, Action);
+                        var LogAuditTrail = Functions.LogAuditTrail(lastInsertId, "Resend Email", "Notifications", null, currentUserId, model.ResendEmail, null, null);
                         return Json("success", JsonRequestBehavior.AllowGet);
                     }
                     else
@@ -455,6 +459,8 @@ namespace OnBoarding.Controllers
             {
                 using (DBModel db = new DBModel())
                 {
+                    var currentUserId = User.Identity.GetUserId();
+
                     //Create New Currency
                     var newCurrency = db.Currencies.Create();
                     newCurrency.CurrencyName = model.CurrencyName;
@@ -462,10 +468,23 @@ namespace OnBoarding.Controllers
                     newCurrency.Status = 1;
                     newCurrency.CreatedBy = User.Identity.GetUserId();
                     db.Currencies.Add(newCurrency);
-                    db.SaveChanges();
+                    var recordSaved = db.SaveChanges();
+                    if(recordSaved > 0)
+                    {
+                        int lastInsertId = db.Currencies.Max(p => p.Id);
+                        var LogAuditTrail = Functions.LogAuditTrail(lastInsertId, "Add", "Currencies", null, currentUserId, model.CurrencyName + " " + model.CurrencyShortName, null, null);
+                        return Json("success", JsonRequestBehavior.AllowGet);
+                    }
+                    else
+                    {
+                        return Json("Error! Unable to add currency.", JsonRequestBehavior.AllowGet);
+                    }
                 }
             }
-            return RedirectToAction("ManageCurrencies");
+            else
+            {
+                return Json("Error! Unable to add currency.", JsonRequestBehavior.AllowGet);
+            }
         }
 
         //
@@ -496,15 +515,31 @@ namespace OnBoarding.Controllers
         {
             using (DBModel db = new DBModel())
             {
-                var getCurrencyUpdate = db.Currencies.SingleOrDefault(c => c.Id == model.EditId);
-                getCurrencyUpdate.CurrencyName = model.EditCurrencyName;
-                getCurrencyUpdate.Status = model.EditTModeStatus;
-                getCurrencyUpdate.CurrencyShort = model.EditCurrencyShortName;
-                getCurrencyUpdate.Status = model.EditStatus;
-                db.SaveChanges();
+                try
+                {
+                    var currentUserId = User.Identity.GetUserId();
+                    var getCurrencyUpdate = db.Currencies.SingleOrDefault(c => c.Id == model.EditId);
+                    getCurrencyUpdate.CurrencyName = model.EditCurrencyName;
+                    getCurrencyUpdate.Status = model.EditTModeStatus;
+                    getCurrencyUpdate.CurrencyShort = model.EditCurrencyShortName;
+                    getCurrencyUpdate.Status = model.EditStatus;
+                    var recordSaved = db.SaveChanges();
+                    if (recordSaved > 0)
+                    {
+                        int lastInsertId = db.Currencies.Max(p => p.Id);
+                        var LogAuditTrail = Functions.LogAuditTrail(model.EditId, "Edit", "Currencies", null, currentUserId, model.EditCurrencyName + " " + model.EditCurrencyShortName, null, null);
+                        return Json("success", JsonRequestBehavior.AllowGet);
+                    }
+                    else
+                    {
+                        return Json("Error! Unable to add currency.", JsonRequestBehavior.AllowGet);
+                    }
+                }
+                catch(Exception ex)
+                {
+                    return Json("" + ex.Message + "", JsonRequestBehavior.AllowGet);
+                }
             }
-
-            return RedirectToAction("ManageCurrencies");
         }
 
         //
@@ -730,25 +765,13 @@ namespace OnBoarding.Controllers
                 {
                     var userId = User.Identity.GetUserId();
                     var UserEmail = db.AspNetUsers.SingleOrDefault(a => a.Id == userId);
-
                     var getClientInfo = db.RegisteredClients.SingleOrDefault(c => c.Id == model.ClientId);
-                    //Delete From Registered Client Table
-                    var newDeletedEntry = db.AuditTrails.Create();
-                    newDeletedEntry.EntityId = model.ClientId;
-                    newDeletedEntry.ActionType = "Delete";
-                    newDeletedEntry.EntityTable = "RegisteredClients, AspNetUsers";
-                    newDeletedEntry.EntityUId = model.UserAccountId;
-                    newDeletedEntry.DoneBy = UserEmail.Email;
-                    newDeletedEntry.DateCreated = DateTime.Now;
-                    //newDeletedEntry.EntityName = getClientInfo.Surname + " " + getClientInfo.Surname + " " + getClientInfo.OtherNames;
-                    newDeletedEntry.EntityName = getClientInfo.Surname + " " + getClientInfo.OtherNames;
-                    newDeletedEntry.EntityEmail = getClientInfo.EmailAddress;
-                    //newDeletedEntry.EntityEmail = getClientInfo.EmailAddress + ", " + getClientInfo.BusinessEmailAddress;
-                    newDeletedEntry.EntityPhone = getClientInfo.PhoneNumber;
-                    db.AuditTrails.Add(newDeletedEntry);
-                    var recordDeleted = db.SaveChanges();
 
-                    if (recordDeleted > 0)
+                    //Delete From Registered Client Table
+                    //LogAuditTrail
+                    var LogAuditTrail = Functions.LogAuditTrail(model.ClientId, "Delete", "RegisteredClients, AspNetUsers", model.UserAccountId, UserEmail.Email, getClientInfo.Surname + " " + getClientInfo.OtherNames, getClientInfo.EmailAddress, getClientInfo.PhoneNumber);
+
+                    if (LogAuditTrail)
                     {
                         db.RegisteredClients.RemoveRange(db.RegisteredClients.Where(r => r.Id == model.ClientId));
                         var deletedClient = db.SaveChanges();
@@ -823,22 +846,11 @@ namespace OnBoarding.Controllers
                     var userId = User.Identity.GetUserId();
                     var UserEmail = db.AspNetUsers.SingleOrDefault(a => a.Id == userId);
                     var getSignatoryInfo = db.ClientSignatories.SingleOrDefault(c => c.Id == model.SignatoryId);
-                    
-                    //Delete From Registered Client Table
-                    var newDeletedEntry = db.AuditTrails.Create();
-                    newDeletedEntry.EntityId = model.ClientId;
-                    newDeletedEntry.ActionType = "Delete";
-                    newDeletedEntry.EntityTable = "ClientSignatories, AspNetUsers";
-                    newDeletedEntry.EntityUId = model.UserAccountId;
-                    newDeletedEntry.DoneBy = UserEmail.Email;
-                    newDeletedEntry.DateCreated = DateTime.Now;
-                    newDeletedEntry.EntityName = getSignatoryInfo.Surname + " " + getSignatoryInfo.OtherNames;
-                    newDeletedEntry.EntityEmail = getSignatoryInfo.EmailAddress;
-                    newDeletedEntry.EntityPhone = getSignatoryInfo.PhoneNumber;
-                    db.AuditTrails.Add(newDeletedEntry);
-                    var recordDeleted = db.SaveChanges();
 
-                    if (recordDeleted > 0)
+                    //Delete From Registered Client Table
+                    var LogAuditTrail = Functions.LogAuditTrail(model.ClientId, "Delete", "RegisteredClients, AspNetUsers", model.UserAccountId, UserEmail.Email, getSignatoryInfo.Surname + " " + getSignatoryInfo.OtherNames, getSignatoryInfo.EmailAddress, getSignatoryInfo.PhoneNumber);
+
+                    if (LogAuditTrail)
                     {
                         db.ClientSignatories.RemoveRange(db.ClientSignatories.Where(r => r.Id == model.SignatoryId));
                         var deletedClient = db.SaveChanges();
@@ -1216,6 +1228,7 @@ namespace OnBoarding.Controllers
             return PartialView(GetAllUploadedUsers());
         }
 
+        //
         //Get All Uploaded Users from table
         private IEnumerable<UploadedUsersViewModel> GetAllUploadedUsers()
         {
@@ -1235,6 +1248,7 @@ namespace OnBoarding.Controllers
             }
         }
 
+        //
         //Get All Uploaded Users from table
         public JsonResult SendOTPToUploadedUsers()
         {
@@ -1408,6 +1422,9 @@ namespace OnBoarding.Controllers
                         {
                             con.Open();
                             sqlBulkCopy.WriteToServer(dt);
+
+                            //Add audit trail
+                            var LogAuditTrail = Functions.LogAuditTrail(1, "Upload Clients", "RegisteredClients", null, User.Identity.GetUserId(), filePath, null, null);
                         }
                         catch (Exception)
                         {
@@ -1462,624 +1479,7 @@ namespace OnBoarding.Controllers
             }
         }
 
-        //POST EditClient
-        [HttpPost]
-        [AllowAnonymous]
-        public PartialViewResult EditClient(int clientId)
-        {
-            using (DBModel db = new DBModel())
-            {
-                var clientDetails = db.RegisteredClients.SingleOrDefault(s => s.Id == clientId);
-                ViewBag.ClientInfo = clientDetails;
-
-            }
-
-            return PartialView();
-        }
-
-        // POST: EditClientDetails
-        [HttpPost]
-        [AllowAnonymous]
-        public ActionResult PostEditClientDetails(EditUploadedClientViewModel model)
-        {
-            var errors = ModelState.Values.SelectMany(v => v.Errors);
-
-            //Log SSI Value if settlement account exist
-            SSI = (model.HaveSettlementAccount == "Yes") ? true : false;
-
-            if (ModelState.IsValid)
-            {
-                using (DBModel db = new DBModel())
-                {
-                    //Update Client Details with provided form values
-                    var updateClient = db.RegisteredClients.SingleOrDefault(c => c.Id == model.ClientID);
-                    if (updateClient != null)
-                    {
-                        try
-                        {
-                            //Update Registered Client Details
-                            //updateClient.CompanyName = model.CompanyName;
-                            updateClient.IDRegNumber = model.CompanyRegistration;
-                            //updateClient.CompanyTownCity = model.CompanyTownCity;
-                            //updateClient.Building = model.Building;
-                            //updateClient.Street = model.Street;
-                            updateClient.PostalAddress = model.PostalAddress;
-                            updateClient.PostalCode = model.PostalCode;
-                            //updateClient.BusinessEmailAddress = model.BusinessEmailAddress;
-                            updateClient.AcceptedTerms = true;
-                            db.SaveChanges();
-                        }
-                        catch (Exception ex)
-                        {
-                            throw (ex);
-                        }
-                    }
-                    else
-                    {
-                        return Json("Unable to Update Client Details!", JsonRequestBehavior.AllowGet);
-                    }
-
-                    //Log Settlement Account Details if yes is selected
-                    if (model.HaveSettlementAccount == "Yes")
-                    {
-                        var newAccountDetails = db.ClientSettlementAccounts.Create();
-                        if (model.SettlementAccount1 != null || model.InputCurrencyType1 != null)
-                        {
-                            var SettlementAccount1Exists = db.ClientSettlementAccounts.Any(c => c.AccountNumber == model.SettlementAccount1);
-                            if (!SettlementAccount1Exists)
-                            {
-                                newAccountDetails.ClientID = model.ClientID;
-                                newAccountDetails.AccountNumber = model.SettlementAccount1;
-                                newAccountDetails.OtherCurrency = model.InputCurrencyType1;
-                                newAccountDetails.CurrencyID = model.SelectCurrency1;
-                                newAccountDetails.Status = 1;
-                                db.ClientSettlementAccounts.Add(newAccountDetails);
-                                db.SaveChanges();
-                            }
-                            else
-                            {
-                                var SettlementAccountUpdate1 = db.ClientSettlementAccounts.SingleOrDefault(c => c.AccountNumber == model.SettlementAccount1);
-                                SettlementAccountUpdate1.Status = 1;
-                                db.SaveChanges();
-                            }
-                        }
-                        if (model.SettlementAccount2 != null || model.InputCurrencyType2 != null)
-                        {
-                            var SettlementAccount2Exists = db.ClientSettlementAccounts.Any(c => c.AccountNumber == model.SettlementAccount2);
-                            if (!SettlementAccount2Exists)
-                            {
-                                newAccountDetails.ClientID = model.ClientID;
-                                newAccountDetails.AccountNumber = model.SettlementAccount2;
-                                newAccountDetails.OtherCurrency = model.InputCurrencyType2;
-                                newAccountDetails.CurrencyID = model.SelectCurrency2;
-                                newAccountDetails.Status = 1;
-                                db.ClientSettlementAccounts.Add(newAccountDetails);
-                                db.SaveChanges();
-                            }
-                            else
-                            {
-                                var SettlementAccountUpdate2 = db.ClientSettlementAccounts.SingleOrDefault(c => c.AccountNumber == model.SettlementAccount2);
-                                SettlementAccountUpdate2.Status = 1;
-                                db.SaveChanges();
-                            }
-                        }
-                        if (model.SettlementAccount3 != null || model.InputCurrencyType3 != null)
-                        {
-                            var SettlementAccount3Exists = db.ClientSettlementAccounts.Any(c => c.AccountNumber == model.SettlementAccount3);
-                            if (!SettlementAccount3Exists)
-                            {
-                                newAccountDetails.ClientID = model.ClientID;
-                                newAccountDetails.AccountNumber = model.SettlementAccount3;
-                                newAccountDetails.OtherCurrency = model.InputCurrencyType3;
-                                newAccountDetails.CurrencyID = model.SelectCurrency3;
-                                newAccountDetails.Status = 1;
-                                db.ClientSettlementAccounts.Add(newAccountDetails);
-                                db.SaveChanges();
-                            }
-                            else
-                            {
-                                var SettlementAccountUpdate3 = db.ClientSettlementAccounts.SingleOrDefault(c => c.AccountNumber == model.SettlementAccount3);
-                                SettlementAccountUpdate3.Status = 1;
-                                db.SaveChanges();
-                            }
-                        }
-                        if (model.SettlementAccount4 != null || model.InputCurrencyType4 != null)
-                        {
-                            var SettlementAccount4Exists = db.ClientSettlementAccounts.Any(c => c.AccountNumber == model.SettlementAccount4);
-                            if (!SettlementAccount4Exists)
-                            {
-                                newAccountDetails.ClientID = model.ClientID;
-                                newAccountDetails.AccountNumber = model.SettlementAccount4;
-                                newAccountDetails.OtherCurrency = model.InputCurrencyType4;
-                                newAccountDetails.CurrencyID = model.SelectCurrency4;
-                                newAccountDetails.Status = 1;
-                                db.ClientSettlementAccounts.Add(newAccountDetails);
-                                db.SaveChanges();
-                            }
-                            else
-                            {
-                                var SettlementAccountUpdate4 = db.ClientSettlementAccounts.SingleOrDefault(c => c.AccountNumber == model.SettlementAccount4);
-                                SettlementAccountUpdate4.Status = 1;
-                                db.SaveChanges();
-                            }
-                        }
-                        if (model.SettlementAccount5 != null || model.InputCurrencyType5 != null)
-                        {
-                            var SettlementAccount5Exists = db.ClientSettlementAccounts.Any(c => c.AccountNumber == model.SettlementAccount5);
-                            if (!SettlementAccount5Exists)
-                            {
-                                newAccountDetails.ClientID = model.ClientID;
-                                newAccountDetails.AccountNumber = model.SettlementAccount5;
-                                newAccountDetails.OtherCurrency = model.InputCurrencyType5;
-                                newAccountDetails.CurrencyID = model.SelectCurrency5;
-                                newAccountDetails.Status = 1;
-                                db.ClientSettlementAccounts.Add(newAccountDetails);
-                                db.SaveChanges();
-                            }
-                            else
-                            {
-                                var SettlementAccountUpdate5 = db.ClientSettlementAccounts.SingleOrDefault(c => c.AccountNumber == model.SettlementAccount5);
-                                SettlementAccountUpdate5.Status = 1;
-                                db.SaveChanges();
-                            }
-                        }
-                        if (model.SettlementAccount6 != null || model.InputCurrencyType6 != null)
-                        {
-                            var SettlementAccount6Exists = db.ClientSettlementAccounts.Any(c => c.AccountNumber == model.SettlementAccount6);
-                            if (!SettlementAccount6Exists)
-                            {
-                                newAccountDetails.ClientID = model.ClientID;
-                                newAccountDetails.AccountNumber = model.SettlementAccount6;
-                                newAccountDetails.OtherCurrency = model.InputCurrencyType6;
-                                newAccountDetails.CurrencyID = model.SelectCurrency6;
-                                newAccountDetails.Status = 1;
-                                db.ClientSettlementAccounts.Add(newAccountDetails);
-                                db.SaveChanges();
-                            }
-                            else
-                            {
-                                var SettlementAccountUpdate6 = db.ClientSettlementAccounts.SingleOrDefault(c => c.AccountNumber == model.SettlementAccount6);
-                                SettlementAccountUpdate6.Status = 1;
-                                db.SaveChanges();
-                            }
-                        }
-                        if (model.SettlementAccount7 != null || model.InputCurrencyType7 != null)
-                        {
-                            var SettlementAccount7Exists = db.ClientSettlementAccounts.Any(c => c.AccountNumber == model.SettlementAccount7);
-                            if (!SettlementAccount7Exists)
-                            {
-                                newAccountDetails.ClientID = model.ClientID;
-                                newAccountDetails.AccountNumber = model.SettlementAccount7;
-                                newAccountDetails.OtherCurrency = model.InputCurrencyType7;
-                                newAccountDetails.CurrencyID = model.SelectCurrency7;
-                                newAccountDetails.Status = 1;
-                                db.ClientSettlementAccounts.Add(newAccountDetails);
-                                db.SaveChanges();
-                            }
-                            else
-                            {
-                                var SettlementAccountUpdate7 = db.ClientSettlementAccounts.SingleOrDefault(c => c.AccountNumber == model.SettlementAccount7);
-                                SettlementAccountUpdate7.Status = 1;
-                                db.SaveChanges();
-                            }
-                        }
-                        if (model.SettlementAccount8 != null || model.InputCurrencyType8 != null)
-                        {
-                            var SettlementAccount8Exists = db.ClientSettlementAccounts.Any(c => c.AccountNumber == model.SettlementAccount8);
-                            if (!SettlementAccount8Exists)
-                            {
-                                newAccountDetails.ClientID = model.ClientID;
-                                newAccountDetails.AccountNumber = model.SettlementAccount8;
-                                newAccountDetails.OtherCurrency = model.InputCurrencyType8;
-                                newAccountDetails.CurrencyID = model.SelectCurrency8;
-                                newAccountDetails.Status = 1;
-                                db.ClientSettlementAccounts.Add(newAccountDetails);
-                                db.SaveChanges();
-                            }
-                            else
-                            {
-                                var SettlementAccountUpdate6 = db.ClientSettlementAccounts.SingleOrDefault(c => c.AccountNumber == model.SettlementAccount6);
-                                SettlementAccountUpdate6.Status = 1;
-                                db.SaveChanges();
-                            }
-                        }
-                    }
-
-                    //Create Account Signatory 1
-                    if (model.SignatorySurname1 != null || model.SignatoryOtherNames1 != null || model.SignatoryEmail1 != null || model.SignatoryDesignation1 != null)
-                    {
-                        //check if exists and add is false
-                        var SignatoryExists = db.ClientSignatories.SingleOrDefault(s => s.EmailAddress == model.SignatoryEmail1);
-                        if (SignatoryExists == null)
-                        {
-                            try
-                            {
-                                var addSignatory1 = db.ClientSignatories.Create();
-                                addSignatory1.ClientID = model.ClientID;
-                                addSignatory1.Designation = model.SignatoryDesignation1;
-                                addSignatory1.Surname = model.SignatorySurname1;
-                                addSignatory1.OtherNames = model.SignatoryOtherNames1;
-                                addSignatory1.EmailAddress = model.SignatoryEmail1.ToLower();
-                                addSignatory1.PhoneNumber = model.SignatoryPhoneNumber1;
-                                addSignatory1.DateCreated = DateTime.Now;
-                                addSignatory1.Status = 1;
-                                addSignatory1.AcceptedTerms = true;
-                                db.ClientSignatories.Add(addSignatory1);
-                                db.SaveChanges();
-                            }
-                            catch (Exception ex)
-                            {
-                                throw (ex);
-                            }
-                        }
-                        else
-                        {
-                            var Signatory1ToUpdateStatus = db.ClientSignatories.SingleOrDefault(c => c.EmailAddress == model.SignatoryEmail1);
-                            Signatory1ToUpdateStatus.Status = 1;
-                            db.SaveChanges();
-                        }
-                    }
-
-                    //Create Account Signatory 2
-                    if (model.SignatorySurname2 != null || model.SignatoryOtherNames2 != null || model.SignatoryEmail2 != null || model.SignatoryDesignation2 != null)
-                    {
-                        //Check if Signatory already exists
-                        var Signatory2Exist = db.ClientSignatories.Any(c => c.EmailAddress == model.SignatoryEmail2);
-                        if (Signatory2Exist)
-                        {
-                            //Update Status if signatory exists
-                            var Signatory2ToUpdateStatus = db.ClientSignatories.SingleOrDefault(c => c.EmailAddress == model.SignatoryEmail2);
-                            Signatory2ToUpdateStatus.Status = 1;
-                            db.SaveChanges();
-                        }
-                        else
-                        {
-                            //Create Signatory 2
-                            try
-                            {
-                                var addSignatory2 = db.ClientSignatories.Create();
-                                addSignatory2.ClientID = model.ClientID;
-                                addSignatory2.Designation = model.SignatoryDesignation2;
-                                addSignatory2.Surname = model.SignatorySurname2;
-                                addSignatory2.OtherNames = model.SignatoryOtherNames2;
-                                addSignatory2.EmailAddress = model.SignatoryEmail2.ToLower();
-                                addSignatory2.PhoneNumber = model.SignatoryPhoneNumber2;
-                                addSignatory2.DateCreated = DateTime.Now;
-                                addSignatory2.Status = 0;
-                                db.ClientSignatories.Add(addSignatory2);
-                                db.SaveChanges();
-                            }
-                            catch (Exception ex)
-                            {
-                                throw (ex);
-                            }
-                        }
-                    }
-
-                    //Create Signatory and Send email notification and OTP (Signatory 3)
-                    if (model.SignatorySurname3 != null || model.SignatoryOtherNames3 != null || model.SignatoryEmail3 != null || model.SignatoryDesignation3 != null)
-                    {
-                        //Check if Signatory already exists
-                        var Signatory3Exist = db.ClientSignatories.Any(c => c.EmailAddress == model.SignatoryEmail3);
-                        if (Signatory3Exist)
-                        {
-                            //Update Status if signatory exists
-                            var Signatory3ToUpdateStatus = db.ClientSignatories.SingleOrDefault(c => c.EmailAddress == model.SignatoryEmail3);
-                            Signatory3ToUpdateStatus.Status = 1;
-                            db.SaveChanges();
-                        }
-                        else
-                        {
-                            try
-                            {
-                                var addSignatory3 = db.ClientSignatories.Create();
-                                addSignatory3.ClientID = model.ClientID;
-                                addSignatory3.Designation = model.SignatoryDesignation3;
-                                addSignatory3.Surname = model.SignatorySurname3;
-                                addSignatory3.OtherNames = model.SignatoryOtherNames3;
-                                addSignatory3.EmailAddress = model.SignatoryEmail3.ToLower();
-                                addSignatory3.PhoneNumber = model.SignatoryPhoneNumber3;
-                                addSignatory3.DateCreated = DateTime.Now;
-                                addSignatory3.Status = 0;
-                                db.ClientSignatories.Add(addSignatory3);
-                                db.SaveChanges();
-                            }
-                            catch (Exception ex)
-                            {
-                                throw (ex);
-                            }
-                        }
-                    }
-
-                    //Create Account Signatory 4
-                    if (model.SignatorySurname4 != null || model.SignatoryOtherNames4 != null || model.SignatoryEmail4 != null || model.SignatoryDesignation4 != null)
-                    {
-                        //Check if Signatory already exists
-                        var Signatory4Exist = db.ClientSignatories.Any(c => c.EmailAddress == model.SignatoryEmail4);
-                        if (Signatory4Exist)
-                        {
-                            //Update Status if signatory exists
-                            var Signatory4ToUpdateStatus = db.ClientSignatories.SingleOrDefault(c => c.EmailAddress == model.SignatoryEmail4);
-                            Signatory4ToUpdateStatus.Status = 1;
-                            db.SaveChanges();
-                        }
-                        else
-                        {
-                            try
-                            {
-                                var addSignatory4 = db.ClientSignatories.Create();
-                                addSignatory4.ClientID = model.ClientID;
-                                addSignatory4.Designation = model.SignatoryDesignation4;
-                                addSignatory4.Surname = model.SignatorySurname4;
-                                addSignatory4.OtherNames = model.SignatoryOtherNames4;
-                                addSignatory4.EmailAddress = model.SignatoryEmail4.ToLower();
-                                addSignatory4.PhoneNumber = model.SignatoryPhoneNumber4;
-                                addSignatory4.DateCreated = DateTime.Now;
-                                addSignatory4.Status = 0;
-                                db.ClientSignatories.Add(addSignatory4);
-                                db.SaveChanges();
-                            }
-                            catch (Exception ex)
-                            {
-                                throw (ex);
-                            }
-                        }
-                    }
-
-                    //Create Signatory and Send email notification And OTP (Signatory 5)
-                    if (model.SignatorySurname5 != null || model.SignatoryOtherNames5 != null || model.SignatoryEmail5 != null || model.SignatoryDesignation5 != null)
-                    {
-                        //Check if Signatory already exists
-                        var Signatory5Exist = db.ClientSignatories.Any(c => c.EmailAddress == model.SignatoryEmail5);
-                        if (Signatory5Exist)
-                        {
-                            //Update Status if signatory exists
-                            var Signatory5ToUpdateStatus = db.ClientSignatories.SingleOrDefault(c => c.EmailAddress == model.SignatoryEmail5);
-                            Signatory5ToUpdateStatus.Status = 1;
-                            db.SaveChanges();
-                        }
-                        else
-                        {
-                            try
-                            {
-                                var addSignatory5 = db.ClientSignatories.Create();
-                                addSignatory5.ClientID = model.ClientID;
-                                addSignatory5.Designation = model.SignatoryDesignation5;
-                                addSignatory5.Surname = model.SignatorySurname5;
-                                addSignatory5.OtherNames = model.SignatoryOtherNames5;
-                                addSignatory5.EmailAddress = model.SignatoryEmail5.ToLower();
-                                addSignatory5.PhoneNumber = model.SignatoryPhoneNumber5;
-                                addSignatory5.DateCreated = DateTime.Now;
-                                addSignatory5.Status = 0;
-                                db.ClientSignatories.Add(addSignatory5);
-                                db.SaveChanges();
-                            }
-                            catch (Exception ex)
-                            {
-                                throw (ex);
-                            }
-                        }
-                    }
-
-                    //Log authorised representative (Representative 1)
-                    if (model.UserEmail1 != null && model.UserSurname1 != null && model.UserOthernames1 != null && model.UserMobileNumber1 != null)
-                    {
-                        //Check if representative exists
-                        var Representative1Exists = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.UserEmail1);
-                        if (Representative1Exists == null)
-                        {
-                            //Create new representative if false
-                            try
-                            {
-                                var addDesignatedUser1 = db.DesignatedUsers.Create();
-                                addDesignatedUser1.Status = 0;
-                                addDesignatedUser1.ClientID = model.ClientID;
-                                addDesignatedUser1.DateCreated = DateTime.Now;
-                                addDesignatedUser1.DOB = model.DOB1;
-                                addDesignatedUser1.Email = model.UserEmail1.ToLower();
-                                addDesignatedUser1.Surname = model.UserSurname1;
-                                addDesignatedUser1.Othernames = model.UserOthernames1;
-                                addDesignatedUser1.Mobile = model.UserMobileNumber1;
-                                addDesignatedUser1.POBox = model.UserPOBox1;
-                                addDesignatedUser1.ZipCode = model.UserZipCode1;
-                                addDesignatedUser1.Town = model.UserTownCity1;
-                                addDesignatedUser1.TradingLimit = model.TransactionLimit1;
-                                addDesignatedUser1.EMarketSignUp = model.EMarketSignUp1;
-                                addDesignatedUser1.AcceptedTerms = false;
-                                db.DesignatedUsers.Add(addDesignatedUser1);
-                                db.SaveChanges();
-                            }
-                            catch (Exception ex)
-                            {
-                                throw (ex);
-                            }
-                        }
-                        else
-                        {
-                            //Update Status if representative exists
-                            var Representative1ToUpdateStatus = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.UserEmail1);
-                            Representative1ToUpdateStatus.Status = 1;
-                            db.SaveChanges();
-                        }
-                    }
-
-                    //Log authorised Representative 2
-                    if (model.UserEmail2 != null && model.UserSurname2 != null && model.UserOthernames2 != null && model.UserMobileNumber2 != null)
-                    {
-                        var Representative2Exists = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.UserEmail2);
-                        var RepresentativeIsAClient = db.RegisteredClients.SingleOrDefault(c => c.EmailAddress == model.UserEmail2);
-
-                        if (Representative2Exists == null)
-                        {
-                            var addDesignatedUser2 = db.DesignatedUsers.Create();
-                            addDesignatedUser2.Status = 0;
-                            addDesignatedUser2.ClientID = model.ClientID;
-                            addDesignatedUser2.DateCreated = DateTime.Now;
-                            addDesignatedUser2.DOB = model.DOB2;
-                            addDesignatedUser2.Email = model.UserEmail2.ToLower();
-                            addDesignatedUser2.Surname = model.UserSurname2;
-                            addDesignatedUser2.Othernames = model.UserOthernames2;
-                            addDesignatedUser2.Mobile = model.UserMobileNumber2;
-                            addDesignatedUser2.POBox = model.UserPOBox2;
-                            addDesignatedUser2.ZipCode = model.UserZipCode2;
-                            addDesignatedUser2.Town = model.UserTownCity2;
-                            addDesignatedUser2.TradingLimit = model.TransactionLimit2;
-                            addDesignatedUser2.EMarketSignUp = model.EMarketSignUp2;
-                            addDesignatedUser2.AcceptedTerms = false;
-                            db.DesignatedUsers.Add(addDesignatedUser2);
-                            db.SaveChanges();
-                        }
-                        else
-                        {
-                            //Update Status if representative exists
-                            var Representative2ToUpdateStatus = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.UserEmail2);
-                            Representative2ToUpdateStatus.Status = 1;
-                            db.SaveChanges();
-                        }
-                    }
-
-                    //Log authorised Representative 3
-                    if (model.UserEmail3 != null && model.UserSurname3 != null && model.UserOthernames3 != null && model.UserMobileNumber3 != null)
-                    {
-                        var Representative3Exists = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.UserEmail3);
-                        if (Representative3Exists == null)
-                        {
-                            var addDesignatedUser3 = db.DesignatedUsers.Create();
-                            addDesignatedUser3.Status = 0;
-                            addDesignatedUser3.ClientID = model.ClientID;
-                            addDesignatedUser3.DateCreated = DateTime.Now;
-                            addDesignatedUser3.DOB = model.DOB3;
-                            addDesignatedUser3.Email = model.UserEmail3.ToLower();
-                            addDesignatedUser3.Surname = model.UserSurname3;
-                            addDesignatedUser3.Othernames = model.UserOthernames3;
-                            addDesignatedUser3.Mobile = model.UserMobileNumber3;
-                            addDesignatedUser3.POBox = model.UserPOBox3;
-                            addDesignatedUser3.ZipCode = model.UserZipCode3;
-                            addDesignatedUser3.Town = model.UserTownCity3;
-                            addDesignatedUser3.TradingLimit = model.TransactionLimit3;
-                            addDesignatedUser3.EMarketSignUp = model.EMarketSignUp3;
-                            addDesignatedUser3.AcceptedTerms = false;
-                            db.DesignatedUsers.Add(addDesignatedUser3);
-                            db.SaveChanges();
-                        }
-                        else
-                        {
-                            //Update Status if representative exists
-                            var Representative3ToUpdateStatus = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.UserEmail3);
-                            Representative3ToUpdateStatus.Status = 1;
-                            db.SaveChanges();
-                        }
-                    }
-
-                    //Log authorised Representative 4
-                    if (model.UserEmail4 != null && model.UserSurname4 != null && model.UserOthernames4 != null && model.UserMobileNumber4 != null)
-                    {
-                        var Representative4Exists = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.UserEmail4);
-                        if (Representative4Exists == null)
-                        {
-                            var addDesignatedUser4 = db.DesignatedUsers.Create();
-                            addDesignatedUser4.Status = 0;
-                            addDesignatedUser4.ClientID = model.ClientID;
-                            addDesignatedUser4.DateCreated = DateTime.Now;
-                            addDesignatedUser4.DOB = model.DOB4;
-                            addDesignatedUser4.Email = model.UserEmail4.ToLower();
-                            addDesignatedUser4.Surname = model.UserSurname4;
-                            addDesignatedUser4.Othernames = model.UserOthernames4;
-                            addDesignatedUser4.Mobile = model.UserMobileNumber4;
-                            addDesignatedUser4.POBox = model.UserPOBox4;
-                            addDesignatedUser4.Town = model.UserTownCity4;
-                            addDesignatedUser4.ZipCode = model.UserZipCode4;
-                            addDesignatedUser4.AcceptedTerms = false;
-                            addDesignatedUser4.TradingLimit = model.TransactionLimit4;
-                            addDesignatedUser4.EMarketSignUp = model.EMarketSignUp4;
-                            db.DesignatedUsers.Add(addDesignatedUser4);
-                            db.SaveChanges();
-                        }
-                        else
-                        {
-                            //Update Status if representative exists
-                            var Representative4ToUpdateStatus = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.UserEmail4);
-                            Representative4ToUpdateStatus.Status = 1;
-                            db.SaveChanges();
-                        }
-                    }
-
-                    //Log authorised Representative 5
-                    if (model.UserEmail5 != null && model.UserSurname5 != null && model.UserOthernames5 != null && model.UserMobileNumber5 != null)
-                    {
-                        var Representative5Exists = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.UserEmail5);
-                        if (Representative5Exists == null)
-                        {
-                            var addDesignatedUser5 = db.DesignatedUsers.Create();
-                            addDesignatedUser5.Status = 0;
-                            addDesignatedUser5.ClientID = model.ClientID;
-                            addDesignatedUser5.DateCreated = DateTime.Now;
-                            addDesignatedUser5.DOB = model.DOB5;
-                            addDesignatedUser5.Email = model.UserEmail5.ToLower();
-                            addDesignatedUser5.Surname = model.UserSurname5;
-                            addDesignatedUser5.Othernames = model.UserOthernames5;
-                            addDesignatedUser5.Mobile = model.UserMobileNumber5;
-                            addDesignatedUser5.POBox = model.UserPOBox5;
-                            addDesignatedUser5.Town = model.UserTownCity5;
-                            addDesignatedUser5.ZipCode = model.UserZipCode5;
-                            addDesignatedUser5.TradingLimit = model.TransactionLimit5;
-                            addDesignatedUser5.EMarketSignUp = model.EMarketSignUp5;
-                            addDesignatedUser5.AcceptedTerms = false;
-                            db.DesignatedUsers.Add(addDesignatedUser5);
-                            db.SaveChanges();
-                        }
-                        else
-                        {
-                            //Update Status if representative exists
-                            var Representative5ToUpdateStatus = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.UserEmail5);
-                            Representative5ToUpdateStatus.Status = 1;
-                            db.SaveChanges();
-                        }
-                    }
-
-                    //Update Number of Application Signatories and Designated Users
-                    var SignatoryCount = db.ClientSignatories.Count(c => c.ClientID == model.ClientID && c.Status != 2);
-                    var DesignatedUsersCount = db.DesignatedUsers.Count(c => c.ClientID == model.ClientID && c.Status != 2);
-                    try
-                    {
-                        //Log new application
-                        var newApplication = db.EMarketApplications.Create();
-                        newApplication.AcceptedTAC = true;
-                        newApplication.ClientID = model.ClientID;
-                        newApplication.DesignatedUsers = DesignatedUsersCount;
-                        newApplication.DateCreated = DateTime.Now;
-                        newApplication.Signatories = SignatoryCount;
-                        newApplication.Status = 1;
-                        newApplication.SignatoriesApproved = SignatoryCount;
-                        newApplication.UsersApproved = DesignatedUsersCount;
-                        newApplication.SignatoriesDateApproved = DateTime.Now;
-                        newApplication.UsersDateApproved = DateTime.Now;
-                        newApplication.Emt = true;
-                        newApplication.SSI = SSI;
-                        newApplication.OPSApproved = true;
-                        newApplication.OPSDateApproved = DateTime.Now;
-                        newApplication.OPSWhoApproved = User.Identity.GetUserId();
-                        newApplication.OPSComments = "Uploaded Application";
-                        newApplication.POAApproved = true;
-                        newApplication.POADateApproved = DateTime.Now;
-                        newApplication.POAWhoApproved = User.Identity.GetUserId();
-                        newApplication.POAComments = "Uploaded Application";
-                        db.EMarketApplications.Add(newApplication);
-                        db.SaveChanges();
-                    }
-                    catch (Exception ex)
-                    {
-                        throw (ex);
-                    }
-                }
-                return Json("success", JsonRequestBehavior.AllowGet);
-            }
-            else
-            {
-                return Json("Model Invalid " + errors + " ", JsonRequestBehavior.AllowGet);
-            }
-        }
-
+        //Rmoved Edit Client for Digital Desk do not edit clients
 
         //
         //Get //list
@@ -3890,6 +3290,7 @@ namespace OnBoarding.Controllers
                             {
                                 //Log email sent notification
                                 LogNotification.AddSucsessNotification(MailHelper.EmailFrom, EmailBody, ClientToUpdate.EmailAddress, _action);
+                                var LogAuditTrail = Functions.LogAuditTrail(model.getClientId, "Reset Clients OTP", "RegisteredClients", null, User.Identity.GetUserId(), ClientToUpdate.Surname +" "+ ClientToUpdate.OtherNames, ClientToUpdate.EmailAddress, null);
                             }
                             else
                             {
@@ -4077,6 +3478,7 @@ namespace OnBoarding.Controllers
                             {
                                 //Log email sent notification
                                 LogNotification.AddSucsessNotification(MailHelper.EmailFrom, EmailBody, SignatoryToUpdate.EmailAddress, _action);
+                                var LogAuditTrail = Functions.LogAuditTrail(model.getSignatoryId, "Reset Clients OTP", "RegisteredClients", null, User.Identity.GetUserId(), SignatoryToUpdate.Surname + " " + SignatoryToUpdate.OtherNames, SignatoryToUpdate.EmailAddress, null);
                             }
                             else
                             {
@@ -4264,6 +3666,7 @@ namespace OnBoarding.Controllers
                             {
                                 //Log email sent notification
                                 LogNotification.AddSucsessNotification(MailHelper.EmailFrom, EmailBody, RepresentiveToUpdate.Email, _action);
+                                var LogAuditTrail = Functions.LogAuditTrail(model.getRepresentativeId, "Reset Clients OTP", "RegisteredClients", null, User.Identity.GetUserId(), RepresentiveToUpdate.Surname + " " + RepresentiveToUpdate.Othernames, RepresentiveToUpdate.Email, null);
                             }
                             else
                             {

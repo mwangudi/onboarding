@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
-using OnBoarding.ViewModels;
-using Microsoft.AspNet.Identity;
 using OnBoarding.Services;
 using OnBoarding.Models;
 using System.IO;
 using System.Web;
+using OnBoarding.ViewModels;
+using Microsoft.AspNet.Identity;
+using System.Collections.Generic;
 
 namespace OnBoarding.Controllers
 {
