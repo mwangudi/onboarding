@@ -1,0 +1,2 @@
+# onboarding
+Global Markets Onboarding system is a web-based application that is designed to replace the manual signup process of Stanbic Bank Kenya Ltd existing banks clients who want to trade in the banks forex market. We used ASP.NET C#, CSHTML, JavaScript, jQuery on the Frontend and Backend coding which connects to a database designed by MSSQL Server. The system can be access from a standard web browser.
