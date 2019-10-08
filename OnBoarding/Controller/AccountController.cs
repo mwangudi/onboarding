@@ -1202,6 +1202,7 @@ namespace OnBoarding.Controllers
                             var deviceIP = (from address in NetworkInterface.GetAllNetworkInterfaces().Select(x => x.GetIPProperties()).SelectMany(x => x.UnicastAddresses).Select(x => x.Address)
                                                 where !IPAddress.IsLoopback(address) && address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork
                                                 select address).FirstOrDefault();
+                            var callbackUrl = Url.Action("ResetAccount", "Account", null, Request.Url.Scheme);
 
                             using (StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/PasswordChange.html")))
                             {
@@ -1211,6 +1212,7 @@ namespace OnBoarding.Controllers
                             EmailBody = EmailBody.Replace("{DatePasswordChanged}", DateTime.Now.ToString());
                             EmailBody = EmailBody.Replace("{DeviceName}", System.Environment.MachineName);
                             EmailBody = EmailBody.Replace("{IP}", deviceIP.ToString());
+                            EmailBody = EmailBody.Replace("{ResetUrl}", callbackUrl);
 
                             var CompleteRegistrationEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, UserToUpdate.Email.ToLower(), "Confirm Registration", EmailBody);
                             if (CompleteRegistrationEmail == true)
