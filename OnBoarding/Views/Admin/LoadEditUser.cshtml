@@ -1,0 +1,177 @@
+﻿@model OnBoarding.ViewModels.EditUserViewModel
+	<div class="form-row">
+		<form action="" enctype="multipart/form-data" method="post" class="mt-2 w_full" id="Edit_User_FRM" name="Edit_User_FRM" data-fv-message="This value is not valid"
+			  data-fv-icon-validating="glyphicon glyphicon-refresh">
+			<div class="form-group form-row" style="margin-left: 0px !important;">
+				<div class="col-12 col-sm-4 col-lg-4">
+					<div class="form-group">
+						<label>Full Names</label>
+						<input type="text" class="form-control" name="EditUserNames" id="EditUserNames" autocomplete="off" placeholder="Full Names" value="@ViewBag.UserDetails.CompanyName" />
+						<input type="hidden" name="getUserId" id="getUserId" value="@ViewBag.UserDetails.Id" />
+						<input type="hidden" name="getUserRoleId" id="getUserRoleId" value="@ViewData["RoleId"]" />
+					</div>
+				</div>
+				<div class="col-12 col-sm-4 col-lg-4">
+					<div class="form-group">
+						<label>Office Staff Number <span class="red">*</span></label>
+						<input type="text" class="form-control" autocomplete="off" name="Username" id="Username" placeholder="Staff Number e.g. A0000" />
+					</div>
+				</div>
+				<div class="col-12 col-sm-4 col-lg-4">
+					<div class="form-group">
+						<label>Email <span class="red">*</span></label>
+						<input type="email" class="form-control" name="EditEmail" id="EditEmail" autocomplete="off" placeholder="Email Address" value="@ViewBag.UserDetails.Email" />
+					</div>
+				</div>
+			</div>
+			<div class="form-group form-row" style="margin-left: 0px !important;">
+				<div class="col-12 col-sm-4 col-lg-4">
+					<div class="form-group">
+						<label>Phone / Office Extension <span class="red">*</span></label>
+						<input type="text" class="form-control" name="EditPhoneNumber" id="EditPhoneNumber" autocomplete="off" placeholder="Phone / Office Extension" value="@ViewBag.UserDetails.PhoneNumber" />
+					</div>
+				</div>
+				<div class="col-12 col-sm-4 col-lg-4">
+					<label>Select User Role <span class="red">*</span></label>
+					<select id="EditUserRole" name="EditUserRole" class="form-control select2" style="width: 100%;">
+						<option selected> @ViewData["RoleName"] </option>
+					</select>
+				</div>
+				<div class="col-12 col-sm-4 col-lg-4">
+					<div class="form-group mb-0">
+						<label for="EditTModeStatus"> Status</label>
+						<div class="radio" style="margin:5px 0 0 20px;">
+							<label for="optionsRadios1">
+								<input type="radio" name="EditTModeStatus" id="optionsRadios1" value="1" style="margin-top:3px;" @(ViewBag.UserDetails.Status.ToString() == "1" ? "checked" : "") />
+								Active &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							</label>
+							<label for="optionsRadios2">
+								<input type="radio" name="EditTModeStatus" id="optionsRadios2" value="0" style="margin-top:3px;" @(ViewBag.UserDetails.Status.ToString() == "0" ? "checked" : "") /> In-Active
+							</label>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="form-group form-row" style="margin-left: 0px !important;">
+				<div class="col-12 col-sm-4 col-lg-4 col-md-offset-8">
+					<div class="form-group">
+						<button type="submit" class="btn submitform btn-primary w_full" name="submit">
+							<span class="fa fa fa-check-circle"></span> Edit System User
+						</button>
+					</div>
+				</div>
+			</div>
+		</form>
+		<!--Processing Submission -->
+		<div class="col-lg-12 d_none" id="ModalLoading">
+			<center class="r_corners m_top_10">
+				<h4 class="m_top_20 m_bottom_20">Please wait... Processing Your Submission</h4>
+				<img src="~/Content/images/loading-bar.gif" class="img-thumbnail m_bottom_20" alt="Loading" style="max-width:160px;">
+			</center>
+		</div>
+		<!--End Submission Processing -->
+		<!--Alert Successful -->
+		<div class="jumbotron EditSuccessDiv text-xs-center d_none w_full" style="text-align: center;">
+			<h1 class="display-3"><i class="fa fa-check-circle-o" style="color:green"></i><br /> Success </h1>
+			<p class="lead"><strong> User Details Has been Updated Successfully! </strong> </p>
+			<hr>
+			<div class="col-lg-12">
+				<center class="m_top_10">
+					<b>Global Markets Onboarding Portal &copy; 2018 Stanbic Bank</b>
+				</center>
+			</div>
+		</div>
+		<!--End Successful ALert -->
+	</div>
+<script type="text/javascript">
+
+	jQuery().ready(function () {
+		var v = jQuery("#Edit_User_FRM").validate({
+			rules: {
+				EditUserRole: {
+					required: true
+				},
+				EditPhoneNumber: {
+					required: true
+				},
+				EditEmail: {
+					required: true,
+					email: true
+				},
+				EditUserNames: {
+					required: true
+				},
+				EditStaffNumber: {
+					required: true
+				}
+			},
+			errorElement: "span",
+			errorClass: "help-inline-error",
+		});
+	});
+
+	$(document).ready(function () {
+		//Initialize select2
+		$(".select2").select2();
+		
+		//Get Roles List
+		$("#EditUserRole").select2({
+			placeholder: "Select User Roles",
+			allowClear: true,
+			ajax: {
+				url: '/Admin/GetUserRoles',
+				data: function (params) {
+					return {
+						q: params.term // search term
+					};
+				},
+				processResults: function (data) {
+					return {
+						results: data.items
+					};
+				},
+				minimumInputLength: 2
+			}
+		});
+
+		//Submit Form Action
+		$("form#Edit_User_FRM").submit(function (e) {
+            e.preventDefault();
+            if ($('#Edit_User_FRM').valid()) {
+				$("#ModalLoading").show('fast');
+                $('#Edit_User_FRM').hide('fast');
+                var formData = new FormData($(this)[0]);
+                $.ajax({
+                    url: '/Admin/EditUser',
+                    type: 'POST',
+                    data: formData,
+                    async: true,
+					success: function (XmlHttpRequest) {
+						window.setTimeout(close, 1500);
+						window.setTimeout(closemodal, 1800);
+						function close() {
+							if (XmlHttpRequest === 'success') {
+								$("#ModalLoading").hide('fast');
+								$('.EditSuccessDiv').show('fast');
+							}
+							else {
+								$("#ModalLoading").hide('fast');
+								$('#Edit_User_FRM').show("fast");
+								toastr.error(XmlHttpRequest);
+							}
+						}
+						function closemodal() {
+							if (XmlHttpRequest === 'success') {
+								$('.EditSuccessDiv').hide('fast');
+								location.href = '/Admin/ManageInternalUsers';
+							}
+						}
+					},
+                    cache: false,
+                    contentType: false,
+                    processData: false
+                });
+            }
+		});
+	});
+</script>

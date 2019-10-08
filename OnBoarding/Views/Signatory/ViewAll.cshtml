@@ -1,0 +1,122 @@
+﻿@model IEnumerable<OnBoarding.ViewModels.ClientApplicationsViewModel>
+@{
+    ViewBag.Title = "ViewAll";
+    Layout = "~/Views/Shared/_AdminNewLayout.cshtml";
+}
+
+<section class="section">
+    <h4 class="section-header">
+        My Nominations 
+    </h4>
+    <div class="row">
+        <div class="col-12 col-md-12 col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Nomination list</h4>
+                </div>
+                <div class="card-body">
+                    <div class="item-data-retriving d_none">
+                        <div class="float-right">
+                            <button class="btn btn-danger select-another-item">
+                                <i class="fa fa ion-android-cancel"></i> Cancel
+                            </button>
+                        </div>
+                        <h6><i class="fa fa-adjust"></i> Accept Nomination </h6>
+                        <hr />
+                        <!--Load Up Data -->
+                        <center id="RMDLoading_ID" class="d_none r_corners">
+                            <h4 class="m_top_20 m_bottom_20"> Please wait... Fetching Nomination Details </h4>
+                            <img src="~/Content/images/loading-bar.gif" class="img-thumbnail" alt="Loading" style="max-width:160px;">
+                        </center>
+                        <!--End Loading Up Data -->
+                    </div>
+                    <div class="item-data-retrived"></div>
+                    <div id="ViewAllArea" class="table-responsive">
+                        <table id="ApplicationsList" class="table table-bordered" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Company Name</th>
+                                    <th>Accepted Terms</th>
+                                    <th>Date Nominated</th>
+                                    <th>Application Status</th>
+                                    <th>View</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                <tr>
+                                    <td> @item.Client</td>
+                                    <td> @item.AcceptedTAC</td>
+                                    <td> @item.DateCreated</td>
+                                    <td> @item.Status</td>
+									<td>
+										@if (item.Status == "Active")
+										{
+											<center>
+												<button data-id='@item.ApplicationID' data-cid='@item.CompanyID' type="submit" name="submit" class="btn btn-outline-primary btn-md btn-agent-id w_full">
+													<i class="fa fa fa-check-circle"></i> View Details
+												</button>
+											</center>
+										}
+										else
+										{
+											<center>
+												<i class="fa fa-shield-alt fa-2x" style="color:red;"></i>
+											</center>
+										}
+									</td>
+                                </tr>
+                                }
+                            </tbody>
+                            <tfoot></tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    $(document).ready(function () {
+
+        $('#ApplicationsList').DataTable({
+            responsive: true
+        });
+
+        //select-another-item
+        $('.select-another-item').click(function (e) {
+            e.preventDefault();
+            $('.item-data-retrived').hide('fast');
+            $('.item-data-retriving').hide('fast');
+            $('#ViewAllArea').show('fast');
+        });
+
+        //Approve Nomination
+        $('.btn-agent-id').click(function (e) {
+            e.preventDefault();
+            var ApplicationID = $(this).attr('data-id');
+            var CompanyID = $(this).attr('data-cid');
+            $('#ViewAllArea').hide('fast');
+            $('#RMDLoading_ID').show();
+            $('.item-data-retriving').show('fast');
+
+            $.ajax({
+                type: "POST",
+                url: "/Signatory/ViewNominationDetails",
+                data: '{applicationId: "' + ApplicationID + '", companyId: "' + CompanyID + '" }',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                success: function (data) {
+                    $('#RMDLoading_ID').hide();
+                    $('.item-data-retrived').show();
+                    $('.item-data-retrived').html(data);
+                }
+            });
+
+        });
+
+    });
+
+</script>

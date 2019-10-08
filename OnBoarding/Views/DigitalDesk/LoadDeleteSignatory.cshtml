@@ -1,0 +1,102 @@
+﻿@model OnBoarding.ViewModels.DeleteClientViewModel
+<form action="" role="form" id="DeleteUserFRM" method="POST" accept-charset="utf-8">
+	<div class="form-group form-row mb-0" style="margin: 0px">
+		<div class="col-12 col-sm-12 col-lg-12">
+			<h5 class="t_aling_c"> Delete @ViewData["FullNames"]?</h5>
+			<h6 class="t_aling_c help-inline-error">Kindly note that this is irreversible</h6>
+			<input name="UserAccountId" id="UserAccountId" type="hidden" value="@ViewData["UserAccountId"]">
+			<input name="ClientId" id="ClientId" type="hidden" value="@ViewData["ClientId"]">
+			<input name="EmailAddress" id="EmailAddress" type="hidden" value="@ViewData["EmailAddress"]">
+		</div>
+	</div><hr />
+	<div class="row m_bottom_10">
+		<div class="col-lg-6">
+			<button id="cancelmodal" class="btn btn-danger w_full">
+				<i class="fa fa-cogs" data-dismiss="modal"></i> Cancel
+			</button>
+		</div>
+		<div class="col-lg-6">
+			<button type="submit" class="btn btn-success w_full" name="updateplan" id="updateplan">
+				<i class="fa fa-check-circle"></i> Submit
+			</button>
+		</div>
+	</div>
+</form>
+
+<!--Processing Submission -->
+<div class="col-lg-12 d_none" id="ModalLoadingDiv">
+	<center class="r_corners m_top_10">
+		<h4 class="m_top_20 m_bottom_20">Please wait... Processing Your Submission</h4>
+		<img src="~/Content/images/loading-bar.gif" class="img-thumbnail m_bottom_20" alt="Loading" style="max-width:160px;">
+	</center>
+</div>
+<!--End Submission Processing -->
+<!--Alert Successful -->
+<div class="col-lg-12 EditSuccess d_none" style="margin: 0 auto;">
+	<div class="alert alert-success alert-dismissible">
+		<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+		<h4><i class="icon fa fa-check-circle-o" style="color:green"></i> @ViewData["FullNames"] successfully Deleted</h4>
+	</div>
+</div>
+<!--End Successful ALert -->
+
+<script type="text/javascript">
+
+	$(document).ready(function () {
+		//Close Delete modal
+		$('#cancelmodal').on('click', function (e) {
+			e.preventDefault();
+			$('#LoadUpDeleteModal').modal('hide');
+		})
+
+		$('#closemodalup').on('click', function (e) {
+			e.preventDefault();
+			$('#LoadUpDeleteModal').modal('hide');
+		})
+
+		$("form#DeleteUserFRM").submit(function (e) {
+			e.preventDefault();
+			if ($('#DeleteUserFRM').valid()) {
+				$("#ModalLoadingDiv").show('fast');
+				$('#DeleteUserFRM').hide("fast");
+				var formData = new FormData($(this)[0]);
+				$.ajax({
+					url: '/DigitalDesk/DeleteSignatory',
+					type: 'POST',
+					data: formData,
+					async: true,
+					success: function (XmlHttpRequest) {
+						window.setTimeout(close, 1500);
+						window.setTimeout(closemodal, 1800);
+						function close() {
+							if (XmlHttpRequest === 'success') {
+								$("#ModalLoadingDiv").hide('fast');
+								$('.EditSuccess').show("fast");
+							}
+							else {
+								$("#ModalLoadingDiv").hide('fast');
+								$('#LoadUpDeleteModal').modal('hide').effect('explode');
+								toastr.error(XmlHttpRequest);
+							}
+						}
+						function closemodal() {
+							if (XmlHttpRequest === 'success') {
+								$('#LoadUpDeleteModal').modal('hide').effect('explode');
+								$('.EditSuccess').hide("fast");
+								$('.item-data-retrived').hide("fast");
+								$('#searchform').show("fast");
+								$('#ViewAll').show("fast");
+								$('#ClientSignatoriesTableContainer').jtable('load');
+							}
+						}
+					},
+					cache: false,
+					contentType: false,
+					processData: false
+				});
+			}
+		});
+	});
+</script>
+
+

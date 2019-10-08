@@ -1,0 +1,111 @@
+﻿<form action="" enctype="multipart/form-data" method="post" id="ResendMessageFRM" name="ResendMessageFRM" data-fv-message="This value is not valid" data-fv-icon-validating="glyphicon glyphicon-refresh">
+	<div class="form-group form-row mb-0" style="margin: 0px">
+	 	<div class="col-12 col-sm-6 col-lg-6">
+	 		<div class="form-group">
+	 			<label for="EditName"> Email Address </label>
+	 			<input type="text" class="form-control" name="ResendEmail" id="ResendEmail" value="@ViewData["EmailTo"]" readonly />
+	 			<input type="hidden" class="form-control" name="getNotificationId" id="getNotificationId" value="@ViewData["MessageId"]" />
+	 		</div>
+	 	</div>
+	</div>
+	<div class="form-group form-row" style="margin: 0px">
+	 	<div class="col-12 col-sm-12 col-lg-12">
+	 		<div class="form-group">
+	 			<label for="EditName"> Message Body </label>
+	 			<textarea cols="12" rows="6" placeholder="MessageBody ..." id="ResendMessage" name="ResendMessage" class="form-control" readonly>
+					@*@Html.Raw(HttpUtility.HtmlDecode((ViewData["MessageBody"]).ToString()))*@
+					@Html.Raw(ViewData["MessageBody"])
+				</textarea>
+	 		</div>
+	 	</div>
+	</div>
+	<hr />
+	<div class="row m_bottom_10">
+	 	<div class="col-lg-6">
+	 		<button class="btn btn-danger w_full cancel_edit_btn">
+	 			<i class="fa fa-cogs" data-dismiss="modal"></i> Cancel
+	 		</button>
+	 	</div>
+	 	<div class="col-lg-6">
+	 		<button type="submit" class="btn btn-success w_full" name="updateplan" id="updateplan">
+	 			<i class="fa fa-check-circle"></i> Submit
+	 		</button>
+	 	</div>
+	</div>
+</form>
+<!--Processing Submission -->
+<div class="col-lg-12 d_none" id="ModalLoadingDiv">
+	<center class="r_corners m_top_10">
+		<h4 class="m_top_20 m_bottom_20">Please wait... Processing Your Submission</h4>
+		<img src="~/Content/images/loading-bar.gif" class="img-thumbnail m_bottom_20" alt="Loading" style="max-width:160px;">
+	</center>
+</div>
+<!--End Submission Processing -->
+<!--Alert Successful -->
+<div class="col-lg-12 EditSuccess d_none" style="margin: 0 auto;">
+	<div class="alert alert-success alert-dismissible">
+		<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+		<h4><i class="icon fa fa-check-circle-o" style="color:green"></i> Email resent successfully</h4>
+	</div>
+</div>
+	<!--End Successful ALert -->
+<script type="text/javascript">
+
+	$(document).ready(function () {
+		//Submit Form Action
+        $("form#ResendMessageFRM").submit(function (e) {
+            e.preventDefault();
+            if ($('#ResendMessageFRM').valid()) {
+				$("#ModalLoadingDiv").show('fast');
+                $('#ResendMessageFRM').hide("fast");
+                var formData = new FormData($(this)[0]);
+                $.ajax({
+					url: "/DigitalDesk/ResendNotification",
+                    type: 'POST',
+                    data: formData,
+                    async: true,
+					success: function (XmlHttpRequest) {
+						window.setTimeout(close, 1500);
+						window.setTimeout(closemodal, 1800);
+						function close() {
+							if (XmlHttpRequest === 'success') {
+								$("#ModalLoadingDiv").hide('fast');
+								$('.EditSuccess').show("fast");
+							}
+							else {
+								$("#ModalLoadingDiv").hide('fast');
+								toastr.error(XmlHttpRequest);
+							}
+						}
+						function closemodal() {
+							$('#LoadUpModal').modal('hide').effect('explode');
+							$('.EditSuccess').hide("fast");
+							$('#NotificationsTableContainer').jtable('load');
+						}
+					},
+					error: function (xhr, textStatus, errorThrown) {
+						if (textStatus === 'error') {
+							$('#LoadUpModal').modal('hide').effect('explode');
+							toastr.error('Submission error!. Code: ' + xhr.status + ' Details: ' + errorThrown);
+						}
+					},
+                    cache: false,
+                    contentType: false,
+                    processData: false
+                });
+            }
+		});
+
+		//Cancel Modal btn
+		$('.cancel_edit_btn').on('click', function (e) {
+			e.preventDefault();
+			$('#LoadUpModal').modal('hide');
+		})
+		
+		$('#closemodalup').on('click', function (e) {
+			e.preventDefault();
+			$('#LoadUpModal').modal('hide');
+		})
+	});
+
+</script>

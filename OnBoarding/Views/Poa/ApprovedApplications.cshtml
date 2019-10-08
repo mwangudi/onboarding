@@ -1,0 +1,206 @@
+﻿@{
+	Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<section class="section">
+	<div class="col-12 col-sm-12 col-lg-12">
+		<div class="card">
+			<div class="card-header">
+				<h4> Approved Applications </h4>
+			</div>
+			<div class="card-body">
+				<ul class="nav nav-tabs" id="myTab" role="tablist">
+					<li class="nav-item">
+						<a class="nav-link active show" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">
+							<i class="fa fa-list"></i> Approved Applications
+						</a>
+					</li>
+				</ul>
+				<div class="tab-content" id="myTabContent">
+					<div class="tab-pane fade active show" id="home" role="tabpanel" aria-labelledby="home-tab">
+						<form action="" class="mt-2" id="searchform" name="searchform" method="POST">
+							<div class="form-group form-row" style="margin-left: 0px !important;">
+								<div class="col-12 col-sm-9 col-lg-9">
+									<input type="text" id="searchMessage" name="searchMessage" placeholder="Search Registered Clients By company name, email" value="" class="form-control" />
+								</div>
+								<div class="col-12 col-sm-3 col-lg-3">
+									<button id="search" class="btn btn-success w_full" type="button"><i class="fa fa-check-circle"></i> Search </button>
+								</div>
+							</div>
+						</form>
+						<div class="item-data-retriving d_none">
+							<div class="form-group form-row" style="margin-left: 0px !important;">
+								<div class="col-12 col-sm-9 col-lg-9">
+									<h6><i class="fa fa-adjust"></i> View Approved Application Details </h6>
+								</div>
+								<div class="col-12 col-sm-3 col-lg-3">
+									<button id="selectanother" class="btn btn-danger w_full" type="button"><i class="fa fa-check-circle"></i> Select Another Application </button>
+								</div>
+
+							</div>
+						</div><hr />
+						<!--Load Up Data -->
+						<center id="RMDLoading_ID" class="d_none r_corners">
+							<h6 class="m_top_20 m_bottom_20"> Please wait... Fetching Client Details </h6>
+							<img src="~/Content/images/loading-bar.gif" class="img-thumbnail" alt="Loading" style="max-width:160px;">
+						</center>
+						<!--End Loading Up Data -->
+					</div>
+					<div class="item-data-retrived"></div>
+					<div class="row mt-1" id="ViewAll">
+						<div class="col-lg-12 col-md-12 col-12">
+							<div id="CompletedApplicationsTableContainer"></div>
+						</div>
+						<script>
+                            $(document).ready(function () {
+                                $('#CompletedApplicationsTableContainer').jtable({
+                                    title: '<i class="fa fa-list"></i> Approved Applications',
+                                    paging: true,
+                                    pageSize: 10,
+                                    sorting: true,
+                                    defaultSorting: 'ApplicationID DESC',
+                                    actions:
+                                    {
+                                        listAction: '/Poa/GetApprovedApplications'
+                                    },
+                                    fields: {
+                                        ApplicationID: {
+                                            key: true,
+                                            list: false
+                                        },
+                                        Client: {
+                                            title: 'CompanyName',
+                                            width: '25%'
+                                        },
+                                        Status: {
+                                            title: 'Status',
+                                            width: '10%'
+                                        },
+                                        AcceptedTAC: {
+											title: 'Terms',
+											width: '10%',
+											display: function (data) {
+												var accepted = data.record.AcceptedTAC;
+												if (accepted) {
+													return '<center><p class="text-success"><i class="fa fa-check-circle"></i> Accepted </p></center>';
+												}
+												else {
+													return '<center><p class="text-danger"><i class="fa fa-times-circle"></i> Not Yet Accepted </p></center>';
+												}
+											}
+										},
+                                        DateCreated: {
+                                            title: 'Application Date',
+                                            width: '10%',
+                                            type: 'date',
+                                            displayFormat: 'yy-mm-dd'
+                                        },
+                                        OPSApproved: {
+											title: 'OPS',
+                                            width: '10%',
+                                            display: function (data) {
+                                                var opsapproved = data.record.OPSApproved;
+                                                var opsdeclined = data.record.OPSDeclined;
+                                                if (opsapproved) {
+                                                    return '<center><p class="text-success"><i class="fa fa-check-circle"></i> Approved </p></center>';
+                                                }
+                                                else if(opsdeclined){
+                                                    return '<center><p class="text-danger"><i class="fa fa-times-circle"></i> Declined </p></center>';
+                                                }
+												else {
+													return '<center><i class="fa fa-shield-alt" style="color:red;"></i></center>';
+                                                }
+                                            }
+                                        },
+                                        POAApproved: {
+											title: 'POA',
+                                            width: '10%',
+                                            display: function (data) {
+                                                var poaapproved = data.record.POAApproved;
+                                                var poadeclined = data.record.POADeclined;
+                                                if (poaapproved) {
+                                                    return '<center><p class="text-success"><i class="fa fa-check-circle"></i> Approved </p></center>';
+                                                }
+                                                else if (poadeclined){
+                                                    return '<center><p class="text-danger"><i class="fa fa-times-circle"></i> Declined </p></center>';
+                                                }
+												else {
+                                                    return '<center><i class="fa fa-shield-alt" style="color:red;"></i></center>';
+                                                }
+                                            }
+										},
+                                        MyButton: {
+                                            title: 'Action',
+                                            width: '10%',
+                                            display: function (data) {
+                                                return '<center><button class="btn btn-outline-primary w_full btn-small" onclick="LoadUpModal(' + data.record.ApplicationID + ')">' +
+                                                    '<span class="fa fa-check-circle"></span> View Details </button></center>';
+                                            }
+                                        },
+                                    }
+                                });
+                                // Re-load records when user click button.
+                                $('#search').click(function (e) {
+                                    e.preventDefault();
+                                    $('#CompletedApplicationsTableContainer').jtable('load', {
+                                        searchMessage: $('#searchMessage').val(),
+                                        searchDate: $('#searchDate').val()
+                                    });
+                                });
+                                //Load list from server
+                                $('#CompletedApplicationsTableContainer').jtable('load');
+                            });
+						</script>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        //Initialize Date picker
+        $('.datepicker').datepicker({
+            format: "yyyy-mm-dd",
+            autoclose: true,
+        }).on('changeDate', function (e) {
+            $(this).datepicker('hide');
+        });
+    });
+
+    //select-another-item
+    $('#selectanother').click(function (e) {
+        e.preventDefault();
+        $('.item-data-retrived').hide('fast');
+        $('.item-data-retriving').hide('fast');
+        $('#RMDLoading_ID').hide('fast');
+        $('#searchform').show();
+        $('#ViewAll').show('fast');
+    });
+
+    //Function Load modal
+    function LoadUpModal(applicationId) {
+        // Hide Default DIV's
+        $('#searchform').hide();
+        $('#ViewAll').hide();
+        $('#RMDLoading_ID').show('fast');
+        $('.item-data-retriving').show();
+        // LoadUp User Data
+        $.ajax({
+            type: "POST",
+            url: "/Poa/ViewApproval",
+            data: '{applicationId: "' + applicationId + '" }',
+            async: true,
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (data) {
+                $('#RMDLoading_ID').hide();
+                $('.item-data-retrived').show();
+                $('.item-data-retrived').html(data);
+            }
+        });
+    }
+
+</script>

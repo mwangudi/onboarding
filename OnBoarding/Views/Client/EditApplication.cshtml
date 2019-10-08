@@ -1,0 +1,247 @@
+﻿@model OnBoarding.ViewModels.AdminApproveViewModel
+<script src="@Url.Content("~/Assets/fwizard/form-wizard.js")"></script>
+<div class="form-row form-wizard" style="padding: 10px; margin-left: 0px;">
+	<!-- Form Wizard -->
+	<form class="mt-0 w_full" role="form" id="ApplicationForm" action="" method="POST" accept-charset="utf-8">
+		<!-- Form Step 1 -->
+		<fieldset>
+			<div class="form-group">
+				<div class="table-responsive">
+					<table class="table table-bordered">
+						<tr class="success">
+							<th>Business Account :</th>
+							<td style="text-align: right;"><i class="fa fa-archive"></i></td>
+						</tr>
+						<tr>
+							<th>Company Account Number:</th>
+							<td id="AccountNumber" name="AccountNumber">@ViewBag.ApplicationInfo.AccountNumber</td>
+						</tr>
+						<tr class="success">
+							<th>Company Details:</th>
+							<td style="text-align: right;"><i class="fa fa fa-building fa-x"></i></td>
+						</tr>
+						<tr>
+							<th>Company Name:</th>
+							<td id="CompanyName" name="CompanyName">@ViewBag.CompanyInfo.CompanyName</td>
+						</tr>
+						<tr>
+							<th>Company Registration Number:</th>
+							<td id="ConfirmRegistration" name="ConfirmRegistration">@ViewBag.CompanyInfo.CompanyRegNumber</td>
+						</tr>
+						<tr class="success">
+							<th>Principal Place of Business:</th>
+							<td style="text-align: right;"><i class="fa fa fa-location-arrow fa-x"></i></td>
+						</tr>
+						<tr>
+							<th>Company Building:</th>
+							<td id="Building" name="Building">@ViewBag.CompanyInfo.CompanyBuilding</td>
+						</tr>
+						<tr>
+							<th>Street:</th>
+							<td id="Street" name="Street">@ViewBag.CompanyInfo.CompanyStreet</td>
+						</tr>
+						<tr>
+							<th>Company Town/City:</th>
+							<td id="CompanyTownCity" name="CompanyTownCity">@ViewBag.CompanyInfo.CompanyTownCity</td>
+						</tr>
+						<tr>
+							<th>Postal Address:</th>
+							<td id="PostalAddress" name="PostalAddress">@ViewBag.CompanyInfo.PostalAddress - @ViewBag.CompanyInfo.PostalCode - @ViewBag.CompanyInfo.TownCity</td>
+						</tr>
+						<tr>
+							<th>Business Email Address:</th>
+							<td id="BusinessEmailAddress" name="BusinessEmailAddress">@ViewBag.CompanyInfo.BusinessEmailAddress</td>
+						</tr>
+						<tr>
+							<th>Attention where notices will be sent:</th>
+							<td id="AttentionTo" name="AttentionTo">@ViewBag.CompanyInfo.AttentionTo</td>
+						</tr>
+						<tr class="success">
+							<th>Company Settlement Accounts:</th>
+							<td style="text-align: right;"><i class="fa fa-money fa-x"></i></td>
+						</tr>
+						<tr>
+							<th>Settlement Accounts:</th>
+							<td id="SettlementAccounts" name="SettlementAccounts">
+								@if (ViewBag.SettlementAccounts.Count != 0)
+								{
+									<table class="custom-table">
+										<th> Currency</th>
+										<th> Account Number</th>
+										@foreach (var item in ViewBag.SettlementAccounts)
+										{
+											<tbody>
+												<td>@item.CurrencyName</td>
+												<td>@item.AccountNumber</td>
+											</tbody>
+										}
+									</table>
+								}
+								else
+								{
+									<table class="custom-table">No Settlement Accounts</table>
+								}
+							</td>
+						</tr>
+						<tr class="success">
+							<th>Signatories Details:</th>
+							<td style="text-align: right;"><i class="fa fa fa-users fa-x"></i></td>
+						</tr>
+						<tr>
+							<th>Signatories:</th>	
+							<td id="Signatories" name="Signatories" colspan="2">
+								<table class="custom-table">
+									<th> Full Names</th>
+									<th> Designation </th>
+									<th> Email </th>
+									<th> Phone </th>
+									<th> Signature </th>
+									<th> Action </th>
+									@foreach (var item in ViewBag.ClientSignatory)
+									{
+										<tbody>
+										<td>@(item.Surname + " " + item.OtherNames)</td>
+										<td>@item.Designation</td>
+										<td>@item.EmailAddress</td>
+										<td>@item.PhoneNumber</td>
+										<td>
+											@if (item.Signature == null || item.Signature == "")
+											{
+												<img width="100" height="80" src="~/Content/images/signatures/no-signature-17.jpg" />
+											}
+											else
+											{
+												<img width="100" height="80" src="~/Content/images/signatures/@item.Signature" />
+											}
+										</td>
+										<td>
+											@if (item.EmailAddress == ViewBag.ApplicationInfo.EmailAddress)
+											{
+
+											}
+											else
+											{
+												<button onclick="LoadUpDeleteModal('@item.Id')" type="submit" id="btnRemoveSignatory" class="btn btn-danger"><i class="fa fa-check-circle"></i> Remove </button>
+											}
+										</td>
+										</tbody>
+									}
+								</table>
+							</td>
+						</tr>
+						<tr class="success">
+							<th>Authorized Representatives:</th>
+							<td style="text-align: right;"><i class="fa fa fa-users fa-x"></i></td>
+						</tr>
+						<tr>
+							<th>Authorized Representatives:</th>
+							<td id="Representatives" name="Representatives" colspan="2">
+								<table class="custom-table">
+									<th> Full Names</th>
+									<th> Email </th>
+									<th> Phone </th>
+									<th> Trading Limit </th>
+									<th> EMarket SignUp </th>
+									<th> Signature </th>
+									<th> Action </th>
+									@foreach (var item in ViewBag.DesignatedUser)
+									{
+										<tbody>
+										<td>@(item.Surname + " " + item.Othernames)</td>
+										<td>@item.Email</td>
+										<td>@item.Mobile</td>
+										<td>@item.TradingLimit</td>
+										<td>@(item.EMarketSignUp ? "Yes" : "No")</td>
+										<td>
+											@if (item.Signature == null || item.Signature == "")
+											{
+												<img width="100" height="80" src="~/Content/images/signatures/no-signature-17.jpg" />
+											}
+											else
+											{
+												<img width="100" height="80" src="~/Content/images/signatures/@item.Signature" />
+											}
+										</td>
+										<td>
+											@if (item.Email == ViewBag.ApplicationInfo.EmailAddress)
+											{
+
+											}
+											else
+											{
+												<button onclick="LoadUpDeleteRepresentativeModal('@item.Id')" type="submit" id="btnRemoveRepresentative" class="btn btn-danger"><i class="fa fa-check-circle"></i> Remove </button>
+											}
+										</td>
+										</tbody>
+									}
+								</table>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div class="form-wizard-buttons">
+					<div class="col-md-6">
+						<div class="input-group accept-terms">
+							<input type="hidden" id="ApplicationId" name="ApplicationId" value="@ViewData["ApplicationId"]" class="form-control">
+							<input type="hidden" id="CompanyEmail" name="CompanyEmail" value="@ViewData["CompanyEmail"]" class="form-control">
+							<input type="hidden" id="CompanyName" name="CompanyName" value="@ViewData["CompanyName"]" class="form-control">
+							<input type="hidden" id="OPSCanApprove" name="OPSCanApprove" value="@ViewData["OPSCanApprove"]" class="form-control">
+						</div>
+					</div>
+				</div>
+			</div><br />
+		</fieldset>
+		<!-- End Form Step 2 -->
+	</form>
+	<!-- End Form Wizard -->
+	<!--Processing Submission -->
+	<div class="col-lg-12 d_none" id="Loading_Div">
+		<center class="r_corners m_top_20">
+			<h4 class="m_top_20 m_bottom_20">Please wait... Processing Your Submission</h4>
+			<img src="~/Content/images/loading-bar.gif" class="img-thumbnail m_bottom_20" alt="Loading" style="max-width:160px;">
+		</center>
+	</div>
+	<!--End Submission Processing -->
+</div>
+<script type="text/javascript">
+	//Function Load modal
+	function LoadUpDeleteModal(getSignatoryId) {
+		$('#LoadUpDeleteModal').modal({ backdrop: 'static', keyboard: false });
+		$.ajax({
+			type: "POST",
+			url: "/Client/LoadDeleteSignatory",
+			data: '{getSignatoryId: "' + getSignatoryId + '" }',
+			contentType: "application/json; charset=utf-8",
+			dataType: "html",
+			success: function (data) {
+				$('.students-data').html(data);
+			},
+			error: function (xhr, textStatus, errorThrown) {
+				if (textStatus === 'error') {
+					toastr.error('Error!. Code: ' + xhr.status + ', Details: ' + errorThrown);
+				}
+			}
+		});
+	}
+
+	//LoadUpDeleteRepresentativeModal
+	function LoadUpDeleteRepresentativeModal(getRepresentativeId) {
+		$('#LoadUpDeleteModal').modal({ backdrop: 'static', keyboard: false });
+		$.ajax({
+			type: "POST",
+			url: "/Client/LoadDeleteRepresentative",
+			data: '{getRepresentativeId: "' + getRepresentativeId + '" }',
+			contentType: "application/json; charset=utf-8",
+			dataType: "html",
+			success: function (data) {
+				$('.students-data').html(data);
+			},
+			error: function (xhr, textStatus, errorThrown) {
+				if (textStatus === 'error') {
+					toastr.error('Error!. Code: ' + xhr.status + ', Details: ' + errorThrown);
+				}
+			}
+		});
+	}
+
+</script>

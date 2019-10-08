@@ -1,0 +1,200 @@
+﻿@{
+	/**/
+	ViewBag.Title = "Index";
+	Layout = "~/Views/Shared/_AdminNewLayout.cshtml";
+}
+
+<section class="section">
+	<h4 class="section-header">Dashboard</h4>
+	<div class="row">
+		<div class="col-12 col-lg-3 col-md-3">
+			<div class="card card-sm-3">
+				<div class="card-icon bg-success">
+					<i class="ion ion-ios-book"></i>
+				</div>
+				<div class="card-wrap">
+					<div class="card-header">
+						<h4>Registered Companies </h4>
+					</div>
+					<div class="card-body">
+						@ViewData["RegisteredCompanies"]
+					</div>
+					<a href="@(Url.Action("AddCompanies", "Client"))">
+						<div class="panel-footer">
+							<span class="pull-left">View</span>
+							<span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+							<div class="clearfix"></div>
+						</div>
+					</a>
+				</div>
+			</div>
+		</div>
+		<div class="col-12 col-lg-3 col-md-3">
+			<div class="card card-sm-3">
+				<div class="card-icon bg-primary">
+					<i class="ion ion-ios-information"></i>
+				</div>
+				<div class="card-wrap">
+					<div class="card-header">
+						<h4>Applications </h4>
+					</div>
+					<div class="card-body">
+						@ViewData["Applications"]
+					</div>
+					<a href="@(Url.Action("ViewAll", "Client"))">
+						<div class="panel-footer">
+							<span class="pull-left">View</span>
+							<span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+							<div class="clearfix"></div>
+						</div>
+					</a>
+				</div>
+			</div>
+		</div>
+		<div class="col-lg-3 col-md-3 col-12">
+			<div class="card card-sm-3">
+				<div class="card-icon bg-success">
+					<i class="ion ion-paper-airplane"></i>
+				</div>
+				<div class="card-wrap">
+					<div class="card-header">
+						<h4>Approved</h4>
+					</div>
+					<div class="card-body">
+						@ViewData["Approved"]
+					</div>
+				</div>
+				<a href="@(Url.Action("ViewAll", "Client"))">
+					<div class="panel-footer">
+						<span class="pull-left">View</span>
+						<span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+						<div class="clearfix"></div>
+					</div>
+				</a>
+			</div>
+		</div>
+		<div class="col-lg-3 col-md-3 col-12">
+			<div class="card card-sm-3">
+				<div class="card-icon bg-danger">
+					<i class="ion ion-paper-airplane"></i>
+				</div>
+				<div class="card-wrap">
+					<div class="card-header">
+						<h4>Declined</h4>
+					</div>
+					<div class="card-body">
+						@ViewData["Declined"]
+					</div>
+					<a href="@(Url.Action("ViewAll", "Client"))">
+						<div class="panel-footer">
+							<span class="pull-left">View</span>
+							<span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+							<div class="clearfix"></div>
+						</div>
+					</a>
+				</div>
+			</div>
+		</div>
+	</div><br /><hr />
+
+	<div class="row">
+		<div class="col-12 col-lg-4 col-md-4"></div>
+		<div class="col-12 col-lg-4 col-md-4">
+			<button id="newapplication1" class="btn btn-outline-danger w_full" type="button">
+				<i class="ion ion-paper-airplane"></i> New Application in 3 Easy Steps!
+			</button>
+		</div>
+	</div>
+
+</section>
+<!--Start Welcome Modal -->
+<div class="modal fade right" id="LoadUpWelcomeModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<!-- Add class .modal-side and then add class .modal-top-right (or other classes from list above) to set a position to the modal -->
+	<div class="modal-dialog modal-side modal-top-right" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title w-100" id="myModalLabel"><i class="fa fa-info-circle"></i> Welcome to the Online Registration Portal </h5>
+				<button type="button" id="closemodalup" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				Click button below or select the <b> New Application</b> menu to get started!
+			</div>
+			<div class="modal-footer">
+				<button type="button" name="cancelmodal" id="cancelmodal" class="btn btn-danger"><i class="fa fa-trash"></i> Close </button>
+				<button type="button" class="btn btn-success" name="newapplication" id="newapplication"><i class="fa fa-check-circle"></i> New Application</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!--End Welcome Modal-->
+<!-- /.row -->
+<script type="text/javascript">
+    $(document).ready(function () {
+		//Load WelcomeModal
+		$('#LoadUpWelcomeModal').modal({ backdrop: 'static', keyboard: false });
+        
+		$('#cancelmodal').on('click', function () {
+			$('#LoadUpWelcomeModal').modal('hide');
+		})
+
+		$("#newapplication").click(function (e) {
+            e.preventDefault();
+            $.ajax({
+				url: '/Client/HaveApplications',
+                type: 'POST',
+                async: true,
+                success: function (XmlHttpRequest) {
+                    if (XmlHttpRequest == 'success') {
+                        //Take to application form
+                        window.location.replace("/Client/NewApplications");
+                    }
+                    //Pop up with Error
+                    else {
+						$('#LoadUpWelcomeModal').modal('hide');
+						toastr.error(XmlHttpRequest);
+                    }
+				},
+				error: function (xhr, textStatus, errorThrown) {
+					if (textStatus === 'error') {
+						$('#LoadUpWelcomeModal').modal('hide');
+						toastr.error('Submission error!. Code: ' + xhr.status + ', Details: ' + errorThrown);
+					}
+				},
+                cache: false,
+                contentType: false,
+                processData: false
+            });
+		});
+
+		//newapplication1
+		$("#newapplication1").click(function (e) {
+            e.preventDefault();
+            $.ajax({
+				url: '/Client/HaveApplications',
+                type: 'POST',
+                async: true,
+                success: function (XmlHttpRequest) {
+                    if (XmlHttpRequest == 'success') {
+                        //Take to application form
+                        window.location.replace("/Client/NewApplications");
+                    }
+                    //Pop up with Error
+                    else {
+						toastr.error(XmlHttpRequest);
+                    }
+				},
+				error: function (xhr, textStatus, errorThrown) {
+					if (textStatus === 'error') {
+						toastr.error('Submission error!. Code: ' + xhr.status + ', Details: ' + errorThrown);
+					}
+				},
+                cache: false,
+                contentType: false,
+                processData: false
+            });
+		});
+
+   });
+</script>

@@ -1,0 +1,135 @@
+/**
+ *
+ * You can write your CSS code here, DO NOT touch the default JavaScript file
+ * because it will make it harder for you to update.
+ * 
+ */
+
+.d_none {
+    display: none;
+}
+
+.success {
+	background-color: #ECECEC;
+}
+
+.t_aling_c {
+    text-align: center;
+}
+
+.btn-register {
+	background-color: #1cb94e;
+	outline: none;
+	color: #fff;
+	font-size: 12px;
+	height: auto;
+	font-weight: normal;
+	padding: 9px 0;
+	width: 100%;
+	text-transform: uppercase;
+	border-color: #1cb94a;
+}
+
+#notfound .notfound {
+	max-width: 520px;
+	width: 100%;
+	line-height: 1.4;
+}
+
+.notfound {
+	position: absolute;
+	left: 50%;
+	top: 40%;
+	-webkit-transform: translate(-50%, -50%);
+	-ms-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+}
+
+.notfound .notfound-404 {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 170px;
+	height: 170px;
+	background: #e01818;
+	border-radius: 7px;
+	-webkit-box-shadow: 0px 0px 0px 10px #e01818 inset, 0px 0px 0px 20px #fff inset;
+	box-shadow: 0px 0px 0px 10px #e01818 inset, 0px 0px 0px 20px #fff inset;
+}
+
+.notfound .notfound-404 h1 {
+	font-family: 'Chango', cursive;
+	color: #fff;
+	font-size: 118px;
+	margin: 0px;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	-webkit-transform: translate(-50%, -50%);
+	-ms-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+	display: inline-block;
+	height: 60px;
+	line-height: 60px;
+}
+
+.notfound h2 {
+	font-family: 'Arial';
+	font-size: 25px;
+	color: #222;
+	font-weight: 800;
+	text-transform: uppercase;
+	margin: 0 0 0 180px;
+	line-height: 1.1;
+}
+
+.notfound p {
+	font-family: 'Montserrat', sans-serif;
+	font-size: 16px;
+	font-weight: 400;
+	color: #222;
+	margin: 10px 0 0 180px;
+}
+
+.bd-example {
+	position: relative;
+	border: solid #f7f7f9;
+	border-width: .2rem 0 0;
+}
+
+span.step {
+	background: #021269;
+	border-radius: .8em;
+	-moz-border-radius: .8em;
+	-webkit-border-radius: .8em;
+	color: #fff;
+	display: inline-block;
+	font-weight: bold;
+	line-height: 1.6em;
+	margin-right: 5px;
+	text-align: center;
+	width: 1.6em;
+}
+
+.custom-select.is-invalid, .form-control.is-invalid, .was-validated .custom-select:invalid, .was-validated .form-control:invalid {
+	border-color: #dc3545;
+	color: #dc3545;
+}
+
+.small, small {
+    font-size: 90%;
+    font-weight: 400;
+}
+.field-validation-error {
+	color: #dc3545;
+}
+
+.media-body {
+    -webkit-box-flex: 1;
+    flex: 1;
+    overflow: hidden;
+}
+.col-5 {
+	flex: 0 0 40%;
+	max-width: 40%;
+}

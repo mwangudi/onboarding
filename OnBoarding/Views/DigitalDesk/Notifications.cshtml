@@ -1,0 +1,164 @@
+﻿@{
+	Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<section class="section">
+	<div class="col-12 col-sm-12 col-lg-12">
+		<div class="card">
+			<div class="card-header">
+				<h4> System Notifications </h4>
+			</div>
+			<div class="card-body">
+				<ul class="nav nav-tabs" id="myTab" role="tablist">
+					<li class="nav-item">
+						<a class="nav-link active show" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">
+							<i class="fa fa-list"></i> Messages
+						</a>
+					</li>
+				</ul>
+				<div class="tab-content" id="myTabContent">
+					<div class="tab-pane fade active show" id="home" role="tabpanel" aria-labelledby="home-tab">
+						<form action="" class="mt-2" id="searchform" name="searchform" method="POST">
+							<div class="form-group form-row" style="margin-left: 0px !important;">
+								<div class="col-12 col-sm-6 col-lg-6">
+									<input type="text" id="searchMessage" name="searchMessage" placeholder="Search messages by recepient's email" value="" class="form-control required" />
+								</div>
+								<div class="col-12 col-sm-3 col-lg-3">
+									<div class="input-group bootstrap-timepicker">
+										<div class="input-group-addon">
+											<i class="fa fa-calendar"></i>
+										</div>
+										<input type="text" class="form-control datepicker" id="searchDate" name="searchDate" placeholder="Filter By Date" style="margin:0px;" autocomplete="off">
+									</div>
+								</div>
+								<div class="col-12 col-sm-3 col-lg-3">
+									<button id="search" class="btn btn-success w_full" type="button"><i class="fa fa-check-circle"></i> Search </button>
+								</div>
+							</div>
+						</form> <hr />
+						<div class="row mt-3">
+							<div class="col-lg-12 col-md-12 col-12">
+								<div id="NotificationsTableContainer"></div>
+							</div>
+							<script>
+								$(document).ready(function () {
+									$('#NotificationsTableContainer').jtable({
+										title: '<i class="fa fa-list"></i> System Messages',
+										paging: true,
+										pageSize: 10,
+										sorting: true,
+										defaultSorting: 'Id DESC',
+										actions:
+										{
+											listAction: '/DigitalDesk/GetSystemNotifications'
+										},
+										fields: {
+											Id: {
+												key: true,
+												list: false
+											},
+											Type: {
+												title: 'Type',
+												width: '10%'
+											},
+											From: {
+												title: 'From',
+												width: '20%'
+											},
+											To: {
+												title: 'To',
+												width: '20%'
+											},
+											DateCreated: {
+												title: 'DateCreated',
+												width: '20%'
+											},
+											Sent: {
+												title: 'Sent',
+												width: '10%',
+												display: function (data) {
+                                                    var accepted = data.record.Sent;
+                                                    if (accepted) {
+                                                        return '<center><p class="text-success"><i class="fa fa-check-circle"></i> Sent </p></center>';
+                                                    }
+                                                    else {
+                                                        return '<center><p class="text-danger"><i class="fa fa-times-circle"></i> Failed </p></center>';
+                                                    }
+                                                }
+											},
+											MyButton: {
+												title: 'Action',
+												width: '10%',
+												display: function (data) {
+													return '<center><button class="btn btn-outline-primary w_full btn-small" onclick="LoadUpModal(' + data.record.Id + ')">' +
+														'<span class="fa fa-envelope"></span> Resend </button></center>';
+												}
+											},
+										}
+									});
+									// Re-load records when user click button.
+									$('#search').click(function (e) {
+										e.preventDefault();
+										$('#NotificationsTableContainer').jtable('load', {
+											searchMessage: $('#searchMessage').val(),
+											searchDate: $('#searchDate').val()
+										});
+									});
+									//Load list from server
+									$('#NotificationsTableContainer').jtable('load');
+								});
+							</script>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<!--Start Confirm Delete Modal -->
+<div class="modal fade right" id="LoadUpModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<!-- Add class .modal-side and then add class .modal-top-right (or other classes from list above) to set a position to the modal -->
+	<div class="modal-dialog modal-side modal-top-right" role="document" style="width:500px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title w-100" id="myModalLabel"><i class="fa fa-envelope-open"></i> Resend Notification </h4>
+				<button type="button" id="closemodalup" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body students-data mb-0"></div>
+			<div class="modal-footer mb-0">
+				<div class="col-lg-12">
+					<center> <b> Global Markets Onboarding System  &copy; Stanbic Bank Kenya </b> </center>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--End Confirm Delete Modal -->
+<script type="text/javascript">
+	//Function Load modal
+	function LoadUpModal(getNotificationId) {
+		$('#LoadUpModal').modal({ backdrop: 'static', keyboard: false });
+		$.ajax({
+			type: "POST",
+			url: "/DigitalDesk/LoadResendNotification",
+			data: '{getNotificationId: "' + getNotificationId + '" }',
+			contentType: "application/json; charset=utf-8",
+			dataType: "html",
+			success: function (data) {
+				$('.students-data').html(data);
+			}
+		});
+	}
+
+	$(document).ready(function () {
+		//Initialize Date picker
+		$('.datepicker').datepicker({
+			format: "yyyy-mm-dd",
+			autoclose: true,
+		}).on('changeDate', function (e) {
+			$(this).datepicker('hide');
+		});
+	});
+
+</script>
