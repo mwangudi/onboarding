@@ -269,7 +269,7 @@
     <Content Include="Assets\bootstrap\js\tooltip.js" />
     <Content Include="Assets\bootstrap\js\transition.js" />
     <Content Include="Assets\bootstrap\package.js" />
-    <Content Include="Assets\chart.min.js" />
+    <Content Include="Scripts\js\chart.min.js" />
     <Content Include="Assets\datatables\DataTables-1.10.16\css\dataTables.bootstrap.css" />
     <Content Include="Assets\datatables\DataTables-1.10.16\css\dataTables.bootstrap.min.css" />
     <Content Include="Assets\datatables\DataTables-1.10.16\css\dataTables.bootstrap4.css" />
@@ -357,7 +357,7 @@
     <Content Include="Assets\datatables\Select-1.2.4\js\dataTables.select.min.js" />
     <Content Include="Assets\datepicker\bootstrap-datepicker.js" />
     <Content Include="Assets\datepicker\datepicker.css" />
-    <Content Include="Assets\fileSaver.js" />
+    <Content Include="Scripts\js\fileSaver.js" />
     <Content Include="Assets\flag-icon-css\css\flag-icon.css" />
     <Content Include="Assets\flag-icon-css\css\flag-icon.min.css" />
     <Content Include="Assets\flag-icon-css\flags\1x1\ad.svg" />
@@ -906,7 +906,6 @@
     <Content Include="Assets\fwizard\form-wizard.js" />
     <Content Include="Assets\fwizard\form-wizard.css" />
     <Content Include="Assets\fwizard\jquery.validate.js" />
-    <Content Include="Assets\gmaps.js" />
     <Content Include="Assets\holderjs\.gitattributes" />
     <Content Include="Assets\holderjs\.gitignore" />
     <Content Include="Assets\holderjs\gulpfile.js" />
@@ -2258,9 +2257,7 @@
     <Content Include="Assets\ionicons\src\xbox.svg" />
     <Content Include="Assets\jasny-bootstrap\jasny-bootstrap.css" />
     <Content Include="Assets\jasny-bootstrap\jasny-bootstrap.min.css" />
-    <Content Include="Assets\jquery.accordion-wizard.js" />
-    <Content Include="Assets\jquery.min.js" />
-    <Content Include="Assets\jquery.sparkline.min.js" />
+    <Content Include="Scripts\js\jquery.accordion-wizard.js" />
     <Content Include="Assets\metisMenu\dist\metisMenu.css" />
     <Content Include="Assets\metisMenu\dist\metisMenu.js" />
     <Content Include="Assets\metisMenu\dist\metisMenu.min.css" />
@@ -2324,7 +2321,7 @@
     <Content Include="Assets\nicescroll\jquery.nicescroll.js" />
     <Content Include="Assets\nicescroll\jquery.nicescroll.min.js" />
     <Content Include="Assets\nicescroll\zoomico.png" />
-    <Content Include="Assets\popper.js" />
+    <Content Include="Scripts\js\popper.js" />
     <Content Include="Assets\raphael\dev\amdDev.js" />
     <Content Include="Assets\raphael\dev\index.js" />
     <Content Include="Assets\raphael\dev\require.js" />
@@ -2395,7 +2392,7 @@
     <Content Include="Assets\toastr\build\toastr.min.css" />
     <Content Include="Assets\toastr\build\toastr.min.js" />
     <Content Include="Assets\toastr\toastr-icon.png" />
-    <Content Include="Assets\tooltip.js" />
+    <Content Include="Scripts\js\tooltip.js" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
@@ -2989,25 +2986,14 @@
     <Content Include="Assets\jtable\themes\metro\red\jtable.css" />
     <Content Include="Assets\jtable\themes\metro\red\jtable.min.css" />
     <Content Include="Assets\jtable\themes\metro\red\loading.gif" />
-    <Content Include="Scripts\bootstrap.js" />
-    <Content Include="Scripts\bootstrap.min.js" />
-    <Content Include="Scripts\jasny-bootstrap.js" />
-    <Content Include="Scripts\jasny-bootstrap.min.js" />
     <Content Include="Scripts\js\additional-methods.min.js" />
     <Content Include="Scripts\js\app.js" />
     <Content Include="Scripts\js\client_application.js" />
-    <Content Include="Scripts\js\custom.js" />
     <Content Include="Scripts\js\demo.js" />
     <Content Include="Scripts\js\sa-functions.js" />
     <Content Include="Scripts\js\scripts.js" />
-    <Content Include="Scripts\modernizr-2.8.3.js" />
-    <Content Include="Scripts\morris-data.js" />
-    <Content Include="Scripts\respond.min.js" />
-    <Content Include="Scripts\sb-admin-2.js" />
-    <Content Include="Scripts\Scripts.js" />
     <Content Include="Assets\toastr\toastr.js" />
     <Content Include="Assets\toastr\toastr.min.js" />
-    <Content Include="Scripts\_references.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -3132,7 +3118,6 @@
     <Content Include="Views\Shared\_AdminLayout.cshtml" />
     <Content Include="Views\Shared\_AdminNewLayout.cshtml" />
     <Content Include="Views\Shared\_AdminNewNavbar.cshtml" />
-    <Content Include="Views\Shared\_AdminOldLayout.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Shared\_LayoutWithoutVideo.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />

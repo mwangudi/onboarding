@@ -17,7 +17,6 @@ namespace OnBoarding.Web
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-            BundleConfig.RegisterAdminBundles(BundleTable.Bundles);
             //Database.SetInitializer<DBModel>(new DropCreateDatabaseIfModelChanges<DBModel>());
             Startup.createRolesandUsers();
             //WebSecurity.InitializeDatabaseConnection("DefaultConnection", "UserProfile", "UserId", "UserName", autoCreateTables: true);
