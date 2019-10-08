@@ -57,7 +57,7 @@
 							<script>
 								$(document).ready(function () {
 									$('#InternalUsersTableContainer').jtable({
-										title: '<i class="fa fa-list"></i> Internal System Users',
+										title: '<i class="fa fa-list"></i> Internal System Users <div class="dropdown float-right" style="margin: 0 -20px 0px 0;"><a class="btn dropdown-toggle" data-toggle="dropdown" aria-expanded="false" style="font-size: 13px;"><i class="fa fa-print"></i> Export Report</a><div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 32px, 0px); top: 0px; left: 0px; will-change: transform; width: 175px;"><a href="javascript:void(0);" onclick="GetCSVReport()" data-tab="alerts" class="dropdown-item"><i class="fa fa-file-excel"></i> Export CSV </a></div></div>',
 										paging: true,
 										pageSize: 10,
 										sorting: true,
@@ -341,4 +341,10 @@
 			}
 		});
 	});
+
+	//Get CSV Report
+	function GetCSVReport(){
+		window.location = "/Admin/ExportUsers";
+	};
+
 </script>

@@ -11,6 +11,8 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity.Owin;
+using System.Configuration;
+using System.Data.SqlClient;
 
 namespace OnBoarding.Controllers
 {
@@ -692,6 +694,67 @@ namespace OnBoarding.Controllers
                 catch(Exception ex)
                 {
                     return Json(ex.Message, JsonRequestBehavior.AllowGet);
+                }
+            }
+        }
+
+        //
+        //GET //ExportUsers
+        [HttpGet]
+        public void ExportUsers()
+        {
+            string constr = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+            using (SqlConnection con = new SqlConnection(constr))
+            {
+                var query = "";
+                var customquery = "SELECT u.Email, u.UserName, u.PhoneNumber Extension, s.StatusName Status, r.Name AS SystemRole, u.DateCreated, u.LastPasswordChangedDate FROM AspNetUsers u LEFT JOIN AspNetUserRoles ur ON ur.UserId = u.Id LEFT JOIN AspNetRoles r ON r.Id = ur.RoleId INNER JOIN tblStatus s ON s.Id = u.Status WHERE u.Id <> '3c162824-045d-429a-b530-173adecb7585' AND r.Id NOT IN ('8f70018b-22c2-4ef8-b465-ceefc7df3afb','aa145382-378e-49df-bf06-c96e081d2466','d97260b8-3879-403e-9f08-b388e91c0a25', '4796025b-6669-4b61-88eb-23662e0aab58') ORDER BY u.DateCreated;";
+                query = customquery;
+
+                using (SqlCommand cmd = new SqlCommand(query))
+                {
+                    using (SqlDataAdapter sda = new SqlDataAdapter())
+                    {
+                        cmd.Connection = con;
+                        sda.SelectCommand = cmd;
+                        using (DataTable dt = new DataTable())
+                        {
+                            sda.Fill(dt);
+
+                            //Build the CSV file data as a Comma separated string.
+                            string csv = string.Empty;
+
+                            foreach (DataColumn column in dt.Columns)
+                            {
+                                //Add the Header row for CSV file.
+                                csv += column.ColumnName + ',';
+                            }
+
+                            //Add new line.
+                            csv += "\r\n";
+
+                            foreach (DataRow row in dt.Rows)
+                            {
+                                foreach (DataColumn column in dt.Columns)
+                                {
+                                    //Add the Data rows.
+                                    csv += row[column.ColumnName].ToString().Replace(",", ";") + ',';
+                                }
+
+                                //Add new line.
+                                csv += "\r\n";
+                            }
+
+                            //Download the CSV file.
+                            Response.Clear();
+                            Response.Buffer = true;
+                            Response.AddHeader("content-disposition", "attachment;filename=GMOnBoarding_AllSystemUsers.csv");
+                            Response.Charset = "";
+                            Response.ContentType = "application/text";
+                            Response.Output.Write(csv);
+                            Response.Flush();
+                            Response.End();
+                        }
+                    }
                 }
             }
         }
