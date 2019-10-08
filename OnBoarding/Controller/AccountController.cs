@@ -904,6 +904,7 @@ namespace OnBoarding.Controllers
                         {
                             var updateUser = db.AspNetUsers.SingleOrDefault(c => c.Email == model.Email);
                             updateUser.PasswordResetCode = Functions.GenerateMD5Hash(code);
+                            updateUser.AccessFailedCount = 0;
                             db.SaveChanges();
                         }
                         catch (Exception ex)
@@ -968,7 +969,7 @@ namespace OnBoarding.Controllers
                     //var user = await UserManager.FindByNameAsync(model.Email);
                     var decodedCode = Functions.GenerateMD5Hash(model.PasswordResetCode);
                     var _action = "ResetPassword";
-                     var UserExists = db.AspNetUsers.SingleOrDefault(c => c.Email == model.Email && c.PasswordResetCode == decodedCode);
+                    var UserExists = db.AspNetUsers.SingleOrDefault(c => c.Email == model.Email && c.PasswordResetCode == decodedCode);
                     if (UserExists != null)
                     {
                         //var result = await UserManager.UpdateAsync(user.Id);
