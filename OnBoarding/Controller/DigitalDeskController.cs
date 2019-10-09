@@ -17,9 +17,8 @@ namespace OnBoarding.Controllers
 {
     public class DigitalDeskController : Controller
     {
-        private bool SSI;
-
-        // GET: DigitalDesk
+        //
+        // GET: Index
         public ActionResult Index()
         {
             using (DBModel db = new DBModel())
@@ -28,7 +27,7 @@ namespace OnBoarding.Controllers
                 var CompletedApplications = db.EMarketApplications.Count(a => a.Signatories == a.SignatoriesApproved && a.DesignatedUsers == a.UsersApproved);
                 var InCompleteApplications = db.EMarketApplications.Count(a => (a.Signatories != a.SignatoriesApproved || a.DesignatedUsers != a.UsersApproved) && (a.Status == 1 && a.OPSApproved == false && a.POAApproved == false));
                 var Approvals = db.EMarketApplications.Count(a => (a.OPSApproved == true && a.POAApproved == true));
-                var PendingOpsApprovals = db.EMarketApplications.Count(a => a.Signatories == a.SignatoriesApproved && a.DesignatedUsers == a.UsersApproved && (a.OPSApproved == false && a.OPSDeclined == false));
+                var PendingOpsApprovals = db.EMarketApplications.Count(a => a.Signatories == a.SignatoriesApproved && a.DesignatedUsers == a.UsersApproved && (a.OPSApproved == false && a.OPSDeclined == false) && (a.POAApproved == false && a.POAApproved == false));
                 var PendingPOAApprovals = db.EMarketApplications.Count(a => (a.OPSApproved == true && a.Status == 1 && (a.POAApproved == false && a.POADeclined == false)));
                 var PendingApprovals = db.EMarketApplications.Count(a => (a.OPSApproved == false || a.POAApproved == false));
                 var DeclinedApplications = db.EMarketApplications.Count(a => a.Signatories == a.SignatoriesApproved && a.DesignatedUsers == a.UsersApproved && (a.POADeclined == true || a.OPSDeclined == true));
