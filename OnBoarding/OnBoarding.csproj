@@ -2906,14 +2906,12 @@
     <Content Include="Views\Account\LoadResendOTP.cshtml" />
     <Content Include="Views\Account\LoadResendRepresentativeOTP.cshtml" />
     <Content Include="Views\Account\LoadResendSignatoryOTP.cshtml" />
-    <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Account\Register.cshtml" />
     <Content Include="Views\Account\ResetAccount.cshtml" />
     <Content Include="Views\Account\ResetPassword.cshtml" />
     <Content Include="Views\Account\ResetPasswordConfirmation.cshtml" />
     <Content Include="Views\Account\SignatoryConfirmation.cshtml" />
     <Content Include="Views\Account\UploadedClientCompleteRegistration.cshtml" />
-    <Content Include="Views\Account\_ExternalLoginsListPartial.cshtml" />
     <Content Include="Views\Admin\Index.cshtml" />
     <Content Include="Views\Admin\LoadDeleteUser.cshtml" />
     <Content Include="Views\Admin\LoadEditUser.cshtml" />
