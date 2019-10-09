@@ -2,7 +2,27 @@
 //Removed Jquery.ready Function
 
 $(document).ready(function () {
-    //On Load 
+
+	//Add scroll effect for terms and conditions
+	$(document).ready(function () {
+		$("#read_through_content").scroll(function () {
+			var totalScrollHeight = $("#read_through_content")[0].scrollHeight;
+			var scrollBarHeight = $("#read_through_content")[0].clientHeight;
+			var scrollBarTopPosition = $("#read_through_content")[0].scrollTop;
+			if (totalScrollHeight === scrollBarHeight + scrollBarTopPosition) {
+				$("#applicant_read_the_content").val("true");
+			}
+		});
+
+		$("#terms").click(function () {
+			if ($("#applicant_read_the_content").val() !== "true") {
+				toastr.error('Please scroll through the disclosure text before clicking I Accept.', { positionClass: 'toast-top-center' });
+				return false;
+			}
+		});
+	});
+
+	//On Load
     LoadUpModal();
 
     //Load up modal function
@@ -87,6 +107,14 @@ $(document).ready(function () {
 			$('#CompanyInfo').removeClass('d-none');
 			/* little fade in effect */
 			$('#CompanyDetailsPartialView').fadeIn('fast');
+		});
+
+		//applicant_terms_content
+		$.get('../Content/documents/Merged GTCs and eMT Agreement/eMT-Agreement_and_Terms.html', function (data) {
+			/* data is the pure html returned from action method, load it to your page */
+			$('#applicant_esign_content').html(data);
+			/* little fade in effect */
+			$('#applicant_esign_content').fadeIn('fast');
 		});
 	});
 

@@ -133,3 +133,20 @@ span.step {
 	flex: 0 0 40%;
 	max-width: 40%;
 }
+
+.DivToScroll {
+	background-color: #F5F5F5;
+	border: 1px solid #DDDDDD;
+	border-radius: 4px;
+	color: #3B3C3E;
+	font-size: 12px;
+	font-weight: bold;
+	left: -1px;
+	padding: 10px 7px 5px;
+}
+
+.DivWithScroll {
+	height: 350px;
+	overflow: scroll;
+	overflow-x: hidden;
+}

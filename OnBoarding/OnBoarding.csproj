@@ -269,6 +269,16 @@
     <Content Include="Assets\bootstrap\js\tooltip.js" />
     <Content Include="Assets\bootstrap\js\transition.js" />
     <Content Include="Assets\bootstrap\package.js" />
+    <Content Include="Content\documents\Merged GTCs and eMT Agreement\eMT-Agreement_and_Terms.html" />
+    <Content Include="Content\documents\Merged GTCs and eMT Agreement\files\background1.jpg" />
+    <Content Include="Content\documents\Merged GTCs and eMT Agreement\files\background2.jpg" />
+    <Content Include="Content\documents\Merged GTCs and eMT Agreement\files\background3.jpg" />
+    <Content Include="Content\documents\Merged GTCs and eMT Agreement\files\background4.jpg" />
+    <Content Include="Content\documents\Merged GTCs and eMT Agreement\files\background5.jpg" />
+    <Content Include="Content\documents\Merged GTCs and eMT Agreement\files\background6.jpg" />
+    <Content Include="Content\documents\Merged GTCs and eMT Agreement\files\background7.jpg" />
+    <Content Include="Content\documents\Merged GTCs and eMT Agreement\files\background8.jpg" />
+    <Content Include="Content\documents\Merged GTCs and eMT Agreement\files\background9.jpg" />
     <Content Include="Scripts\js\chart.min.js" />
     <Content Include="Assets\datatables\DataTables-1.10.16\css\dataTables.bootstrap.css" />
     <Content Include="Assets\datatables\DataTables-1.10.16\css\dataTables.bootstrap.min.css" />

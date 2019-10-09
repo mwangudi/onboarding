@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Web;
 using System.Web.Mvc;
-using OnBoarding.Models;
 using System.Web.Routing;
 using System.Web.Optimization;
-using Microsoft.AspNet.Identity;
-using System.Linq;
 
 namespace OnBoarding.Web
 {
@@ -25,7 +22,6 @@ namespace OnBoarding.Web
         protected void Application_BeginRequest(object sender, EventArgs e)
         {
             HttpContext.Current.Response.AddHeader("X-Frame-Options", "DENY");
-            //HttpContext.Current.Response.AddHeader("X-Frame-Options", "sameorigin");
         }
     }
 }

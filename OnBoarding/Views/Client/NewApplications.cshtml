@@ -47,17 +47,18 @@
 						<h5 class="mb-0" data-acc-title>Terms and Conditions</h5>
 						<div data-acc-content>
 							<div class="my-3 form-group">
-								<div class="col-12 col-sm-12 col-lg-12">
-									<h6>This agreement is entered into by and between: Stanbic Bank Kenya Limited (acting only through its Global Markets Division unless stated otherwise in the agreement) (the “Bank”); and <b>@ViewData["CompanyName"]</b>.</h6>
-									<div class="form-group scroll-terms">
-										<embed id="scroll" src="~/Content/documents/Merged GTCs and eMT Agreement.pdf" width="900" height="500" alt="Terms and Conditions pdf" pluginspage="http://www.adobe.com/products/acrobat/readstep2.html" />
+								<div id="accept_terms" class="col-12 col-sm-12 col-lg-12">
+									<h6>This agreement is entered into by and between: <b>Stanbic Bank Kenya Limited </b> (acting only through its Global Markets Division unless stated otherwise in the agreement) (the “Bank”); and <b>@ViewData["CompanyName"]</b>.</h6>
+									<div class="col-12 col-sm-12 col-lg-12" id="read_through_content" style="overflow-y: auto; border: 1px solid;">
+										<div id="applicant_esign_content" style="height:350px;"></div>
 									</div>
-								</div>
-								<div class="row">
-									<div class="col-12 col-sm-6 col-lg-6"></div>
-									<div class="col-12 col-sm-6 col-lg-6">
-										<label for="checkbox1">I have read and hereby accept the above terms and conditions</label>
-										<input value="false" type="checkbox" name="terms[]" id="terms">
+									<div class="row" style="text-align:right;">
+										<div class="col-12 col-sm-6 col-lg-6"></div>
+										<div class="col-12 col-sm-6 col-lg-6 mt-3">
+											<input type="hidden" value="false" name="applicant_read_the_content" id="applicant_read_the_content" />
+											<label for="checkbox1"><b>I have read and hereby accept the above terms and conditions</b></label>
+											<input value="false" type="checkbox" name="terms[]" id="terms">
+										</div>
 									</div>
 								</div>
 							</div>
