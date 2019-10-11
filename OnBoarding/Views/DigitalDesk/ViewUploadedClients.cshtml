@@ -1,0 +1,33 @@
+﻿@model IEnumerable<OnBoarding.ViewModels.UploadedClientsViewModel>
+<div class="col-md-12">
+	<table id="UploadedList" class="display nowrap" style="width:100%">
+		<thead>
+			<tr>
+				<th>Company Name</th>
+				<th>Company Registration</th>
+				<th>Company Phone</th>
+				<th>Email Address</th>
+				<th>Date Uploaded</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var item in Model)
+			{
+				<tr>
+					<td> @item.CompanyName</td>
+					<td> @item.CompanyRegistration</td>
+					<td> @item.PhoneNumber</td>
+					<td> @item.EmailAddress</td>
+					<td> @item.DateCreated</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#UploadedList').DataTable({
+            responsive: true
+        });
+    });
+</script>

@@ -1,0 +1,34 @@
+﻿<div class="col-12 col-lg-12 p-0">
+	<table class="table table-bordered">
+		<thead>
+			<tr>
+				<th>Full Names</th>
+				<th>Company</th>
+				<th>Phone</th>
+				<th>Email</th>
+				<th>Date of Sign-Up</th>
+				<th>Signature</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>@(ViewBag.RepresentativeInfo.Surname + " " + ViewBag.RepresentativeInfo.Othernames)</td>
+				<td>@ViewBag.RegisteredClientInfo.CompanyName</td>
+				<td>@ViewBag.RepresentativeInfo.Mobile</td>
+				<td>@ViewBag.RepresentativeInfo.Email</td>
+				<td>@ViewBag.RepresentativeInfo.DateCreated</td>
+				<td>
+					@if (ViewBag.RepresentativeInfo.Signature == null || ViewBag.RepresentativeInfo.Signature == "")
+					{
+						<img width="100" height="80" src="~/Content/images/signatures/no-signature-17.jpg" />
+					}
+					else
+					{
+						<img width="100" height="80" src="~/Content/images/signatures/@ViewBag.RepresentativeInfo.Signature" />
+					}
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+

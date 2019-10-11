@@ -1,0 +1,83 @@
+﻿@model OnBoarding.ViewModels.DeleteClientViewModel
+<div class="row">
+	<div class="col-md-12">
+		<form role="form" id="DeleteClientFRM" action="" method="POST" accept-charset="utf-8">
+			<div class="row">
+				<div class="col-md-12">
+					<h4 class="t_aling_c"> Delete @ViewData["CompanyName"]?</h4>
+					<h5 class="t_aling_c"> Email Address: @ViewData["CompanyEmail"], AccountNumber: @ViewData["CompanyAccountNumber"]</h5>
+					<input name="getClientId" id="getClientId" type="hidden" value="@ViewData["UserId"]">
+					<input name="UserAccountId" id="UserAccountId" type="hidden" value="@ViewData["UserAccountId"]">
+				</div>
+			</div><hr/>
+			<div class="col-md-6 m_bottom_10">
+				<button type="submit" class="btn btn-success w_full" name="cancelmodal" id="cancelmodal">
+					<i class="fa fa-close"></i> Cancel
+				</button>
+			</div>
+			<div class="col-md-6 m_bottom_10">
+				<p>  </p>
+				<button type="submit" class="btn btn-danger w_full" name="deleteuser" id="deleteuser">
+					<i class="fa fa-trash-o"></i> Delete
+				</button>
+			</div>
+		</form>
+		<!--Processing Submission -->
+		<div class="col-lg-12 d_none" id="ModalLoadingDiv">
+			<center class="r_corners m_top_10">
+				<h4 class="m_top_20 m_bottom_20">Please wait... Processing Your Submission</h4>
+				<img src="~/Content/images/loading-bar.gif" class="img-thumbnail m_bottom_20" alt="Loading" style="max-width:160px;">
+			</center>
+		</div>
+		<!--End Submission Processing -->
+		<!--Alert Successful -->
+		<div class="col-lg-12 EditSuccess d_none" style="margin: 0 auto;">
+			<div class="alert alert-success alert-dismissible">
+				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+				<h4><i class="icon fa fa-check-circle-o" style="color:green"></i> @ViewData["CompanyName"] successfully deleted!</h4>
+			</div>
+		</div>
+		<!--End Successful ALert -->
+	</div>
+</div>
+
+<script type="text/javascript">
+
+	$(document).ready(function () {
+		//Close Delete modal
+		$('#cancelmodal').on('click', function (e) {
+			e.preventDefault();
+			$('#LoadDeleteModal').modal('hide');
+		})
+
+		$("form#DeleteClientFRM").submit(function (e) {
+			e.preventDefault();
+			if ($('#DeleteClientFRM').valid()) {
+				$("#ModalLoadingDiv").show('fast');
+				$('#DeleteClientFRM').hide("fast");
+				var formData = new FormData($(this)[0]);
+				$.ajax({
+					url: '@Url.Action("DeleteRegisteredClient", "Admin")',
+					type: 'POST',
+					data: formData,
+					async: true,
+					success: function () {
+						window.setTimeout(close, 1500);
+						window.setTimeout(closemodal, 1800);
+						function close() {
+							$("#ModalLoadingDiv").hide('fast');
+							$('.EditSuccess').show("fast");
+						}
+						function closemodal() {
+							$('#LoadDeleteModal').modal('hide').effect('explode');
+							$('.EditSuccess').hide("fast");
+						}
+					},
+					cache: false,
+					contentType: false,
+					processData: false
+				});
+			}
+		});
+	});
+</script>

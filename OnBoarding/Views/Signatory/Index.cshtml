@@ -1,0 +1,57 @@
+﻿@{
+	ViewBag.Title = "Index";
+	Layout = "~/Views/Shared/_AdminNewLayout.cshtml";
+}
+
+    <section class="section">
+        <h1 class="section-header">
+            <div>Dashboard</div>
+        </h1>
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-12">
+                <div class="card card-sm-3">
+                    <div class="card-icon bg-primary">
+                        <i class="ion ion-ios-information"></i>
+                    </div>
+                    <div class="card-wrap">
+                        <div class="card-header">
+                            <h4> Recent Nomination </h4>
+                        </div>
+                        <div class="card-body">
+                            @ViewData["CompanyName"]
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 col-12">
+                <div class="card card-sm-3">
+                    <div class="card-icon bg-warning">
+                        <i class="ion ion-paper-airplane"></i>
+                    </div>
+                    <div class="card-wrap">
+                        <div class="card-header">
+                            <h4>Accepted</h4>
+                        </div>
+                        <div class="card-body">
+                            @ViewData["Nominations"]
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-12 d_none">
+                <div class="card card-sm-3">
+                    <div class="card-icon bg-warning">
+                        <i class="ion ion-paper-airplane"></i>
+                    </div>
+                    <div class="card-wrap">
+                        <div class="card-header">
+                            <h4>Declined</h4>
+                        </div>
+                        <div class="card-body">
+                            @ViewData["Nominations"]
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>

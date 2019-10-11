@@ -1,0 +1,386 @@
+﻿@model OnBoarding.ViewModels.ConfirmApproveViewModel
+<script src="@Url.Content("~/Assets/fwizard/form-wizard.js")"></script>
+<div class="row">
+	<div class="col-md-12 form-wizard">
+		<!-- Form Wizard -->
+		<form role="form" enctype="multipart/form-data" id="ApplicationForm" action="" method="POST" accept-charset="utf-8">
+			<p>Confirm the details as provided and accept the terms and conditions</p>
+			<!-- Form progress -->
+			<div class="form-wizard-steps form-wizard-total-steps-3">
+				<div class="form-wizard-progress">
+					<div class="form-wizard-progress-line" data-now-value="12.25" data-number-of-steps="3" style="width: 12.25%;"></div>
+				</div>
+				<!-- Step 1 -->
+				<div class="form-wizard-step active">
+					<div class="form-wizard-step-icon"><i class="fa fa-user" aria-hidden="true"></i></div>
+					<p>Client Details</p>
+				</div>
+				<!-- Step 1 -->
+				<!-- Step 2 -->
+				<div class="form-wizard-step">
+					<div class="form-wizard-step-icon"><i class="fa fa-check" aria-hidden="true"></i></div>
+					<p>Terms and Conditions</p>
+				</div>
+				<!-- Step 2 -->
+				<!-- Step 3 -->
+				<div class="form-wizard-step">
+					<div class="form-wizard-step-icon"><i class="fa fa-file" aria-hidden="true"></i></div>
+					<p>Sign off & Submit</p>
+				</div>
+				<!-- Step 3 -->
+			</div>
+			<!-- Form progress -->
+			<!-- Form Step 1 -->
+			<fieldset>
+				<h4>Company / Individual Details <span>Step 1 of 3 </span></h4>
+				<p>Company Details</p><hr />
+				<div class="form-group row">
+					 <div class="col-12 col-lg-12">
+						<div class="table-responsive">
+							<table class="table table-bordered">
+								<tr class="success">
+									<th>Company Details:</th>
+									<td style="text-align: right;"><i class="fa fa fa-building fa-x"></i></td>
+								</tr>
+								<tr>
+									<th>Company / Individual Name:</th>
+									<td id="CompanyName" name="CompanyName">@ViewBag.ApplicationInfo.CompanyName</td>
+								</tr>
+								<tr>
+									<th>Company Registration Number / Identity Number:</th>
+									<td id="ConfirmRegistration" name="ConfirmRegistration">@ViewBag.ApplicationInfo.IDRegNumber</td>
+								</tr>
+								<tr>
+									<th>Principal Place of Business / Company Town/City:</th>
+									<td id="ConfirmAddress" name="ConfirmAddress">@ViewBag.ApplicationInfo.CompanyTownCity</td>
+								</tr>
+								<tr>
+									<th>Principal Place of Business / Company Building:</th>
+									<td id="Building" name="Building">@ViewBag.ApplicationInfo.Building</td>
+								</tr>
+								<tr>
+									<th>Principal Place of Business / Street:</th>
+									<td id="Street" name="Street">@ViewBag.ApplicationInfo.Street</td>
+								</tr>
+								<tr class="success">
+									<th>Standard Settlement Instructions:</th>
+									<td style="text-align: right;"><i class="fa fa fa-money fa-x"></i></td>
+								</tr>
+								<tr>
+									<th>Settlement Instructions:</th>
+									<td id="SettlementAccounts" name="SettlementAccounts">
+										@if (ViewBag.SettlementAccounts.Count != 0)
+										{
+											<table class="custom-table">
+												<th> Currency</th>
+												<th> Account Number</th>
+												@foreach (var item in ViewBag.SettlementAccounts)
+												{
+													<tbody>
+													<td>@item.CurrencyName</td>
+													<td>@item.AccountNumber</td>
+													</tbody>
+												}
+											</table>
+										}
+										else
+										{
+											<table class="custom-table">No Settlement Accounts</table>
+										}
+									</td>
+								</tr>
+								<tr class="success">
+									<th>Authorized Representatives:</th>
+									<td style="text-align: right;"><i class="fa fa fa-users fa-x"></i></td>
+								</tr>
+								<tr>
+									<th>Authorized Representatives:</th>
+									<td id="Representatives" name="Representatives">
+										<table class="custom-table">
+											<th> Full Names</th>
+											<th> Email </th>
+											<th> Trading Limit </th>
+											<th> EMarket SignUp </th>
+											@foreach (var item in ViewBag.DesignatedUser)
+											{
+												<tbody>
+												<td>@(item.Surname + " " + item.Othernames)</td>
+												<td>@item.Email</td>
+												<td>@item.TradingLimit</td>
+												<td>@(item.EMarketSignUp ? "Yes" : "No")</td>
+												</tbody>
+											}
+										</table>
+									</td>
+								</tr>
+							</table>
+						</div>
+						<div class="form-wizard-buttons">
+							<button type="button" class="btn btn-next"> Next <i class="fa fa-angle-right"></i></button>
+						</div>
+					</div>
+				</div>
+			</fieldset>
+			<!-- End Form Step 1 -->
+			<!-- Form Step 2 -->
+			<fieldset>
+				<h4>Terms and Conditions <span>Step 2 - 3</span></h4>
+				<h5>Read the below terms and conditions carefully and accept by clicking on the checkbox below the terms and conditions</h5>
+                <div class="form-group scroll-terms">
+                    <embed id="scroll" src="~/Content/documents/Merged GTCs and eMT Agreement.pdf" width="950" height="500" alt="Terms and Conditions pdf" pluginspage="http://www.adobe.com/products/acrobat/readstep2.html" />
+                </div>
+				<div class="form-group row">
+					<div class="col-12 col-lg-8 col-xs-12">
+						<div class="input-group accept-terms">
+							<input type="text" id="error-check" class="form-control">
+							<input type="hidden" id="ApplicationId" name="ApplicationId" value="@ViewData["ApplicationId"]" class="form-control">
+							<input type="hidden" id="CompanyEmail" name="CompanyEmail" value="@ViewData["CompanyEmail"]" class="form-control">
+							<input type="hidden" id="CompanyName" name="CompanyName" value="@ViewData["CompanyName"]" class="form-control">
+							<input type="hidden" id="CompanySurname" name="CompanySurname" value="@ViewData["CompanySurname"]" class="form-control">
+							<span class="input-group-addon beautiful" id="beautifulcheckbox">
+								<input value="true" type="checkbox" id="terms" name="terms" class="form-control">
+							</span>
+						</div>
+					</div>
+					<div class="col-12 col-md-4 col-xs-12">
+						<div class="form-wizard-buttons">
+							<button type="button" class="btn btn-previous"><i class="fa fa-angle-left"></i> Back</button>
+							<button type="button" class="btn btn-twende-mbele" id="acceptterms"> Next <i class="fa fa-angle-right"></i></button>
+						</div>
+					</div>
+				</div><br /><br />
+			</fieldset>
+			<!-- End Form Step 2 -->
+			<!-- Form Step 3 -->
+			<fieldset class="d_none">
+				<h4>Confirm Details <span>Step 3 - 3</span></h4>
+				<div style="clear:both;"></div>
+				<div class="card-body form-group form-row">
+					<div class="col-12 col-lg-3 col-sm-3 imgUp">
+						<label>Upload your scanned signature: <span>*</span></label>
+						<div class="imagePreview"></div>
+						<label class="btn btn-primary" style="color:#fff">
+							Upload Signature <input id="inputFile" name="inputFile" type="file" class="uploadFile img" value="Upload Signature" style="width: 0px;height: 0px;overflow: hidden;">
+						</label>
+					</div>
+					<div class="col-12 col-lg-4 m_top_30">
+						<h6><b>Image types to be uploaded</b></h6>
+						<ul>
+							<li style="color:red"><small>JPEG Image (.jpeg)</small></li>
+							<li style="color:red"><small>JPEG Image (.jpg)</small></li>
+							<li style="color:red"><small>Portable Network Graphic (.png)</small></li>
+							<li style="color:red"><small>Image Size (100 by 80)</small></li>
+						</ul>
+					</div>
+				</div>
+				<div class="row d_none">
+					<div class="col-md-12">
+						<h5>Provide notes upon approval (if any) </h5>
+						<div class="form-group">
+							<textarea cols="12" rows="4" placeholder="Approval Notes ..." id="Comments" name="Comments" class="form-control"></textarea>
+						</div>
+					</div>
+				</div>
+				<div class="form-wizard-buttons">
+					<button type="button" class="btn btn-previous"><i class="fa fa-angle-left"></i> Back</button>
+					<button type="submit" class="btn btn-danger btnDecline"><i class="fa fa-trash"></i> Decline </button>
+					<button type="submit" class="btn btn-submit btnApprove"><i class="fa fa-check"></i> Approve </button>
+				</div>
+			</fieldset>
+			<!-- End Form Step 3 -->
+		</form>
+		<!-- End Form Wizard -->
+	</div>
+	<!--Processing Submission -->
+	<div class="col-lg-12 d_none" id="Loading_Div">
+		<center class="r_corners m_top_20">
+			<h4 class="m_top_20 m_bottom_20">Please wait... Processing Your Submission</h4>
+			<img src="~/Content/images/loading-bar.gif" class="img-thumbnail m_bottom_20" alt="Loading" style="max-width:160px;">
+		</center>
+	</div>
+	<!--End Submission Processing -->
+	<!--Alert Successful -->
+	<div class="col-12 col-lg-12 jumbotron text-xs-center d_none" style="text-align: center;" id="Success_Div">
+		<h1 class="display-3 m_top_20"><i class="fa fa-check-circle" style="color:green"></i><br />Thank You!</h1>
+		<p class="lead"><strong>Please check your email </strong> for further instructions on approval of your application.</p>
+		<hr>
+	</div>
+	<!--End Successful ALert -->
+	<!--Start Confirm Approval Modal -->
+	<div class="modal fade" id="LoadUpModal" role="dialog" aria-labelledby="LoadUpModal">
+		<div class="modal-dialog" style="width:500px;">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="t_aling_c"><i class="fa fa-warning" style="font-size:30px; color:red"></i> Please read carefully and accept the terms and conditions</h5>
+				</div>
+				<div class="modal-data">
+					<div class="row">
+						<div class="col-lg-6 m_top_10 m_bottom_10" style="margin-left:120px">
+							<button type="submit" class="btn btn-danger w_full" name="closemodal" id="closemodal">
+								<i class="fa fa-database"></i> Close Dialog
+							</button>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<div class="col-lg-12">
+						<center class="m_top_10">
+							<b>Global Markets Onboarding System &copy; Stanbic Bank Kenya</b>
+						</center>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--End Confirm Approval Modal-->
+</div>
+<script type="text/javascript">
+
+	jQuery().ready(function () {
+		var v = jQuery("#ApplicationForm").validate({
+			rules: {
+				Comments: {
+					minlength: 4,
+					maxlength: 200
+				},
+				VerifyPhone: {
+					required: true,
+					number: true
+				},
+				inputFile: {
+					required: true,
+					accept: "jpg,png,jpeg"
+				}
+			},
+			errorElement: "span",
+			errorClass: "help-inline-error",
+			messages: {
+				inputFile: {
+					required: "Please upload your signature",
+					accept: "Only image of type jpg/png/jpeg is allowed"
+				}
+			}
+		});
+	});
+
+	$(document).ready(function () {
+		//Close modal
+		$('#closemodal').on('click', function () {
+			$('#LoadUpModal').modal('hide');
+		})
+
+		//Preview Image function
+		$(".imgAdd").click(function () {
+			$(this).closest(".row").find('.imgAdd').before('<div class="col-sm-2 imgUp"><div class="imagePreview"></div><label class="btn btn-primary">Upload<input type="file" class="uploadFile img" value="Upload Photo" style="width:0px;height:0px;overflow:hidden;"></label><i class="fa fa-times del"></i></div>');
+		});
+
+		$(document).on("click", "i.del", function () {
+			$(this).parent().remove();
+		});
+
+		$(function () {
+			$(document).on("change", ".uploadFile", function () {
+				var uploadFile = $(this);
+				var files = !!this.files ? this.files : [];
+				if (!files.length || !window.FileReader) return; // no file selected, or no FileReader support
+
+				if (/^image/.test(files[0].type)) { // only image file
+					var reader = new FileReader(); // instance of the FileReader
+					reader.readAsDataURL(files[0]); // read the local file
+
+					reader.onloadend = function () { // set image data as background of div
+						//alert(uploadFile.closest(".upimage").find('.imagePreview').length);
+						uploadFile.closest(".imgUp").find('.imagePreview').css("background-image", "url(" + this.result + ")");
+					}
+				}
+
+			});
+		});
+
+		//Beautiful Checkbox
+		$(function () {
+			$('.input-group-addon.beautiful').each(function () {
+				var $widget = $(this),
+					$input = $widget.find('input'),
+					type = $input.attr('type');
+				settings = {
+					checkbox: {
+						on: { icon: 'fa fa-check-circle fa-2x' },
+						off: { icon: 'fa fa-circle fa-2x' }
+					}
+				};
+
+				$widget.prepend('<span class="' + settings[type].off.icon + '"></span>');
+				$widget.on('click', function () {
+					$input.prop('checked', !$input.is(':checked'));
+					updateDisplay();
+				});
+
+				function updateDisplay() {
+					var isChecked = $input.is(':checked') ? 'on' : 'off';
+					$widget.find('.fa').attr('class', settings[type][isChecked].icon);
+					//Just for display
+					isChecked = $input.is(':checked') ? 'I have carefully read and hereby accept the terms and conditions' : 'Please read carefully and accept the terms and conditions';
+					$widget.closest('.input-group').find('input[type="text"]').val(isChecked)
+				}
+				updateDisplay();
+			});
+		});
+
+		//Approve Nomination
+		$('.btnApprove').click(function (e) {
+			e.preventDefault();
+			if ($('#ApplicationForm').valid()) {
+				$("#Loading_Div").show('fast');
+				$('#ApplicationForm').hide("fast");
+				var formData = new FormData($("#ApplicationForm")[0]);
+				$.ajax({
+					url: '@Url.Action("ApproveNomination", "DesignatedUser")',
+					type: 'POST',
+					data: formData,
+					async: true,
+					success: function () {
+						window.setTimeout(close, 500);
+						function close() {
+							$('#ApplicationForm')[0].reset();
+							$("#Loading_Div").hide('fast');
+							$('#Success_Div').show("fast");
+							window.location.reload();
+						}
+					},
+					cache: false,
+					contentType: false,
+					processData: false
+				});
+			}
+		});
+
+		//Decline Nomination
+		$('.btnDecline').click(function (e) {
+			e.preventDefault();
+			if ($('#ApplicationForm').valid()) {
+				$("#Loading_Div").show('fast');
+				$('#ApplicationForm').hide("fast");
+				var formData = new FormData($("#ApplicationForm")[0]);
+				$.ajax({
+					url: '@Url.Action("DeclineNomination", "DesignatedUser")',
+					type: 'POST',
+					data: formData,
+					async: true,
+					success: function () {
+						window.setTimeout(close, 500);
+						function close() {
+							$('#ApplicationForm')[0].reset();
+							$("#Loading_Div").hide('fast');
+							$('#Success_Div').show("fast");
+							window.location.reload();
+						}
+					},
+					cache: false,
+					contentType: false,
+					processData: false
+				});
+			}
+		});
+	});
+</script>

@@ -1,0 +1,96 @@
+﻿@model IEnumerable<OnBoarding.ViewModels.SystemNotificationsViewModel>
+@{
+	Layout = "~/Views/Shared/_AdminOldLayout.cshtml";
+}
+<div class="row">
+	<ul class="nav nav-tabs">
+		<li class="active pull-left"><a dat.a-toggle="tab" href="#ContentTab"> Notification Messages </a></li>
+	</ul>
+	<div class="tab-content">
+		<div class="col-lg-12">
+			<div id="ContentTab" class="tab-pane fade in active m_top_10">
+				<div id="ViewAllArea">
+					<table id="NotificationList" class="display nowrap" style="width:100%">
+						<thead>
+							<tr>
+								<th>Type</th>
+								<th>From</th>
+								<th>Recepient</th>
+								<th>Status</th>
+								<th>Date Created</th>
+								<th>Action</th>
+							</tr>
+						</thead>
+						<tbody>
+							@foreach (var item in Model)
+							{
+								<tr>
+									<td> @item.Type</td>
+									<td> @item.From</td>
+									<td> @item.To</td>
+									<td>@(item.Sent ? "Sent" : "Failed")</td>
+									<td> @item.DateCreated</td>
+									<td>
+										<center>
+											<button data-id='@item.Id' type="submit" name="submit" class="btn btn-info btn-md btn-agent-id w_full">
+												<span class="glyphicon glyphicon-edit"></span> Resend
+											</button>
+										</center>
+									</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--Start Confirm Delete Modal -->
+<div class="modal fade" id="LoadDeleteModal" role="dialog" aria-labelledby="LoadDeleteModal">
+	<div class="modal-dialog" style="width:500px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="t_aling_c"><i class="fa fa-warning" style="font-size:30px; color:red"></i> Resend Notification </h5>
+			</div>
+			<div class="students-data"></div>
+			<div class="modal-footer">
+				<div class="col-lg-12">
+					<center class="m_top_10">
+						<b> Global Markets Onboarding System  &copy; 2018 Stanbic Bank Kenya </b>
+					</center>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	$(document).ready(function () {
+		//Function Load modal
+		function LoadUpModal(getNotificationId) {
+			$('#LoadDeleteModal').modal({ backdrop: 'static', keyboard: false });
+			$.ajax({
+				type: "POST",
+				url: "/Admin/LoadResendNotification",
+				data: '{getNotificationId: "' + getNotificationId + '" }',
+				contentType: "application/json; charset=utf-8",
+				dataType: "html",
+				success: function (data) {
+					$('.students-data').html(data);
+				}
+			});
+		}
+
+		$('.btn-agent-id').click(function (e) {
+			e.preventDefault();
+			var getNotificationId = $(this).attr('data-id');
+			LoadUpModal(getNotificationId);
+		});
+
+		$('#NotificationList').DataTable({
+			responsive: true
+		});
+
+	});
+</script>

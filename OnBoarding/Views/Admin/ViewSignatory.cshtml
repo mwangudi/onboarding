@@ -1,0 +1,52 @@
+﻿<script src="@Url.Content("~/Assets/fwizard/form-wizard.js")"></script>
+<div class="col-md-12 form-wizard">
+	<div class="form-group">
+		<div class="row">
+			<div class="table-responsive">
+				<table class="table table-hover">
+					<tr class="success">
+						<th>Signatory Details:</th>
+						<td></td>
+						<td style="text-align: right;"><i class="fa fa fa-user fa-x"></i></td>
+					</tr>
+					<tr>
+						<td id="Signatories" name="Signatories">
+                            <table class="custom-table">
+                                <th> Full Names</th>
+                                <th> Designation </th>
+                                <th> Company </th>
+                                <th> Phone </th>
+                                <th> Email </th>
+                                <th> Date of Sign-Up </th>
+                                <th> Signature </th>
+                                <tbody>
+                                <td>@(ViewBag.SignatoryInfo.Surname + " " + ViewBag.SignatoryInfo.OtherNames)</td>
+                                <td>@ViewBag.SignatoryInfo.Designation</td>
+                                <td>@ViewBag.RegisteredClientInfo.CompanyName</td>
+                                <td>@ViewBag.SignatoryInfo.PhoneNumber</td>
+                                <td>@ViewBag.SignatoryInfo.EmailAddress</td>
+                                <td>@ViewBag.SignatoryInfo.DateCreated</td>
+                                <td>
+                                    @if (ViewBag.SignatoryInfo.Signature == null || ViewBag.SignatoryInfo.Signature == "")
+                                    {
+                                        <img width="100" height="80" src="~/Content/images/signatures/no-signature-17.jpg" />
+                                    }
+                                    else
+                                    {
+                                        <img width="100" height="80" src="~/Content/images/signatures/@ViewBag.SignatoryInfo.Signature" />
+                                    }
+                                </td>
+                                </tbody>
+                            </table>
+						</td>
+					</tr>
+					<tr class="success">
+						<th></th>
+						<td></td>
+						<td style="text-align: right;"></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>

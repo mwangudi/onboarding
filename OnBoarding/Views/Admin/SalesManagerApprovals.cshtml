@@ -1,0 +1,104 @@
+﻿@model IEnumerable<OnBoarding.ViewModels.ClientApplicationsViewModel>
+
+@{
+	Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="row">
+	<ul class="nav nav-tabs">
+		<li class="active pull-left"><a dat.a-toggle="tab" href="#ContentTab"> Operations Manager Approvals </a></li>
+	</ul>
+	<div class="tab-content">
+		<div class="col-lg-12">
+			<div id="ContentTab" class="tab-pane fade in active m_top_10">
+				<div class="item-data-retriving d_none">
+					<div class="row">
+						<div class="col-xs-6">
+							<h4><p class="text-aqua"><i class="fa fa-adjust"></i> Approve Application</p></h4>
+						</div>
+						<div class="col-xs-6">
+							<button class="btn btn-danger pull-right select-another-item">
+								<span class="glyphicon glyphicon-check"></span> Select Another Application
+							</button>
+						</div>
+					</div><hr />
+					<!--Load Up Data -->
+					<center id="RMDLoading_ID" class="d_none r_corners">
+						<h4 class="m_top_20 m_bottom_20"> Please wait... Fetching Application Details </h4>
+						<img src="~/Content/images/loading-bar.gif" class="img-thumbnail" alt="Loading" style="max-width:160px;">
+					</center>
+					<!--End Loading Up Data -->
+				</div>
+				<div class="item-data-retrived"></div>
+				<div id="ViewAllArea">
+					<table id="ApplicationsList" class="display nowrap" style="width:100%">
+						<thead>
+							<tr>
+								<th>Company Name</th>
+								<th>Status</th>
+								<th>AcceptedTAC</th>
+								<th>Application Date</th>
+								<th>Actions</th>
+							</tr>
+						</thead>
+						<tbody>
+							@foreach (var item in Model)
+							{
+								<tr>
+									<td> @item.Client</td>
+									<td> @item.Status</td>
+									<td> @item.AcceptedTAC</td>
+									<td> @item.DateCreated</td>
+									<td>
+										<center>
+											<button data-id='@item.ApplicationID' type="submit" name="submit" class="btn btn-register btn-md btn-agent-id w_full">
+												<span class="glyphicon glyphicon-check"></span> Approve
+											</button>
+										</center>
+									</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#ApplicationsList').DataTable({
+            responsive: true
+        });
+        //select-another-item
+        $('.select-another-item').click(function (e) {
+            e.preventDefault();
+            $('.item-data-retrived').hide('fast');
+            $('.item-data-retriving').hide('fast');
+            $('#ViewAllArea').show('fast');
+        });
+
+        $('.btn-agent-id').click(function (e) {
+            e.preventDefault();
+            var ApplicationID = $(this).attr('data-id');
+            $('#ViewAllArea').hide('fast');
+            $('#RMDLoading_ID').show();
+            $('.item-data-retriving').show('fast');
+
+            $.ajax({
+                type: "POST",
+                url: "/Admin/ViewApproval",
+                data: '{applicationId: "' + ApplicationID + '" }',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+
+                success: function (data) {
+                    $('#RMDLoading_ID').hide();
+                    $('.item-data-retrived').show();
+                    $('.item-data-retrived').html(data);
+                }
+            });
+        });
+
+    });
+</script>

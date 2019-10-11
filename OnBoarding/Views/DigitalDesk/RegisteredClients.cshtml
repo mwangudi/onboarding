@@ -1,0 +1,226 @@
+﻿@{
+	Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<section class="section">
+	<div class="col-12 col-sm-12 col-lg-12">
+		<div class="card">
+			<div class="card-header">
+				<h4> Registered Clients </h4>
+			</div>
+			<div class="card-body">
+				<ul class="nav nav-tabs" id="myTab" role="tablist">
+					<li class="nav-item">
+						<a class="nav-link active show" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">
+							<i class="fa fa-list"></i> Registered Clients
+						</a>
+					</li>
+				</ul>
+				<div class="tab-content" id="myTabContent">
+					<div class="tab-pane fade active show" id="home" role="tabpanel" aria-labelledby="home-tab">
+						<form action="" class="mt-2" id="searchform" name="searchform" method="POST">
+							<div class="form-group form-row" style="margin-left: 0px !important;">
+								<div class="col-12 col-sm-6 col-lg-6">
+									<input type="text" id="searchMessage" name="searchMessage" placeholder="Search Registered Clients By company name, email" value="" class="form-control" />
+								</div>
+								<div class="col-12 col-sm-2 col-lg-2">
+									<div class="input-group bootstrap-timepicker">
+										<div class="input-group-addon">
+											<i class="fa fa-calendar"></i>
+										</div>
+										<input type="text" class="form-control datepicker" id="searchFromDate" name="searchFromDate" placeholder="From Date" style="margin:0px;" autocomplete="off">
+									</div>
+								</div>
+								<div class="col-12 col-sm-2 col-lg-2">
+									<div class="input-group bootstrap-timepicker">
+										<div class="input-group-addon">
+											<i class="fa fa-calendar"></i>
+										</div>
+										<input type="text" class="form-control datepicker" id="searchToDate" name="searchToDate" placeholder="To Date" style="margin:0px;" autocomplete="off">
+									</div>
+								</div>
+								<div class="col-12 col-sm-2 col-lg-2">
+									<button id="search" class="btn btn-success w_full" type="button"><i class="fa fa-check-circle"></i> Search </button>
+								</div>
+							</div>
+						</form>
+						<div class="item-data-retriving d_none">
+							<div class="form-group form-row" style="margin-left: 0px !important;">
+								<div class="col-12 col-sm-9 col-lg-9">
+									<h6><i class="fa fa-adjust"></i> View Client Details </h6>
+								</div>
+								<div class="col-12 col-sm-3 col-lg-3">
+									<button id="selectanother" class="btn btn-outline-primary w_full" type="button"><i class="fa fa-check-circle"></i> Select Another Client </button>
+								</div>
+
+							</div>
+						</div><hr />
+						<!--Load Up Data -->
+						<center id="RMDLoading_ID" class="d_none r_corners">
+							<h6 class="m_top_20 m_bottom_20"> Please wait... Fetching Client Details </h6>
+							<img src="~/Content/images/loading-bar.gif" class="img-thumbnail" alt="Loading" style="max-width:160px;">
+						</center>
+						<!--End Loading Up Data -->
+					</div>
+					<div class="item-data-retrived"></div>
+					<div class="row" id="ViewAll">
+						<div class="col-lg-12 col-md-12 col-12">
+							<div id="RegisteredClientsTableContainer"></div>
+						</div>
+						<script>
+							$(document).ready(function () {
+								$('#RegisteredClientsTableContainer').jtable({
+									title: '<i class="fa fa-list"></i> Registered Clients <div class="dropdown float-right" style="margin: 0 -20px 0px 0;"><a class="btn dropdown-toggle" data-toggle="dropdown" aria-expanded="false" style="font-size: 13px;"><i class="fa fa-print"></i> Export Report</a><div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 32px, 0px); top: 0px; left: 0px; will-change: transform; width: 175px;"><a href="javascript:void(0);" onclick="GetCSVReport()" data-tab="alerts" class="dropdown-item"><i class="fa fa-file-excel"></i> Export CSV </a></div></div>',
+									paging: true,
+									pageSize: 10,
+									sorting: true,
+									defaultSorting: 'DateCreated DESC',
+									actions:
+									{
+										listAction: '/DigitalDesk/GetRegisteredClients'
+									},
+									fields: {
+										Id: {
+											key: true,
+											list: false
+										},
+										CompanyName: {
+											title: 'Company Name',
+											width: '40%'
+										},
+										EmailAddress: {
+											title: 'Email',
+											width: '20%'
+										},
+										Status: {
+											title: 'Status',
+											width: '10%',
+											options: { '1': 'Active', '0': 'InActive', '4': 'Deleted' }
+										},
+										AcceptedTerms: {
+											title: 'Terms',
+											width: '10%',
+											display: function (data) {
+												var accepted = data.record.AcceptedTerms;
+												if (accepted) {
+													return '<center><p class="text-success"><i class="fa fa-check-circle"></i> Accepted </p></center>';
+												}
+												else {
+													return '<center><p class="text-danger"><i class="fa fa-times-circle"></i> Not Yet Accepted </p></center>';
+												}
+											}
+										},
+										DateCreated: {
+											title: 'DateCreated',
+											width: '10%',
+											type: 'date',
+											displayFormat: 'yy-mm-dd'
+										},
+										MyButton: {
+											title: 'Action',
+											width: '10%',
+											display: function (data) {
+												return '<center><button class="btn btn-outline-primary w_full btn-small" onclick="LoadUpModal(' + data.record.Id + ')">' +
+													'<span class="fa fa-check-circle"></span> View Details </button></center>';
+											}
+										},
+									}
+								});
+								// Re-load records when user click button.
+								$('#search').click(function (e) {
+									e.preventDefault();
+									$('#RegisteredClientsTableContainer').jtable('load', {
+										searchMessage: $('#searchMessage').val(),
+										searchFromDate: $('#searchFromDate').val(),
+										searchToDate: $('#searchToDate').val()
+									});
+								});
+								//Load list from server
+								$('#RegisteredClientsTableContainer').jtable('load');
+							});
+						</script>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<!--Start Confirm Delete Modal -->
+<div class="modal fade right" id="LoadUpDeleteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<!-- Add class .modal-side and then add class .modal-top-right (or other classes from list above) to set a position to the modal -->
+	<div class="modal-dialog modal-side modal-top-right" role="document" style="width:500px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title w-100" id="myModalLabel"><i class="fa fa-trash"></i> Delete Client </h4>
+				<button type="button" id="closemodalup" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body students-data mb-0"></div>
+			<div class="modal-footer mb-0">
+				<div class="col-lg-12">
+					<center> <b> Global Markets Onboarding System  &copy; Stanbic Bank Kenya </b> </center>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--End Confirm Delete Modal -->
+<script type="text/javascript">
+
+	$(document).ready(function () {
+		//Initialize Date picker
+		$('.datepicker').datepicker({
+			format: "yyyy-mm-dd",
+			autoclose: true,
+		}).on('changeDate', function (e) {
+			$(this).datepicker('hide');
+		});
+	});
+
+	//select-another-item
+	$('#selectanother').click(function (e) {
+		e.preventDefault();
+		$('.item-data-retrived').hide('fast');
+		$('.item-data-retriving').hide('fast');
+		$('#RMDLoading_ID').hide('fast');
+		$('#searchform').show();
+		$('#ViewAll').show('fast');
+	});
+
+	//Function Load modal
+	function LoadUpModal(clientId) {
+		// Hide Default DIV's
+		$('#searchform').hide();
+		$('#ViewAll').hide();
+		$('#RMDLoading_ID').show('fast');
+		$('.item-data-retriving').show();
+		// LoadUp User Data
+		$.ajax({
+			type: "POST",
+			url: "/DigitalDesk/ViewClient",
+			data: '{clientId: "' + clientId + '" }',
+			async: true,
+			contentType: "application/json; charset=utf-8",
+			dataType: "html",
+			success: function (data) {
+				$('#RMDLoading_ID').hide();
+				$('.item-data-retrived').show();
+				$('.item-data-retrived').html(data);
+
+				//btnRemoveRepresentative
+				$("#btnDeleteClient").click(function (e) {
+					e.preventDefault();
+				});
+			}
+		});
+	}
+
+	//Get CSV Report
+	function GetCSVReport(){
+		var searchText = $('#searchMessage').val();
+		var DateFrom = $('#searchFromDate').val();
+		var DateTo = $('#searchToDate').val();
+		window.location = "/Gmo/ExportRegisteredClients?searchText=" + searchText + "&DateFrom=" + DateFrom + "&DateTo=" + DateTo;
+	};
+
+</script>

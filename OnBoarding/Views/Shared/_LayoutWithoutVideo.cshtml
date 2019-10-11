@@ -1,0 +1,65 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no" name="viewport">
+	<title>Stanbic Bank &mdash; Global Markets Onboarding Portal </title>
+
+	@RenderSection("head", required: false)
+	<!-- Bundled CSS -->
+	@Styles.Render("~/bundles/bootstrapfrontendcss")
+
+	<!-- Bundled JS -->
+	@Scripts.Render("~/bundles/bootstrapadminjs")
+
+	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+	<!--[if lt IE 9]>
+	  <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+	  <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+	<![endif]-->
+
+</head>
+
+<body>
+	<div id="app">
+		<div class="main-wrapper">
+			<!-- Navigation -->
+			<div class="navbar-bg navbar-fixed-top" role="navigation">
+				<div class="container">
+					<!-- Brand and toggle get grouped for better mobile display -->
+					<div class="navbar-header">
+						<a class="navbar-brand" href="~/home/index">
+							Global Markets OnBoarding Portal
+						</a>
+					</div>
+					<!-- Collect the nav links, forms, and other content for toggling -->
+					<div class="logo-image float-right">
+						<a href="~/home/index">
+							<img src="~/Content/images/STB_LOGO.jpg" class="logo" style="height: 55px; margin: 2px 5px;" />
+						</a>
+					</div>
+					<!-- /.navbar-collapse -->
+				</div>
+				<!-- /.container -->
+			</div>
+
+			@RenderBody()
+
+			<footer class="main-footer">
+				<div class="container">
+					<div class="row">
+						<div class="col-md-12 mb-3">
+							<p class="footertext">Stanbic Bank Kenya is licensed and regulated by the Central Bank of Kenya</p>
+							<img src="/Content/images/STB_AMO_rgb_A4.png" class="float-right" height="50">
+						</div>
+					</div><!-- /.row -->
+				</div>
+			</footer>
+		</div>
+	</div>
+	@RenderSection("scripts", required: false)
+</body>
+</html>

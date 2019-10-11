@@ -1,0 +1,2347 @@
+﻿@model OnBoarding.ViewModels.ApplicationViewModel
+@{
+	ViewBag.Message1 = "Welcome to the Global Markets Onboarding Portal. Let’s get started!";
+	ViewBag.Message2 = "Please read the terms and conditions carefully before accepting them.";
+	ViewBag.Message3 = "The Settlement Instructions guides settlement once you book a deal. The accounts are credited or debited as per your deals. You should have a minimum of 2 accounts and a maximum of 5";
+	ViewBag.Message4 = "Kindly input signatories as per mandate held in the Bank";
+	ViewBag.Message5 = "You are almost there. Please let us know who has approval to deal a rate on behalf of the company";
+	Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<!-- /.row -->
+<div class="row">
+	<ul class="nav nav-tabs">
+		<li class="active pull-left"><a data-toggle="tab" href="#secondTab"> New Application </a></li>
+	</ul>
+	<div class="tab-content">
+		<div id="secondTab" class="tab-pane fade in active">
+			<div class="col-md-12 form-wizard">
+				<!-- Form Wizard -->
+				<form role="form" id="ApplicationForm" action="" method="POST" accept-charset="utf-8">
+					<p>Fill the required form fields (*) to go to the next step </p>
+					<!-- Form progress -->
+					<div class="form-wizard-steps form-wizard-total-steps-6">
+						<div class="form-wizard-progress">
+							<div class="form-wizard-progress-line" data-now-value="12.25" data-number-of-steps="6" style="width: 12.25%;"></div>
+						</div>
+						<!-- Step 1 -->
+						<div class="form-wizard-step active">
+							<div class="form-wizard-step-icon"><i class="fa fa-user" aria-hidden="true"></i></div>
+							<p>Company Details</p>
+						</div>
+						<!-- Step 1 -->
+						<!-- Step 2-->
+						<div class="form-wizard-step">
+							<div class="form-wizard-step-icon"><i class="fa fa-check" aria-hidden="true"></i></div>
+							<p> Terms and Conditions</p>
+						</div>
+						<!-- Step 2 -->
+						<!-- Step 3 -->
+						<div class="form-wizard-step">
+							<div class="form-wizard-step-icon"><i class="fa fa-bank" aria-hidden="true"></i></div>
+							<p>Settlement Instructions</p>
+						</div>
+						<!-- Step 3 -->
+						<!-- Step 4 -->
+						<div class="form-wizard-step">
+							<div class="form-wizard-step-icon"><i class="fa fa-user-md" aria-hidden="true"></i></div>
+							<p>Account Signatories</p>
+						</div>
+						<!-- Step 4 -->
+						<!-- Step 5 -->
+						<div class="form-wizard-step">
+							<div class="form-wizard-step-icon"><i class="fa fa-users" aria-hidden="true"></i></div>
+							<p>Authorized representatives</p>
+						</div>
+						<!-- Step 5 -->
+						<!-- Step 6 -->
+						<div class="form-wizard-step">
+							<div class="form-wizard-step-icon"><i class="fa fa-file-text" aria-hidden="true"></i></div>
+							<p>Confirm</p>
+						</div>
+						<!-- Step 6 -->
+					</div>
+					<!-- Form progress -->
+					<!-- Form Step 1 -->
+					<fieldset>
+						<h4> Company Details <span>Step 1 of 6</span></h4>
+						<p>Provide your Company Details</p><hr />
+						<div class="form-group">
+							<table class="table table-hover">
+								<tr class="success">
+									<th>Company Details:</th>
+								</tr>
+							</table>
+							<div class="row">
+								<div class="col-md-4">
+									<label> Company Name:</label>
+									<input type="text" class="form-control" name="CompanyName" id="CompanyName" value="@ViewData["CompanyName"]" placeholder="Company / Individual Name">
+									<input name="__RequestVerificationToken" type="hidden" value="<token_generated_here>">
+									<input name="ClientID" id="ClientID" type="hidden" value="@ViewData["ClientID"]">
+									<input name="CompanyEmail" id="CompanyEmail" type="hidden" value="@ViewData["CompanyEmail"]">
+								</div>
+								<div class="col-md-4">
+									<label>Company Registration Number: <span>*</span></label>
+									<input type="text" class="form-control required" name="CompanyRegistration" id="CompanyRegistration" value="@ViewData["IncorporationNumber"]" placeholder="Company Registration Number">
+								</div>
+							</div>
+							<table class="table table-hover m_top_10">
+								<tr class="success">
+									<th>Principal Place of Business:</th>
+								</tr>
+							</table>
+							<div class="row">
+								<div class="col-md-4">
+									<label>Company Building: <span>*</span></label>
+									<input type="text" id="Building" name="Building" value="@ViewData["Building"]" placeholder="Building" class="form-control required">
+								</div>
+								<div class="col-md-4">
+									<label>Company Street: <span>*</span></label>
+									<input type="text" id="Street" name="Street" placeholder="Street" value="@ViewData["Street"]" class="form-control required">
+								</div>
+								<div class="col-md-4">
+									<label>Company Town/City: <span>*</span></label>
+									<input type="text" id="CompanyTownCity" name="CompanyTownCity" placeholder="Company Town / City" value="@ViewData["TownCity"]" class="form-control required">
+								</div>
+							</div>
+							<table class="table table-hover m_top_10">
+								<tr class="success">
+									<th>Address where notices will be sent to the counterparty:</th>
+								</tr>
+							</table>
+							<div class="row">
+								<div class="col-md-4">
+									<label>Business Email Address: <span>*</span></label>
+									<input type="email" id="BusinessEmailAddress" name="BusinessEmailAddress" value="@ViewData["BusinessEmail"]" placeholder="Business Email Address" class="form-control required">
+								</div>
+								<div class="col-md-4">
+									<label>Attention to: <span>*</span></label>
+									<input type="text" id="AttentionTo" name="AttentionTo" value="@ViewData["Attention"]" placeholder="Attention Person" class="form-control required">
+								</div>
+								<div class="col-md-4">
+									<label>Company Fax:</label>
+									<input type="text" id="CompanyFax" name="CompanyFax" value="@ViewData["Fax"]" placeholder="Company Fax" class="form-control">
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-4">
+									<label>Postal Address: <span>*</span></label>
+									<input type="text" id="PostalAddress" name="PostalAddress" placeholder="Postal Address" value="@ViewData["PostalAddress"]" class="form-control required">
+								</div>
+								<div class="col-md-4">
+									<label>Postal Code: <span>*</span></label>
+									<input type="text" id="PostalCode" name="PostalCode" placeholder="Postal Code" value="@ViewData["PostalCode"]" class="form-control required">
+								</div>
+								<div class="col-md-4">
+									<label> Town/City: <span>*</span></label>
+									<input type="text" id="AddressTownCity" name="AddressTownCity" placeholder="Town / City" value="@ViewData["TownCity"]" class="form-control required">
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-4 pull-right m_top_20">
+									<div class="form-wizard-buttons">
+										<button type="button" class="btn btn-save"><i class="fa fa-save"></i> Save</button>
+										<button type="button" class="btn btn-next  btn-fao"> Next <i class="fa fa-angle-right"></i></button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</fieldset>
+					<!-- Form Step 1 -->
+					<!-- Form Step 2 -->
+					<fieldset>
+						<h4>General Terms and Conditions <span> Step 2 - 6 </span></h4>
+						<h5>This agreement is entered into by and between: Stanbic Bank Kenya Limited (acting only through its Global Markets Division unless stated otherwise in the agreement) (the “Bank”); and <b>@ViewData["CompanyName"]</b>.</h5>
+						<div class="form-group scroll-terms">
+							<embed id="scroll" src="~/Content/documents/Merged GTCs and eMT Agreement.pdf" width="950" height="500" alt="Terms and Conditions pdf" pluginspage="http://www.adobe.com/products/acrobat/readstep2.html" />
+						</div>
+						<div class="form-group">
+							<div class="col-md-8">
+								<div class="input-group accept-terms">
+									<input type="text" id="error-check" class="form-control">
+									<span class="input-group-addon beautiful" id="beautifulcheckbox">
+										<input value="true" type="checkbox" id="terms" name="terms" class="form-control">
+									</span>
+								</div>
+							</div>
+							<div class="col-md-4">
+								<div class="form-wizard-buttons">
+									<button type="button" class="btn btn-previous"><i class="fa fa-angle-left"></i> Back</button>
+									<button type="button" class="btn btn-twende-mbele" id="acceptterms">Next <i class="fa fa-angle-right"></i></button>
+								</div>
+							</div>
+						</div><br /><br />
+					</fieldset>
+					<!-- Form Step 2 -->
+					<!-- Form Step 3 -->
+					<fieldset>
+						<h4>Standard Settlement Instructions <span>Step 3 - 6</span></h4>
+						<h5>The Settlement Instructions guides settlement once you book a deal.</h5>
+						<h5>The accounts are credited or debited as per your deals. You should have a minimum of 2 accounts and a maximum of 8 </h5><hr />
+						<div class="form-group">
+							@if (ViewBag.SettlementAccounts.Count > 0)
+							{
+								int nombre = 1;
+								<table class="custom-table" id="settlement-table">
+									<h5><b> Clients Settlement Accounts. </b></h5>
+									<th>#</th>
+									<th> Currency </th>
+									<th> Account Number </th>
+									@foreach (var item in ViewBag.SettlementAccounts)
+									{
+										<tbody>
+										<td>@nombre</td>
+										<td>@item.CurrencyName</td>
+										<td>@item.AccountNumber</td>
+										</tbody>
+
+										nombre = nombre + 1;
+									}
+								</table>
+							}
+							else
+							{
+								<h5><b> Indicate Settlement Accounts. </b></h5>
+							}
+							<div class="row" id="HaveSettlementsDiv">
+								<h5 style="margin-left: 15px;"><b> Do you have a settlement account? <i> Indicate by choosing YES of NO below. </i></b></h5>
+								<div class="col-md-3">
+									<select id="HaveSettlementAccount" name="HaveSettlementAccount" class="form-control select2" style="width: 100%;">
+										<option value="" selected> Do you have a settlement Account? </option>
+										<option value="Yes"> Yes </option>
+										<option value="No"> No </option>
+									</select>
+								</div>
+							</div><br />
+							<div class="row d_none" id="AccountDiv1">
+								<div class="col-md-3">
+									<label>Select Currency <span>*</span></label>
+									<select id="SelectCurrency1" name="SelectCurrency1" class="choose-currency form-control select2" style="width: 100%;"></select>
+								</div>
+								<div class="col-md-3 d_none" id="currencytypediv1">
+									<label>Indicate Currency Type <span>*</span></label>
+									<input type="text" class="form-control" name="InputCurrencyType1" id="InputCurrencyType1" placeholder="Currency" autocomplete="off" style="text-transform:uppercase">
+								</div>
+								<div class="col-md-3">
+									<label>Account Number <span>*</span></label>
+									<input type="text" class="form-control" name="SettlementAccount1" id="SettlementAccount1" placeholder="Account Number">
+								</div>
+								<div class="d_none col-md-3 m_top_10">
+									<button type="button" class="btn btn-success" style="margin: 8px 15px 0px 0px;" id="btnAddAccount2"><span class="glyphicon glyphicon-plus-sign"></span> Add Another Account</button>
+								</div>
+							</div>
+							<div class="row d_none" id="AccountDiv2">
+								<div class="col-md-3">
+									<label>Select Currency <span>*</span></label>
+									<select id="SelectCurrency2" name="SelectCurrency2" class="choose-currency form-control select2" style="width: 100%;"></select>
+								</div>
+								<div class="col-md-3 d_none" id="currencytypediv2">
+									<label>Indicate Currency Type <span>*</span></label>
+									<input type="text" class="form-control" name="InputCurrencyType2" id="InputCurrencyType2" placeholder="Indicate Currency Type" autocomplete="off">
+								</div>
+								<div class="col-md-3">
+									<label>Account Number <span>*</span></label>
+									<input type="text" class="form-control" name="SettlementAccount2" id="SettlementAccount2" placeholder="Account Number">
+								</div>
+								<div class="form-wizard-buttons m_top_20">
+									<button type="button" class="btn btn-success" style="margin: 8px 15px 0px 0px;" id="btnAddAccount3"><span class="glyphicon glyphicon-plus-sign"></span> Add Another Account</button>
+								</div>
+							</div>
+							<div class="row d_none" id="AccountDiv3">
+								<div class="col-md-3">
+									<label>Select Currency <span>*</span></label>
+									<select id="SelectCurrency3" name="SelectCurrency3" class="choose-currency form-control select2" style="width: 100%;"></select>
+								</div>
+								<div class="col-md-3 d_none" id="currencytypediv3">
+									<label>Indicate Currency Type <span>*</span></label>
+									<input type="text" class="form-control" name="InputCurrencyType3" id="InputCurrencyType3" placeholder="Indicate Currency Type" autocomplete="off">
+								</div>
+								<div class="col-md-3">
+									<label>Account Number <span>*</span></label>
+									<input type="text" class="form-control" name="SettlementAccount3" id="SettlementAccount3" value="" placeholder="Account Number">
+								</div>
+								<div class="form-wizard-buttons m_top_20"> 
+									<button type="button" class="btn btn-success" style="margin: 8px 15px 0px 0px;" id="btnAddAccount4"><span class="glyphicon glyphicon-plus-sign"></span> Add Another Account</button>
+									<button type="button" class="btn btn-danger" style="margin: 8px 15px 0px 0px;" id="btnRemoveAccount3"><span class="glyphicon glyphicon-minus-sign"></span> Remove Account</button>
+								</div>
+							</div>
+							<div class="row d_none" id="AccountDiv4">
+								<div class="col-md-3">
+									<label>Select Currency <span>*</span></label>
+									<select id="SelectCurrency4" name="SelectCurrency4" class="choose-currency form-control select2" style="width: 100%;"></select>
+								</div>
+								<div class="col-md-3 d_none" id="currencytypediv4">
+									<label>Indicate Currency Type <span>*</span></label>
+									<input type="text" class="form-control" name="InputCurrencyType4" id="InputCurrencyType4" placeholder="Indicate Currency Type" autocomplete="off">
+								</div>
+								<div class="col-md-3">
+									<label>Account Number <span>*</span></label>
+									<input type="text" class="form-control" name="SettlementAccount4" id="SettlementAccount4" value="" placeholder="Account Number">
+								</div>
+								<div class="form-wizard-buttons m_top_20">
+									<button type="button" class="btn btn-success" style="margin: 8px 15px 0px 0px;" id="btnAddAccount5"><span class="glyphicon glyphicon-plus-sign"></span> Add Another Account</button>
+									<button type="button" class="d_none btn btn-danger" style="margin: 8px 15px 0px 0px;" id="btnRemoveAccount4"><span class="glyphicon glyphicon-minus-sign"></span> Remove Account</button>
+								</div>
+							</div>
+							<div class="row d_none" id="AccountDiv5">
+								<div class="col-md-3">
+									<label>Select Currency <span>*</span></label>
+									<select id="SelectCurrency5" name="SelectCurrency5" class="choose-currency form-control select2" style="width: 100%;"></select>
+								</div>
+								<div class="col-md-3 d_none" id="currencytypediv5">
+									<label>Indicate Currency Type <span>*</span></label>
+									<input type="text" class="form-control" name="InputCurrencyType5" id="InputCurrencyType5" placeholder="Indicate Currency Type" autocomplete="off">
+								</div>
+								<div class="col-md-3">
+									<label>Account Number <span>*</span></label>
+									<input type="text" class="form-control" name="SettlementAccount5" id="SettlementAccount5" value="" placeholder="Account Number">
+								</div>
+								<div class="col-md-3 m_top_10">
+									<button type="button" class="d_none btn btn-danger" style="margin: 8px 15px 0px 0px;" id="btnRemoveAccount5"><span class="glyphicon glyphicon-minus-sign"></span> Remove Account</button>
+								</div>
+							</div><hr />
+							<h5 class="d_none" id="disclaimer"><i>The counterparty hereby indemnifies the Bank against all and any losses and any demages that the Bank may suffer as a result of settling any transaction in any of the aforementioned bank accounts.</i></h5>
+							<div class="row">
+								<div class="col-md-6 pull-right">
+									<div class="form-wizard-buttons">
+										<button type="button" class="btn btn-save-settlement"><i class="fa fa-save"></i> Save</button>
+										<button type="button" class="btn btn-success btn-edit-settlement d_none"><i class="fa fa-edit"></i> Change Accounts </button>
+										<button type="button" class="btn btn-previous"><i class="fa fa-angle-left"></i> Back</button>
+										<button type="button" class="btn btn-next twende-mbali"> Next <i class="fa fa-angle-right"></i></button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</fieldset>
+					<!-- Form Step 3 -->
+					<!-- Form Step 4 -->
+					<fieldset>
+						<h4>Authorized Signatories <span>Step 4 - 6</span></h4>
+						<h5 style="font-size: 12px;">
+							The following representatives of the counterparty are hereby designated as Authorized Signatories of the counterparty, having the authority to sign any relevant document pertaining to these terms on behalf of the Counterparty.
+						</h5><hr />
+						@if (ViewBag.ClientSignatory.Count > 0)
+						{
+							int nombre1 = 1;
+							<table class="custom-table" id="signatories-table">
+								<h5><b> Client Signatories. </b></h5>
+								<th>#</th>
+								<th> Full Names</th>
+								<th> Designation </th>
+								<th> Phone </th>
+								<th> Email </th>
+								<th> Uploaded Signature </th>
+								@foreach (var item in ViewBag.ClientSignatory)
+								{
+									<tbody>
+										<td>@nombre1</td>
+										<td>@(item.Surname + " " + item.OtherNames)</td>
+										<td>@item.Designation</td>
+										<td>@item.PhoneNumber</td>
+										<td>@item.EmailAddress</td>
+										<td>
+                                            @if (item.Signature == null || item.Signature == "")
+                                            {
+                                                <img width="100" height="80" src="~/Content/images/signatures/no-signature-17.jpg" />
+                                            }
+                                            else
+                                            {
+                                                <img width="100" height="80" src="~/Content/images/signatures/@item.Signature" />
+                                            }
+                                        </td>
+									</tbody>
+									nombre1 = nombre1 + 1;
+								}
+							</table><hr/>
+						}
+						else
+						{
+							<h5><b> Indicate Settlement Accounts. </b></h5>
+						}
+						<div id="SignatoryDiv1">
+							<div class="panel panel-default">
+								<div class="panel-heading">
+									<span class="glyphicon glyphicon-user"></span> Account Signatory 1: <i>[My Details]</i>
+								</div>
+								<div class="panel-body">
+									<div class="row">
+										<div class="col-md-3">
+											<label>Surname <span>*</span></label>
+											<input type="text" class="form-control required" name="SignatorySurname1" id="SignatorySurname1" value="@ViewData["Signatory1Surname"]" placeholder="Surname">
+										</div>
+										<div class="col-md-3">
+											<label>Other Names <span>*</span></label>
+											<input type="text" class="form-control required" name="SignatoryOtherNames1" id="SignatoryOtherNames1" value="@ViewData["Signatory1OtherNames"]" placeholder="Other Names">
+										</div>
+										<div class="col-md-3">
+											<label>Designation: <span>*</span></label>
+											<input type="text" class="form-control required" name="SignatoryDesignation1" id="SignatoryDesignation1" value="@ViewData["Designation"]" placeholder="Signatory Designation">
+										</div>
+										<div class="col-md-3">
+											<label>Email Address: <span>*</span></label>
+											<input type="email" class="form-control required textToLower" name="SignatoryEmail1" id="SignatoryEmail1" value="@ViewData["CompanyEmail"]" placeholder="Email Address" readonly>
+										</div>
+									</div><br />
+									<div class="row">
+										<div class="col-md-3">
+											<label>Phone Number: <span>*</span></label>
+											<input type="text" class="form-control required" name="SignatoryPhoneNumber1" id="SignatoryPhoneNumber1" value="@ViewData["Signatory1Phone"]" placeholder="Include Country Code">
+										</div>
+										<div class="col-lg-4">
+											<label>Upload Scanned Signature: <span>*</span> <i> Image Size (100 by 80)</i></label>
+											<div class="form-group image-upload">
+												<div class="setting image_picker">
+													<div class="settings_wrap">
+														<label class="drop_target">
+															<div class="image_preview"><img src=""></div>
+															<input id="inputFile" class="form-control required" type="file" name="inputFile" />
+														</label>
+														<div class="settings_actions vertical" style="margin:-70px 0px 0px 125px;">
+															<a class="disabled" data-action="remove_current_image">
+																<i class="fa fa-trash" aria-hidden="true"></i>
+																Remove Signature
+															</a>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="col-lg-4 m_top_30">
+											<h5><b>Image types to be uploaded</b></h5>
+											<ul>
+												<li style="color:red"><small>JPEG Image (.jpeg)</small></li>
+												<li style="color:red"><small>JPEG Image (.jpg)</small></li>
+												<li style="color:red"><small>Portable Network Graphic (.png)</small></li>
+											</ul>
+										</div>
+										<div class="form-wizard-buttons m_top_20">
+											<button type="button" class="btn btn-danger d_none" id="btnRemoveSignatory1"><span class="glyphicon glyphicon-minus-sign"></span> Remove </button>
+											<button type="button" class="btn btn-success" style="margin: 8px 15px 0px 0px;" id="btnAddSignatory2"><span class="glyphicon glyphicon-plus-sign"></span> Add Signatory</button>
+										</div>
+									</div><br />
+								</div>
+							</div>
+						</div>
+						<div id="SignatoryDiv2" class="d_none">
+							<div class="panel panel-default">
+								<div class="panel-heading">
+									<span class="glyphicon glyphicon-user"></span> Account Signatory 2
+								</div>
+								<div class="panel-body">
+									<div class="row">
+										<div class="col-md-3">
+											<label>Surname <span>*</span></label>
+											<input type="text" class="form-control" name="SignatorySurname2" id="SignatorySurname2" placeholder="Surname">
+										</div>
+										<div class="col-md-3">
+											<label>Other Names <span>*</span></label>
+											<input type="text" class="form-control" name="SignatoryOtherNames2" id="SignatoryOtherNames2" placeholder="Other Names">
+										</div>
+										<div class="col-md-3">
+											<label>Designation: <span>*</span></label>
+											<input type="text" class="form-control" name="SignatoryDesignation2" id="SignatoryDesignation2" placeholder="Designation">
+										</div>
+										<div class="col-md-3">
+											<label>Email Address: <span>*</span></label>
+											<input type="email" class="form-control textToLower" name="SignatoryEmail2" id="SignatoryEmail2" placeholder="Email Address">
+										</div>
+										<div class="col-md-3">
+											<label>Phone Number: <span>*</span></label>
+											<input type="text" class="form-control" name="SignatoryPhoneNumber2" id="SignatoryPhoneNumber2" placeholder="Include Country Code">
+										</div>
+									</div>
+									<div class="form-wizard-buttons m_top_20">
+										<button type="button" class="btn btn-danger" id="btnRemoveSignatory2"><span class="glyphicon glyphicon-minus-sign"></span> Remove </button>
+										<button type="button" class="btn btn-success" id="btnAddSignatory3"><span class="glyphicon glyphicon-plus-sign"></span> Add </button>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div id="SignatoryDiv3" class="d_none">
+							<div class="panel panel-default">
+								<div class="panel-heading">
+									<span class="glyphicon glyphicon-user"></span> Account Signatory 3
+								</div>
+								<div class="panel-body">
+									<div class="row">
+										<div class="col-md-3">
+											<label>Surname <span>*</span></label>
+											<input type="text" class="form-control" name="SignatorySurname3" id="SignatorySurname3" placeholder="Surname">
+										</div>
+										<div class="col-md-3">
+											<label>Other Names <span>*</span></label>
+											<input type="text" class="form-control" name="SignatoryOtherNames2" id="SignatoryOtherNames3" placeholder="Other Names">
+										</div>
+										<div class="col-md-3">
+											<label>Designation: <span>*</span></label>
+											<input type="text" class="form-control" name="SignatoryDesignation3" id="SignatoryDesignation3" placeholder="Designation">
+										</div>
+										<div class="col-md-3">
+											<label>Email Address: <span>*</span></label>
+											<input type="email" class="form-control textToLower" name="SignatoryEmail3" id="SignatoryEmail3" placeholder="Email Address">
+										</div>
+										<div class="col-md-3">
+											<label>Phone Number: <span>*</span></label>
+											<input type="text" class="form-control" name="SignatoryPhoneNumber3" id="SignatoryPhoneNumber3" placeholder="Include Country Code">
+										</div>
+									</div>
+									<div class="form-wizard-buttons m_top_20">
+										<button type="button" class="btn btn-danger" id="btnRemoveSignatory3"><span class="glyphicon glyphicon-minus-sign"></span> Remove </button>
+										<button type="button" class="btn btn-success" id="btnAddSignatory4"><span class="glyphicon glyphicon-plus-sign"></span> Add </button>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div id="SignatoryDiv4" class="d_none">
+							<div class="panel panel-default">
+								<div class="panel-heading">
+									<span class="glyphicon glyphicon-user"></span> Account Signatory 4
+								</div>
+								<div class="panel-body">
+									<div class="row">
+										<div class="col-md-3">
+											<label>Surname <span>*</span></label>
+											<input type="text" class="form-control" name="SignatorySurname4" id="SignatorySurname4" placeholder="Surname">
+										</div>
+										<div class="col-md-3">
+											<label>Other Names <span>*</span></label>
+											<input type="text" class="form-control" name="SignatoryOtherNames4" id="SignatoryOtherNames4" placeholder="Other Names">
+										</div>
+										<div class="col-md-3">
+											<label>Designation: <span>*</span></label>
+											<input type="text" class="form-control" name="SignatoryDesignation4" id="SignatoryDesignation4" placeholder="Designation">
+										</div>
+										<div class="col-md-3">
+											<label>Email Address: <span>*</span></label>
+											<input type="email" class="form-control textToLower" name="SignatoryEmail4" id="SignatoryEmail4" placeholder="Email Address">
+										</div>
+										<div class="col-md-3">
+											<label>Phone Number: <span>*</span></label>
+											<input type="text" class="form-control" name="SignatoryPhoneNumber4" id="SignatoryPhoneNumber4" placeholder="Include Country Code">
+										</div>
+									</div>
+									<div class="form-wizard-buttons m_top_20">
+										<button type="button" class="btn btn-danger" id="btnRemoveSignatory4"><span class="glyphicon glyphicon-minus-sign"></span> Remove </button>
+										<button type="button" class="btn btn-success" id="btnAddSignatory5"><span class="glyphicon glyphicon-plus-sign"></span> Add </button>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div id="SignatoryDiv5" class="d_none">
+							<div class="panel panel-default">
+								<div class="panel-heading">
+									<span class="glyphicon glyphicon-user"></span> Account Signatory 5
+								</div>
+								<div class="panel-body">
+									<div class="row">
+										<div class="col-md-3">
+											<label>Surname <span>*</span></label>
+											<input type="text" class="form-control" name="SignatorySurname5" id="SignatorySurname5" placeholder="Surname">
+										</div>
+										<div class="col-md-3">
+											<label>Other Names <span>*</span></label>
+											<input type="text" class="form-control" name="SignatoryOtherNames5" id="SignatoryOtherNames5" placeholder="Other Names">
+										</div>
+										<div class="col-md-3">
+											<label>Designation: <span>*</span></label>
+											<input type="text" class="form-control" name="SignatoryDesignation5" id="SignatoryDesignation5" placeholder="designation">
+										</div>
+										<div class="col-md-3">
+											<label>Email Address: <span>*</span></label>
+											<input type="email" class="form-control textToLower" name="SignatoryEmail5" id="SignatoryEmail5" placeholder="Email Address">
+										</div>
+										<div class="col-md-3">
+											<label>Phone Number: <span>*</span></label>
+											<input type="text" class="form-control" name="SignatoryPhoneNumber5" id="SignatoryPhoneNumber5" placeholder="Include Country Code">
+										</div>
+									</div>
+									<div class="form-wizard-buttons m_top_20">
+										<button type="button" class="btn btn-danger" id="btnRemoveSignatory5"><span class="glyphicon glyphicon-minus-sign"></span> Remove </button>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="form-wizard-buttons">
+							<button type="button" class="btn btn-success btn-edit-signatories d_none"><i class="fa fa-edit"></i> Change Signatories </button>
+							<button type="button" class="btn btn-save-signatories"><i class="fa fa-save"></i> Save</button>
+							<button type="button" class="btn btn-previous"><i class="fa fa-angle-left"></i> Back</button>
+							<button type="button" class="btn btn-next checkinputFile"> Next <i class="fa fa-angle-right"></i></button>
+						</div>
+					</fieldset>
+					<!-- Form Step 4 -->
+					<!-- Form Step 5 -->
+					<fieldset>
+						<h4>Authorized Representatives <span>Step 5 - 6</span></h4>
+						<h5 style="font-size: 12px;">
+							The following representatives of the counterparty are hereby designated Representatives of the counterparty, having the capacity to conclude transactions with the Bank and provide instructions to the Bank, whether in respect of a transaction
+							or otherwise and the acts of any Authorized Representative listed hereunder shall be fully binding to the counterparty.
+						</h5><hr />
+						@if (ViewBag.DesignatedUser.Count > 0)
+						{
+							int nombre2 = 1;
+							 <table class="custom-table" id="representatives-table">
+							 	<h5><b> Authorized Representatives. </b></h5>
+							 	<th>#</th>
+							 	<th> Full Names</th>
+							 	<th> Email </th>
+							 	<th> Trading Limit </th>
+							 	<th> EMarket SignUp </th>
+							 	@foreach (var item in ViewBag.DesignatedUser)
+								{
+							 	 <tbody>
+							 		<td>@nombre2</td>
+									<td>@(item.Surname + " " + item.Othernames)</td>
+									<td>@item.Email</td>
+									<td>@item.TradingLimit</td>
+									<td>@(item.EMarketSignUp ? "Yes" : "No")</td>
+								 </tbody>
+								 nombre2 = nombre2 + 1;
+								}
+							 </table><hr />
+						}
+						else
+						{
+							<h5><b> Indicate Authorized Representatives. </b></h5>
+						}
+						<div id="UserDiv1">
+							<div class="panel panel-default">
+								<div class="panel-heading">
+									<span class="glyphicon glyphicon-user"></span> Authorized Representative 1
+								</div>
+								<div class="panel-body">
+									<div class="row">
+										<div class="col-md-3">
+											<label>Surname <span>*</span></label>
+											<input type="text" class="form-control required" name="UserSurname1" id="UserSurname1" value="@ViewData["Representative1Surname"]" placeholder="Surname">
+										</div>
+										<div class="col-md-3">
+											<label>Other Names <span>*</span></label>
+											<input type="text" class="form-control required" name="UserOthernames1" id="UserOthernames1" value="@ViewData["Representative1Othernames"]" placeholder="Other Names">
+										</div>
+										<div class="col-md-3">
+											<label>Email <span>*</span></label>
+											<input type="email" class="form-control required" name="UserEmail1" id="UserEmail1" value="@ViewData["Representative1Email"]" placeholder="Email Address">
+										</div>
+										<div class="col-md-3">
+											<label>Mobile Number: <small></small><span>*</span></label>
+											<input type="text" class="form-control required" name="UserMobileNumber1" id="UserMobileNumber1" value="@ViewData["Representative1Phone"]" placeholder="Include country code (000)">
+										</div>
+									</div><br />
+									<div class="row d_none">
+										<div class="col-md-3">
+											<label>Date of Birth: <span>*</span></label>
+											<div class="input-group bootstrap-timepicker">
+												<div class="input-group-addon">
+													<i class="fa fa-calendar"></i>
+												</div>
+												<input type="text" class="form-control datepicker" id="DOB1" name="DOB1" placeholder="Date of Birth" style="margin:0px;" autocomplete="off">
+											</div>
+										</div>
+										<div class="col-md-3">
+											<label>Postal Office Address <span>*</span></label>
+											<input type="text" class="form-control" name="UserPOBox1" id="UserPOBox1" placeholder="Postal Address">
+										</div>
+										<div class="col-md-3">
+											<label>ZIP/Postal Code <span>*</span></label>
+											<input type="text" class="form-control" name="UserZipCode1" id="UserZipCode1" placeholder="ZIP/Postal Code">
+										</div>
+										<div class="col-md-3">
+											<label>Town/City <span>*</span></label>
+											<input type="text" class="form-control" name="UserTownCity1" id="UserTownCity1" placeholder="Town/City">
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-3">
+											<label> Does your Representative have a Transaction Limit? <span>*</span></label>
+											<select id="TransactionLimitQ1" name="TransactionLimitQ1" class="form-control select2" style="width: 100%;">
+												<option value="No" selected> Choose Yes or No </option>
+												<option value="Yes"> Yes </option>
+												<option value="No"> No </option>
+											</select>
+										</div>
+										<div class="TransactionLimit1 col-md-3 d_none">
+											<label>Transaction Limit (Upto & Including in USD $) <span>*</span></label>
+											<input type="text" class="form-control" name="TransactionLimit1" id="TransactionLimit1" placeholder="Transaction Limit in dollar ($)">
+										</div>
+										<div class="col-md-3">
+											<label>Would you like user to sign up for E-Market Trader?</label>
+											<select id="EMarketSignUp1" name="EMarketSignUp1" class="form-control select2" style="width: 100%;">
+												<option value="false" selected> Sign up for E-Market Trader? </option>
+												<option value="true"> Yes</option>
+												<option value="false">No</option>
+											</select>
+										</div>
+										<div class="col-md-3">
+											<h5 id="disclaimerUser1" class="d_none" style="color:red;"><i> Please note that this authorized representative will be created as a user on the eMarket Trader Platform  </i></h5><hr />
+										</div>
+									</div>
+									<div class="row pull-right">
+										<div class="col-md-12 m_top_20">
+											<button type="button" class="btn btn-success w_full" id="btnAddUser2"><span class="glyphicon glyphicon-plus-sign"></span> Add Another Representative </button>
+										</div><br />
+									</div>
+								</div>
+							</div>
+						</div>
+						<div id="UserDiv2" class="d_none">
+							<div class="panel panel-default">
+								<div class="panel-heading">
+									<span class="glyphicon glyphicon-user"></span> Authorized Representative 2
+								</div>
+								<div class="panel-body">
+									<div class="row">
+										<div class="col-md-3">
+											<label>Surname <span>*</span></label>
+											<input type="text" class="form-control" name="UserSurname2" id="UserSurname2" placeholder="Surname">
+										</div>
+										<div class="col-md-3">
+											<label>Other Names <span>*</span></label>
+											<input type="text" class="form-control" name="UserOthernames2" id="UserOthernames2" placeholder="Other Names">
+										</div>
+										<div class="col-md-3">
+											<label>Email <span>*</span></label>
+											<input type="text" class="form-control" name="UserEmail2" id="UserEmail2" placeholder="Email Address">
+										</div>
+										<div class="col-md-3">
+											<label>Mobile Number: <small></small><span>*</span></label>
+											<input type="text" class="form-control" name="UserMobileNumber2" id="UserMobileNumber2" placeholder="Include country code (254)">
+										</div>
+									</div><br />
+									<div class="row d_none">
+										<div class="col-md-3">
+											<label>Date of Birth: <span>*</span></label>
+											<div class="input-group bootstrap-timepicker">
+												<div class="input-group-addon">
+													<i class="fa fa-calendar"></i>
+												</div>
+												<input type="text" class="form-control datepicker" id="DOB2" name="DOB2" placeholder="Date of Birth" style="margin:0px;" autocomplete="off">
+											</div>
+										</div>
+										<div class="col-md-3">
+											<label>Postal Office Address <span>*</span></label>
+											<input type="text" class="form-control" name="UserPOBox2" id="UserPOBox2" placeholder="Postal Address">
+										</div>
+										<div class="col-md-3">
+											<label>ZIP/Postal Code <span>*</span></label>
+											<input type="text" class="form-control" name="UserZipCode2" id="UserZipCode2" placeholder="ZIP/Postal Code">
+										</div>
+										<div class="col-md-3">
+											<label>Town/City <span>*</span></label>
+											<input type="text" class="form-control" name="UserTownCity2" id="UserTownCity2" placeholder="Town/City">
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-3">
+											<label> Does your Representative have a Transaction Limit? <span>*</span></label>
+											<select id="TransactionLimitQ2" name="TransactionLimitQ2" class="form-control select2" style="width: 100%;">
+												<option value="No" selected> Choose Yes or No </option>
+												<option value="Yes"> Yes </option>
+												<option value="No"> No </option>
+											</select>
+										</div>
+										<div class="TransactionLimit2 col-md-3 d_none">
+											<label>Transaction Limit (Upto & Including in USD $) <span>*</span></label>
+											<input type="text" class="form-control" name="TransactionLimit2" id="TransactionLimit2" placeholder="Transaction Limit in dollar ($)">
+										</div>
+										<div class="col-md-3">
+											<label>Would you like user to sign up for E-Market Trader?</label>
+											<select id="EMarketSignUp2" name="EMarketSignUp2" class="form-control select2" style="width: 100%;">
+												<option value="false" selected> Sign up for E-Market Trader? </option>
+												<option value="true"> Yes </option>
+												<option value="false">No </option>
+											</select>
+										</div>
+										<div class="col-md-3">
+											<h5 id="disclaimerUser2" class="d_none" style="color:red;"><i> Please note that this authorized representative will be created as a user on the eMarket Trader Platform  </i></h5><hr />
+										</div>
+									</div>
+									<div class="row">
+										<div class="form-wizard-buttons m_top_20">
+											<button type="button" class="btn btn-danger" id="btnRemoveUser2"><span class="glyphicon glyphicon-minus-sign"></span> Remove </button>
+											<button type="button" class="btn btn-success" id="btnAddUser3"><span class="glyphicon glyphicon-plus-sign"></span> Add </button>
+										</div>
+									</div><br />
+								</div>
+							</div>
+						</div>
+						<div id="UserDiv3" class="d_none">
+							<div class="panel panel-default" style="margin-top: -40px;">
+								<div class="panel-heading">
+									<span class="glyphicon glyphicon-user"></span> Authorized Representative 3
+								</div>
+								<div class="panel-body">
+									<div class="row">
+										<div class="col-md-3">
+											<label>Surname <span>*</span></label>
+											<input type="text" class="form-control" name="UserSurname3" id="UserSurname3" placeholder="Surname">
+										</div>
+										<div class="col-md-3">
+											<label>Other Names <span>*</span></label>
+											<input type="text" class="form-control" name="UserOthernames3" id="UserOthernames3" placeholder="Other Names">
+										</div>
+										<div class="col-md-3">
+											<label>Email <span>*</span></label>
+											<input type="text" class="form-control" name="UserEmail3" id="UserEmail3" placeholder="Email Address">
+										</div>
+										<div class="col-md-3">
+											<label>Mobile Number: <small></small><span>*</span></label>
+											<input type="text" class="form-control" name="UserMobileNumber3" id="UserMobileNumber3" placeholder="Include country code (000)">
+										</div>
+									</div><br />
+									<div class="row d_none">
+										<div class="col-md-3">
+											<label>Date of Birth: <span>*</span></label>
+											<div class="input-group bootstrap-timepicker">
+												<div class="input-group-addon">
+													<i class="fa fa-calendar"></i>
+												</div>
+												<input type="text" class="form-control datepicker" id="DOB3" name="DOB3" placeholder="Date of Birth" style="margin:0px;" autocomplete="off">
+											</div>
+										</div>
+										<div class="col-md-3">
+											<label>Postal Office Address <span>*</span></label>
+											<input type="text" class="form-control" name="UserPOBox3" id="UserPOBox3" placeholder="Postal Address">
+										</div>
+										<div class="col-md-3">
+											<label>ZIP/Postal Code <span>*</span></label>
+											<input type="text" class="form-control" name="UserZipCode3" id="UserZipCode3" placeholder="ZIP/Postal Code">
+										</div>
+										<div class="col-md-3">
+											<label>Town/City <span>*</span></label>
+											<input type="text" class="form-control" name="UserTownCity3" id="UserTownCity3" placeholder="Town/City">
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-3">
+											<label> Does your Representative have a Transaction Limit? <span>*</span></label>
+											<select id="TransactionLimitQ3" name="TransactionLimitQ3" class="form-control select2" style="width: 100%;">
+												<option value="No" selected> Choose Yes or No </option>
+												<option value="Yes"> Yes </option>
+												<option value="No"> No </option>
+											</select>
+										</div>
+										<div class="TransactionLimit3 col-md-3 d_none">
+											<label>Transaction Limit (Upto & Including in USD $) <span>*</span></label>
+											<input type="text" class="form-control" name="TransactionLimit3" id="TransactionLimit3" placeholder="Transaction Limit in dollar ($)">
+										</div>
+										<div class="col-md-3">
+											<label>Would you like user to sign up for E-Market Trader?</label>
+											<select id="EMarketSignUp3" name="EMarketSignUp3" class="form-control select2" style="width: 100%;">
+												<option value="false" selected> Sign up for E-Market Trader? </option>
+												<option value="true"> Yes</option>
+												<option value="false">No</option>
+											</select>
+										</div>
+										<div class="col-md-3">
+											<h5 id="disclaimerUser3" class="d_none" style="color:red;"><i> Please note that this authorized representative will be created as a user on the eMarket Trader Platform  </i></h5><hr />
+										</div>
+									</div>
+									<div class="row">
+										<div class="form-wizard-buttons m_top_20">
+											<button type="button" class="btn btn-danger" id="btnRemoveUser3"><span class="glyphicon glyphicon-minus-sign"></span> Remove </button>
+											<button type="button" class="btn btn-success" id="btnAddUser4"><span class="glyphicon glyphicon-plus-sign"></span> Add </button>
+										</div>
+									</div><br />
+								</div>
+							</div>
+						</div>
+						<div id="UserDiv4" class="d_none">
+							<div class="panel panel-default">
+								<div class="panel-heading">
+									<span class="glyphicon glyphicon-user"></span> Authorized Representative 4
+								</div>
+								<div class="panel-body">
+									<div class="row">
+										<div class="col-md-3">
+											<label>Surname <span>*</span></label>
+											<input type="text" class="form-control" name="UserSurname4" id="UserSurname4" placeholder="Surname">
+										</div>
+										<div class="col-md-3">
+											<label>Other Names <span>*</span></label>
+											<input type="text" class="form-control" name="UserOthernames4" id="UserOthernames4" placeholder="Other Names">
+										</div>
+										<div class="col-md-3">
+											<label>Email <span>*</span></label>
+											<input type="text" class="form-control" name="UserEmail4" id="UserEmail4" placeholder="Email Address">
+										</div>
+										<div class="col-md-3">
+											<label>Mobile Number: <small></small><span>*</span></label>
+											<input type="text" class="form-control" name="UserMobileNumber4" id="UserMobileNumber4" placeholder="Include country code (254)">
+										</div>
+									</div><br />
+									<div class="row d_none">
+										<div class="col-md-3">
+											<label>Date of Birth: <span>*</span></label>
+											<div class="input-group bootstrap-timepicker">
+												<div class="input-group-addon">
+													<i class="fa fa-calendar"></i>
+												</div>
+												<input type="text" class="form-control datepicker validate" id="DOB4" name="DOB4" placeholder="Date of Birth" style="margin:0px;" autocomplete="off">
+											</div>
+										</div>
+										<div class="col-md-3">
+											<label>Postal Office Address <span>*</span></label>
+											<input type="text" class="form-control" name="UserPOBox4" id="UserPOBox4" placeholder="Postal Address">
+										</div>
+										<div class="col-md-3">
+											<label>ZIP/Postal Code <span>*</span></label>
+											<input type="text" class="form-control" name="UserZipCode4" id="UserZipCode4" placeholder="ZIP/Postal Code">
+										</div>
+										<div class="col-md-3">
+											<label>Town/City <span>*</span></label>
+											<input type="text" class="form-control" name="UserTownCity4" id="UserTownCity4" placeholder="Town/City">
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-3">
+											<label> Does your Representative have a Transaction Limit? <span>*</span></label>
+											<select id="TransactionLimitQ4" name="TransactionLimitQ4" class="form-control select2" style="width: 100%;">
+												<option value="No" selected> Choose Yes or No </option>
+												<option value="Yes"> Yes </option>
+												<option value="No"> No </option>
+											</select>
+										</div>
+										<div class="TransactionLimit4 col-md-3 d_none">
+											<label>Transaction Limit (Upto & Including in USD $) <span>*</span></label>
+											<input type="text" class="form-control" name="TransactionLimit4" id="TransactionLimit4" placeholder="Transaction Limit in dollar ($)">
+										</div>
+										<div class="col-md-3">
+											<label>Would you like user to sign up for E-Market Trader?</label>
+											<select id="EMarketSignUp4" name="EMarketSignUp4" class="form-control select2" style="width: 100%;">
+												<option value="false" selected> Sign up for E-Market Trader? </option>
+												<option value="true"> Yes </option>
+												<option value="false">No </option>
+											</select>
+										</div>
+										<div class="col-md-3">
+											<h5 id="disclaimerUser4" class="d_none" style="color:red;"><i> Please note that this authorized representative will be created as a user on the eMarket Trader Platform  </i></h5><hr />
+										</div>
+									</div>
+									<div class="row">
+										<div class="form-wizard-buttons m_top_20" style="margin-top: -40px;">
+											<button type="button" class="btn btn-danger" id="btnRemoveUser4"><span class="glyphicon glyphicon-minus-sign"></span> Remove </button>
+											<button type="button" class="btn btn-success" id="btnAddUser5"><span class="glyphicon glyphicon-plus-sign"></span> Add </button>
+										</div>
+									</div><br />
+								</div>
+							</div>
+						</div>
+						<div id="UserDiv5" class="d_none">
+							<div class="panel panel-default">
+								<div class="panel-heading">
+									<span class="glyphicon glyphicon-user"></span> Authorized Representative 5
+								</div>
+								<div class="panel-body">
+									<div class="row">
+										<div class="col-md-3">
+											<label>Surname <span>*</span></label>
+											<input type="text" class="form-control" name="UserSurname5" id="UserSurname5" placeholder="Surname">
+										</div>
+										<div class="col-md-3">
+											<label>Other Names <span>*</span></label>
+											<input type="text" class="form-control" name="UserOthernames5" id="UserOthernames5" placeholder="Other Names">
+										</div>
+										<div class="col-md-3">
+											<label>Email <span>*</span></label>
+											<input type="text" class="form-control" name="UserEmail5" id="UserEmail5" placeholder="Email Address">
+										</div>
+										<div class="col-md-3">
+											<label>Mobile Number: <small></small><span>*</span></label>
+											<input type="text" class="form-control" name="UserMobileNumber5" id="UserMobileNumber5" placeholder="Include country code (254)">
+										</div>
+									</div><br />
+									<div class="row d_none">
+										<div class="col-md-3">
+											<label>Date of Birth: <span>*</span></label>
+											<div class="input-group bootstrap-timepicker">
+												<div class="input-group-addon">
+													<i class="fa fa-calendar"></i>
+												</div>
+												<input type="text" class="form-control datepicker" id="DOB5" name="DOB5" placeholder="Date of Birth" style="margin:0px;" autocomplete="off">
+											</div>
+										</div>
+										<div class="col-md-3">
+											<label>Postal Office Address <span>*</span></label>
+											<input type="text" class="form-control" name="UserPOBox5" id="UserPOBox5" placeholder="Postal Address">
+										</div>
+										<div class="col-md-3">
+											<label>ZIP/Postal Code <span>*</span></label>
+											<input type="text" class="form-control" name="UserZipCode5" id="UserZipCode5" placeholder="ZIP/Postal Code">
+										</div>
+										<div class="col-md-3">
+											<label>Town/City <span>*</span></label>
+											<input type="text" class="form-control" name="UserTownCity5" id="UserTownCity5" placeholder="Town/City">
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-3">
+											<label> Does your Representative have a Transaction Limit? <span>*</span></label>
+											<select id="TransactionLimitQ5" name="TransactionLimitQ5" class="form-control select2" style="width: 100%;">
+												<option value="No" selected> Choose Yes or No </option>
+												<option value="Yes"> Yes </option>
+												<option value="No"> No </option>
+											</select>
+										</div>
+										<div class="TransactionLimit5 col-md-3 d_none">
+											<label>Transaction Limit (Upto & Including in USD $) <span>*</span></label>
+											<input type="text" class="form-control" name="TransactionLimit5" id="TransactionLimit5" placeholder="Transaction Limit in dollar ($)">
+										</div>
+										<div class="col-md-3">
+											<label>Would you like user to sign up for E-Market Trader?</label>
+											<select id="EMarketSignUp5" name="EMarketSignUp5" class="form-control select2" style="width: 100%;">
+												<option value="false" selected> Sign up for E-Market Trader? </option>
+												<option value="true"> Yes</option>
+												<option value="false">No</option>
+											</select>
+										</div>
+										<div class="col-md-3">
+											<h5 id="disclaimerUser5" class="d_none" style="color:red;"><i> Please note that this authorized representative will be created as a user on the eMarket Trader Platform  </i></h5><hr />
+										</div>
+									</div>
+									<div class="row">
+										<div class="form-wizard-buttons m_top_20">
+											<button type="button" class="btn btn-danger" id="btnRemoveUser5"><span class="glyphicon glyphicon-minus-sign"></span> Remove </button>
+										</div>
+									</div><br />
+								</div>
+							</div>
+						</div>
+						<div class="form-wizard-buttons">
+							<button type="button" class="btn btn-success btn-edit-representatives d_none"><i class="fa fa-edit"></i> Change Representatives </button>
+							<button type="button" class="btn btn-save-representatives"><i class="fa fa-save"></i> Save</button>
+							<button type="button" class="btn btn-previous"><i class="fa fa-angle-left"></i> Back</button>
+							<button type="button" class="btn btn-next nearApprove"> Next <i class="fa fa-angle-right"></i></button>
+						</div>
+					</fieldset>
+					<!-- Form Step 5 -->
+					<!-- Form Step 6 -->
+					<fieldset class="d_none">
+						<h4>Confirm Details <span>Step 6 - 6</span></h4>
+						<div style="clear:both;"></div>
+						<div class="table-responsive" style="margin: 0 -15px 0 -15px;">
+							<table class="table table-hover">
+								<tr class="success">
+									<th>Company Details:</th>
+									<td style="text-align: right;"><i class="fa fa fa-print fa-x"></i> Print</td>
+								</tr>
+								<tr>
+									<th>Company Name:</th>
+									<td id="ConfirmCompany" name="ConfirmCompany"></td>
+								</tr>
+								<tr>
+									<th>Company Registration Number:</th>
+									<td id="ConfirmRegistration" name="ConfirmRegistration"></td>
+								</tr>
+								<tr>
+									<th>Principal Place of Business:</th>
+									<td id="ConfirmAddress" name="ConfirmAddress"></td>
+								</tr>
+								<tr class="success">
+									<th>Settlement Instructions:</th>
+									<td></td>
+								</tr>
+								<tr id="ConfirmKEStr">
+									<th>Settlement Instruction:</th>
+									<td id="ConfirmKES" name="ConfirmKES"></td>
+								</tr>
+								<tr id="ConfirmOthertr">
+									<th>Settlement Instruction:</th>
+									<td id="ConfirmOther" name="ConfirmOther"></td>
+								</tr>
+								<tr id="ConfirmOthertr3">
+									<th>Settlement Instruction:</th>
+									<td id="ConfirmAccount3" name="ConfirmAccount3"></td>
+								</tr>
+								<tr id="ConfirmOthertr4">
+									<th>Settlement Instruction:</th>
+									<td id="ConfirmAccount4" name="ConfirmAccount4"></td>
+								</tr>
+								<tr id="ConfirmOthertr5">
+									<th>Settlement Instruction:</th>
+									<td id="ConfirmAccount5" name="ConfirmAccount5"></td>
+								</tr>
+								<tr class="success">
+									<th>Terms and Conditions:</th>
+									<td id="ConfirmTerms" name="ConfirmTerms"></td>
+								</tr>
+								<tr class="success">
+									<th>Signatories:</th>
+									<td></td>
+								</tr>
+								<tr id="Signatory1tr">
+									<th>Signatory 1:</th>
+									<td id="ConfirmSignatory1" name="ConfirmSignatory1"></td>
+								</tr>
+								<tr id="Signatory2tr">
+									<th>Signatory 2:</th>
+									<td id="ConfirmSignatory2" name="ConfirmSignatory1"></td>
+								</tr>
+								<tr id="Signatory3tr">
+									<th>Signatory 3:</th>
+									<td id="ConfirmSignatory3" name="ConfirmSignatory1"></td>
+								</tr>
+								<tr id="Signatory4tr">
+									<th>Signatory 4:</th>
+									<td id="ConfirmSignatory4" name="ConfirmSignatory1"></td>
+								</tr>
+								<tr id="Signatory5tr">
+									<th>Signatory 5:</th>
+									<td id="ConfirmSignatory5" name="ConfirmSignatory1"></td>
+								</tr>
+								<tr class="success">
+									<th>Autorised Representatives</th>
+									<td></td>
+								<tr id="AuthUser1tr">
+									<th>User 1:</th>
+									<td id="ConfirmUser1" name="ConfirmUser1"></td>
+								</tr>
+								<tr id="AuthUser2tr">
+									<th>User 2:</th>
+									<td id="ConfirmUser2" name="ConfirmUser2"></td>
+								</tr>
+								<tr id="AuthUser3tr">
+									<th>User 3:</th>
+									<td id="ConfirmUser3" name="ConfirmUser3"></td>
+								</tr>
+								<tr id="AuthUser4tr">
+									<th>User 4:</th>
+									<td id="ConfirmUser4" name="ConfirmUser4"></td>
+								</tr>
+								<tr id="AuthUser5tr">
+									<th>User 5:</th>
+									<td id="ConfirmUser5" name="ConfirmUser5"></td>
+								</tr>
+							</table>
+						</div>
+						<div class="form-wizard-buttons">
+							<button type="button" class="btn btn-previous"><i class="fa fa-angle-left"></i> Back</button>
+							<button type="submit" class="btn btn-submit"><i class="fa fa-send-o"></i> Submit </button>
+						</div>
+					</fieldset>
+					<!-- Form Step 6 -->
+				</form>
+				<!-- End Form Wizard -->
+			</div>
+			<!--Processing Submission -->
+			<div class="col-lg-12 d_none" id="Loading_Div">
+				<center class="r_corners m_top_20">
+					<h4 class="m_top_20 m_bottom_20">Please wait... Processing Your Submission</h4>
+					<img src="~/Content/images/loading-bar.gif" class="img-thumbnail m_bottom_20" alt="Loading" style="max-width:160px;">
+				</center>
+			</div>
+			<!--End Submission Processing -->
+			<!--Alert Successful -->
+			<div class="jumbotron text-xs-center d_none" style="text-align: center;" id="Success_Div">
+				<h1 class="display-3 m_top_20"><i class="fa fa-check-circle-o" style="color:green"></i><br />Thank You!</h1>
+				<p class="lead"><strong> Please check your email for further guidance on your application </strong> </p>
+				<hr>
+				<div class="col-lg-12">
+					<center class="m_top_10">
+						<b>Global Markets Onboarding  &copy; 2018 Stanbic Bank</b>
+					</center>
+				</div>
+			</div>
+			<!--End Successful ALert -->
+			<!--End Confirm Approval Modal-->
+		</div>
+		<!--Start Confirm Approval Modal -->
+		<div class="modal fade" id="LoadUpModal" role="dialog" aria-labelledby="LoadUpModal">
+			<div class="modal-dialog" style="width:500px;">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="t_aling_c"><i class="fa fa-warning" style="font-size:30px; color:red"></i> Please read carefully and accept the terms and conditions</h5>
+					</div>
+					<div class="modal-data">
+						<div class="row">
+							<div class="col-lg-6 m_top_10 m_bottom_10" style="margin-left:120px">
+								<button type="submit" class="btn btn-danger w_full" name="closemodal" id="closemodal">
+									<i class="fa fa-database"></i> Close Dialog
+								</button>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<div class="col-lg-12">
+							<center class="m_top_10">
+								<b> Global Markets Onboarding  &copy; 2018 Stanbic Bank </b>
+							</center>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--End Confirm Approval Modal-->
+	</div>
+</div>
+<script type="text/javascript">
+	jQuery().ready(function () {
+		//alert on load
+		$(function () {
+			toastr.info('@ViewBag.Message1');
+		});
+
+		$('.form-wizard .btn-fao').on('click', function () {
+			if ($('#ApplicationForm').valid()) {
+				toastr.info('@ViewBag.Message2');
+			}
+			else {
+				toastr.error('Please correct the errors on form inputs to proceed');
+			}
+		});
+
+		$('.form-wizard .btn-twende-mbele').on('click', function () {
+			var isChecked = $('#terms').prop('checked');
+			if (isChecked == true) {
+				//toastr.info('@ViewBag.Message3').css("width","500px");
+				toastr.info('@ViewBag.Message3', { "timeOut": "0", "extendedTimeOut": "0" }).css("width","500px");
+			}
+		});
+
+		$('.form-wizard .twende-mbali').on('click', function () {
+			if ($('#ApplicationForm').valid()) {
+				toastr.info('@ViewBag.Message4');
+			}
+			else {
+				toastr.error('Please correct the errors on form inputs to proceed');
+			}
+		});
+
+		var v = jQuery("#ApplicationForm").validate({
+			rules: {
+				PostalAddress: {
+					required: true,
+					number: true
+				},
+				SignatorySurname2: {
+					required: true
+				},
+				SignatoryOtherNames2: {
+					required: true
+				},
+				SignatoryDesignation2: {
+					required: true
+				},
+				SignatoryEmail2: {
+					required: true,
+					email: true
+				},
+				SignatorySurname3: {
+					required: true
+				},
+				SignatoryOtherNames3: {
+					required: true
+				},
+				SignatoryDesignation3: {
+					required: true
+				},
+				SignatoryEmail3: {
+					required: true,
+					email: true
+				},
+				SignatorySurname4: {
+					required: true
+				},
+				SignatoryOtherNames4: {
+					required: true
+				},
+				SignatoryDesignation4: {
+					required: true
+				},
+				SignatoryEmail4: {
+					required: true,
+					email: true
+				},
+				SignatorySurname5: {
+					required: true
+				},
+				SignatoryOtherNames5: {
+					required: true
+				},
+				SignatoryDesignation5: {
+					required: true
+				},
+				SignatoryEmail5: {
+					required: true,
+					email: true
+				},
+				UserSurname1: {
+					required: true
+				},
+				UserOthernames1: {
+					required: true
+				},
+				UserEmail1: {
+					required: true,
+					email: true
+				},
+				UserMobileNumber1: {
+					required: true,
+					number: true
+				},
+				UserSurname2: {
+					required: true
+				},
+				UserOthernames2: {
+					required: true
+				},
+				UserEmail2: {
+					required: true,
+					email: true
+				},
+				UserMobileNumber2: {
+					required: true,
+					number: true
+				},
+				UserMobileNumber3: {
+					required: true,
+					number: true
+				},
+				UserSurname4: {
+					required: true
+				},
+				UserOthernames4: {
+					required: true
+				},
+				UserEmail4: {
+					required: true,
+					email: true
+				},
+				UserMobileNumber4: {
+					required: true,
+					number: true
+				},
+				UserSurname5: {
+					required: true
+				},
+				UserOthernames5: {
+					required: true
+				},
+				UserEmail5: {
+					required: true,
+					email: true
+				},
+				UserMobileNumber5: {
+					required: true,
+					number: true
+				},
+				SelectCurrencyType: {
+					required: true
+				},
+				TransactionLimit1: {
+					required: true,
+					number: true
+				},
+				TransactionLimit2: {
+					required: true,
+					number: true
+				},
+				TransactionLimit3: {
+					required: true,
+					number: true
+				}, TransactionLimit4: {
+					required: true,
+					number: true
+				}, TransactionLimit5: {
+					required: true,
+					number: true
+				}, UserPOBox1: {
+					required: true,
+					number: true
+				},
+				UserPOBox2: {
+					required: true,
+					number: true
+				},
+				UserPOBox3: {
+					required: true,
+					number: true
+				},
+				UserPOBox4: {
+					required: true,
+					number: true
+				},
+				UserPOBox5: {
+					required: true,
+					number: true
+				}, UserZipCode1: {
+					required: true,
+					number: true
+				}, UserZipCode2: {
+					required: true,
+					number: true
+				}, UserZipCode3: {
+					required: true,
+					number: true
+				}, UserZipCode4: {
+					required: true,
+					number: true
+				}, UserZipCode5: {
+					required: true,
+					number: true
+				}, SignatoryPhoneNumber1: {
+					required: true,
+					number: true
+				}, SignatoryPhoneNumber2: {
+					required: true,
+					number: true
+				}, SignatoryPhoneNumber3: {
+					required: true,
+					number: true
+				}, SignatoryPhoneNumber4: {
+					required: true,
+					number: true
+				}, SignatoryPhoneNumber5: {
+					required: true,
+					number: true
+				},
+				SettlementAccount1: {
+					required: true,
+					number: true,
+					minlength: 13,
+					maxlength: 13
+				},
+				SettlementAccount2: {
+					required: true,
+					number: true,
+					minlength: 13,
+					maxlength: 13
+				},
+				SettlementAccount3: {
+					required: true,
+					number: true,
+					minlength: 13,
+					maxlength: 13
+				},
+				SettlementAccount4: {
+					required: true,
+					number: true,
+					minlength: 13,
+					maxlength: 13
+				},
+				SettlementAccount5: {
+					required: true,
+					number: true,
+					maxlength: 13,
+					minlength: 13
+				},
+				HaveSettlementAccount: {
+					required: true
+				},
+				BusinessEmailAddress: {
+					email: true
+				},
+				PostalCode: {
+					number: true
+				}
+			},
+			errorElement: "span",
+			errorClass: "help-inline-error",
+		});
+	});
+
+	$(document).ready(function () {
+		//Initialize Select2
+		$('.select2').select2(); 
+
+		//Get Currency List
+		$(".choose-currency").select2({
+			placeholder: "Select Currency",
+			allowClear: true,
+			ajax: {
+				url: '/Client/GetCurrencyList',
+				data: function (params) {
+					return {
+						q: params.term // search term
+					};
+				},
+				processResults: function (data) {
+					return {
+						results: data.items
+					};
+				},
+				minimumInputLength: 2
+			}
+		});
+
+		//Load modal
+		function LoadUpSuccessModal() {
+			$('#LoadSuccessModal').modal({ backdrop: 'static', keyboard: false });
+		}
+
+		//Get Checkbox value
+		$('#terms').on('change', function () {
+			this.value = this.checked ? true : false;
+		})
+		$('#closemodal').on('click', function () {
+		   $('#LoadUpModal').modal('hide');
+		})
+		//Initialize Date picker
+		$('.datepicker').datepicker({
+			format: "yyyy/mm/dd",
+			autoclose: true,
+		}).on('changeDate', function (e) {
+			$(this).datepicker('hide');
+		});
+
+		//Show Account on settlement accounts
+		$("#HaveSettlementAccount").change(function () {
+			//var chosenvalue = this.value;
+			if (this.value === "Yes") {
+				$('#AccountDiv1').removeClass('d_none');
+				$('#SettlementAccount1').addClass('required');
+				$('#SettlementAccount2').addClass('required');
+				$('#SelectCurrency1').addClass('required');
+				$('#SelectCurrency2').addClass('required');
+				$('#AccountDiv2').removeClass('d_none');
+				$('#disclaimer').removeClass('d_none');
+			} else {
+				$('#AccountDiv1').addClass('d_none');
+				$('#AccountDiv2').addClass('d_none');
+				$('#AccountDiv3').addClass('d_none');
+				$('#AccountDiv4').addClass('d_none');
+				$('#AccountDiv5').addClass('d_none');
+				$('#disclaimer').addClass('d_none');
+				$('#SettlementAccount1').removeClass('required');
+				$('#SettlementAccount2').removeClass('required');
+				$('#SelectCurrency1').removeClass('required');
+				$('#SelectCurrency2').removeClass('required');
+			}
+		});
+
+		//Show Account on settlement accounts
+		//EMarketSignUp5 disclaimerUser5
+		$("#EMarketSignUp1").change(function () {
+			//var chosenvalue = this.value;
+			if (this.value === "true") {
+				$('#disclaimerUser1').removeClass('d_none');
+			} else {
+				$('#disclaimerUser1').addClass('d_none');
+			}
+		});
+		$("#EMarketSignUp2").change(function () {
+			//var chosenvalue = this.value;
+			if (this.value === "true") {
+				$('#disclaimerUser2').removeClass('d_none');
+			} else {
+				$('#disclaimerUser2').addClass('d_none');
+			}
+		});
+		$("#EMarketSignUp3").change(function () {
+			//var chosenvalue = this.value;
+			if (this.value === "true") {
+				$('#disclaimerUser3').removeClass('d_none');
+			} else {
+				$('#disclaimerUser3').addClass('d_none');
+			}
+		});
+		$("#EMarketSignUp4").change(function () {
+			//var chosenvalue = this.value;
+			if (this.value === "true") {
+				$('#disclaimerUser4').removeClass('d_none');
+			} else {
+				$('#disclaimerUser4').addClass('d_none');
+			}
+		});
+		$("#EMarketSignUp5").change(function () {
+			//var chosenvalue = this.value;
+			if (this.value === "true") {
+				$('#disclaimerUser5').removeClass('d_none');
+			} else {
+				$('#disclaimerUser5').addClass('d_none');
+			}
+		});
+		//Show Account on settlement accounts
+		$("#TransactionLimitQ1").change(function () {
+			//var chosenvalue = this.value;
+			if (this.value === "Yes") {
+				$('.TransactionLimit1').removeClass('d_none');
+				$('#TransactionLimit1').addClass('required');
+			} else {
+				$('.TransactionLimit1').addClass('d_none');
+				$('#TransactionLimit1').removeClass('required');
+				$('#TransactionLimit1').removeClass('has-error');
+				$('#TransactionLimit1').val('No Limit');
+			}
+		});
+		//Show Account on settlement accounts
+		$("#TransactionLimitQ2").change(function () {
+			//var chosenvalue = this.value;
+			if (this.value === "Yes") {
+				$('.TransactionLimit2').removeClass('d_none');
+				$('#TransactionLimit2').addClass('required');
+			} else {
+				$('.TransactionLimit2').addClass('d_none');
+				$('#TransactionLimit2').removeClass('required');
+				$('#TransactionLimit2').removeClass('has-error');
+				$('#TransactionLimit2').val('No Limit');
+			}
+		});
+		//Show Account on settlement accounts
+		$("#TransactionLimitQ3").change(function () {
+			//var chosenvalue = this.value;
+			if (this.value === "Yes") {
+				$('.TransactionLimit3').removeClass('d_none');
+				$('#TransactionLimit3').addClass('required');
+			} else {
+				$('.TransactionLimit3').addClass('d_none');
+				$('#TransactionLimit3').removeClass('required');
+				$('#TransactionLimit3').removeClass('has-error');
+				$('#TransactionLimit3').val('No Limit');
+			}
+		});
+		//Show Account on settlement accounts
+		$("#TransactionLimitQ4").change(function () {
+			//var chosenvalue = this.value;
+			if (this.value === "Yes") {
+				$('.TransactionLimit4').removeClass('d_none');
+				$('#TransactionLimit4').addClass('required');
+			} else {
+				$('.TransactionLimit4').addClass('d_none');
+				$('#TransactionLimit4').removeClass('required');
+				$('#TransactionLimit4').removeClass('has-error');
+				$('#TransactionLimit4').val('No Limit');
+			}
+		});
+		//Show Account on settlement accounts
+		$("#TransactionLimitQ5").change(function () {
+			//var chosenvalue = this.value;
+			if (this.value === "Yes") {
+				$('.TransactionLimit5').removeClass('d_none');
+				$('#TransactionLimit5').addClass('required');
+			} else {
+				$('.TransactionLimit5').addClass('d_none');
+				$('#TransactionLimit5').removeClass('required');
+				$('#TransactionLimit5').removeClass('has-error');
+				$('#TransactionLimit5').val('No Limit');
+			}
+		});
+		//Manipulate settlement accounts on other select
+		$('#SelectCurrency1').on('change', function () {
+			var otherselected = this.value;
+			if (otherselected == 6) {
+				$('#currencytypediv1').removeClass('d_none');
+			} else {
+				$('#currencytypediv1').addClass('d_none');
+				$('#InputCurrencyType1 input').removeClass('help-inline-error');
+				$('#InputCurrencyType1').find('span').remove();
+				$('#InputCurrencyType1 input').val('');
+			}
+		})
+		//Manipulate settlement accounts on other select
+		$('#SelectCurrency2').on('change', function () {
+			var otherselected = this.value;
+			if (otherselected == 6) {
+				$('#currencytypediv2').removeClass('d_none');
+			} else {
+				$('#currencytypediv2').addClass('d_none');
+				$('#InputCurrencyType2 input').removeClass('help-inline-error');
+				$('#InputCurrencyType2').find('span').remove();
+				$('#InputCurrencyType2 input').val('');
+			}
+		})
+
+		// Show div 3 on add account
+		$('#btnAddAccount3').on('click', function () {
+			$('#AccountDiv3').removeClass('d_none');
+			$('#btnAddAccount3').addClass('d_none');
+		});
+		$('#btnRemoveAccount3').on('click', function () {
+			$('#AccountDiv3').addClass('d_none');
+			$('#btnAddAccount3').removeClass('d_none');
+			$('#SettlementAccount3').val("");
+			$('#InputCurrencyType3 input').removeClass('help-inline-error');
+			$('#InputCurrencyType3').find('span').remove();
+			$('#SettlementAccount3').val("");
+		});
+
+		// Show div 4 on add account
+		$('#btnAddAccount4').on('click', function () {
+			$('#AccountDiv4').removeClass('d_none');
+			$('#btnAddAccount4').addClass('d_none');
+			$('#btnRemoveAccount3').addClass('d_none');
+			$('#btnRemoveAccount4').removeClass('d_none');
+
+		});
+		$('#btnRemoveAccount4').on('click', function () {
+			$('#AccountDiv4').addClass('d_none');
+			$('#btnAddAccount4').removeClass('d_none');
+			$('#btnRemoveAccount3').removeClass('d_none');
+			$('#InputCurrencyType4 input').removeClass('help-inline-error');
+			$('#InputCurrencyType4').find('span').remove();
+			$('#SettlementAccount4').val("");
+		});
+
+		// Show div 5 on add account
+		$('#btnAddAccount5').on('click', function () {
+			$('#AccountDiv5').removeClass('d_none');
+			$('#btnAddAccount5').addClass('d_none');
+			$('#btnRemoveAccount4').addClass('d_none');
+			$('#btnRemoveAccount5').removeClass('d_none');
+		});
+		$('#btnRemoveAccount5').on('click', function () {
+			$('#AccountDiv5').addClass('d_none');
+			$('#btnAddAccount5').removeClass('d_none');
+			$('#btnRemoveAccount4').removeClass('d_none');
+			$('#InputCurrencyType5 input').removeClass('help-inline-error');
+			$('#InputCurrencyType5').find('span').remove();
+			$('#SettlementAccount5').val("");
+		});
+
+		//Manipulate Signatories Panel Divs
+		$('#btnAddSignatory2').on('click', function () {
+			$('#SignatoryDiv2').removeClass('d_none');
+			$('#btnAddSignatory2').addClass('d_none');
+		});
+		$('#btnRemoveSignatory2').on('click', function () {
+			$('#SignatoryDiv2').addClass('d_none');
+			$('#btnAddSignatory2').removeClass('d_none');
+			$('#SignatoryDiv2 input').removeClass('help-inline-error');
+			$('#SignatoryDiv2').find('span').remove();
+			$('#SignatoryDiv2 input').val('');
+		});
+		$('#btnAddSignatory3').on('click', function () {
+			$('#SignatoryDiv3').removeClass('d_none');
+			$('#btnAddSignatory3').addClass('d_none');
+			$('#btnRemoveSignatory2').addClass('d_none');
+		});
+		$('#btnRemoveSignatory3').on('click', function () {
+			$('#SignatoryDiv3').addClass('d_none');
+			$('#btnAddSignatory3').removeClass('d_none');
+			$('#btnRemoveSignatory2').removeClass('d_none');
+			$('#SignatoryDiv3 input').removeClass('help-inline-error');
+			$('#SignatoryDiv3').find('span').remove();
+			$('#SignatoryDiv3 input').val('');
+		});
+		$('#btnAddSignatory4').on('click', function () {
+			$('#SignatoryDiv4').removeClass('d_none');
+			$('#btnAddSignatory4').addClass('d_none');
+			$('#btnRemoveSignatory3').addClass('d_none');
+		});
+		$('#btnRemoveSignatory4').on('click', function () {
+			$('#SignatoryDiv4').addClass('d_none');
+			$('#btnAddSignatory4').removeClass('d_none');
+			$('#btnRemoveSignatory3').removeClass('d_none');
+			$('#SignatoryDiv4 input').removeClass('help-inline-error');
+			$('#SignatoryDiv4').find('span').remove();
+			$('#SignatoryDiv4 input').val('');
+		});
+		$('#btnAddSignatory5').on('click', function () {
+			$('#SignatoryDiv5').removeClass('d_none');
+			$('#btnAddSignatory5').addClass('d_none');
+			$('#btnRemoveSignatory4').addClass('d_none');
+		});
+		$('#btnRemoveSignatory5').on('click', function () {
+			$('#SignatoryDiv5').addClass('d_none');
+			$('#btnAddSignatory5').removeClass('d_none');
+			$('#btnRemoveSignatory4').removeClass('d_none');
+			$('#SignatoryDiv5 input').removeClass('help-inline-error');
+			$('#SignatoryDiv5').find('span').remove();
+			$('#SignatoryDiv5 input').val('');
+		});
+
+		//Manipulate user Panels Div
+		$('#btnAddUser2').on('click', function () {
+			$('#UserDiv2').removeClass('d_none');
+			$('#btnAddUser2').addClass('d_none');
+			$('#UserSurname2').addClass('required');
+			$('#UserOthernames2').addClass('required');
+			$('#UserEmail2').addClass('required');
+			$('#UserMobileNumber2').addClass('required');
+		});
+		$('#btnRemoveUser2').on('click', function () {
+			$('#UserDiv2').addClass('d_none');
+			$('#btnAddUser2').removeClass('d_none');
+			$('#UserDiv2 input').removeClass('help-inline-error');
+			$('#UserDiv2 input').removeClass('input-error');
+			$('#UserDiv2 input').val('');
+			$('#UserSurname2').removeClass('required');
+			$('#UserOthernames2').removeClass('required');
+			$('#UserEmail2').removeClass('required');
+			$('#UserMobileNumber2').removeClass('required');
+		});
+		$('#btnAddUser3').on('click', function () {
+			$('#UserDiv3').removeClass('d_none');
+			$('#btnAddUser3').addClass('d_none');
+			$('#btnRemoveUser2').addClass('d_none');
+			$('#UserSurname3').addClass('required');
+			$('#UserOthernames3').addClass('required');
+			$('#UserEmail3').addClass('required');
+			$('#UserMobileNumber3').addClass('required');
+		});
+		$('#btnRemoveUser3').on('click', function () {
+			$('#UserDiv3').addClass('d_none');
+			$('#btnAddUser3').removeClass('d_none');
+			$('#btnRemoveUser2').removeClass('d_none');
+			$('#UserDiv3').find('span').remove();
+			$('#UserDiv3 input').removeClass('help-inline-error');
+			$('#UserDiv3 input').val('');
+			$('#UserSurname3').removeClass('required');
+			$('#UserOthernames3').removeClass('required');
+			$('#UserEmail3').removeClass('required');
+			$('#UserMobileNumber3').removeClass('required');
+		});
+		$('#btnAddUser4').on('click', function () {
+			$('#UserDiv4').removeClass('d_none');
+			$('#btnAddUser4').addClass('d_none');
+			$('#btnRemoveUser3').addClass('d_none');
+			$('#UserSurname4').addClass('required');
+			$('#UserOthernames4').addClass('required');
+			$('#UserEmail4').addClass('required');
+			$('#UserMobileNumber4').addClass('required');
+		});
+		$('#btnRemoveUser4').on('click', function () {
+			$('#UserDiv4').addClass('d_none');
+			$('#btnAddUser4').removeClass('d_none');
+			$('#btnRemoveUser3').removeClass('d_none');
+			$('#UserDiv4').find('span').remove();
+			$('#UserDiv4 input').removeClass('help-inline-error');
+			$('#UserDiv4 input').val('');
+			$('#UserSurname4').removeClass('required');
+			$('#UserOthernames4').removeClass('required');
+			$('#UserEmail4').removeClass('required');
+			$('#UserMobileNumber4').removeClass('required');
+		});
+		$('#btnAddUser5').on('click', function () {
+			$('#UserDiv5').removeClass('d_none');
+			$('#btnAddUser5').addClass('d_none');
+			$('#btnRemoveUser4').addClass('d_none');
+			$('#UserSurname5').addClass('required');
+			$('#UserOthernames5').addClass('required');
+			$('#UserEmail5').addClass('required');
+			$('#UserMobileNumber5').addClass('required');
+		});
+		$('#btnRemoveUser5').on('click', function () {
+			$('#UserDiv5').addClass('d_none');
+			$('#btnAddUser5').removeClass('d_none');
+			$('#UserDiv5').find('span').remove();
+			$('#UserDiv5 input').removeClass('help-inline-error');
+			$('#btnRemoveUser4').removeClass('d_none');
+			$('#UserDiv5 input').val('');
+			$('#UserSurname5').removeClass('required');
+			$('#UserOthernames5').removeClass('required');
+			$('#UserEmail5').removeClass('required');
+			$('#UserMobileNumber5').removeClass('required');
+		});
+
+		//checkinputFile
+		$('.form-wizard .checkinputFile').on('click', function () {
+			var signatureUploaded = '@ViewData["Signature"]';
+			var vidFileLength = $("#inputFile")[0].files.length;
+			if (vidFileLength === 0 && signatureUploaded == null) {
+				toastr.error('Upload your scanned signature: Image should be of size(100 by 80)');
+			}
+
+			if ($('#ApplicationForm').valid()) {
+				toastr.info('@ViewBag.Message5');
+			}
+			else {
+				toastr.error('Please correct the errors on form inputs to proceed');
+			}
+		});
+
+		//Confirm and submit details btn-save
+		$('.form-wizard .nearApprove').on('click', function () {
+			if ($('#ApplicationForm').valid()) {
+				$('#ConfirmCompany').html($('#CompanyName').val());
+				$('#ConfirmRegistration').html($('#CompanyRegistration').val());
+				var Address = $('#CompanyTownCity').val() + " - " + $('#Building').val() + " - " + $('#Street').val();
+				$('#ConfirmAddress').html(Address);
+				var chosenvalue = $('#HaveSettlementAccount').val();
+				if (chosenvalue === "Yes") {
+					$('#ConfirmKES').html($('#SettlementAccount1').val());
+					$('#ConfirmOther').html($('#SettlementAccount2').val());
+					if ($('#SettlementAccount3').val() == "") {
+						$('#ConfirmOthertr3').addClass('d_none');
+					} else {
+						$('#ConfirmAccount3').html($('#SettlementAccount3').val());
+					}
+
+					if ($('#SettlementAccount4').val() == "") {
+						$('#ConfirmOthertr4').addClass('d_none');
+					} else {
+						$('#ConfirmAccount4').html($('#SettlementAccount4').val());
+					}
+
+					if ($('#SettlementAccount5').val() == "") {
+						$('#ConfirmOthertr5').addClass('d_none');
+					} else {
+						$('#ConfirmAccount5').html($('#SettlementAccount5').val());
+					}
+
+					$('#ConfirmOthertr').removeClass('d_none');
+				}
+				else {
+					$('#ConfirmKES').html('No Settlement Account').val();
+					$('#ConfirmOthertr').addClass('d_none');
+					$('#ConfirmOthertr3').addClass('d_none');
+					$('#ConfirmOthertr4').addClass('d_none');
+					$('#ConfirmOthertr5').addClass('d_none');
+				}
+			}
+			else
+			{
+				toastr.error('Please correct the errors on form inputs to proceed');
+			}
+
+			//Signatory Details
+			var Signatory1 = $('#SignatorySurname1').val() + " - " + $('#SignatoryOtherNames1').val() + " - " + $('#SignatoryDesignation1').val() + " - " + $('#SignatoryEmail1').val();
+			var Signatory2 = $('#SignatorySurname2').val() + " - " + $('#SignatoryOtherNames2').val() + " - " + $('#SignatoryDesignation2').val() + " - " + $('#SignatoryEmail2').val();
+			var Signatory3 = $('#SignatorySurname3').val() + " - " + $('#SignatoryOtherNames3').val() + " - " + $('#SignatoryDesignation3').val() + " - " + $('#SignatoryEmail3').val();
+			var Signatory4 = $('#SignatorySurname4').val() + " - " + $('#SignatoryOtherNames4').val() + " - " + $('#SignatoryDesignation4').val() + " - " + $('#SignatoryEmail4').val();
+			var Signatory5 = $('#SignatorySurname5').val() + " - " + $('#SignatoryOtherNames5').val() + " - " + $('#SignatoryDesignation5').val() + " - " + $('#SignatoryEmail5').val();
+
+			if($('#SignatoryEmail1').val() == '')
+			{
+				$('#Signatory1tr').addClass('d_none');
+			}
+			else
+			{
+				$('#Signatory1tr').removeClass('d_none');
+				$('#ConfirmSignatory1').html(Signatory1);
+			}
+			if($('#SignatoryEmail2').val() == '')
+			{
+				$('#Signatory2tr').addClass('d_none');
+			}
+			else
+			{
+				$('#Signatory2tr').removeClass('d_none');
+				$('#ConfirmSignatory2').html(Signatory2);
+			}
+			if($('#SignatoryEmail3').val() == '')
+			{
+				$('#Signatory3tr').addClass('d_none');
+			}
+			else
+			{
+				$('#Signatory3tr').removeClass('d_none');
+				$('#ConfirmSignatory3').html(Signatory3);
+			}
+			if($('#SignatoryEmail4').val() == '')
+			{
+				$('#Signatory4tr').addClass('d_none');
+			}
+			else
+			{
+				$('#Signatory4tr').removeClass('d_none');
+				$('#ConfirmSignatory4').html(Signatory4);
+			}
+			if($('#SignatoryEmail5').val() == '')
+			{
+				$('#Signatory5tr').addClass('d_none');
+			}
+			else
+			{
+				$('#Signatory5tr').removeClass('d_none');
+				$('#ConfirmSignatory5').html(Signatory5);
+			}
+
+			//User Details
+			var User1 = $('#UserSurname1').val() + " " + $('#UserOthernames1').val() + " - " + $('#UserMobileNumber1').val() + " - " + $('#UserEmail1').val() + " - Emarket SignUp: " + $('#EMarketSignUp1').find('option:selected').text() + " -  Transaction Limit " + $('#TransactionLimit1').val();
+			var User2 = $('#UserSurname2').val() + " " + $('#UserOthernames2').val() + " - " + $('#UserMobileNumber2').val() + " - " + $('#UserEmail2').val() + " - Emarket SignUp: " + $('#EMarketSignUp2').find('option:selected').text() + " -  Transaction Limit " + $('#TransactionLimit2').val();
+			var User3 = $('#UserSurname3').val() + " " + $('#UserOthernames3').val() + " - " + $('#UserMobileNumber3').val() + " - " + $('#UserEmail3').val() + " - Emarket SignUp: " + $('#EMarketSignUp3').find('option:selected').text() + " -  Transaction Limit " + $('#TransactionLimit3').val();
+			var User4 = $('#UserSurname4').val() + " " + $('#UserOthernames4').val() + " - " + $('#UserMobileNumber4').val() + " - " + $('#UserEmail4').val() + " - Emarket SignUp: " + $('#EMarketSignUp4').find('option:selected').text() + " -  Transaction Limit " + $('#TransactionLimit4').val();
+			var User5 = $('#UserSurname5').val() + " " + $('#UserOthernames5').val() + " - " + $('#UserMobileNumber5').val() + " - " + $('#UserEmail5').val() + " - Emarket SignUp: " + $('#EMarketSignUp5').find('option:selected').text() + " -  Transaction Limit " + $('#TransactionLimit5').val();
+
+			if($('#UserEmail1').val() == '')
+			{
+				$('#AuthUser1tr').addClass('d_none');
+			}
+			else
+			{
+				$('#AuthUser1tr').removeClass('d_none');
+				$('#ConfirmUser1').html(User1);
+			}
+			if($('#UserEmail2').val() == '')
+			{
+				$('#AuthUser2tr').addClass('d_none');
+			}
+			else
+			{
+				$('#AuthUser2tr').removeClass('d_none');
+				$('#ConfirmUser2').html(User2);
+			}
+			if($('#UserEmail3').val() == '')
+			{
+				$('#AuthUser3tr').addClass('d_none');
+			}
+			else
+			{
+				$('#AuthUser3tr').removeClass('d_none');
+				$('#ConfirmUser3').html(User3);
+			}
+			if($('#UserEmail4').val() == '')
+			{
+				$('#AuthUser4tr').addClass('d_none');
+			}
+			else
+			{
+				$('#AuthUser4tr').removeClass('d_none');
+				$('#ConfirmUser4').html(User4);
+			}
+			if($('#UserEmail5').val() == '')
+			{
+				$('#AuthUser5tr').addClass('d_none');
+			}
+			else
+			{
+				$('#AuthUser5tr').removeClass('d_none');
+				$('#ConfirmUser5').html(User5);
+			}
+		}); 
+
+		$(function () {
+			$('.input-group-addon.beautiful').each(function () {
+				var $widget = $(this),
+					$input = $widget.find('input'),
+					type = $input.attr('type');
+				settings = {
+					checkbox: {
+						on: { icon: 'fa fa-check-circle-o fa-2x' },
+						off: { icon: 'fa fa-circle-o fa-2x' }
+					}
+				};
+
+				$widget.prepend('<span class="' + settings[type].off.icon + '"></span>'); 
+				$widget.on('click', function () {
+					$input.prop('checked', !$input.is(':checked'));
+					updateDisplay();
+				});
+				//Update is Checked if Accepted terms is true
+				var acceptedTerms = '@ViewData["AcceptedTerms"]';
+				if (acceptedTerms == 'True') {
+					//alert(acceptedTerms);
+					$input.prop('checked', true);
+					updateDisplay();
+				}
+				function updateDisplay() {
+					var isChecked = $input.is(':checked') ? 'on' : 'off';
+					$widget.find('.fa').attr('class', settings[type][isChecked].icon);
+					//Just for display
+					isChecked = $input.is(':checked') ? 'I have carefully read and hereby accept the terms and conditions' : 'Please read carefully and accept the terms and conditions';
+					$widget.closest('.input-group').find('input[type="text"]').val(isChecked)
+				}
+				updateDisplay();
+			});
+		});
+
+		//Save application btn-save
+		$('.form-wizard .btn-save').on('click', function (e) {
+			e.preventDefault();
+			if ($('#ApplicationForm').valid()) {
+				$("#Loading_Div").show('fast');
+				$('#ApplicationForm').hide("fast");
+				var formData = new FormData($('#ApplicationForm')[0]);
+				$.ajax({
+					url: '@Url.Action("SaveUserInfo", "Client")',
+					type: 'POST',
+					data: formData,
+					async: true,
+					success: function () {
+						window.setTimeout(saved, 500);
+						function saved() {
+							$("#Loading_Div").hide('fast');
+							$('#ApplicationForm').show("fast");
+							toastr.success('Your application has been saved');
+						}
+					},
+					cache: false,
+					contentType: false,
+					processData: false
+				});
+			}
+			else {
+				toastr.error('Please correct the errors on form inputs to proceed');
+			}
+		});
+
+		var settlements = '@ViewBag.SettlementAccounts.Count';
+		if (settlements > 0)
+		{
+			$('#HaveSettlementAccount').val('Yes');
+			$('#HaveSettlementsDiv').addClass('d_none');
+			$('.btn-save-settlement').addClass('d_none');
+			$('.btn-edit-settlement').removeClass('d_none');
+			$('#SettlementAccount1').removeClass('required');
+			$('#SettlementAccount2').removeClass('required');
+			$('#SelectCurrency1').removeClass('required');
+			$('#SelectCurrency2').removeClass('required');
+		}
+		else
+		{
+			$('.btn-save-settlement').removeClass('d_none');
+			$('.btn-edit-settlement').addClass('d_none');
+		}
+		
+		$('.form-wizard .btn-edit-settlement').on('click', function (e) {
+			e.preventDefault();
+			$("#Loading_Div").show('fast');
+			$('#ApplicationForm').hide("fast");
+			$.ajax({
+				url: '@Url.Action("ClearSettlementAccounts", "Client")',
+				type: 'POST',
+				async: true,
+				success: function () {
+					window.setTimeout(saved, 500);
+					function saved() {
+						$("#Loading_Div").hide('fast');
+						$('#ApplicationForm').show("fast");
+						$('#AccountDiv1').removeClass('d_none');
+						$('#AccountDiv2').removeClass('d_none');
+						$('#settlement-table').addClass('d_none');
+						$('.btn-save-settlement').removeClass('d_none');
+						$('.btn-edit-settlement').addClass('d_none');
+						$('#HaveSettlementsDiv').removeClass('d_none');
+					}
+				},
+				cache: false,
+				contentType: false,
+				processData: false
+			});
+		});
+
+		//Save Settlement Accounts btn-save-settlement
+		$('.form-wizard .btn-save-settlement').on('click', function (e) {
+			e.preventDefault();
+			if ($('#ApplicationForm').valid()) {
+				$("#Loading_Div").show('fast');
+				$('#ApplicationForm').hide("fast");
+				var formData = new FormData($('#ApplicationForm')[0]);
+				$.ajax({
+					url: '@Url.Action("SaveSettlementAccounts", "Client")',
+					type: 'POST',
+					data: formData,
+					async: true,
+					success: function () {
+						window.setTimeout(saved, 500);
+						function saved() {
+							$("#Loading_Div").hide('fast');
+							$('#ApplicationForm').show("fast");
+							toastr.success('Your application has been saved');
+						}
+					},
+					cache: false,
+					contentType: false,
+					processData: false
+				});
+			}
+			else {
+				toastr.error('Please correct the errors on form inputs to proceed');
+			}
+		});
+
+		//SignatoryDiv1
+		//signatureUploaded
+		var signatories = '@ViewBag.ClientSignatory.Count';
+		if (signatories > 0)
+		{
+			$('#SignatoryDiv1').addClass('d_none');
+			$('.btn-save-signatories').addClass('d_none');
+			$('.btn-edit-signatories').removeClass('d_none');
+			$('#SignatoryDesignation1').removeClass('required');
+			$('#SignatoryPhoneNumber1').removeClass('required');
+			$('#inputFile').removeClass('required');
+		}
+		else
+		{
+			$('#SignatoryDiv1').removeClass('d_none');
+			$('.btn-save-signatories').removeClass('d_none');
+			$('.btn-edit-signatories').addClass('d_none');
+		}
+
+		//Edit Signatories
+		$('.form-wizard .btn-edit-signatories').on('click', function (e) {
+			e.preventDefault();
+			$("#Loading_Div").show('fast');
+			$('#ApplicationForm').hide("fast");
+			$.ajax({
+				url: '@Url.Action("ClearSignatories", "Client")',
+				type: 'POST',
+				async: true,
+				success: function () {
+					window.setTimeout(saved, 500);
+					function saved() {
+						$("#Loading_Div").hide('fast');
+						$('#ApplicationForm').show("fast");
+						$('#inputFile').removeClass('required');
+						$('#SignatoryDiv1').removeClass('d_none');
+						$('.btn-save-signatories').removeClass('d_none');
+						$('.btn-edit-signatories').addClass('d_none');
+						$('#signatories-table').addClass('d_none');
+					}
+				},
+				cache: false,
+				contentType: false,
+				processData: false
+			});
+		});
+
+		//Save Signatories Info
+		$('.form-wizard .btn-save-signatories').on('click', function (e) {
+			e.preventDefault();
+			if ($('#ApplicationForm').valid()) {
+				var vidFileLength = $("#inputFile")[0].files.length;
+				if (vidFileLength === 0) {
+					toastr.error('Upload your scanned signature: Image should be of size(100 by 80)');
+				}
+				else {
+					$("#Loading_Div").show('fast');
+					$('#ApplicationForm').hide("fast");
+					var formData = new FormData($('#ApplicationForm')[0]);
+					$.ajax({
+						url: '@Url.Action("SaveSignatoriesInfo", "Client")',
+						type: 'POST',
+						data: formData,
+						async: true,
+						success: function () {
+							window.setTimeout(saved, 500);
+							function saved() {
+								$("#Loading_Div").hide('fast');
+								$('#ApplicationForm').show("fast");
+								toastr.success('Your application has been saved');
+							}
+						},
+						cache: false,
+						contentType: false,
+						processData: false
+					});
+				}
+			}
+			else {
+				toastr.error('Please correct the errors on form inputs to proceed');
+			}
+		});
+
+		//RepresentativesDiv
+		var representatives = '@ViewBag.DesignatedUser.Count';
+		if (representatives > 0)
+		{
+			$('#UserDiv1').addClass('d_none');
+			$('.btn-save-representatives').addClass('d_none');
+			$('.btn-edit-representatives').removeClass('d_none');
+			$('#UserSurname1').removeClass('required');
+			$('#UserMobileNumber1').removeClass('required');  
+			$('#UserOthernames1').removeClass('required');
+			$('#UserEmail1').removeClass('required');
+		}
+		else
+		{
+			$('#UserDiv1').removeClass('d_none');
+			$('.btn-save-representatives').removeClass('d_none');
+			$('.btn-edit-representatives').addClass('d_none');
+		}
+
+		//Edit Representatives
+		$('.form-wizard .btn-edit-representatives').on('click', function (e) {
+			e.preventDefault();
+			$("#Loading_Div").show('fast');
+			$('#ApplicationForm').hide("fast");
+			$.ajax({
+				url: '@Url.Action("ClearRepresentatives", "Client")',
+				type: 'POST',
+				async: true,
+				success: function () {
+					window.setTimeout(saved, 500);
+					function saved() {
+						$("#Loading_Div").hide('fast');
+						$('#ApplicationForm').show("fast");
+						$('#inputFile').removeClass('required');
+						$('#UserDiv1').removeClass('d_none');
+						$('.btn-save-representatives').removeClass('d_none');
+						$('.btn-edit-representatives').addClass('d_none');
+						$('#representatives-table').addClass('d_none');
+					}
+				},
+				cache: false,
+				contentType: false,
+				processData: false
+			});
+		});
+
+		//Save Representatives
+		$('.form-wizard .btn-save-representatives').on('click', function (e) {
+			e.preventDefault();
+			if ($('#ApplicationForm').valid()) {
+				$("#Loading_Div").show('fast');
+				$('#ApplicationForm').hide("fast");
+				var formData = new FormData($('#ApplicationForm')[0]);
+				$.ajax({
+					url: '@Url.Action("SaveRepresentativesInfo", "Client")',
+					type: 'POST',
+					data: formData,
+					async: true,
+					success: function () {
+						window.setTimeout(saved, 500);
+						function saved() {
+							$("#Loading_Div").hide('fast');
+							$('#ApplicationForm').show("fast");
+							toastr.success('Your application has been saved');
+						}
+					},
+					cache: false,
+					contentType: false,
+					processData: false
+				});
+			}
+			else {
+				toastr.error('Please correct the errors on form inputs to proceed');
+			}
+		});
+
+		//Submit Form Action
+		$("form#ApplicationForm").submit(function (e) {
+			e.preventDefault();
+			if ($('#ApplicationForm').valid()) {
+				$("#Loading_Div").show('fast');
+				$('#ApplicationForm').hide("fast");
+				var formData = new FormData($(this)[0]);
+				$.ajax({
+					url: '@Url.Action("AddNewApplication", "Client")',
+					type: 'POST',
+					data: formData,
+					async: true,
+					success: function () {
+						window.setTimeout(close, 500);
+						window.setTimeout(close2, 1500);
+						function close() {
+							$('#ApplicationForm')[0].reset();
+							$("#Loading_Div").hide('fast');
+							$('#Success_Div').show("fast");
+						}
+						function close2() {
+							$('#Success_Div').hide("fast");
+							window.location.replace("/Client/ViewAll");
+						}
+					},
+					cache: false,
+					contentType: false,
+					processData: false
+				});
+			}
+		});
+
+	});
+</script>
+<script type="text/javascript">
+	var IDLE_TIMEOUT = 600; //seconds 5 minutes
+	var _idleSecondsCounter = 0;
+	document.onclick = function () {
+		_idleSecondsCounter = 0;
+	};
+	document.onmousemove = function () {
+		_idleSecondsCounter = 0;
+	};
+	document.onkeypress = function () {
+		_idleSecondsCounter = 0;
+	};
+	window.setInterval(CheckIdleTime, 1000);
+	function CheckIdleTime() {
+		_idleSecondsCounter++;
+		var oPanel = document.getElementById("SecondsUntilExpire");
+		if (oPanel)
+			oPanel.innerHTML = (IDLE_TIMEOUT - _idleSecondsCounter) + "";
+		if (_idleSecondsCounter >= IDLE_TIMEOUT) {
+			document.getElementById('logoutForm').submit()
+		}
+	}
+</script>

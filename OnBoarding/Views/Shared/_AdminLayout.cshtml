@@ -1,0 +1,71 @@
+﻿@using Microsoft.AspNet.Identity
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no" name="viewport">
+    <title>Stanbic Bank &mdash; Global Markets Onboarding Portal </title>
+
+    @RenderSection("head", required: false)
+
+    <!-- Bundled CSS -->
+    @Styles.Render("~/bundles/bootstrapadmincss")
+
+    <!-- Bundled JS -->
+    @Scripts.Render("~/bundles/bootstrapadminjs")
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+    <div id="app">
+        <div class="main-wrapper">
+            <div class="navbar-bg"></div>
+            <!-- Navigation -->
+            @Html.Action("Admin", "Navbar")
+
+            <div class="main-content">
+                @RenderBody()
+            </div>
+            <footer class="main-footer">
+				<div class="footer-left">
+					<b> Stanbic Bank &mdash; Global Markets Onboarding Portal </b>
+				</div>
+				<div class="footer-right float-right"> <b>Copyright &copy; @DateTime.Now.Year </b></div>
+            </footer>
+        </div>
+    </div>
+</body>
+</html>
+<script type="text/javascript">
+	var IDLE_TIMEOUT = 600; //seconds 5 minutes
+	var _idleSecondsCounter = 0;
+	document.onclick = function () {
+		_idleSecondsCounter = 0;
+	};
+	document.onmousemove = function () {
+		_idleSecondsCounter = 0;
+	};
+	document.onkeypress = function () {
+		_idleSecondsCounter = 0;
+	};
+	window.setInterval(CheckIdleTime, 1000);
+	function CheckIdleTime() {
+		_idleSecondsCounter++;
+		var oPanel = document.getElementById("SecondsUntilExpire");
+		if (oPanel)
+			oPanel.innerHTML = (IDLE_TIMEOUT - _idleSecondsCounter) + "";
+		if (_idleSecondsCounter >= IDLE_TIMEOUT) {
+			document.getElementById('logoutForm').submit()
+		}
+	}
+</script>

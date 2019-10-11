@@ -1,0 +1,249 @@
+﻿
+@{
+	ViewBag.Title = "UploadExistingClients";
+	Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<section class="section">
+	<div class="col-12 col-sm-12 col-lg-12">
+		<div class="card">
+			<div class="card-header">
+				<h5> Upload Existing Clients </h5>
+			</div>
+			<div class="card-body">
+				<ul class="nav nav-tabs" id="myTab" role="tablist">
+					<li class="nav-item">
+						<a class="nav-link active show" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">
+							<i class="fa fa-list"></i> Upload Existing Clients
+						</a>
+					</li>
+				</ul>
+				<div class="tab-content" id="myTabContent">
+				<!-- Listing Tab-->
+					<div class="tab-pane fade active show" id="home" role="tabpanel" aria-labelledby="home-tab">
+						<form enctype="multipart/form-data" role="form" id="UploadForm" action="" method="POST" accept-charset="utf-8">
+								<div class="form-group form-row" style="margin-left: 0px !important;">
+									<div class="col-md-12 col-sm-12 col-lg-12">
+										<label style="font-size: 12px;">Choose CSV file to Upload <i style="color:red;"> Your list should be in the following format </i>:</label>
+									</div>
+									<div class="col-12 col-sm-12 col-lg-12">
+										<table class="table-bordered" style="width:100%; border: 1px solid black; border-collapse: collapse;">
+											<tr style="border: 1px solid black;">
+												<th>Clients Name</th>
+												<th>Client Number</th>
+												<th>Company Name</th>
+												<th>Company Registration</th>
+												<th>Business Email </th>
+												<th>Email</th>
+												<th>Postal Address</th>
+												<th>Postal Code</th>
+												<th>Town/City</th>
+												<th>PhoneNumber</th>
+											</tr>
+											<tr style="border: 1px solid black;">
+												<td>John Doe</td>
+												<td>C001</td>
+												<td>Company LTD</td>
+												<td>R001</td>
+												<td>business@email.com</td>
+												<td>email@email.com</td>
+												<td>0001</td>
+												<td>00100</td>
+												<td>Nairobi</td>
+												<td>254 70000000</td>
+											</tr>
+											<tr>
+												<td>John Doe</td>
+												<td>C002</td>
+												<td>Company LTD</td>
+												<td>R002</td>
+												<td>business@email.com</td>
+												<td>email@email.com</td>
+												<td>0002</td>
+												<td>00200</td>
+												<td>Nairobi</td>
+												<td>254 70000000</td>
+											</tr>
+										</table>
+									</div>
+								</div><hr />
+								<div class="form-group form-row" style="margin-left: 0px !important;">
+									<div class="col-12 col-sm-8 col-lg-8">
+										<div class="input-group">
+											<label class="input-group-btn">
+												<span class="btn btn-primary mt-0">
+													Browse&hellip; <input type="file" name="FileUpload" id="FileUpload" class="uploadFile" style="width: 0px;height: 0px;overflow: hidden;">
+												</span>
+											</label>
+											<input type="text" class="form-control" name="frm_filename" id="frm_filename" readonly>
+										</div>
+									</div>
+									<div class="col-12 col-sm-4 col-lg-4">
+										<button type="submit" name="submit" id="btnSubmit" class="btn btn-info btn-md w_full">
+											<i class="fa fa-upload"></i> Upload Existing Clients
+										</button>
+									</div>
+								</div>
+							</form>
+							<div class="item-data-retriving d_none">
+								<div class="form-group form-row" style="margin-left: 0px !important;">
+									<div class="col-12 col-sm-9 col-lg-9">
+										<h6><i class="fa fa-adjust"></i> View Client Details </h6>
+									</div>
+									<h4 class="text-aqua"><i class="fa fa-adjust"></i> Uploaded Clients </h4>
+								</div>
+								<div class="col-xs-6">
+									<button class="btn btn-danger pull-right select-another-item">
+										<span class="glyphicon glyphicon-upload"></span> Upload Another List
+									</button>
+								</div>
+							</div>
+							<!--Load Up Data -->
+							<center id="Loading_Div" class="d_none">
+								<h4 class="m_top_20 m_bottom_20"> Please wait... Submiting your request </h4>
+								<img src="~/Content/images/loading-bar.gif" class="img-thumbnail" alt="Loading" style="max-width:160px;">
+							</center>
+							<!--End Loading Up Data -->
+					</div>
+						<!--End Submission Processing -->
+						<div class="item-data-retrived"></div>
+
+					</div>
+			</div>
+		</div>
+	</div>
+</section>
+<!--Start Confirm Approval Modal -->
+<div class="modal fade" id="LoadUpModal" role="dialog" aria-labelledby="LoadUpModal">
+	<div class="modal-dialog" style="width:500px;">
+		<div class="modal-content">
+			<div class="modal-header t_aling_c" style="margin-left:100px">
+				<h5> <i class="fa fa-warning"></i> CSV Upload failure! Please Try again</h5>
+			</div>
+			<div class="modal-data">
+				<div class="form-row">
+					<div class="col-12 col-lg-12 t_aling_c">
+						<h6 id="XmlHttpRequest" style="font-size:14px; color:red"></h6>
+					</div>
+					<div class="col-12 col-lg-6 m_bottom_10" style="margin-left:120px">
+						<button type="submit" class="btn btn-danger w_full" name="closemodal" id="closemodal">
+							<i class="fa fa-window-close"></i> Close
+						</button>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<div class="col-lg-12">
+					<center class="m_top_10">
+						<b>Global Markets Onboarding  &copy; Stanbic Bank Kenya</b>
+					</center>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--End Confirm Approval Modal-->
+<script type="text/javascript">
+	jQuery().ready(function () {
+		var v = jQuery("#UploadForm").validate({
+			rules: {
+				FileUpload: {
+					required: true
+				}
+			},
+			errorElement: "span",
+            errorClass: "help-inline-error",
+			messages: {
+				FileUpload: {
+					required: "Please select file input with fromat as shown above",
+				}
+			}
+		});
+	});
+
+	$(document).ready(function () {
+		//Load modal
+		function LoadUpModal() {
+			$('#LoadUpModal').modal({ backdrop: 'static', keyboard: false });
+		}
+		//Close modal fnction
+		$('#closemodal').on('click', function (e) {
+			e.preventDefault();
+			$('#LoadUpModal').modal('hide');
+		})
+		//select-another-item
+		$('.select-another-item').click(function (e) {
+			e.preventDefault();
+			$('.item-data-retrived').hide('fast');
+			$('.item-data-retriving').hide('fast');
+			$('#UploadForm').show('fast');
+		});
+
+		//Upload scripts
+		$("#frm_filename").val("Select CSV file for upload with the format above");
+		$("#FileUpload").on("change", uploadFile);
+		function uploadFile() {
+			var ftype = $(this).get(0).files[0].type,
+			fname = $(this).get(0).files[0].name,
+			fextension = fname.split('.').pop(), // Another way to get file extension: fname.substring(fname.lastIndexOf('.')+1);
+			validExtensions = ["csv"];
+			if (validExtensions.includes(fextension, 0)) {
+				$("#frm_filename").val(fname);
+				$("#frm_filename").removeClass('is-invalid');
+				$("#btnSubmit").removeClass('d_none');
+			}
+			else {
+				$("#frm_filename").val("The selected file input is not valid");
+				$("#btnSubmit").addClass('d_none');
+				$("#frm_filename").addClass('is-invalid');
+			}
+		}
+
+		//Submit Form Action
+		$("form#UploadForm").submit(function (e) {
+			e.preventDefault();
+			if ($('#UploadForm').valid()) {
+				$("#Loading_Div").show('fast');
+				$('#UploadForm').hide("fast");
+				var formData = new FormData($(this)[0]);
+				$.ajax({
+					url: "/DigitalDesk/ExistingClientUploads",
+					type: 'POST',
+					data: formData,
+					async: true,
+					success: function (XmlHttpRequest) {
+						window.setTimeout(close, 500);
+						function close() {
+							if (XmlHttpRequest == 'success') {
+								$('#UploadForm')[0].reset();
+								$("#Loading_Div").hide('fast');
+								//Load Uploaded Clients html
+								$.ajax({
+									type: "POST",
+									url: "/DigitalDesk/ViewUploadedClients",
+									contentType: "application/json; charset=utf-8",
+									dataType: "html",
+									success: function (data) {
+										$('.item-data-retriving').show();
+										$(".select-another-item").show('fast');
+										$('.item-data-retrived').html(data);
+									}
+								});
+							}
+							else {
+								LoadUpModal();
+								$('#XmlHttpRequest').text(XmlHttpRequest);
+								$('.item-data-retriving').hide('fast');
+								$("#Loading_Div").hide('fast');
+								$('#UploadForm')[0].reset();
+								$('#UploadForm').show("fast");
+							}
+						}
+					},
+					cache: false,
+					contentType: false,
+					processData: false
+				});
+			}
+		});
+	});
+</script>

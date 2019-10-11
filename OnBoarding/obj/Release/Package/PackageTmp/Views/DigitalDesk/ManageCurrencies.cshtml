@@ -1,0 +1,221 @@
+﻿@{
+	Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<section class="section">
+	<div class="col-12 col-sm-12 col-lg-12">
+		<div class="card">
+			<div class="card-header">
+				<h4> System Currencies </h4>
+			</div>
+			<div class="card-body">
+				<ul class="nav nav-tabs" id="myTab" role="tablist">
+					<li class="nav-item">
+						<a class="nav-link active show" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">
+							<i class="fa fa-list"></i> System Currencies
+						</a>
+					</li>
+					<li class="nav-item ml-auto">
+						<a class="nav-link" id="add-tab" data-toggle="tab" href="#add" role="tab" aria-controls="add" aria-selected="true">
+							<i class="fa fa-plus"></i> Add Currencies
+						</a>
+					</li>
+				</ul>
+				<div class="tab-content" id="myTabContent">
+					<!-- Listing Tab-->
+					<div class="tab-pane fade active show" id="home" role="tabpanel" aria-labelledby="home-tab">
+						<form action="" class="mt-2" id="searchform" name="searchform" method="POST">
+							<div class="form-group form-row" style="margin-left: 0px !important;">
+								<div class="col-12 col-sm-9 col-lg-9">
+									<input type="text" id="searchMessage" name="searchMessage" placeholder="Search Currencies by short Name or Name" value="" class="form-control required" />
+								</div>
+								<div class="col-12 col-sm-3 col-lg-3">
+									<button id="search" class="btn btn-success w_full" type="button"><i class="fa fa-check-circle"></i> Search </button>
+								</div>
+							</div>
+						</form> <hr />
+						<div class="row mt-3"> 
+							<div class="col-lg-12 col-md-12 col-12">
+								<div id="CurrenciesTableContainer"></div>
+							</div>
+							<script>
+								$(document).ready(function () {
+									$('#CurrenciesTableContainer').jtable({
+										title: '<i class="fa fa-list"></i> System Currencies',
+										paging: true,
+										pageSize: 10,
+										sorting: true,
+										defaultSorting: 'Id DESC',
+										actions:
+										{
+											listAction: '/DigitalDesk/GetSystemCurrencies'
+										},
+										fields: {
+											Id: {
+												key: true,
+												list: false
+											},
+											CurrencyShort: {
+												title: 'Short Name',
+												width: '10%'
+											},
+											CurrencyName: {
+												title: 'Currency Name',
+												width: '30%'
+											},
+											Status: {
+												title: 'Status',
+												width: '10%',
+												options: { '1': 'Active', '0': 'InActive', '4': 'Deleted' }
+											},
+											DateCreated: {
+												title: 'DateCreated',
+												width: '10%',
+												type: 'date',
+												displayFormat: 'yy-mm-dd'
+											},
+											MyButton: {
+												title: 'Action',
+												width: '10%',
+												display: function (data) {
+													return '<center><button class="btn btn-outline-primary w_full btn-small" onclick="LoadUpModal(' + data.record.Id + ')">' +
+														'<span class="fa fa-edit"></span> Edit </button></center>';
+												}
+											},
+										}
+									});
+									// Re-load records when user click button.
+									$('#search').click(function (e) {
+										e.preventDefault();
+										$('#CurrenciesTableContainer').jtable('load', {
+											searchMessage: $('#searchMessage').val()
+										});
+									});
+
+									//Load list from server
+									$('#CurrenciesTableContainer').jtable('load');
+								});
+							</script>
+						</div>
+					</div>
+
+					<!-- Add Tab-->
+					<div class="tab-pane fade" id="add" role="tabpanel" aria-labelledby="home-tab">
+						<form action="" enctype="multipart/form-data" method="post" class="mt-2" id="Add_Currency_FRM" name="Add_Currency_FRM" data-fv-message="This value is not valid"
+							  data-fv-icon-validating="glyphicon glyphicon-refresh">
+							<div class="form-group form-row" style="margin-left: 0px !important;">
+								<div class="col-12 col-sm-6 col-lg-6">
+									<div class="form-group">
+										<input type="text" class="form-control" name="CurrencyName" id="CurrencyName" placeholder="Currency Name" />
+									</div>
+								</div>
+								<div class="col-12 col-sm-3 col-lg-3">
+									<div class="form-group">
+										<input type="text" class="form-control" name="CurrencyShortName" id="CurrencyShortName" placeholder="Currency Short Name" />
+									</div>
+								</div>
+								<div class="col-12 col-sm-3 col-lg-3">
+									<div class="form-group">
+										<button type="submit" class="btn submitform btn-primary w_full mt-0" name="submit">
+											<span class="fa fa fa-check-circle"></span> Add Currency
+										</button>
+									</div>
+								</div>
+							</div>
+						</form>
+						<!--Processing Submission -->
+						<div class="col-lg-12 col-12 d_none mt-4" id="Loading_ID">
+							<center class="r_corners">
+								<h4 class="m_top_20 m_bottom_20">Please wait... Processing Your Submission</h4>
+								<img src="~/Content/images/loading-bar.gif" class="img-thumbnail m_bottom_20" alt="Loading" style="max-width:160px;">
+							</center>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<!--Start Confirm Approval Modal -->
+<div class="modal fade right" id="LoadUpModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<!-- Add class .modal-side and then add class .modal-top-right (or other classes from list above) to set a position to the modal -->
+	<div class="modal-dialog modal-side modal-top-right" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title w-100" id="myModalLabel"><i class="fa fa-edit"></i> Edit Currency </h4>
+				<button type="button" id="closemodalup" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body students-data mb-0"></div>
+		</div>
+	</div>
+</div>
+<!--End Confirm Approval Modal-->
+<script type="text/javascript">
+	//Function Load modal
+	function LoadUpModal(getCurrencyId) {
+		$('#LoadUpModal').modal({ backdrop: 'static', keyboard: false });
+		$.ajax({
+			type: "POST",
+			url: "/DigitalDesk/LoadEditCurrency",
+			data: '{getCurrencyId: "' + getCurrencyId + '" }',
+			contentType: "application/json; charset=utf-8",
+			dataType: "html",
+			success: function (data) {
+				$('.students-data').html(data);
+			}
+		});
+	}
+
+	jQuery().ready(function () {
+		var v = jQuery("#Add_Currency_FRM").validate({
+			rules: {
+				CurrencyName: {
+					required: true,
+					minlength: 4
+				},
+				CurrencyShortName: {
+					required: true,
+					minlength: 2
+				}
+			},
+			errorElement: "span",
+			errorClass: "help-inline-error",
+		});
+	});
+	$(document).ready(function () {
+		// Ajax Form Submission Starts
+		$("form#Add_Currency_FRM").submit(function (e) {
+			e.preventDefault();
+			if ($('#Add_Currency_FRM').valid()) {
+				$("#Loading_ID").show('fast');
+				$('#Add_Currency_FRM').hide("fast");
+				var formData = new FormData($(this)[0]);
+				$.ajax({
+					url: "/DigitalDesk/AddNewCurrency",
+					type: 'POST',
+					data: formData,
+					async: true,
+					success: function (data) {
+						window.setTimeout(close, 500);
+						function close() {
+							$("#Loading_ID").hide('explode');
+							$('#Add_Currency_FRM').show("fast");
+							$('#Add_Currency_FRM')[0].reset();
+							$('#CurrenciesTableContainer').jtable('load');
+						}
+					},
+					cache: false,
+					contentType: false,
+					processData: false
+				});
+			}
+		});
+
+		$('#closemodalup').on('click', function (e) {
+			e.preventDefault();
+			$('#LoadUpModal').modal('hide');
+		})
+	});
+
+</script>

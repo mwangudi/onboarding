@@ -1,0 +1,158 @@
+﻿@{
+	Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<section class="section">
+	<div class="col-12 col-sm-12 col-lg-12">
+		<div class="card">
+			<div class="card-header">
+				<h4> Client Signatories </h4>
+			</div>
+			<div class="card-body">
+				<ul class="nav nav-tabs" id="myTab" role="tablist">
+					<li class="nav-item">
+						<a class="nav-link active show" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">
+							<i class="fa fa-list"></i> Client Signatory
+						</a>
+					</li>
+				</ul>
+				<div class="tab-content" id="myTabContent">
+					<div class="tab-pane fade active show" id="home" role="tabpanel" aria-labelledby="home-tab">
+						<form action="" class="mt-2" id="searchform" name="searchform" method="POST">
+							<div class="form-group form-row" style="margin-left: 0px !important;">
+								<div class="col-12 col-sm-9 col-lg-9">
+									<input type="text" id="searchMessage" name="searchMessage" placeholder="Search  Client Signatory By company name, email" value="" class="form-control" />
+								</div>
+								<div class="col-12 col-sm-3 col-lg-3">
+									<button id="search" class="btn btn-success w_full" type="button"><i class="fa fa-check-circle"></i> Search </button>
+								</div>
+							</div>
+						</form>
+						<div class="item-data-retriving d_none">
+							<div class="form-group form-row" style="margin-left: 0px !important;">
+								<div class="col-12 col-sm-9 col-lg-9">
+									<h6><i class="fa fa-adjust"></i> View Signatory Details </h6>
+								</div>
+								<div class="col-12 col-sm-3 col-lg-3">
+									<button id="selectanother" class="btn btn-danger w_full" type="button"><i class="fa fa-check-circle"></i> Select Another Signatory </button>
+								</div>
+
+							</div>
+						</div><hr />
+						<!--Load Up Data -->
+						<center id="RMDLoading_ID" class="d_none r_corners">
+							<h6 class="m_top_20 m_bottom_20"> Please wait... Fetching Client Details </h6>
+							<img src="~/Content/images/loading-bar.gif" class="img-thumbnail" alt="Loading" style="max-width:160px;">
+						</center>
+						<!--End Loading Up Data -->
+					</div>
+					<div class="item-data-retrived"></div>
+					<div class="row" id="ViewAll">
+						<div class="col-lg-12 col-md-12 col-12">
+							<div id="ClientSignatoriesTableContainer"></div>
+						</div>
+						<script>
+								$(document).ready(function () {
+									$('#ClientSignatoriesTableContainer').jtable({
+										title: '<i class="fa fa-list"></i>  Client Signatories',
+										paging: true,
+										pageSize: 10,
+										sorting: true,
+										defaultSorting: 'SignatoryId DESC',
+										actions:
+										{
+											listAction: '/DigitalDesk/GetClientSignatories'
+										},
+										fields: {
+											SignatoryId: {
+												key: true,
+												list: false
+											},
+											Names: {
+												title: 'Names',
+												width: '20%'
+											},
+											ClientName: {
+												title: 'Company',
+												width: '20%'
+											},
+											Email: {
+												title: 'Email',
+												width: '20%'
+											},
+											Status: {
+												title: 'Status',
+												width: '10%'
+											},
+											AcceptedTAC: {
+												title: 'Terms',
+												width: '10%',
+												options: { '1': 'Accepted', '0': 'No' }
+											},
+											DateCreated: {
+												title: 'DateCreated',
+                                                width: '20%',
+											},
+											MyButton: {
+												title: 'Action',
+												width: '10%',
+												display: function (data) {
+													return '<center><button class="btn btn-outline-primary w_full btn-small" onclick="LoadUpModal(' + data.record.SignatoryId + ')">' +
+														'<span class="fa fa-check-circle"></span> View Details </button></center>';
+												}
+											},
+										}
+									});
+									// Re-load records when user click button.
+									$('#search').click(function (e) {
+										e.preventDefault();
+										$('#ClientSignatoriesTableContainer').jtable('load', {
+											searchMessage: $('#searchMessage').val()
+										});
+									});
+									//Load list from server
+									$('#ClientSignatoriesTableContainer').jtable('load');
+								});
+						</script>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<script type="text/javascript">
+
+	//select-another-item
+	$('#selectanother').click(function (e) {
+		e.preventDefault();
+		$('.item-data-retrived').hide('fast');
+		$('.item-data-retriving').hide('fast');
+		$('#RMDLoading_ID').hide('fast');
+		$('#searchform').show();
+		$('#ViewAll').show('fast');
+	});
+
+	//Function Load modal
+	function LoadUpModal(signatoryId) {
+        // Hide Default DIV's
+        $('#searchform').hide();
+        $('#ViewAll').hide();
+        $('#RMDLoading_ID').show('fast');
+        $('.item-data-retriving').show();
+		// LoadUp User Data
+		$.ajax({
+			type: "POST",
+			url: "/DigitalDesk/ViewSignatory",
+			data: '{signatoryId: "' + signatoryId + '" }',
+			async: true,
+            contentType: "application/json; charset=utf-8",
+			dataType: "html",
+            success: function (data) {
+                $('#RMDLoading_ID').hide();
+                $('.item-data-retrived').show();
+				$('.item-data-retrived').html(data);
+            }
+        });
+    }
+
+</script>
