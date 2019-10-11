@@ -289,10 +289,7 @@ $.extend($.validator, {
 		digits: "Please enter only digits.",
 		creditcard: "Please enter a valid credit card number.",
 		equalTo: "Please enter the same value again.",
-<<<<<<< HEAD
-=======
 		notEqualTo: "Please enter a different email address for the nominee",
->>>>>>> 4a57cb65d9ff4345fc860a183a3da86a25aa01d6
 		maxlength: $.validator.format("Please enter no more than {0} characters."),
 		minlength: $.validator.format("Please enter at least {0} characters."),
 		rangelength: $.validator.format("Please enter a value between {0} and {1} characters long."),
@@ -1120,22 +1117,6 @@ $.extend($.validator, {
 				});
 			}
 			return value === target.val();
-<<<<<<< HEAD
-        },
-
-        // http://docs.jquery.com/Plugins/Validation/Methods/equalTo
-        notEqualTo: function (value, element, param) {
-            // bind to the blur event of the target in order to revalidate whenever the target field is updated
-            // TODO find a way to bind the event just once, avoiding the unbind-rebind overhead
-            var target = $(param);
-            if (this.settings.onfocusout) {
-                target.unbind(".validate-equalTo").bind("blur.validate-equalTo", function () {
-                    $(element).valid();
-                });
-            }
-            return value !== target.val();
-        },
-=======
 		},
 
 		// http://docs.jquery.com/Plugins/Validation/Methods/equalTo
@@ -1150,7 +1131,6 @@ $.extend($.validator, {
 			}
 			return value !== target.val();
 		},
->>>>>>> 4a57cb65d9ff4345fc860a183a3da86a25aa01d6
 
 		// http://docs.jquery.com/Plugins/Validation/Methods/remote
 		remote: function( value, element, param ) {
@@ -1215,15 +1195,11 @@ $.format = $.validator.format;
 
 }(jQuery));
 
-<<<<<<< HEAD
-=======
 jQuery.validator.addMethod("accountStartingWith010", function (phone_number, element) {
 	phone_number = phone_number.replace(/\s+/g, "");
 	return this.optional(element) || phone_number.match(/^010\d{8,}$/);
 }, "Invalid Stanbic Bank account number");
 
-
->>>>>>> 4a57cb65d9ff4345fc860a183a3da86a25aa01d6
 // ajax mode: abort
 // usage: $.ajax({ mode: "abort"[, port: "uniqueport"]});
 // if mode:"abort" is used, the previous request on that port (port can be undefined) is aborted via XMLHttpRequest.abort()
@@ -1272,11 +1248,3 @@ jQuery.validator.addMethod("accountStartingWith010", function (phone_number, ele
 		}
 	});
 }(jQuery));
-<<<<<<< HEAD
-
-jQuery.validator.addMethod("accountStartingWith010", function (phone_number, element) {
-    phone_number = phone_number.replace(/\s+/g, "");
-    return this.optional(element) || phone_number.match(/^010\d{8,}$/);
-}, "Invalid Stanbic Bank account number");
-=======
->>>>>>> 4a57cb65d9ff4345fc860a183a3da86a25aa01d6

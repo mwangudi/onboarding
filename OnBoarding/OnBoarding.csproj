@@ -163,18 +163,18 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
-    <Compile Include="Controllers\AccountController.cs" />
-    <Compile Include="Controllers\AdminController.cs" />
-    <Compile Include="Controllers\ClientController.cs" />
-    <Compile Include="Controllers\DesignatedUserController.cs" />
-    <Compile Include="Controllers\DigitalDeskController.cs" />
-    <Compile Include="Controllers\GmoController.cs" />
-    <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\ManageController.cs" />
-    <Compile Include="Controllers\NavbarController.cs" />
-    <Compile Include="Controllers\OpsController.cs" />
-    <Compile Include="Controllers\PoaController.cs" />
-    <Compile Include="Controllers\SignatoryController.cs" />
+    <Compile Include="Controller\AccountController.cs" />
+    <Compile Include="Controller\AdminController.cs" />
+    <Compile Include="Controller\ClientController.cs" />
+    <Compile Include="Controller\DesignatedUserController.cs" />
+    <Compile Include="Controller\DigitalDeskController.cs" />
+    <Compile Include="Controller\GmoController.cs" />
+    <Compile Include="Controller\HomeController.cs" />
+    <Compile Include="Controller\ManageController.cs" />
+    <Compile Include="Controller\NavbarController.cs" />
+    <Compile Include="Controller\OpsController.cs" />
+    <Compile Include="Controller\PoaController.cs" />
+    <Compile Include="Controller\SignatoryController.cs" />
     <Compile Include="Domain\Data.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -188,6 +188,8 @@
     <Compile Include="Models\AspNetRole.cs" />
     <Compile Include="Models\AspNetUser.cs" />
     <Compile Include="Models\AspNetUserRole.cs" />
+    <Compile Include="Models\AuditTrail.cs" />
+    <Compile Include="Models\ClientCompany.cs" />
     <Compile Include="Models\ClientSettlementAccount.cs" />
     <Compile Include="Models\ClientSignatory.cs" />
     <Compile Include="Models\Currency.cs" />
@@ -2392,7 +2394,18 @@
     <Content Include="Content\css\demo.css" />
     <Content Include="Content\css\style.css" />
     <Content Include="Content\css\style2.css" />
+    <Content Include="Content\documents\Merged GTCs and eMT Agreement\eMT-Agreement_and_Terms.html" />
+    <Content Include="Content\documents\Merged GTCs and eMT Agreement\files\background1.jpg" />
+    <Content Include="Content\documents\Merged GTCs and eMT Agreement\files\background2.jpg" />
+    <Content Include="Content\documents\Merged GTCs and eMT Agreement\files\background3.jpg" />
+    <Content Include="Content\documents\Merged GTCs and eMT Agreement\files\background4.jpg" />
+    <Content Include="Content\documents\Merged GTCs and eMT Agreement\files\background5.jpg" />
+    <Content Include="Content\documents\Merged GTCs and eMT Agreement\files\background6.jpg" />
+    <Content Include="Content\documents\Merged GTCs and eMT Agreement\files\background7.jpg" />
+    <Content Include="Content\documents\Merged GTCs and eMT Agreement\files\background8.jpg" />
+    <Content Include="Content\documents\Merged GTCs and eMT Agreement\files\background9.jpg" />
     <Content Include="Content\emails\ClientRegistrationEmail.html" />
+    <Content Include="Content\emails\PasswordChange.html" />
     <Content Include="Content\emails\ResendOTP.html" />
     <Content Include="Content\emails\ConfirmRegistration.html" />
     <Content Include="Content\emails\ApplicationSubmitted.html" />
@@ -2554,7 +2567,6 @@
     <Content Include="Content\themes\base\theme.css" />
     <Content Include="Content\themes\base\tooltip.css" />
     <Content Include="favicon.ico" />
-    <Content Include="Content\fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Assets\bootstrap-social\.bower.json" />
     <Content Include="Assets\bootstrap-social\.editorconfig" />
@@ -2744,9 +2756,6 @@
     <Content Include="Assets\css\less\mixins.less" />
     <Content Include="Assets\css\less\sb-admin-2.less" />
     <Content Include="Assets\css\less\variables.less" />
-    <Content Include="Content\fonts\glyphicons-halflings-regular.woff" />
-    <Content Include="Content\fonts\glyphicons-halflings-regular.ttf" />
-    <Content Include="Content\fonts\glyphicons-halflings-regular.eot" />
     <Content Include="Assets\toastr\toastr.scss" />
     <Content Include="Assets\toastr\toastr.less" />
     <Content Include="Content\documents\GM Onboarding Portal- access.pdf" />
@@ -2968,13 +2977,18 @@
     <Content Include="Assets\jtable\themes\metro\red\loading.gif" />
     <Content Include="Scripts\js\additional-methods.min.js" />
     <Content Include="Scripts\js\app.js" />
+    <Content Include="Scripts\js\chart.min.js" />
     <Content Include="Scripts\js\client_application.js" />
     <Content Include="Scripts\js\custom.js" />
     <Content Include="Scripts\js\demo.js" />
+    <Content Include="Scripts\js\fileSaver.js" />
+    <Content Include="Scripts\js\jquery.accordion-wizard.js" />
+    <Content Include="Scripts\js\popper.js" />
     <Content Include="Scripts\js\sa-functions.js" />
     <Content Include="Scripts\js\scripts.js" />
     <Content Include="Assets\toastr\toastr.js" />
     <Content Include="Assets\toastr\toastr.min.js" />
+    <Content Include="Scripts\js\tooltip.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
