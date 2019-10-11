@@ -43,7 +43,11 @@ namespace OnBoarding.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+<<<<<<< HEAD
         [global::System.Configuration.DefaultSettingValueAttribute("4320")]
+=======
+        [global::System.Configuration.DefaultSettingValueAttribute("72")]
+>>>>>>> 4a57cb65d9ff4345fc860a183a3da86a25aa01d6
         public int ClientOTPExpiry {
             get {
                 return ((int)(this["ClientOTPExpiry"]));
@@ -52,7 +56,11 @@ namespace OnBoarding.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+<<<<<<< HEAD
         [global::System.Configuration.DefaultSettingValueAttribute("2880")]
+=======
+        [global::System.Configuration.DefaultSettingValueAttribute("72")]
+>>>>>>> 4a57cb65d9ff4345fc860a183a3da86a25aa01d6
         public int SignatoryOTPExpiry {
             get {
                 return ((int)(this["SignatoryOTPExpiry"]));
@@ -61,11 +69,29 @@ namespace OnBoarding.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+<<<<<<< HEAD
         [global::System.Configuration.DefaultSettingValueAttribute("2880")]
+=======
+        [global::System.Configuration.DefaultSettingValueAttribute("72")]
+>>>>>>> 4a57cb65d9ff4345fc860a183a3da86a25aa01d6
         public int RepresentativeOTPExpiry {
             get {
                 return ((int)(this["RepresentativeOTPExpiry"]));
             }
         }
+<<<<<<< HEAD
+=======
+
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("15")]
+        public int PasswordExpiryDays
+        {
+            get
+            {
+                return ((int)(this["PasswordExpiryDays"]));
+            }
+        }
+>>>>>>> 4a57cb65d9ff4345fc860a183a3da86a25aa01d6
     }
 }

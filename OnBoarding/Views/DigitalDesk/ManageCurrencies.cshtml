@@ -163,6 +163,11 @@
 			dataType: "html",
 			success: function (data) {
 				$('.students-data').html(data);
+			},
+			error: function (xhr, textStatus, errorThrown) {
+				if (textStatus === 'error') {
+					toastr.error('Submission error! Code: ' + xhr.status + ' Details: ' + errorThrown);
+				}
 			}
 		});
 	}
@@ -196,13 +201,27 @@
 					type: 'POST',
 					data: formData,
 					async: true,
-					success: function (data) {
+					success: function (XmlHttpRequest) {
 						window.setTimeout(close, 500);
 						function close() {
-							$("#Loading_ID").hide('explode');
-							$('#Add_Currency_FRM').show("fast");
-							$('#Add_Currency_FRM')[0].reset();
-							$('#CurrenciesTableContainer').jtable('load');
+							if (XmlHttpRequest === 'success') {
+								$("#Loading_ID").hide('explode');
+								$('#Add_Currency_FRM').show("fast");
+								$('#Add_Currency_FRM')[0].reset();
+								$('#CurrenciesTableContainer').jtable('load');
+							}
+							else {
+								$("#Loading_ID").hide('fast');
+								$('#Add_Currency_FRM').show("fast");
+								toastr.error(XmlHttpRequest);
+							}
+						}
+					},
+					error: function (xhr, textStatus, errorThrown) {
+						if (textStatus === 'error') {
+							$("#Loading_ID").hide('fast');
+							$('#AddCompanyFRM').show("fast");
+							toastr.error('Submission error! Code: ' + xhr.status + ' Details: ' + errorThrown);
 						}
 					},
 					cache: false,

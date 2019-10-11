@@ -21,7 +21,7 @@
 						<form action="" class="mt-2" id="searchform" name="searchform" method="POST">
 							<div class="form-group form-row" style="margin-left: 0px !important;">
 								<div class="col-12 col-sm-6 col-lg-6">
-									<input type="text" id="searchMessage" name="searchMessage" placeholder="Search Registered Clients By company name, email" value="" class="form-control" />
+									<input type="text" id="searchMessage" name="searchMessage" placeholder="Search By Company Name or Email Address" value="" class="form-control" />
 								</div>
 								<div class="col-12 col-sm-2 col-lg-2">
 									<div class="input-group bootstrap-timepicker">
@@ -70,7 +70,7 @@
                         <script>
                             $(document).ready(function () {
                                 $('#CompletedApplicationsTableContainer').jtable({
-                                    title: '<i class="fa fa-list"></i> complete Applications <div class="dropdown float-right" style="margin: 0 -20px 0px 0;"><a class="btn dropdown-toggle" data-toggle="dropdown" aria-expanded="false" style="font-size: 13px;"><i class="fa fa-print"></i> Export Report</a><div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 32px, 0px); top: 0px; left: 0px; will-change: transform; width: 175px;"><a href="javascript:void(0);" onclick="GetCSVReport()" data-tab="alerts" class="dropdown-item"><i class="fa fa-file-excel"></i> Export CSV </a></div></div>',
+                                    title: '<i class="fa fa-list"></i> Complete Applications <div class="dropdown float-right" style="margin: 0 -20px 0px 0;"><a class="btn dropdown-toggle" data-toggle="dropdown" aria-expanded="false" style="font-size: 13px;"><i class="fa fa-print"></i> Export Report</a><div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 32px, 0px); top: 0px; left: 0px; will-change: transform; width: 175px;"><a href="javascript:void(0);" onclick="GetCSVReport()" data-tab="alerts" class="dropdown-item"><i class="fa fa-file-excel"></i> Export CSV </a></div></div>',
                                     paging: true,
                                     pageSize: 10,
                                     sorting: true,

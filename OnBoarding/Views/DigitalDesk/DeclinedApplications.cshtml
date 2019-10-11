@@ -18,32 +18,32 @@
 				</ul>
 				<div class="tab-content" id="myTabContent">
 					<div class="tab-pane fade active show" id="home" role="tabpanel" aria-labelledby="home-tab">
-                        <form action="" class="mt-2" id="searchform" name="searchform" method="POST">
-                            <div class="form-group form-row" style="margin-left: 0px !important;">
-                                <div class="col-12 col-sm-6 col-lg-6">
-                                    <input type="text" id="searchMessage" name="searchMessage" placeholder="Search Registered Clients By company name, email" value="" class="form-control" />
-                                </div>
-                                <div class="col-12 col-sm-2 col-lg-2">
-                                    <div class="input-group bootstrap-timepicker">
-                                        <div class="input-group-addon">
-                                            <i class="fa fa-calendar"></i>
-                                        </div>
-                                        <input type="text" class="form-control datepicker" id="searchFromDate" name="searchFromDate" placeholder="From Date" style="margin:0px;" autocomplete="off">
-                                    </div>
-                                </div>
-                                <div class="col-12 col-sm-2 col-lg-2">
-                                    <div class="input-group bootstrap-timepicker">
-                                        <div class="input-group-addon">
-                                            <i class="fa fa-calendar"></i>
-                                        </div>
-                                        <input type="text" class="form-control datepicker" id="searchToDate" name="searchToDate" placeholder="To Date" style="margin:0px;" autocomplete="off">
-                                    </div>
-                                </div>
-                                <div class="col-12 col-sm-2 col-lg-2">
-                                    <button id="search" class="btn btn-success w_full" type="button"><i class="fa fa-check-circle"></i> Search </button>
-                                </div>
-                            </div>
-                        </form>
+						<form action="" class="mt-2" id="searchform" name="searchform" method="POST">
+							<div class="form-group form-row" style="margin-left: 0px !important;">
+								<div class="col-12 col-sm-6 col-lg-6">
+									<input type="text" id="searchMessage" name="searchMessage" placeholder="Search Registered Clients By company name, email" value="" class="form-control" />
+								</div>
+								<div class="col-12 col-sm-2 col-lg-2">
+									<div class="input-group bootstrap-timepicker">
+										<div class="input-group-addon">
+											<i class="fa fa-calendar"></i>
+										</div>
+										<input type="text" class="form-control datepicker" id="searchFromDate" name="searchFromDate" placeholder="From Date" style="margin:0px;" autocomplete="off">
+									</div>
+								</div>
+								<div class="col-12 col-sm-2 col-lg-2">
+									<div class="input-group bootstrap-timepicker">
+										<div class="input-group-addon">
+											<i class="fa fa-calendar"></i>
+										</div>
+										<input type="text" class="form-control datepicker" id="searchToDate" name="searchToDate" placeholder="To Date" style="margin:0px;" autocomplete="off">
+									</div>
+								</div>
+								<div class="col-12 col-sm-2 col-lg-2">
+									<button id="search" class="btn btn-success w_full" type="button"><i class="fa fa-check-circle"></i> Search </button>
+								</div>
+							</div>
+						</form>
 						<div class="item-data-retriving d_none">
 							<div class="form-group form-row" style="margin-left: 0px !important;">
 								<div class="col-12 col-sm-9 col-lg-9">
@@ -85,7 +85,7 @@
                                             list: false
                                         },
                                         Client: {
-                                            title: 'CompanyName',
+                                            title: 'Company Name',
                                             width: '20%'
                                         },
                                         Status: {
@@ -104,12 +104,6 @@
                                                     return '<center><p class="text-danger"><i class="fa fa-times-circle"></i> Not Yet Accepted </p></center>';
                                                 }
                                             }
-                                        },
-                                        DateCreated: {
-                                            title: 'Date',
-                                            width: '10%',
-                                            type: 'date',
-                                            displayFormat: 'yy-mm-dd'
                                         },
                                         SignatoriesApproved: {
                                             title: 'Signatories Approved',
@@ -150,6 +144,12 @@
                                                     return '<center><p class="text-danger"><i class="fa fa-times-circle"></i> ' + usersrem + ' Remaining </p></center>';
                                                 }
                                             }
+										},
+										DateCreated: {
+                                            title: 'Date',
+                                            width: '10%',
+                                            type: 'date',
+                                            displayFormat: 'yy-mm-dd'
                                         },
                                         MyButton: {
                                             title: 'Action',
@@ -167,7 +167,7 @@
                                     $('#CompletedApplicationsTableContainer').jtable('load', {
                                         searchMessage: $('#searchMessage').val(),
                                         searchFromDate: $('#searchFromDate').val(),
-                                        searchToDate: $('#searchToDate').val()
+										searchToDate: $('#searchToDate').val()
                                     });
                                 });
                                 //Load list from server
@@ -224,13 +224,14 @@
                 $('.item-data-retrived').html(data);
             }
         });
-    }
+	}
 
-    //Get CSV Report
-    function GetCSVReport() {
-        var searchText = $('#searchMessage').val();
-        var DateFrom = $('#searchFromDate').val();
-        var DateTo = $('#searchToDate').val();
-        window.location = "/DigitalDesk/ExportDeclinedApplications?searchText=" + searchText + "&DateFrom=" + DateFrom + "&DateTo=" + DateTo;
-    };
+	//Get CSV Report
+	function GetCSVReport(){
+		var searchText = $('#searchMessage').val();
+		var DateFrom = $('#searchFromDate').val();
+		var DateTo = $('#searchToDate').val();
+		window.location = "/DigitalDesk/ExportDeclinedApplications?searchText=" + searchText + "&DateFrom=" + DateFrom + "&DateTo=" + DateTo;
+	};
+
 </script>

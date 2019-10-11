@@ -318,7 +318,11 @@ div.jtable-main-container > div.jtable-title .jtable-close-button {
   position: absolute;
   opacity: 0.5;
   filter: alpha(opacity=50);
+<<<<<<< HEAD
   background: url('../metro/close.png') no-repeat;
+=======
+  background: url('../../metro/close.png') no-repeat;
+>>>>>>> 4a57cb65d9ff4345fc860a183a3da86a25aa01d6
   width: 16px;
   height: 16px;
 }
@@ -336,7 +340,11 @@ div.jtable-main-container > div.jtable-title div.jtable-toolbar span.jtable-tool
   color: white;
 }
 div.jtable-main-container > div.jtable-title div.jtable-toolbar span.jtable-toolbar-item.jtable-toolbar-item-add-record span.jtable-toolbar-item-icon {
+<<<<<<< HEAD
   background-image: url('../metro/add.png');
+=======
+  background-image: url('../../metro/add.png');
+>>>>>>> 4a57cb65d9ff4345fc860a183a3da86a25aa01d6
 }
 div.jtable-main-container > div.jtable-title div.jtable-toolbar span.jtable-toolbar-item.jtable-toolbar-item-hover {
   background-color: #1c78de;
@@ -353,7 +361,11 @@ div.jtable-main-container > table.jtable > thead {
 div.jtable-main-container > table.jtable > thead th {
   font-family: 'Segoe UI Semilight', 'Open Sans', Verdana, Arial, Helvetica, sans-serif;
   font-weight: 300;
+<<<<<<< HEAD
   font-size: 12px;
+=======
+  font-size: 13px;
+>>>>>>> 4a57cb65d9ff4345fc860a183a3da86a25aa01d6
   color: #fff;
 }
 div.jtable-main-container > table.jtable > thead th.jtable-column-header div.jtable-column-header-container {
@@ -367,6 +379,7 @@ div.jtable-main-container > table.jtable > thead th.jtable-column-header div.jta
   margin-top: 2px;
 }
 div.jtable-main-container > table.jtable > thead th.jtable-column-header-sortable div.jtable-column-header-container {
+<<<<<<< HEAD
   background: url('../metro/column-sortable.png') no-repeat right;
 }
 div.jtable-main-container > table.jtable > thead th.jtable-column-header-sorted-asc div.jtable-column-header-container {
@@ -374,6 +387,15 @@ div.jtable-main-container > table.jtable > thead th.jtable-column-header-sorted-
 }
 div.jtable-main-container > table.jtable > thead th.jtable-column-header-sorted-desc div.jtable-column-header-container {
   background: url('../metro/column-desc.png') no-repeat right;
+=======
+  background: url('../../metro/column-sortable.png') no-repeat right;
+}
+div.jtable-main-container > table.jtable > thead th.jtable-column-header-sorted-asc div.jtable-column-header-container {
+  background: url('../../metro/column-asc.png') no-repeat right;
+}
+div.jtable-main-container > table.jtable > thead th.jtable-column-header-sorted-desc div.jtable-column-header-container {
+  background: url('../../metro/column-desc.png') no-repeat right;
+>>>>>>> 4a57cb65d9ff4345fc860a183a3da86a25aa01d6
 }
 div.jtable-main-container > table.jtable > tbody > tr {
   background-color: #fff;
@@ -385,7 +407,11 @@ div.jtable-main-container > table.jtable > tbody > tr.jtable-data-row > td {
   padding: 4px;
 }
 div.jtable-main-container > table.jtable > tbody > tr.jtable-data-row > td > .jtable-edit-command-button {
+<<<<<<< HEAD
   background: url('../metro/edit.png') no-repeat;
+=======
+  background: url('../../metro/edit.png') no-repeat;
+>>>>>>> 4a57cb65d9ff4345fc860a183a3da86a25aa01d6
   width: 16px;
   height: 16px;
   opacity: 0.4;
@@ -394,7 +420,11 @@ div.jtable-main-container > table.jtable > tbody > tr.jtable-data-row > td > .jt
   opacity: 0.8;
 }
 div.jtable-main-container > table.jtable > tbody > tr.jtable-data-row > td > .jtable-delete-command-button {
+<<<<<<< HEAD
   background: url('../metro/delete.png') no-repeat;
+=======
+  background: url('../../metro/delete.png') no-repeat;
+>>>>>>> 4a57cb65d9ff4345fc860a183a3da86a25aa01d6
   width: 16px;
   height: 16px;
   opacity: 0.4;
@@ -489,7 +519,11 @@ div.jtable-busy-message {
   border: 1px solid #fff;
   padding: 5px 5px 5px 58px;
   color: #fff;
+<<<<<<< HEAD
   background: url('../metro/blue/loading.gif') no-repeat;
+=======
+  background: url('../../metro/blue/loading.gif') no-repeat;
+>>>>>>> 4a57cb65d9ff4345fc860a183a3da86a25aa01d6
   background-color: #0b67cd;
   background-position: 8px;
 }

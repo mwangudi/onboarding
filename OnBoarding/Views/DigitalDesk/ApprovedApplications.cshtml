@@ -20,10 +20,26 @@
 					<div class="tab-pane fade active show" id="home" role="tabpanel" aria-labelledby="home-tab">
 						<form action="" class="mt-2" id="searchform" name="searchform" method="POST">
 							<div class="form-group form-row" style="margin-left: 0px !important;">
-								<div class="col-12 col-sm-9 col-lg-9">
+								<div class="col-12 col-sm-6 col-lg-6">
 									<input type="text" id="searchMessage" name="searchMessage" placeholder="Search Registered Clients By company name, email" value="" class="form-control" />
 								</div>
-								<div class="col-12 col-sm-3 col-lg-3">
+								<div class="col-12 col-sm-2 col-lg-2">
+									<div class="input-group bootstrap-timepicker">
+										<div class="input-group-addon">
+											<i class="fa fa-calendar"></i>
+										</div>
+										<input type="text" class="form-control datepicker" id="searchFromDate" name="searchFromDate" placeholder="From Date" style="margin:0px;" autocomplete="off">
+									</div>
+								</div>
+								<div class="col-12 col-sm-2 col-lg-2">
+									<div class="input-group bootstrap-timepicker">
+										<div class="input-group-addon">
+											<i class="fa fa-calendar"></i>
+										</div>
+										<input type="text" class="form-control datepicker" id="searchToDate" name="searchToDate" placeholder="To Date" style="margin:0px;" autocomplete="off">
+									</div>
+								</div>
+								<div class="col-12 col-sm-2 col-lg-2">
 									<button id="search" class="btn btn-success w_full" type="button"><i class="fa fa-check-circle"></i> Search </button>
 								</div>
 							</div>
@@ -54,14 +70,14 @@
 						<script>
 							$(document).ready(function () {
 								$('#ApprovedApplicationsTableContainer').jtable({
-									title: '<i class="fa fa-list"></i> Approved Applications',
+									title: '<i class="fa fa-list"></i> Approved Applications <div class="dropdown float-right" style="margin: 0 -20px 0px 0;"><a class="btn dropdown-toggle" data-toggle="dropdown" aria-expanded="false" style="font-size: 13px;"><i class="fa fa-print"></i> Export Report</a><div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 32px, 0px); top: 0px; left: 0px; will-change: transform; width: 175px;"><a href="javascript:void(0);" onclick="GetCSVReport()" data-tab="alerts" class="dropdown-item"><i class="fa fa-file-excel"></i> Export CSV </a></div></div>',
 									paging: true,
 									pageSize: 10,
 									sorting: true,
 									defaultSorting: 'ApplicationID DESC',
 									actions:
 									{
-										listAction: '/Gmo/GetApprovedApplications'
+										listAction: '/DigitalDesk/GetApprovedApplications'
 									},
 									fields: {
 										ApplicationID: {
@@ -69,7 +85,7 @@
 											list: false
 										},
 										Client: {
-											title: 'Company-Name',
+											title: 'Company Name',
 											width: '20%'
 										},
 										Status: {
@@ -96,8 +112,8 @@
 											display: function (data) {
 												return '<center><p class="text-success"><i class="fa fa-check-circle"></i> All Approved </p></center>';
 											}
-                                        },
-                                        DateCreated: {
+										},
+										DateCreated: {
 											title: 'Date',
 											width: '10%',
 											type: 'date',
@@ -118,7 +134,8 @@
 									e.preventDefault();
 									$('#ApprovedApplicationsTableContainer').jtable('load', {
 										searchMessage: $('#searchMessage').val(),
-										searchDate: $('#searchDate').val()
+										searchFromDate: $('#searchFromDate').val(),
+										searchToDate: $('#searchToDate').val()
 									});
 								});
 								//Load list from server
@@ -164,7 +181,7 @@
 		// LoadUp User Data
 		$.ajax({
 			type: "POST",
-			url: "/Gmo/ViewApproval",
+			url: "/DigitalDesk/ViewApproval",
 			data: '{applicationId: "' + applicationId + '" }',
 			async: true,
 			contentType: "application/json; charset=utf-8",
@@ -176,5 +193,13 @@
 			}
 		});
 	}
+
+	//Get CSV Report
+	function GetCSVReport(){
+		var searchText = $('#searchMessage').val();
+		var DateFrom = $('#searchFromDate').val();
+		var DateTo = $('#searchToDate').val();
+		window.location = "/DigitalDesk/ExportApprovedApplications?searchText=" + searchText + "&DateFrom=" + DateFrom + "&DateTo=" + DateTo;
+	};
 
 </script>

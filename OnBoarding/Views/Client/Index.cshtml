@@ -9,6 +9,28 @@
 	<div class="row">
 		<div class="col-12 col-lg-3 col-md-3">
 			<div class="card card-sm-3">
+				<div class="card-icon bg-success">
+					<i class="ion ion-ios-book"></i>
+				</div>
+				<div class="card-wrap">
+					<div class="card-header">
+						<h4>Registered Companies </h4>
+					</div>
+					<div class="card-body">
+						@ViewData["RegisteredCompanies"]
+					</div>
+					<a href="@(Url.Action("AddCompanies", "Client"))">
+						<div class="panel-footer">
+							<span class="pull-left">View</span>
+							<span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+							<div class="clearfix"></div>
+						</div>
+					</a>
+				</div>
+			</div>
+		</div>
+		<div class="col-12 col-lg-3 col-md-3">
+			<div class="card card-sm-3">
 				<div class="card-icon bg-primary">
 					<i class="ion ion-ios-information"></i>
 				</div>
@@ -53,21 +75,6 @@
 		</div>
 		<div class="col-lg-3 col-md-3 col-12">
 			<div class="card card-sm-3">
-				<div class="card-icon bg-warning">
-					<i class="ion ion-paper-airplane"></i>
-				</div>
-				<div class="card-wrap">
-					<div class="card-header">
-						<h4>Signatories</h4>
-					</div>
-					<div class="card-body">
-						@ViewData["Signatories"]
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="col-lg-3 col-md-3 col-12">
-			<div class="card card-sm-3">
 				<div class="card-icon bg-danger">
 					<i class="ion ion-paper-airplane"></i>
 				</div>
@@ -79,11 +86,11 @@
 						@ViewData["Declined"]
 					</div>
 					<a href="@(Url.Action("ViewAll", "Client"))">
-					<div class="panel-footer">
-						<span class="pull-left">View</span>
-						<span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-						<div class="clearfix"></div>
-					</div>
+						<div class="panel-footer">
+							<span class="pull-left">View</span>
+							<span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+							<div class="clearfix"></div>
+						</div>
 					</a>
 				</div>
 			</div>
@@ -132,29 +139,6 @@
 			$('#LoadUpWelcomeModal').modal('hide');
 		})
 
-		$('#newapplication1').on('click', function (e) {
-			e.preventDefault();
-            $.ajax({
-				url: '/Client/HaveApplications',
-                type: 'POST',
-                async: true,
-                success: function (XmlHttpRequest) {
-                    if (XmlHttpRequest == 'success') {
-                        //Take to application form
-						window.location.replace("/Client/NewApplications");
-                    }
-                    //Pop up with Error
-                    else {
-                        LoadUpModal();
-                        $('#XmlHttpRequest').text(XmlHttpRequest);
-                    }
-                },
-                cache: false,
-                contentType: false,
-                processData: false
-            });
-		})
-
 		$("#newapplication").click(function (e) {
             e.preventDefault();
             $.ajax({
@@ -168,14 +152,48 @@
                     }
                     //Pop up with Error
                     else {
-                        LoadUpModal();
-                        $('#XmlHttpRequest').text(XmlHttpRequest);
+						$('#LoadUpWelcomeModal').modal('hide');
+						toastr.error(XmlHttpRequest);
                     }
-                },
+				},
+				error: function (xhr, textStatus, errorThrown) {
+					if (textStatus === 'error') {
+						$('#LoadUpWelcomeModal').modal('hide');
+						toastr.error('Submission error!. Code: ' + xhr.status + ', Details: ' + errorThrown);
+					}
+				},
                 cache: false,
                 contentType: false,
                 processData: false
             });
-        });
+		});
+
+		//newapplication1
+		$("#newapplication1").click(function (e) {
+            e.preventDefault();
+            $.ajax({
+				url: '/Client/HaveApplications',
+                type: 'POST',
+                async: true,
+                success: function (XmlHttpRequest) {
+                    if (XmlHttpRequest == 'success') {
+                        //Take to application form
+                        window.location.replace("/Client/NewApplications");
+                    }
+                    //Pop up with Error
+                    else {
+						toastr.error(XmlHttpRequest);
+                    }
+				},
+				error: function (xhr, textStatus, errorThrown) {
+					if (textStatus === 'error') {
+						toastr.error('Submission error!. Code: ' + xhr.status + ', Details: ' + errorThrown);
+					}
+				},
+                cache: false,
+                contentType: false,
+                processData: false
+            });
+		});
    });
 </script>

@@ -4,111 +4,129 @@
 	Layout = "~/Views/Shared/_AdminNewLayout.cshtml";
 }
 
-    <section class="section">
-        <h1 class="section-header">
-            <div> My Applications </div>
-        </h1>
-        <div class="row">
-            <div class="col-12 col-md-12 col-lg-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h4>Application list</h4>
-                    </div>
-                    <div class="card-body">
-                        <div class="item-data-retriving d_none">
-                            <div class="float-right">
-                                <button class="btn btn-danger select-another-item">
-                                    <i class="fa fa ion-android-cancel"></i> Cancel Edit
-                                </button>
-                            </div>
-                            <h6><i class="fa fa-adjust"></i> Edit Application Details </h6>
-                            <hr />
-                            <!--Load Up Data -->
-                            <center id="RMDLoading_ID" class="d_none r_corners">
-                                <h4 class="m_top_20 m_bottom_20"> Please wait... Fetching Application Details </h4>
-                                <img src="~/Content/images/loading-bar.gif" class="img-thumbnail" alt="Loading" style="max-width:160px;">
-                            </center>
-                            <!--End Loading Up Data -->
-                        </div>
-                        <div class="item-data-retrived"></div>
-                        <div id="ViewAllArea" class="table-responsive">
-                            <table id="ApplicationsList" class="table table-bordered" style="width:100%">
-                                <thead>
-                                    <tr>
-                                        <th>Signatories</th>
-                                        <th>Users</th>
-                                        <th>Application Date</th>
-                                        <th>Status</th>
-                                        <th>Comments</th>
-                                        <th>Approved</th>
-                                        <th>Date Approved</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var item in Model)
-                                    {
-                                    <tr>
-                                        <td> @item.Signatories</td>
-                                        <td> @item.DesignatedUsers</td>
-                                        <td> @item.DateCreated</td>
-                                        <td> @item.Status</td>
-                                        <td> @item.OPSComments</td>
-                                        <td> @(item.POAApproved ? "Approved" : "No")</td>
+<section class="section">
+	<h5 class="section-header"> My Applications <small><i><a href="~/Client/NewApplications">Click here to submit another application</a></i></small> </h5> 
+	<div class="row">
+		<div class="col-12">
+			<div class="item-data-retriving d_none">
+				<div class="float-right">
+					<button class="btn btn-danger select-another-item">
+						<i class="fa fa ion-android-cancel"></i> Cancel
+					</button>
+				</div>
+				<h6><i class="fa fa-adjust"></i> Application Details </h6>
+				<hr />
+				<!--Load Up Data -->
+				<center id="RMDLoading_ID" class="d_none r_corners">
+					<h4 class="m_top_20 m_bottom_20"> Please wait... Fetching Application Details </h4>
+					<img src="~/Content/images/loading-bar.gif" class="img-thumbnail" alt="Loading" style="max-width:160px;">
+				</center>
+				<!--End Loading Up Data -->
+			</div>
+			<div class="item-data-retrived"></div>
+			<div class="card" id="ViewAll">
+				<div class="card-header">
+					<h4>Application List</h4>
+				</div>
+				<div class="card-body">
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<tbody>
+								<tr>
+									<th>Company</th>
+									<th>Signatories</th>
+									<th>Representatives</th>
+									<th>Date</th>
+									<th>Status</th>
+									<th>Comments</th>
+									<th>Approval</th>
+									<th>Date-Approved</th>
+									<th>Action</th>
+								</tr>
+								@foreach (var item in Model)
+								{
+									<tr>
+										<td> @item.Client</td>	
+										<td> @item.Signatories</td>
+										<td> @item.DesignatedUsers</td>
+										<td> @Convert.ToDateTime(item.DateCreated).ToString("dd/MM/yyyy")</td>
+										<td> @item.Status</td>
+										<td> @item.OPSComments</td>
+										<td> @(item.POAApproved ? "Approved" : "Pending")</td>
 										<td>
 											@if (item.Status == "Declined")
 											{
-												<center>@item.DateDeclined</center>
+												<center>@Convert.ToDateTime(item.DateDeclined).ToString("dd/MM/yyyy")</center>
 											}
 											else
 											{
-												<center>@item.POADateApproved</center>
+												if (item.POADateApproved.ToString() != "")
+												{
+													<center>@Convert.ToDateTime(item.POADateApproved).ToString("dd/MM/yyyy")</center>
+												}
 											}
 										</td>
-                                        <td>
-                                            @if (item.Status == "Declined")
-                                            {
-                                                <!--<center>
-                                                    <button data-id='@item.ApplicationID' type="submit" name="submit" class="btn btn-info btn-md btn-agent-id w_full">
-                                                        <span class="glyphicon glyphicon-edit"></span> Edit
-                                                    </button>
-                                                </center>-->
+										<td>
+											@if (item.Status == "Declined")
+											{
 												<center>
-                                                    <i class="fa fa-shield-alt fa-2x" style="color:red;"></i>
-                                                </center>
+													<i class="fa fa-shield-alt fa-2x" style="color:red;"></i>
+												</center>
 
-                                            }
-                                            else
-                                            {
-                                                <center>
-                                                    <i class="fa fa-shield-alt fa-2x" style="color:red;"></i>
-                                                </center>
-                                            }
+											}
+											else if (item.Status == "Approved")
+											{
+												<center>
+													<i class="fa fa-check-circle fa-2x" style="color:green;"> Approved </i>
+												</center>
+											}
+											else
+											{
+												<button data-id='@item.ApplicationID' data-cid="@item.CompanyID" type="submit" name="submit" class="btn btn-outline-primary btn-md btn-agent-id w_full">
+													<span class="fa fa-edit"></span> Detail
+												</button>
+											}
+										</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<!--Start Confirm Delete Modal -->
+<div class="modal fade right" id="LoadUpDeleteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<!-- Add class .modal-side and then add class .modal-top-right (or other classes from list above) to set a position to the modal -->
+	<div class="modal-dialog modal-side modal-top-right" role="document" style="width:500px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title w-100" id="myModalLabel"><i class="fa fa-trash"></i> Delete Signatory </h4>
+				<button type="button" id="closemodalup" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body students-data mb-0"></div>
+			<div class="modal-footer mb-0">
+				<div class="col-lg-12">
+					<center> <b> Global Markets Onboarding System  &copy; Stanbic Bank Kenya </b> </center>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--End Confirm Delete Modal -->
+<script type="text/javascript">
 
-                                        </td>
-                                    </tr>
-                                    }
-                                </tbody>
-                                <tfoot></tfoot>
-                            </table>                            
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <script type="text/javascript">
-    jQuery().ready(function () {
-        
-    });
-
-    $(document).ready(function () {
+	$(document).ready(function () {
 		//select-another-item
 		$('.select-another-item').click(function (e) {
 			e.preventDefault();
 			$('.item-data-retrived').hide('fast');
 			$('.item-data-retriving').hide('fast');
-			$('#ViewAllArea').show('fast');
+			$('#ViewAll').show('fast');
 		});
 
 		$('#ApplicationsList').DataTable({
@@ -116,49 +134,69 @@
 		});
 
 		//Check if a user has applications
-        $(".a-btn-3").click(function (e) {
-            e.preventDefault();
-            $.ajax({
-                url: '@Url.Action("HaveApplications", "Client")',
-                type: 'POST',
-                async: true,
-                success: function (XmlHttpRequest) {
-                    if (XmlHttpRequest == 'success') {
-                        //Take to application form
-                        window.location.replace("/Client/Applications");
-                    }
-                    //Pop up with Error
-                    else {
-                        LoadUpModal();
-                        $('#XmlHttpRequest').text(XmlHttpRequest);
-                    }
-                },
-                cache: false,
-                contentType: false,
-                processData: false
-            });
+		$(".a-btn-3").click(function (e) {
+			e.preventDefault();
+			$.ajax({
+				url: '/Client/HaveApplications',
+				type: 'POST',
+				async: true,
+				success: function (XmlHttpRequest) {
+					if (XmlHttpRequest == 'success') {
+						//Take to application form
+						window.location.replace("/Client/Applications");
+					}
+					//Pop up with Error
+					else {
+						LoadUpModal();
+						$('#XmlHttpRequest').text(XmlHttpRequest);
+					}
+				},
+				error: function (xhr, textStatus, errorThrown) {
+					if (textStatus === 'error') {
+						toastr.error('Submission error!. Code: ' + xhr.status + ', Details: ' + errorThrown);
+					}
+				},
+				cache: false,
+				contentType: false,
+				processData: false
+			});
 		});
 
 		$('.btn-agent-id').click(function (e) {
 			e.preventDefault();
 			var ApplicationID = $(this).attr('data-id');
-			$('#ViewAllArea').hide('fast');
+			var CompanyID = $(this).attr('data-cid');
+			$('#ViewAll').hide('fast');
 			$('#RMDLoading_ID').show();
 			$('.item-data-retriving').show('fast');
-
 			$.ajax({
 				type: "POST",
 				url: "/Client/EditApplication",
-				data: '{applicationId: "' + ApplicationID + '" }',
+				data: '{applicationId: "' + ApplicationID + '", companyId: "' + CompanyID + '" }',
 				contentType: "application/json; charset=utf-8",
 				dataType: "html",
-
 				success: function (data) {
 					$('#RMDLoading_ID').hide();
 					$('.item-data-retrived').show();
 					$('.item-data-retrived').html(data);
+					//btnRemoveSignatory
+					$("#btnRemoveSignatory").click(function (e) {
+						e.preventDefault();
+					});
+					//btnRemoveRepresentative
+					$("#btnRemoveRepresentative").click(function (e) {
+						e.preventDefault();
+					});
+				},
+				error: function (xhr, textStatus, errorThrown) {
+					if (textStatus === 'error') {
+						$('#RMDLoading_ID').hide();
+						$('.item-data-retriving').hide('fast');
+						$('#ViewAll').show('fast');
+						toastr.error('Submission error!. Code: ' + xhr.status + ', Details: ' + errorThrown);
+					}
 				}
 			});
 		});
-    });
-    </script>
+	});
+</script>

@@ -7,7 +7,7 @@
 	<form class="form-inline mr-auto">
 		<ul class="navbar-nav mr-3">
 			<li><a href="#" data-toggle="sidebar" class="nav-link nav-link-lg"><i class="ion ion-navicon-round"></i></a></li>
-			<li><a href="#" data-toggle="search" class="nav-link nav-link-lg d-sm-none"><i class="ion ion-search"></i></a></li>
+			<li><a href="#" data-toggle="search" class="nav-link nav-link-lg d-none d-sm-none"><i class="ion ion-search"></i></a></li>
 		</ul>
 		<div class="search-element d_none">
 			<input class="form-control" type="search" placeholder="Search" aria-label="Search">
@@ -95,42 +95,36 @@
 		</div> <br /> <hr />
 		<ul class="sidebar-menu">
 			<li class="menu-header">Menus</li>
-             @foreach (var item in Model)
-             {
+
+              @foreach (var item in Model)
+              {
                  if (item.isParent == false && item.parentId == 0)
+				 {
+                    <li class="menu-dropdown"><a href="@Url.Action(item.action, item.controller)"><i class="@item.imageClass"></i> @item.nameOption</a></li>
+                 }
+                 else
+                 {
+                    if (item.isParent == true)
                     {
-                        <li><a href="@Url.Action(item.action, item.controller)"><i class="@item.imageClass"></i> @item.nameOption</a></li>
-                    }
-                    else
-                    {
-                        if (item.isParent == true)
-                        {
-                            <li>
-                                <a href="#" class="has-dropdown"><i class="@item.imageClass"></i> <span> @item.nameOption</span></a>
-                                <ul class="menu-dropdown">
-                                    @foreach (var child in Model.Where(p => p.parentId == item.Id))
+                        <li class="" id="@item.nameOption">
+                            <a href="#" class="has-dropdown"><i class="@item.imageClass"></i> <span> @item.nameOption</span></a>
+                            <ul class="menu-dropdown">
+                                @foreach (var child in Model.Where(p => p.parentId == item.Id))
+                                {
+                                    if (child.controller == null)
                                     {
-                                        if (child.controller == null)
-                                        {
-                                            <li><a href="#"><i class="@child.imageClass"></i> @child.nameOption</a></li>
-                                        }
-                                        else
-                                        {
-                                            <li><a href="@Url.Action(child.action, child.controller)"><i class="@child.imageClass"></i> @child.nameOption</a></li>
-                                        }
+                                        <li class=""><a href="#"><i class="@child.imageClass"></i> @child.nameOption</a></li>
                                     }
-                                </ul>
-                            </li>
-                        }
+                                    else
+                                    {
+                                        <li class=""><a href="@Url.Action(child.action, child.controller)"><i class="@child.imageClass"></i> @child.nameOption</a></li>
+                                    }
+                                }
+                            </ul>
+                        </li>
                     }
-             }
-			<!--<li>
-				<a href="#" class="has-dropdown"><i class="ion ion-ios-albums-outline"></i><span>Application</span></a>
-				<ul class="menu-dropdown">
-					<li><a href="NewApplications"><i class="ion ion-ios-circle-outline"></i> New Application </a></li>
-					<li><a href="ViewAll"><i class="ion ion-ios-circle-outline"></i> My Applications </a></li>
-				</ul>
-			</li>-->
+                 }
+              }
 		</ul>
 	</aside>
 </div>

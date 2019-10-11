@@ -45,7 +45,6 @@ namespace OnBoarding.ViewModels
         [AllowHtml]
         public string MessageBody { get; set; }
         public string Type { get; set; }
-        public string Action { get; set; }
         public string From { get; set; }
         public string To { get; set; }
         public string DateCreated { get; set; }
@@ -157,6 +156,7 @@ namespace OnBoarding.ViewModels
     {
         public int ClientId { get; set; }
         public string UserAccountId { get; set; }
+        public string EmailAddress { get; set; }
     }
 
     public class DeclineApplicationViewModel

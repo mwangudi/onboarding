@@ -33,7 +33,7 @@
 									<h6><i class="fa fa-adjust"></i> View Signatory Details </h6>
 								</div>
 								<div class="col-12 col-sm-3 col-lg-3">
-									<button id="selectanother" class="btn btn-danger w_full" type="button"><i class="fa fa-check-circle"></i> Select Another Signatory </button>
+									<button id="selectanother" class="btn btn-outline-primary w_full" type="button"><i class="fa fa-check-circle"></i> Select Another Signatory </button>
 								</div>
 
 							</div>
@@ -51,67 +51,67 @@
 							<div id="ClientSignatoriesTableContainer"></div>
 						</div>
 						<script>
-								$(document).ready(function () {
-									$('#ClientSignatoriesTableContainer').jtable({
-										title: '<i class="fa fa-list"></i>  Client Signatories',
-										paging: true,
-										pageSize: 10,
-										sorting: true,
-										defaultSorting: 'SignatoryId DESC',
-										actions:
-										{
-											listAction: '/DigitalDesk/GetClientSignatories'
+							$(document).ready(function () {
+								$('#ClientSignatoriesTableContainer').jtable({
+									title: '<i class="fa fa-list"></i>  Client Signatories',
+									paging: true,
+									pageSize: 10,
+									sorting: true,
+									defaultSorting: 'SignatoryId DESC',
+									actions:
+									{
+										listAction: '/DigitalDesk/GetClientSignatories'
+									},
+									fields: {
+										SignatoryId: {
+											key: true,
+											list: false
 										},
-										fields: {
-											SignatoryId: {
-												key: true,
-												list: false
-											},
-											Names: {
-												title: 'Names',
-												width: '20%'
-											},
-											ClientName: {
-												title: 'Company',
-												width: '20%'
-											},
-											Email: {
-												title: 'Email',
-												width: '20%'
-											},
-											Status: {
-												title: 'Status',
-												width: '10%'
-											},
-											AcceptedTAC: {
-												title: 'Terms',
-												width: '10%',
-												options: { '1': 'Accepted', '0': 'No' }
-											},
-											DateCreated: {
-												title: 'DateCreated',
-                                                width: '20%',
-											},
-											MyButton: {
-												title: 'Action',
-												width: '10%',
-												display: function (data) {
-													return '<center><button class="btn btn-outline-primary w_full btn-small" onclick="LoadUpModal(' + data.record.SignatoryId + ')">' +
-														'<span class="fa fa-check-circle"></span> View Details </button></center>';
-												}
-											},
-										}
-									});
-									// Re-load records when user click button.
-									$('#search').click(function (e) {
-										e.preventDefault();
-										$('#ClientSignatoriesTableContainer').jtable('load', {
-											searchMessage: $('#searchMessage').val()
-										});
-									});
-									//Load list from server
-									$('#ClientSignatoriesTableContainer').jtable('load');
+										Names: {
+											title: 'Names',
+											width: '20%'
+										},
+										ClientName: {
+											title: 'Company',
+											width: '20%'
+										},
+										Email: {
+											title: 'Email',
+											width: '20%'
+										},
+										Status: {
+											title: 'Status',
+											width: '10%'
+										},
+										AcceptedTAC: {
+											title: 'Terms',
+											width: '10%',
+											options: { '1': 'Accepted', '0': 'No' }
+										},
+										DateCreated: {
+											title: 'DateCreated',
+											width: '20%',
+										},
+										MyButton: {
+											title: 'Action',
+											width: '10%',
+											display: function (data) {
+												return '<center><button class="btn btn-outline-primary w_full btn-small" onclick="LoadUpModal(' + data.record.SignatoryId + ')">' +
+													'<span class="fa fa-check-circle"></span> View Details </button></center>';
+											}
+										},
+									}
 								});
+								// Re-load records when user click button.
+								$('#search').click(function (e) {
+									e.preventDefault();
+									$('#ClientSignatoriesTableContainer').jtable('load', {
+										searchMessage: $('#searchMessage').val()
+									});
+								});
+								//Load list from server
+								$('#ClientSignatoriesTableContainer').jtable('load');
+							});
 						</script>
 					</div>
 				</div>
@@ -120,6 +120,27 @@
 	</div>
 </section>
 
+<!--Start Confirm Delete Modal -->
+<div class="modal fade right" id="LoadUpDeleteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<!-- Add class .modal-side and then add class .modal-top-right (or other classes from list above) to set a position to the modal -->
+	<div class="modal-dialog modal-side modal-top-right" role="document" style="width:500px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title w-100" id="myModalLabel"><i class="fa fa-trash"></i> Delete Signatory </h4>
+				<button type="button" id="closemodalup" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body students-data mb-0"></div>
+			<div class="modal-footer mb-0">
+				<div class="col-lg-12">
+					<center> <b> Global Markets Onboarding System  &copy; Stanbic Bank Kenya </b> </center>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--End Confirm Delete Modal -->
 <script type="text/javascript">
 
 	//select-another-item
@@ -134,25 +155,30 @@
 
 	//Function Load modal
 	function LoadUpModal(signatoryId) {
-        // Hide Default DIV's
-        $('#searchform').hide();
-        $('#ViewAll').hide();
-        $('#RMDLoading_ID').show('fast');
-        $('.item-data-retriving').show();
+
+		// Hide Default DIV's
+		$('#searchform').hide();
+		$('#ViewAll').hide();
+		$('#RMDLoading_ID').show('fast');
+		$('.item-data-retriving').show();
 		// LoadUp User Data
 		$.ajax({
 			type: "POST",
 			url: "/DigitalDesk/ViewSignatory",
 			data: '{signatoryId: "' + signatoryId + '" }',
 			async: true,
-            contentType: "application/json; charset=utf-8",
+			contentType: "application/json; charset=utf-8",
 			dataType: "html",
-            success: function (data) {
-                $('#RMDLoading_ID').hide();
-                $('.item-data-retrived').show();
+			success: function (data) {
+				$('#RMDLoading_ID').hide();
+				$('.item-data-retrived').show();
 				$('.item-data-retrived').html(data);
-            }
-        });
-    }
 
+				//btnRemoveRepresentative
+				$("#btnDeleteClient").click(function (e) {
+					e.preventDefault();
+				});
+			}
+		});
+	}
 </script>

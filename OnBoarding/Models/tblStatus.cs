@@ -16,7 +16,10 @@ namespace OnBoarding.Models
             EMarketApplications = new HashSet<EMarketApplication>();
             RegisteredClients = new HashSet<RegisteredClient>();
             AspNetUsers = new HashSet<AspNetUser>();
+<<<<<<< HEAD
             ApplicationNominations = new HashSet<ApplicationNomination>();
+=======
+>>>>>>> 4a57cb65d9ff4345fc860a183a3da86a25aa01d6
         }
 
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
@@ -53,7 +56,10 @@ namespace OnBoarding.Models
         public virtual ICollection<AspNetUser> AspNetUsers { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+<<<<<<< HEAD
         public virtual ICollection<ApplicationNomination> ApplicationNominations { get; set; }
+=======
+>>>>>>> 4a57cb65d9ff4345fc860a183a3da86a25aa01d6
         public virtual ICollection<ClientCompany> ClientCompanies { get; set; }
     }
 }

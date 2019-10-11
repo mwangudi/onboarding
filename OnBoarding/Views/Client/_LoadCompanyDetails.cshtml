@@ -1,0 +1,51 @@
+﻿<div class="my-3 form-group form-row">
+	<div class="col-12 col-sm-6 col-lg-6">
+		<label>Company Name: <span>*</span></label>
+		<input type="text" id="CompanyName" name="CompanyName" placeholder="Company Name" value="@ViewBag.CompanyDetails.CompanyName" class="form-control" />
+		<input name="CompanyID" id="CompanyID" type="hidden" value="@ViewBag.CompanyDetails.Id">
+	</div>
+	<div class="col-12 col-sm-6 col-lg-6">
+		<label>Company Registration Number: <span>*</span></label>
+		<input type="text" id="CompanyRegistration" name="CompanyRegistration" value="@ViewBag.CompanyDetails.CompanyRegNumber" placeholder="Company Registration Number" class="form-control required" />
+	</div>
+</div>
+<div class="my-3 form-group form-row">
+	<div class="col-12 col-sm-4 col-lg-4">
+		<label>Company Building: <span>*</span></label>
+		<input type="text" id="Building" name="Building" value="@ViewBag.CompanyDetails.CompanyBuilding" placeholder="Company Building" class="form-control required" />
+	</div>
+	<div class="col-12 col-sm-4 col-lg-4">
+		<label>Company Street: <span>*</span></label>
+		<input type="text" id="Street" name="Street" value="@ViewBag.CompanyDetails.CompanyBuilding" placeholder="Company Street" class="form-control required" />
+	</div>
+	<div class="col-12 col-sm-4 col-lg-4">
+		<label>Company Town/City: <span>*</span></label>
+		<input type="text" id="CompanyTownCity" name="CompanyTownCity" value="@ViewBag.CompanyDetails.CompanyBuilding" placeholder="Company Town/City" class="form-control" />
+	</div>
+</div>
+<div class="my-3 form-group form-row">
+	<div class="col-12 col-sm-4 col-lg-4">
+		<label>Business Email Address: <span>*</span></label>
+		<input type="text" id="BusinessEmailAddress" name="BusinessEmailAddress" value="@ViewBag.CompanyDetails.BusinessEmailAddress" placeholder="Business Email" class="form-control required" />
+	</div>
+	<div class="col-12 col-sm-4 col-lg-4">
+		<label>Atention To: <span>*</span></label>
+		<input type="text" id="AttentionTo" name="AttentionTo" value="@ViewBag.CompanyDetails.AttentionTo" placeholder="Attention To" class="form-control required" />
+	</div>
+	<div class="col-12 col-sm-4 col-lg-4">
+		<label>Company Fax:</label>
+		<input type="text" id="CompanyFax" name="CompanyFax" value="@ViewBag.CompanyDetails.Fax" placeholder="Company Fax" class="form-control" />
+	</div>
+	<div class="col-12 col-sm-4 col-lg-4">
+		<label>Postal Address: <span>*</span></label>
+		<input type="text" id="PostalAddress" name="PostalAddress" value="@ViewBag.CompanyDetails.PostalAddress" placeholder="Postal Address" class="form-control required" />
+	</div>
+	<div class="col-12 col-sm-4 col-lg-4">
+		<label>Postal Code: <span>*</span></label>
+		<input type="text" id="PostalCode" name="PostalCode" value="@ViewBag.CompanyDetails.PostalCode" placeholder="Postal Code" class="form-control required" />
+	</div>
+	<div class="col-12 col-sm-4 col-lg-4">
+		<label>Town/City: <span>*</span></label>
+		<input type="text" id="AddressTownCity" name="AddressTownCity" value="@ViewBag.CompanyDetails.PostalCode" placeholder="Town/City" class="form-control required" />
+	</div>
+</div>

@@ -54,8 +54,8 @@
 										@if (item.Status == "Active")
 										{
 											<center>
-												<button data-id='@item.ApplicationID' type="submit" name="submit" class="btn btn-outline-primary btn-md btn-agent-id w_full">
-													<i class="fa fa fa-check-circle"></i> View
+												<button data-id='@item.ApplicationID' data-cid='@item.CompanyID' type="submit" name="submit" class="btn btn-outline-primary btn-md btn-agent-id w_full">
+													<i class="fa fa fa-check-circle"></i> View Details
 												</button>
 											</center>
 										}
@@ -97,6 +97,7 @@
         $('.btn-agent-id').click(function (e) {
             e.preventDefault();
             var ApplicationID = $(this).attr('data-id');
+            var CompanyID = $(this).attr('data-cid');
             $('#ViewAllArea').hide('fast');
             $('#RMDLoading_ID').show();
             $('.item-data-retriving').show('fast');
@@ -104,7 +105,7 @@
             $.ajax({
                 type: "POST",
                 url: "/Signatory/ViewNominationDetails",
-                data: '{applicationId: "' + ApplicationID + '" }',
+                data: '{applicationId: "' + ApplicationID + '", companyId: "' + CompanyID + '" }',
                 contentType: "application/json; charset=utf-8",
                 dataType: "html",
                 success: function (data) {

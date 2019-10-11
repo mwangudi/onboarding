@@ -448,7 +448,7 @@ body.sidebar-gone .navbar {
 	left: 0;
 }
 body.sidebar-gone .main-content {
-	padding-left: 30px;
+	padding-left: 10px;
 }
 .main-sidebar .sidebar-brand {
 	display: inline-block;
@@ -698,15 +698,15 @@ body.sidebar-gone .main-content {
 
 /*card*/
 .card {
-    -webkit-box-shadow: 0 0 40px rgba(0,0,0,.05);
-    box-shadow: 0 0 40px rgba(0,0,0,.05);
-    background-color: #fff;
-    border-radius: 3px;
-    border: none;
-    position: relative;
-    margin-bottom: 30px;
-    width: 100%;
-    margin: 0px 15px 0px 0px;
+	-webkit-box-shadow: 0 0 40px rgba(0,0,0,.05);
+	box-shadow: 0 0 40px rgba(0,0,0,.05);
+	background-color: #fff;
+	border-radius: 3px;
+	border: none;
+	position: relative;
+	margin-bottom: 30px;
+	width: 100%;
+	margin: 0px 15px 10px 0px;
 }
 
 /* Image Scripts */
@@ -735,7 +735,7 @@ body.sidebar-gone .main-content {
 }
 
 .imgUp {
-    margin-top: 20px;
+    margin-top: 0px;
 }
 
 .del {
@@ -2264,6 +2264,9 @@ table tr:hover .table-links {
 	.weather {
 		text-align: center;
 	}
+	.tab-content {
+		overflow: scroll;
+	}
 	.weather .weather-icon {
 		float: none;
 		width: auto;
@@ -2291,6 +2294,9 @@ table tr:hover .table-links {
 	body.search-show .navbar .form-inline .search-element {
 		display: block;
 	}
+	.container {
+		padding-left: 0px;
+	}
 	.navbar .form-inline .search-element {
 		position: absolute;
 		top: 10px;
@@ -2317,6 +2323,9 @@ table tr:hover .table-links {
 	.dropdown-list-toggle .dropdown-list {
 		left: 10px !important;
 		width: calc(100% - 20px);
+	}
+	.card {
+		overflow: scroll;
 	}
 	.card-author-box .author-box-left {
 		float: none;
@@ -2390,6 +2399,9 @@ table tr:hover .table-links {
 	.navbar .form-inline .search-element {
 		display: block;
 	}
+	.container {
+		padding-left: 0px;
+	} 
 }
 @media (min-width: 768px) and (max-width: 991.98px) {
 	.article {
@@ -2398,11 +2410,18 @@ table tr:hover .table-links {
 	.article.article-style-c .article-header {
 		height: 155px;
 	}
+
+	.container {
+		padding-left: 0px;
+	}
 }
 @media (max-width: 1024px) {
 	.main-sidebar {
 		position: fixed;
 		z-index: 891;
+	}
+	.container {
+		padding-left: 0px;
 	}
 	.main-content {
 		padding-left: 30px;

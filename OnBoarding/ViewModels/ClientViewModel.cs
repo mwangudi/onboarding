@@ -74,8 +74,8 @@ namespace OnBoarding.ViewModels
     public class ConfirmApproveViewModel
     {
         public int ApplicationID { get; set; }
-        public int CompanyID { get; set; }
         public int SignatoryID { get; set; }
+        public int CompanyID { get; set; }
         public bool terms { get; set; }
         public string inputFile { get; set; } //Signature Upload
         public string CompanyEmail { get; set; }
@@ -100,8 +100,8 @@ namespace OnBoarding.ViewModels
     public class UserDeclineNominationViewModel
     {
         public int ApplicationID { get; set; }
-        public int CompanyID { get; set; }
         public int UserID { get; set; }
+        public int CompanyID { get; set; }
         public string CompanyEmail { get; set; }
         public string CompanyName { get; set; }
         public string Comments { get; set; }

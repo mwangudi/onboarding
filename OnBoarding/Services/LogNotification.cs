@@ -18,8 +18,8 @@ namespace OnBoarding.Services
                     Notification.To = to;
                     Notification.Sent = true;
                     Notification.Type = "Email";
-                    Notification.DateCreated = DateTime.Now;
                     Notification.Action = _action;
+                    Notification.DateCreated = DateTime.Now;
                     db.Notifications.Add(Notification);
                     db.SaveChanges();
                 }
@@ -44,8 +44,8 @@ namespace OnBoarding.Services
                     Notification.To = to;
                     Notification.Sent = false;
                     Notification.Type = "Email";
-                    Notification.DateCreated = DateTime.Now;
                     Notification.Action = _action;
+                    Notification.DateCreated = DateTime.Now;
                     db.Notifications.Add(Notification);
                     db.SaveChanges();
                 }

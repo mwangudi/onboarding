@@ -21,8 +21,7 @@ namespace OnBoarding.Models
         public virtual DbSet<tblStatus> tblStatus { get; set; }
         public virtual DbSet<SystemMenu> SystemMenus { get; set; }
         public virtual DbSet<SystemMenuAccess> SystemMenuAccess { get; set; }
-        public virtual DbSet<ApplicationNomination> ApplicationNominations { get; set; }
-        public virtual DbSet<DeletedEntity> DeletedEntities { get; set; }
+        public virtual DbSet<AuditTrail> AuditTrails { get; set; }
         public virtual DbSet<ClientCompany> ClientCompanies { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -191,12 +190,6 @@ namespace OnBoarding.Models
                 .WithRequired(e => e.tblStatus)
                 .HasForeignKey(e => e.Status)
                 .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<tblStatus>()
-               .HasMany(e => e.ApplicationNominations)
-               .WithRequired(e => e.tblStatus)
-               .HasForeignKey(e => e.NominationStatus)
-               .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tblStatus>()
                .HasMany(e => e.ClientCompanies)

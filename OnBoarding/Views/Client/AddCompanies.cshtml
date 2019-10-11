@@ -1,0 +1,147 @@
+﻿@model OnBoarding.ViewModels.ApplicationViewModel
+@{
+	Layout = "~/Views/Shared/_AdminNewLayout.cshtml";
+}
+	<section class="section">
+		<h5 class="section-header"> Add New Company <small><i><a href="~/Client/NewApplications">Click here to submit an application</a></i></small> </h5>
+		<div class="row">
+			<div class="col-12 col-sm-12 col-lg-12">
+				<form id="AddCompanyFRM" enctype="multipart/form-data" method="post" class="needs-validation" novalidate="">
+					<div class="list-group">
+						<div class="list-group-item py-3" data-acc-step>
+							<div data-acc-content>
+								<div class="my-3 form-group form-row">
+									<div class="col-12 col-sm-6 col-lg-6">
+										<label>Company Name: <span>*</span></label>
+										<input type="text" id="CompanyName" name="CompanyName" placeholder="Company Name" class="form-control" />
+										<input name="__RequestVerificationToken" type="hidden" value="<token_generated_here>">
+										<input name="ClientID" id="ClientID" type="hidden" value="@ViewData["ClientID"]">
+									</div>
+									<div class="col-12 col-sm-6 col-lg-6">
+										<label>Company Registration Number: <span>*</span></label>
+										<input type="text" id="CompanyRegistration" name="CompanyRegistration" placeholder="Company Registration Number" class="form-control required" />
+									</div>
+								</div>
+								<div class="my-3 form-group form-row">
+									<div class="col-12 col-sm-4 col-lg-4">
+										<label>Company Building: <span>*</span></label>
+										<input type="text" id="Building" name="Building" placeholder="Company Building" class="form-control required" />
+									</div>
+									<div class="col-12 col-sm-4 col-lg-4">
+										<label>Company Street: <span>*</span></label>
+										<input type="text" id="Street" name="Street" placeholder="Company Street" class="form-control required" />
+									</div>
+									<div class="col-12 col-sm-4 col-lg-4">
+										<label>Company Town/City: <span>*</span></label>
+										<input type="text" id="CompanyTownCity" name="CompanyTownCity" placeholder="Company Town/City" class="form-control" />
+									</div>
+								</div>
+								<div class="my-3 form-group form-row">
+									<div class="col-12 col-sm-4 col-lg-4">
+										<label>Business Email Address: <span>*</span></label>
+										<input type="text" id="BusinessEmailAddress" name="BusinessEmailAddress" placeholder="Business Email" class="form-control required" />
+									</div>
+									<div class="col-12 col-sm-4 col-lg-4">
+										<label>Atention To: <span>*</span></label>
+										<input type="text" id="AttentionTo" name="AttentionTo" placeholder="Attention To" class="form-control required" />
+									</div>
+									<div class="col-12 col-sm-4 col-lg-4">
+										<label>Company Fax:</label>
+										<input type="text" id="CompanyFax" name="CompanyFax" placeholder="Company Fax" class="form-control" />
+									</div>
+									<div class="col-12 col-sm-4 col-lg-4">
+										<label>Postal Address: <span>*</span></label>
+										<input type="text" id="PostalAddress" name="PostalAddress" placeholder="Postal Address" class="form-control required" />
+									</div>
+									<div class="col-12 col-sm-4 col-lg-4">
+										<label>Postal Code: <span>*</span></label>
+										<input type="text" id="PostalCode" name="PostalCode" placeholder="Postal Code" class="form-control required" />
+									</div>
+									<div class="col-12 col-sm-4 col-lg-4">
+										<label>Town/City: <span>*</span></label>
+										<input type="text" id="AddressTownCity" name="AddressTownCity" placeholder="Town/City" class="form-control required" />
+									</div>
+								</div><hr />
+								<div class="my-3 form-group form-row">
+									<div class="col-12 col-sm-8 col-lg-8"></div>
+									<div class="col-12 col-sm-4 col-lg-4">
+										<button type="submit" id="addcompany" name="addcompany" class="btn btn-primary w-100"><i class="fa fa-check-circle"></i> Add New Company </button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>
+				<!--Processing Submission -->
+				<div id="Loading_Div" class="col-12 col-lg-12 col-md-12 d_none m_bottom_20" style="background:#fff;">
+					<center class="r_corners m_top_20 m_bottom_20">
+						<h4 class="m_top_20 m_bottom_20">Please wait... Processing Your Submission</h4>
+						<img src="~/Content/images/loading-bar.gif" class="img-thumbnail m_bottom_20" alt="Loading" style="max-width:160px;">
+					</center>
+				</div>
+				<!--End Submission Processing -->
+			</div>
+		</div>
+	</section>
+	<script type="text/javascript">
+		jQuery().ready(function () {
+			//Form Validation
+			var v = jQuery("#AddCompanyFRM").validate({
+				rules: {
+					BusinessEmailAddress: { email: true },
+					CompanyName: { required: true },
+					CompanyTownCity: { required: true },
+					PostalCode: { number: true },
+				},
+			});
+		});
+
+		$(document).ready(function () {
+			//Submit Form Action
+			$("form#AddCompanyFRM").submit(function (e) {
+				e.preventDefault();
+				if ($('#AddCompanyFRM').valid()) {
+					$("#Loading_Div").show('fast');
+					$('#AddCompanyFRM').hide("fast");
+					var formData = new FormData($(this)[0]);
+					$.ajax({
+						url: '/Client/PostAddCompanies',
+						type: 'POST',
+						data: formData,
+						async: true,
+						success: function (XmlHttpRequest) {
+							window.setTimeout(close, 1500);
+							function close() {
+								if (XmlHttpRequest === 'success') {
+									$('#AddCompanyFRM')[0].reset();
+									$("#Loading_Div").hide('fast');
+									$('#AddCompanyFRM').show("fast");
+									toastr.success("Company details saved successfully");
+								}
+								else {
+									$("#Loading_Div").hide('fast');
+									$('#AddCompanyFRM').show("fast");
+									toastr.error(XmlHttpRequest);
+								}
+							}
+						},
+						error: function (xhr, textStatus, errorThrown) {
+							if (textStatus === 'error') {
+								$("#Loading_Div").hide('fast');
+								$('#AddCompanyFRM').show("fast");
+								toastr.error('Submission error! Code: ' + xhr.status + ' Details: ' + errorThrown);
+							}
+						},
+						cache: false,
+						contentType: false,
+						processData: false
+					});
+				}
+				else
+				{
+					toastr.error("Please fill all the form inputs marked with asterik (*)");
+				}
+			});
+		});
+
+	</script>

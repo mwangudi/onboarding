@@ -294,4 +294,24 @@ namespace OnBoarding.ViewModels
         [EmailAddress]
         public string Email { get; set; }
     }
+
+    public class ChangePasswordViewModel
+    {
+        [Display(Name = "Current Password")]
+        [Required(ErrorMessage = "Old password is required")]
+        [RegularExpression("^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).{8,24}$", ErrorMessage = "Invalid password format: Your password must be atleast 8, alphaneumeric upper and lowercase!")]
+        [DataType(DataType.Password, ErrorMessage = "Invalid password format")]
+        public string CurrentPassword { get; set; }
+
+        [Display(Name = "Enter new password")]
+        [Required(ErrorMessage = "New password is required")]
+        [RegularExpression("^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).{8,24}$", ErrorMessage = "Invalid password format: Your password must be atleast 8, alphaneumeric upper and lowercase!")]
+        [DataType(DataType.Password, ErrorMessage = "Invalid password format")]
+        public string NewPassword { get; set; }
+
+        [Display(Name = "Confirm new password")]
+        [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
+        [DataType(DataType.Password, ErrorMessage = "Invalid password format")]
+        public string ConfirmPassword { get; set; }
+    }
 }

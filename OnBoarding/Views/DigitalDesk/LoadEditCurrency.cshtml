@@ -90,18 +90,31 @@
 					type: 'POST',
 					data: formData,
 					async: true,
-					success: function () {
+					success: function (XmlHttpRequest) {
 						window.setTimeout(close, 3000);
 						window.setTimeout(closemodal, 4000);
 						function close() {
-							$("#ModalLoadingDiv").hide('fast');
-							$('.EditSuccess').show("fast");
+							if (XmlHttpRequest === 'success') {
+								$("#ModalLoadingDiv").hide('fast');
+								$('.EditSuccess').show("fast");
+							}
+							else {
+								$("#ModalLoadingDiv").hide('fast');
+								toastr.error(XmlHttpRequest);
+							}
 						}
 						function closemodal() {
 							$('#LoadUpModal').modal('hide').effect('explode');
 							$('.EditSuccess').hide("fast");
 							//Reload JTable
 							$('#CurrenciesTableContainer').jtable('load');
+						}
+					},
+					error: function (xhr, textStatus, errorThrown) {
+						if (textStatus === 'error') {
+							$("#ModalLoadingDiv").hide('fast');
+							$('#LoadUpModal').modal('hide').effect('explode');
+							toastr.error('Submission error! Code: ' + xhr.status + ' Details: ' + errorThrown);
 						}
 					},
 					cache: false,

@@ -1,12 +1,29 @@
-﻿jQuery().ready(function () {
-    //alert on load
-    /*$(function () {
-        toastr.success('Welcome to the Global Markets Onboarding Portal. Let’s get started! Please ensure you are a signatory and you have scanned your signature for upload.', { positionClass: 'toast-top-center' });
-    });*/
-});
+
+﻿//JS File for NewApplication
+//Removed Jquery.ready Function
 
 $(document).ready(function () {
-    //On Load 
+
+	//Add scroll effect for terms and conditions
+	$(document).ready(function () {
+		$("#read_through_content").scroll(function () {
+			var totalScrollHeight = $("#read_through_content")[0].scrollHeight;
+			var scrollBarHeight = $("#read_through_content")[0].clientHeight;
+			var scrollBarTopPosition = $("#read_through_content")[0].scrollTop;
+			if (totalScrollHeight === scrollBarHeight + scrollBarTopPosition) {
+				$("#applicant_read_the_content").val("true");
+			}
+		});
+
+		$("#terms").click(function () {
+			if ($("#applicant_read_the_content").val() !== "true") {
+				toastr.error('Please scroll through the disclosure text before clicking I Accept.', { positionClass: 'toast-top-center' });
+				return false;
+			}
+		});
+	});
+
+	//On Load
     LoadUpModal();
 
     //Load up modal function
@@ -58,6 +75,49 @@ $(document).ready(function () {
 	});
     //Initialize Select2
     $('.select2').select2();
+
+	//Get Company List
+	$("#SelectedCompany").select2({
+		placeholder: "Select Company",
+		allowClear: true,
+		ajax: {
+			url: '/Client/GetCompanyList',
+			data: function (params) {
+				return {
+					q: params.term // search term
+				};
+			},
+			processResults: function (data) {
+				return {
+					results: data.items
+				};
+			},
+			minimumInputLength: 2
+		}
+	});
+
+	/* This is change event for your dropdownlist */
+	$('#SelectedCompany').change(function () {
+		/* Get the selected value of dropdownlist */
+		var selectedID = $(this).val();
+
+		/* Request the partial view with .get request. */
+		$.get('/Client/_LoadCompanyDetails/' + selectedID, function (data) {
+			/* data is the pure html returned from action method, load it to your page */
+			$('#CompanyDetailsPartialView').html(data);
+			$('#CompanyInfo').removeClass('d-none');
+			/* little fade in effect */
+			$('#CompanyDetailsPartialView').fadeIn('fast');
+		});
+
+		//applicant_terms_content
+		$.get('../Content/documents/Merged GTCs and eMT Agreement/eMT-Agreement_and_Terms.html', function (data) {
+			/* data is the pure html returned from action method, load it to your page */
+			$('#applicant_esign_content').html(data);
+			/* little fade in effect */
+			$('#applicant_esign_content').fadeIn('fast');
+		});
+	});
 
     //Get Currency List
     $(".choose-currency").select2({
@@ -303,6 +363,11 @@ $(document).ready(function () {
 					$('#InputCurrencyType3 input').removeClass('help-inline-error');
 					$('#InputCurrencyType3').find('span').remove();
 					$('#SettlementAccount3').val("");
+				},
+				error: function (xhr, textStatus, errorThrown) {
+					if (textStatus === 'error') {
+						toastr.error('Submission error!. Code: ' + xhr.status + ', Details: ' + errorThrown);
+					}
 				}
 			});
 		}
@@ -344,6 +409,11 @@ $(document).ready(function () {
 					$('#InputCurrencyType4 input').removeClass('help-inline-error');
 					$('#InputCurrencyType4').find('span').remove();
 					$('#SettlementAccount4').val("");
+				},
+				error: function (xhr, textStatus, errorThrown) {
+					if (textStatus === 'error') {
+						toastr.error('Error!. Code: ' + xhr.status + ', Details: ' + errorThrown);
+					}
 				}
 			});
 		}
@@ -384,6 +454,11 @@ $(document).ready(function () {
 					$('#InputCurrencyType5 input').removeClass('help-inline-error');
 					$('#InputCurrencyType5').find('span').remove();
 					$('#SettlementAccount5').val("");
+				},
+				error: function (xhr, textStatus, errorThrown) {
+					if (textStatus === 'error') {
+						toastr.error('Submission error!. Code: ' + xhr.status + ', Details: ' + errorThrown);
+					}
 				}
 			});
 		}
@@ -512,31 +587,33 @@ $(document).ready(function () {
             $('#TransactionLimit5').removeClass('has-error');
             $('#TransactionLimit5').val('No Limit');
         }
-    });
+	});
+
     //Manipulate settlement accounts on other select
-    $('#SelectCurrency1').on('change', function () {
-        var otherselected = this.value;
-        if (otherselected == 6) {
-            $('#currencytypediv1').removeClass('d_none');
-        } else {
-            $('#currencytypediv1').addClass('d_none');
-            $('#InputCurrencyType1 input').removeClass('help-inline-error');
-            $('#InputCurrencyType1').find('span').remove();
-            $('#InputCurrencyType1 input').val('');
-        }
-    })
+	$('#SelectCurrency1').on('change', function () {
+		var otherselected = this.value;
+		if (otherselected === 6) {
+			$('#currencytypediv1').removeClass('d_none');
+		} else {
+			$('#currencytypediv1').addClass('d_none');
+			$('#InputCurrencyType1 input').removeClass('help-inline-error');
+			$('#InputCurrencyType1').find('span').remove();
+			$('#InputCurrencyType1 input').val('');
+		}
+	});
+
     //Manipulate settlement accounts on other select
-    $('#SelectCurrency2').on('change', function () {
-        var otherselected = this.value;
-        if (otherselected === 6) {
-            $('#currencytypediv2').removeClass('d_none');
-        } else {
-            $('#currencytypediv2').addClass('d_none');
-            $('#InputCurrencyType2 input').removeClass('help-inline-error');
-            $('#InputCurrencyType2').find('span').remove();
-            $('#InputCurrencyType2 input').val('');
-        }
-    })
+	$('#SelectCurrency2').on('change', function () {
+		var otherselected = this.value;
+		if (otherselected === 6) {
+			$('#currencytypediv2').removeClass('d_none');
+		} else {
+			$('#currencytypediv2').addClass('d_none');
+			$('#InputCurrencyType2 input').removeClass('help-inline-error');
+			$('#InputCurrencyType2').find('span').remove();
+			$('#InputCurrencyType2 input').val('');
+		}
+	});
 
     //Manipulate user Panels Div
     $('#btnAddUser2').on('click', function () {
@@ -570,6 +647,11 @@ $(document).ready(function () {
 					$('#UserOthernames2').removeClass('required');
 					$('#UserEmail2').removeClass('required');
 					$('#UserMobileNumber2').removeClass('required');
+				},
+				error: function (xhr, textStatus, errorThrown) {
+					if (textStatus === 'error') {
+						toastr.error('Submission error!. Code: ' + xhr.status + ', Details: ' + errorThrown);
+					}
 				}
 			});
 		}
@@ -619,6 +701,11 @@ $(document).ready(function () {
 					$('#UserOthernames3').removeClass('required');
 					$('#UserEmail3').removeClass('required');
 					$('#UserMobileNumber3').removeClass('required');
+				},
+				error: function (xhr, textStatus, errorThrown) {
+					if (textStatus === 'error') {
+						toastr.error('Submission error!. Code: ' + xhr.status + ', Details: ' + errorThrown);
+					}
 				}
 			});
 		}
@@ -668,6 +755,11 @@ $(document).ready(function () {
 					$('#UserOthernames4').removeClass('required');
 					$('#UserEmail4').removeClass('required');
 					$('#UserMobileNumber4').removeClass('required');
+				},
+				error: function (xhr, textStatus, errorThrown) {
+					if (textStatus === 'error') {
+						toastr.error('Submission error!. Code: ' + xhr.status + ', Details: ' + errorThrown);
+					}
 				}
 			});
 		}
@@ -718,6 +810,11 @@ $(document).ready(function () {
 					$('#UserOthernames5').removeClass('required');
 					$('#UserEmail5').removeClass('required');
 					$('#UserMobileNumber5').removeClass('required');
+				},
+				error: function (xhr, textStatus, errorThrown) {
+					if (textStatus === 'error') {
+						toastr.error('Submission error!. Code: ' + xhr.status + ', Details: ' + errorThrown);
+					}
 				}
 			});
 		}
@@ -787,6 +884,11 @@ $(document).ready(function () {
 					$('#SignatoryDiv2 input').removeClass('help-inline-error');
 					$('#SignatoryDiv2').find('span').remove();
 					$('#SignatoryDiv2 input').val('');
+				},
+				error: function (xhr, textStatus, errorThrown) {
+					if (textStatus === 'error') {
+						toastr.error('Submission error!. Code: ' + xhr.status + ', Details: ' + errorThrown);
+					}
 				}
 			});
 		}
@@ -825,6 +927,11 @@ $(document).ready(function () {
 					$('#SignatoryDiv3 input').removeClass('help-inline-error');
 					$('#SignatoryDiv3').find('span').remove();
 					$('#SignatoryDiv3 input').val('');
+				},
+				error: function (xhr, textStatus, errorThrown) {
+					if (textStatus === 'error') {
+						toastr.error('Submission error!. Code: ' + xhr.status + ', Details: ' + errorThrown);
+					}
 				}
 			});
 		}
@@ -864,6 +971,11 @@ $(document).ready(function () {
 					$('#SignatoryDiv4 input').removeClass('help-inline-error');
 					$('#SignatoryDiv4').find('span').remove();
 					$('#SignatoryDiv4 input').val('');
+				},
+				error: function (xhr, textStatus, errorThrown) {
+					if (textStatus === 'error') {
+						toastr.error('Submission error!. Code: ' + xhr.status + ', Details: ' + errorThrown);
+					}
 				}
 			});
 		}
@@ -903,6 +1015,11 @@ $(document).ready(function () {
 					$('#SignatoryDiv5 input').removeClass('help-inline-error');
 					$('#SignatoryDiv5').find('span').remove();
 					$('#SignatoryDiv5 input').val('');
+				},
+				error: function (xhr, textStatus, errorThrown) {
+					if (textStatus === 'error') {
+						toastr.error('Submission error!. Code: ' + xhr.status + ', Details: ' + errorThrown);
+					}
 				}
 			});
 		}
@@ -940,7 +1057,14 @@ $(document).ready(function () {
 						$("#saved").addClass("d_none");
 						$("#save").removeClass("d_none");
                     }
-                },
+				},
+				error: function (xhr, textStatus, errorThrown) {
+					if (textStatus === 'error') {
+						$("#saved").addClass("d_none");
+						$("#save").removeClass("d_none");
+						toastr.error('Submission error!. Code: ' + xhr.status + ', Details: ' + errorThrown);
+					}
+				},
                 cache: false,
                 contentType: false,
                 processData: false
@@ -964,9 +1088,9 @@ $(document).ready(function () {
     else
     {
         $('#btn-edit-settlement').addClass('d_none');
-        $('#btn-save-settlement').addClass('d_none');
-		$("#HaveSettlementAccount").val("No");
-		 $('#SavedSettlements').addClass('d_none');
+		$('#btn-save-settlement').addClass('d_none');
+		$('#HaveSettlementsDiv').addClass('d_none');
+		$('#SavedSettlements').addClass('d_none');
     }
 	
 	//btn-edit-settlements load modal
@@ -982,15 +1106,17 @@ $(document).ready(function () {
         $('#HaveSettlementAccount').val('');
 		$('#SettlementAccountDiv').removeClass('d_none');
         $('#HaveSettlementAccount').attr("disabled", false);
-		$('#SettlementAccountsCount').val("0")
+		$('#SettlementAccountsCount').val("0");
+		var formData = new FormData($("#form")[0]);
         $.ajax({
             url: '/Client/ClearSettlementAccounts',
-            type: 'POST',
+			type: 'POST',
+			data: formData,
             async: true,
             success: function (XmlHttpRequest) {
                 window.setTimeout(saved, 500);
                 function saved() {
-					if (XmlHttpRequest == 'success') {
+					if (XmlHttpRequest === 'success') {
 						$('#AccountDiv1').removeClass('d_none');
 						$('#AccountDiv2').removeClass('d_none');
 						$('#btn-save-settlement').removeClass('d_none');
@@ -998,10 +1124,20 @@ $(document).ready(function () {
 						$('#LoadUpSettlementModal').modal('hide');
 					}
 					else {
-						toastr.error('Error editing your settlement instructions', { positionClass: 'toast-top-center' });
+						//toastr.error(XmlHttpRequest, { positionClass: 'toast-top-center' });
+						$('#AccountDiv1').removeClass('d_none');
+						$('#AccountDiv2').removeClass('d_none');
+						$('#btn-save-settlement').removeClass('d_none');
+						$('#btn-edit-settlement').addClass('d_none');
+						$('#LoadUpSettlementModal').modal('hide');
 					}
                 }
-            },
+			},
+			error: function (xhr, textStatus, errorThrown) {
+				if (textStatus === 'error') {
+					toastr.error('Submission error!. Code: ' + xhr.status + ', Details: ' + errorThrown);
+				}
+			},
             cache: false,
             contentType: false,
             processData: false
@@ -1024,7 +1160,7 @@ $(document).ready(function () {
                     window.setTimeout(close, 500);
 					window.setTimeout(enablesave, 3000);
                     function close() {
-						if (XmlHttpRequest == 'success') {
+						if (XmlHttpRequest === 'success') {
 							$("#savingsettlement").addClass("d_none");
 							$("#savedsettlement").removeClass("d_none");
 							toastr.success('Settlement instructions saved', { positionClass: 'toast-top-center' });
@@ -1039,7 +1175,14 @@ $(document).ready(function () {
 						$("#savedsettlement").addClass("d_none");
 						$("#btn-save-settlement").removeClass("d_none");
 					}
-                },
+				},
+				error: function (xhr, textStatus, errorThrown) {
+					if (textStatus === 'error') {
+						$("#savedsettlement").addClass("d_none");
+						$("#btn-save-settlement").removeClass("d_none");
+						toastr.error('Submission error!. Code: ' + xhr.status + ', Details: ' + errorThrown);
+					}
+				},
                 cache: false,
                 contentType: false,
                 processData: false
@@ -1056,7 +1199,7 @@ $(document).ready(function () {
         $('#SignatoriesDiv').removeClass('d_none');
         $('#SignatoryDiv1').addClass('d_none');
         $('#btn-save-signatories').addClass('d_none');
-        $('#btn-edit-signatories').removeClass('d_none');
+		$('#btn-edit-signatories').removeClass('d_none'); 
     }
     else {
         $('#SignatoryDiv1').removeClass('d_none');
@@ -1088,7 +1231,14 @@ $(document).ready(function () {
 						$("#savedsignatories").addClass("d_none");
 						$("#btn-save-signatories").removeClass("d_none");
                     }
-                },
+				},
+				error: function (xhr, textStatus, errorThrown) {
+					if (textStatus === 'error') {
+						$("#savedsignatories").addClass("d_none");
+						$("#btn-save-signatories").removeClass("d_none");
+						toastr.error('Submission error!. Code: ' + xhr.status + ', Details: ' + errorThrown);
+					}
+				},
                 cache: false,
                 contentType: false,
                 processData: false
@@ -1106,10 +1256,13 @@ $(document).ready(function () {
     });
 
     $('#btnEditSignatories').on('click', function (e) {
-        e.preventDefault();
+		e.preventDefault();
+		$('#ClientSignatoryCount').val("0");
+		var formData = new FormData($("#form")[0]);
         $.ajax({
             url: '/Client/ClearSignatories',
-            type: 'POST',
+			type: 'POST',
+			data: formData,
             async: true,
             success: function () {
                 window.setTimeout(saved, 500);
@@ -1121,7 +1274,12 @@ $(document).ready(function () {
                     $('#btn-save-signatories').removeClass('d_none');
                     $('#LoadUpSignatoryModal').modal('hide');
                 }
-            },
+			},
+			error: function (xhr, textStatus, errorThrown) {
+				if (textStatus === 'error') {
+					toastr.error('Submission error!. Code: ' + xhr.status + ', Details: ' + errorThrown);
+				}
+			},
             cache: false,
             contentType: false,
             processData: false
@@ -1149,10 +1307,13 @@ $(document).ready(function () {
     });
 
     $('#btnEditRepresentatives').on('click', function (e) {
-        e.preventDefault();
+		e.preventDefault();
+		$('#DesignatedUserCount').val("0");
+		var formData = new FormData($("#form")[0]);
         $.ajax({
             url: '/Client/ClearRepresentatives',
-            type: 'POST',
+			type: 'POST',
+			data: formData,
             async: true,
             success: function () {
                 window.setTimeout(saved, 500);
@@ -1164,7 +1325,12 @@ $(document).ready(function () {
                     $('#btn-save-representatives').removeClass('d_none');
                     $('#LoadUpRepresentativeModal').modal('hide');
                 }
-            },
+			},
+			error: function (xhr, textStatus, errorThrown) {
+				if (textStatus === 'error') {
+					toastr.error('Submission error!. Code: ' + xhr.status + ', Details: ' + errorThrown);
+				}
+			},
             cache: false,
             contentType: false,
             processData: false
@@ -1195,7 +1361,14 @@ $(document).ready(function () {
 						$("#savedrepresentatives").addClass("d_none");
 						$("#btn-save-representatives").removeClass("d_none"); 
                     }
-                },
+				},
+				error: function (xhr, textStatus, errorThrown) {
+					if (textStatus === 'error') {
+						$("#savedrepresentatives").addClass("d_none");
+						$("#btn-save-representatives").removeClass("d_none");
+						toastr.error('Submission error!. Code: ' + xhr.status + ', Details: ' + errorThrown);
+					}
+				},
                 cache: false,
                 contentType: false,
                 processData: false
@@ -1218,19 +1391,36 @@ $(document).ready(function () {
                 type: 'POST',
                 data: formData,
                 async: true,
-                success: function () {
+				success: function (XmlHttpRequest) {
                     window.setTimeout(close, 500);
                     window.setTimeout(close2, 1500);
-                    function close() {
-                        $('#form')[0].reset();
-                        $("#Loading_Div").hide('fast');
-                        $('#Success_Div').show("fast");
+					function close() {
+						if (XmlHttpRequest === 'success') {
+							$('#form')[0].reset();
+							$("#Loading_Div").hide('fast');
+							$('#Success_Div').show("fast");
+						}
+						else {
+							toastr.error(XmlHttpRequest);
+						}
+					}
+					function close2() {
+						if (XmlHttpRequest === 'success') {
+							$('#Success_Div').hide("fast");
+							window.location.replace("/Client/ViewAll");
+						}
+						else {
+							$("#Loading_Div").hide('fast');
+							$('#form').show("fast");
+						}
                     }
-                    function close2() {
-                        $('#Success_Div').hide("fast");
-                        window.location.replace("/Client/ViewAll");
-                    }
-                },
+				},
+				error: function (xhr, textStatus, errorThrown) {
+					if (textStatus === 'error') {
+						$("#Loading_Div").hide('fast');
+						toastr.error('Submission error!. Code: ' + xhr.status + ', Details: ' + errorThrown);
+					}
+				},
                 cache: false,
                 contentType: false,
                 processData: false

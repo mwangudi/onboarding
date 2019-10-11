@@ -77,9 +77,18 @@
                                             width: '10%'
                                         },
                                         AcceptedTAC: {
-                                            title: 'Accepted Terms',
-                                            width: '10%'
-                                        },
+											title: 'Terms',
+											width: '10%',
+											display: function (data) {
+												var accepted = data.record.AcceptedTAC;
+												if (accepted) {
+													return '<center><p class="text-success"><i class="fa fa-check-circle"></i> Accepted </p></center>';
+												}
+												else {
+													return '<center><p class="text-danger"><i class="fa fa-times-circle"></i> Not Yet Accepted </p></center>';
+												}
+											}
+										},
                                         DateCreated: {
                                             title: 'Application Date',
                                             width: '10%',
@@ -87,13 +96,39 @@
                                             displayFormat: 'yy-mm-dd'
                                         },
                                         OPSApproved: {
-                                            title: 'OPSApproved',
-                                            width: '10%'
+											title: 'OPS',
+                                            width: '10%',
+                                            display: function (data) {
+                                                var opsapproved = data.record.OPSApproved;
+                                                var opsdeclined = data.record.OPSDeclined;
+                                                if (opsapproved) {
+                                                    return '<center><p class="text-success"><i class="fa fa-check-circle"></i> Approved </p></center>';
+                                                }
+                                                else if(opsdeclined){
+                                                    return '<center><p class="text-danger"><i class="fa fa-times-circle"></i> Declined </p></center>';
+                                                }
+												else {
+													return '<center><i class="fa fa-shield-alt" style="color:red;"></i></center>';
+                                                }
+                                            }
                                         },
                                         POAApproved: {
-                                            title: 'POAApproved',
-                                            width: '10%'
-                                        },
+											title: 'POA',
+                                            width: '10%',
+                                            display: function (data) {
+                                                var poaapproved = data.record.POAApproved;
+                                                var poadeclined = data.record.POADeclined;
+                                                if (poaapproved) {
+                                                    return '<center><p class="text-success"><i class="fa fa-check-circle"></i> Approved </p></center>';
+                                                }
+                                                else if (poadeclined){
+                                                    return '<center><p class="text-danger"><i class="fa fa-times-circle"></i> Declined </p></center>';
+                                                }
+												else {
+                                                    return '<center><i class="fa fa-shield-alt" style="color:red;"></i></center>';
+                                                }
+                                            }
+										},
                                         MyButton: {
                                             title: 'Action',
                                             width: '10%',

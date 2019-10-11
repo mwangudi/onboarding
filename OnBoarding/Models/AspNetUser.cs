@@ -53,7 +53,11 @@ namespace OnBoarding.Models
         public string CompanyName { get; set; }
 
         [Column(TypeName = "datetime2")]
-        public DateTime? DateCreated { get; set; } = DateTime.Now;
+
+        public DateTime DateCreated { get; set; } = DateTime.Now;
+
+        [Column(TypeName = "datetime2")]
+        public DateTime LastPasswordChangedDate { get; set; } = DateTime.Now;
 
         public virtual tblStatus tblStatus { get; set; }
 

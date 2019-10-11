@@ -131,6 +131,7 @@
 	<div class="col-12 col-md-6 col-lg-6">
 		<div class="card">
 			<div class="card-header">
+				<div class="float-right"><button id="save-bar-graph" class="btn btn-primary"> <i class="fa fa-save"></i> Save </button></div>
 				<h4> Client Applications </h4>
 			</div>
 			<div class="card-body">
@@ -141,6 +142,7 @@
 	<div class="col-12 col-md-6 col-lg-6">
 		<div class="card">
 			<div class="card-header">
+				<div class="float-right"><button id="save-pie-chart" class="btn btn-primary"> <i class="fa fa-save"></i> Save </button></div>
 				<h4> Application Statuses </h4>
 			</div>
 			<div class="card-body">
@@ -150,7 +152,7 @@
 	</div>
 </div> <hr class="m_top_10" />
 <div class="row">
-	<div class="col-lg-6 col-md-6 col-12">
+	<div class="col-12 col-lg-6 col-sm-6">
 		<div class="card">
 			<div class="card-header">
 				<h4>Menu Quicklinks</h4>
@@ -208,7 +210,7 @@
 				{
 					<ul class="list-unstyled list-unstyled-border">
 						<li class="media">
-							<img class="mr-3 rounded-circle" width="50" src="../content/images/email_avatar.png" alt="avatar">
+							<img class="mr-3" width="50" src="../content/images/email_avatar.png" alt="avatar">
 							<div class="media-body">
 								<div class="float-right"><small>@item.DateCreated.ToString("yyyy/M/dd H:ss")</small></div>
 								<div class="media-title">@item.From</div>
@@ -235,7 +237,7 @@
 		data: {
 			labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Aug", "Sep", "Oct", "Nov", "Dec"],
 			datasets: [{
-				label: 'Statistics',
+				label: 'Approved Applications',
 				data: @ViewData["Chart1Data"],
 				borderWidth: 2,
 				backgroundColor: 'rgb(87,75,144)',
@@ -295,5 +297,20 @@
 				position: 'right',
 			},
 		}
+	});
+
+	// save as image
+	var canvas = $('#myChart1').get(0);
+	$('#save-bar-graph').click(function() {
+		canvas.toBlob(function(blob) {
+			saveAs(blob, "GM_approved_applications.png");
+		});
+	});
+
+	var canvas1 = $('#myChart2').get(0);
+	$('#save-pie-chart').click(function() {
+		canvas1.toBlob(function(blob) {
+			saveAs(blob, "GM_application_statuses.png");
+		});
 	});
 </script>

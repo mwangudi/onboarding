@@ -32,4 +32,31 @@
 			</tr>
 		</tbody>
 	</table>
+	@if (ViewBag.ApprovalDetails == false)
+	{
+		<button onclick="LoadUpDeleteClientModal('@ViewBag.SignatoryInfo.Id')" type="submit" id="btnDeleteClient" name="btnDeleteClient" class="btn btn-danger float-right"><i class="fa fa-trash"></i> Delete Signatory </button>
+	}
+	else
+	{
+
+	}
 </div>
+<script type="text/javascript">
+
+	//Function Load modal
+	function LoadUpDeleteClientModal(getSignatoryId) {
+		$('#LoadUpDeleteModal').modal({ backdrop: 'static', keyboard: false });
+		$.ajax({
+			type: "POST",
+			url: "/DigitalDesk/LoadDeleteSignatory",
+			data: '{getSignatoryId: "' + getSignatoryId + '" }',
+			contentType: "application/json; charset=utf-8",
+			dataType: "html",
+			success: function (data) {
+				$('.students-data').html(data);
+			}
+		});
+	}
+
+</script>
+>>>>>>> 4a57cb65d9ff4345fc860a183a3da86a25aa01d6

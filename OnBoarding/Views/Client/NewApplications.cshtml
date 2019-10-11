@@ -1,1049 +1,998 @@
 ﻿@model OnBoarding.ViewModels.ApplicationViewModel
 @{
-    ViewBag.Title = "New Application";
-    Layout = "~/Views/Shared/_AdminNewLayout.cshtml";
+	ViewBag.Title = "New Application";
+	Layout = "~/Views/Shared/_AdminNewLayout.cshtml";
 }
 <section class="section">
-    <h5 class="section-header"> New Application </h5>
-    <div class="row">
-        <div class="col-12 col-sm-12 col-lg-12">
-            <form id="form" enctype="multipart/form-data" method="post" class="needs-validation" novalidate="">
-                <div class="list-group">
-                    <div class="list-group-item py-3" data-acc-step>
-                        <h5 class="mb-0" data-acc-title> Company Details </h5>
-                        <div data-acc-content>
-                            <div class="my-3 form-group form-row">
-                                <div class="col-12 col-sm-6 col-lg-6">
-                                    <label>Company Name: <span>*</span></label>
-                                    <input type="text" id="CompanyName" name="CompanyName" placeholder="Company Name" value="@ViewData["CompanyName"]" class="form-control" />
-                                    <input name="__RequestVerificationToken" type="hidden" value="<token_generated_here>">
-                                    <input name="ClientID" id="ClientID" type="hidden" value="@ViewData["ClientID"]">
-                                    <input name="CompanyEmail" id="CompanyEmail" type="hidden" value="@ViewData["CompanyEmail"]">
-                                </div>
-                                <div class="col-12 col-sm-6 col-lg-6">
-                                    <label>Company Registration Number: <span>*</span></label>
-                                    <input type="text" id="CompanyRegistration" name="CompanyRegistration" value="@ViewData["IncorporationNumber"]" placeholder="Company Registration Number" class="form-control required" />
+	<h5 class="section-header"> New Application <small><i> [Registered Companies: @ViewData["RegisteredCompanies"]]</i></small> </h5>
+	<div class="row">
+		<div class="col-12 col-sm-12 col-lg-12">
+			<form id="form" enctype="multipart/form-data" method="post" class="needs-validation" novalidate="">
+				<div class="list-group">
+					<div class="list-group-item py-3" data-acc-step>
 
-                                </div>
-                            </div>
-                            <div class="my-3 form-group form-row">
-                                <div class="col-12 col-sm-4 col-lg-4">
-                                    <label>Company Building: <span>*</span></label>
-                                    <input type="text" id="Building" name="Building" value="@ViewData["Building"]" placeholder="Company Building" class="form-control required" />
-                                </div>
-                                <div class="col-12 col-sm-4 col-lg-4">
-                                    <label>Company Street: <span>*</span></label>
-                                    <input type="text" id="Street" name="Street" value="@ViewData["Street"]" placeholder="Company Street" class="form-control required" />
-                                </div>
-                                <div class="col-12 col-sm-4 col-lg-4">
-                                    <label>Company Town/City: <span>*</span></label>
-                                    <input type="text" id="CompanyTownCity" name="CompanyTownCity" value="@ViewData["TownCity"]" placeholder="Company Town/City" class="form-control" />
-                                </div>
-                            </div>
-                            <div class="my-3 form-group form-row">
-                                <div class="col-12 col-sm-4 col-lg-4">
-                                    <label>Business Email Address: <span>*</span></label>
-                                    <input type="text" id="BusinessEmailAddress" name="BusinessEmailAddress" value="@ViewData["BusinessEmail"]" placeholder="Business Email" class="form-control required" />
-                                </div>
-                                <div class="col-12 col-sm-4 col-lg-4">
-                                    <label>Atention To: <span>*</span></label>
-                                    <input type="text" id="AttentionTo" name="AttentionTo" value="@ViewData["Attention"]" placeholder="Attention To" class="form-control required" />
-                                </div>
-                                <div class="col-12 col-sm-4 col-lg-4">
-                                    <label>Company Fax:</label>
-                                    <input type="text" id="CompanyFax" name="CompanyFax" value="@ViewData["Fax"]" placeholder="Company Fax" class="form-control" />
-                                </div>
-                                <div class="col-12 col-sm-4 col-lg-4">
-                                    <label>Postal Address: <span>*</span></label>
-                                    <input type="text" id="PostalAddress" name="PostalAddress" value="@ViewData["PostalAddress"]" placeholder="Postal Address" class="form-control required" />
-                                </div>
-                                <div class="col-12 col-sm-4 col-lg-4">
-                                    <label>Postal Code: <span>*</span></label>
-                                    <input type="text" id="PostalCode" name="PostalCode" value="@ViewData["PostalCode"]" placeholder="Postal Code" class="form-control required" />
-                                </div>
-                                <div class="col-12 col-sm-4 col-lg-4">
-                                    <label>Town/City: <span>*</span></label>
-                                    <input type="text" id="AddressTownCity" name="AddressTownCity" value="@ViewData["AddressTownCity"]" placeholder="Town/City" class="form-control required" />
-                                    <input name="AcceptedTerms" id="AcceptedTerms" type="hidden" value="@ViewData["AcceptedTerms"]">
-                                </div>
-                            </div>
-                            <div class="my-3 form-group form-row">
-                                <div class="col-12 col-sm-3 col-lg-3">
-                                    <button id="saving" class="btn btn-outline-primary d_none" type="button">
-                                        <i class="fa fa-spinner fa-spin fa-2x fa-fw"></i> Saving Company Details ...
-                                    </button>
-                                    <button id="saved" class="btn btn-success d_none" type="button">
-                                        <i class="fa fa-check-circle"></i> Company Details Saved
-                                    </button>
-                                    <button id="save" class="btn btn-outline-danger" type="button">
-                                        <i class="fa fa-save"></i> Save
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="list-group-item py-3" data-acc-step>
-                        <h5 class="mb-0" data-acc-title>Terms and Conditions</h5>
-                        <div data-acc-content>
-                            <div class="my-3 form-group">
-                                <div class="col-12 col-sm-12 col-lg-12">
-                                    <h6>This agreement is entered into by and between: Stanbic Bank Kenya Limited (acting only through its Global Markets Division unless stated otherwise in the agreement) (the “Bank”); and <b>@ViewData["CompanyName"]</b>.</h6>
-                                    <div class="form-group scroll-terms">
-                                        <embed id="scroll" src="~/Content/documents/Merged GTCs and eMT Agreement.pdf" width="900" height="500" alt="Terms and Conditions pdf" pluginspage="http://www.adobe.com/products/acrobat/readstep2.html" />
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-12 col-sm-6 col-lg-6"></div>
-                                    <div class="col-12 col-sm-6 col-lg-6">
-                                        <label for="checkbox1">I have read and hereby accept the above terms and conditions</label>
-                                        <input value="false" type="checkbox" name="terms[]" id="terms">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="list-group-item py-3" data-acc-step>
-                        <h5 class="mb-0" data-acc-title>Settlement Instructions</h5>
-                        <div data-acc-content>
-                            <div class="my-3 form-group">
-                                <div class="col-12 col-sm-12 col-lg-12">
-                                    <h6><small>The Settlement Instructions guides settlement once you book a deal.</small></h6>
-                                    <h6><small>The accounts are credited or debited as per your deals. You should have a minimum of 2 accounts and a maximum of 5 </small></h6><hr class="nopadding" />
-                                    <h6><b><small>Do you have a settlement account? <i> Indicate by choosing YES or NO below. </i></small></b></h6>
-                                    <input name="SettlementAccountsCount" id="SettlementAccountsCount" type="hidden" value="@ViewBag.SettlementAccounts.Count">
-                                    <input name="ClientSignatoryCount" id="ClientSignatoryCount" type="hidden" value="@ViewBag.ClientSignatory.Count">
-                                    <input name="DesignatedUserCount" id="DesignatedUserCount" type="hidden" value="@ViewBag.DesignatedUser.Count">
-                                </div>
-                                <div id="SettlementAccountDiv" class="col-12 col-sm-3 col-lg-3">
-                                    <select id="HaveSettlementAccount" name="HaveSettlementAccount" class="form-control select2 required" style="width: 100%;">
-                                        <option value="" selected> Do you have a settlement Account? </option>
-                                        <option value="Yes"> Yes </option>
-                                        <option value="No"> No </option>
-                                    </select>
-                                </div><br />
-                                <div id="HaveSettlementsDiv" class="col-12 col-sm-6 col-lg-6 d_none">
-                                    @if (ViewBag.SettlementAccounts.Count > 0)
-                                    {
-                                        <table class="table table-bordered">
-                                            <thead>
-                                                <tr>
-                                                    <th>Currency</th>
-                                                    <th>Account Number</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach (var item in ViewBag.SettlementAccounts)
-                                                {
-                                                    <tr>
-                                                        <td>@item.CurrencyName</td>
-                                                        <td>@item.AccountNumber</td>
-                                                    </tr>
-                                                }
-                                            </tbody>
-                                        </table>
-                                    }
-                                </div>
-                            </div>
-                            <div id="AccountDiv1" class="my-3 form-group form-row d_none">
-                                <div class="col-12 col-sm-3 col-lg-3">
-                                    <label>Select Currency <span>*</span></label>
-                                    <select id="SelectCurrency1" name="SelectCurrency1" class="choose-currency form-control select2" style="width: 100%;"></select>
-                                </div>
-                                <div class="col-12 col-sm-3 col-lg-3 d_none" id="currencytypediv1">
-                                    <label>Indicate Currency Type <span>*</span></label>
-                                    <input type="text" class="form-control" name="InputCurrencyType1" id="InputCurrencyType1" placeholder="Currency" autocomplete="off" style="text-transform:uppercase">
-                                </div>
-                                <div class="col-12 col-sm-3 col-lg-3">
-                                    <label>Account Number <span>*</span></label>
-                                    <input type="text" class="form-control" name="SettlementAccount1" id="SettlementAccount1" placeholder="Account Number">
-                                </div>
-                            </div>
-                            <div id="AccountDiv2" class="my-3 form-group form-row d_none">
-                                <div class="col-12 col-sm-3 col-lg-3">
-                                    <label>Select Currency <span>*</span></label>
-                                    <select id="SelectCurrency2" name="SelectCurrency2" class="choose-currency form-control select2" style="width: 100%;"></select>
-                                </div>
-                                <div class="col-12 col-sm-3 col-lg-3 d_none" id="currencytypediv2">
-                                    <label>Indicate Currency Type <span>*</span></label>
-                                    <input type="text" class="form-control" name="InputCurrencyType2" id="InputCurrencyType2" placeholder="Indicate Currency Type" autocomplete="off">
-                                </div>
-                                <div class="col-12 col-sm-3 col-lg-3">
-                                    <label>Account Number <span>*</span></label>
-                                    <input type="text" class="form-control" name="SettlementAccount2" id="SettlementAccount2" placeholder="Account Number">
-                                </div>
-                                <div class="m_top_20">
-                                    <button type="button" class="btn btn-success" style="margin-top: 22px;" id="btnAddAccount3"><i class="fa fa-plus"></i> Add Another Account</button>
-                                </div>
-                            </div>
-                            <div id="AccountDiv3" class="my-3 form-group form-row d_none">
-                                <div class="col-12 col-sm-3 col-lg-3">
-                                    <label>Select Currency <span>*</span></label>
-                                    <select id="SelectCurrency3" name="SelectCurrency3" class="choose-currency form-control select2" style="width: 100%;"></select>
-                                </div>
-                                <div class="col-12 col-sm-3 col-lg-3 d_none" id="currencytypediv3">
-                                    <label>Indicate Currency Type <span>*</span></label>
-                                    <input type="text" class="form-control" name="InputCurrencyType3" id="InputCurrencyType3" placeholder="Indicate Currency Type" autocomplete="off">
-                                </div>
-                                <div class="col-12 col-sm-3 col-lg-3">
-                                    <label>Account Number <span>*</span></label>
-                                    <input type="text" class="form-control" name="SettlementAccount3" id="SettlementAccount3" placeholder="Account Number">
-                                </div>
-                                <div class="m_top_20">
-                                    <button type="button" class="btn btn-success" style="margin-top: 22px;" id="btnAddAccount4"><i class="fa fa-plus"></i> Add Another Account</button>
-                                    <button type="button" class="btn btn-danger" style="margin-top: 22px;" id="btnRemoveAccount3"><i class="fa fa-trash"></i> Remove Account</button>
-                                </div>
-                            </div>
-                            <div id="AccountDiv4" class="my-3 form-group form-row d_none">
-                                <div class="col-12 col-sm-3 col-lg-3">
-                                    <label>Select Currency <span>*</span></label>
-                                    <select id="SelectCurrency4" name="SelectCurrency4" class="choose-currency form-control select2" style="width: 100%;"></select>
-                                </div>
-                                <div class="col-12 col-sm-3 col-lg-3 d_none" id="currencytypediv4">
-                                    <label>Indicate Currency Type <span>*</span></label>
-                                    <input type="text" class="form-control" name="InputCurrencyType4" id="InputCurrencyType4" placeholder="Indicate Currency Type" autocomplete="off">
-                                </div>
-                                <div class="col-12 col-sm-3 col-lg-3">
-                                    <label>Account Number <span>*</span></label>
-                                    <input type="text" class="form-control" name="SettlementAccount4" id="SettlementAccount4" placeholder="Account Number">
-                                </div>
-                                <div class="m_top_20">
-                                    <button type="button" class="btn btn-success" style="margin-top: 22px;" id="btnAddAccount5"><i class="fa fa-plus"></i> Add Another Account</button>
-                                    <button type="button" class="d_none btn btn-danger" style="margin-top: 22px;" id="btnRemoveAccount4"><i class="fa fa-trash"></i> Remove Account</button>
-                                </div>
-                            </div>
-                            <div id="AccountDiv5" class="my-3 form-group form-row d_none">
-                                <div class="col-12 col-sm-3 col-lg-3">
-                                    <label>Select Currency <span>*</span></label>
-                                    <select id="SelectCurrency5" name="SelectCurrency5" class="choose-currency form-control select2" style="width: 100%;"></select>
-                                </div>
-                                <div class="col-12 col-sm-3 col-lg-3 d_none" id="currencytypediv5">
-                                    <label>Indicate Currency Type <span>*</span></label>
-                                    <input type="text" class="form-control" name="InputCurrencyType5" id="InputCurrencyType5" placeholder="Indicate Currency Type" autocomplete="off">
-                                </div>
-                                <div class="col-12 col-sm-3 col-lg-3">
-                                    <label>Account Number <span>*</span></label>
-                                    <input type="text" class="form-control" name="SettlementAccount5" id="SettlementAccount5" placeholder="Account Number">
-                                </div>
-                                <div class="m_top_10">
-                                    <button type="button" class="d_none btn btn-danger" style="margin-top: 22px;" id="btnRemoveAccount5"><i class="fa fa-trash"></i> Remove Account</button>
-                                </div>
-                            </div>
-                            <div class="my-3 form-group form-row">
-                                <div class="col-12 col-sm-3 col-lg-3">
-                                    <button id="savingsettlement" class="btn btn-outline-primary d_none" type="button">
-                                        <i class="fa fa-spinner fa-spin fa-2x fa-fw"></i> Saving Settlement Instructions ...
-                                    </button>
-                                    <button id="savedsettlement" class="btn btn-success d_none" type="button">
-                                        <i class="fa fa-check-circle"></i> Settlement Instructions Saved
-                                    </button>
-                                    <button id="btn-save-settlement" class="btn btn-outline-danger" type="button">
-                                        <i class="fa fa-save"></i> Save
-                                    </button>
-                                    <button id="btn-edit-settlement" class="btn btn-outline-info" type="button">
-                                        <i class="fa fa-edit"></i> Edit Settlements
-                                    </button>
-                                </div>
-                            </div><hr />
-                            <div class="my-3 form-group form-row">
-                                <h6 class="d_none" id="disclaimer"><i><small>The counterparty hereby indemnifies the Bank against all and any losses and any demages that the Bank may suffer as a result of settling any transaction in any of the aforementioned bank accounts.</small></i></h6>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="list-group-item py-3" data-acc-step>
-                        <h5 class="mb-0" data-acc-title>Account Signatories</h5>
-                        <div data-acc-content>
-                            <div class="my-3 form-group">
-                                <div class="col-12 col-sm-12 col-lg-12">
-                                    <h6><small>The following representatives of the counterparty are hereby designated as Authorized Signatories of the counterparty, having the authority to sign any relevant document pertaining to these terms on behalf of the Counterparty.</small></h6>
-                                </div>
-                            </div>
-                            <div id="SignatoriesDiv" class="col-12 col-sm-12 col-lg-12 d_none">
-                                @if (ViewBag.ClientSignatory.Count > 0)
-                                {
-                                    <table class="table table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th> Full Names</th>
-                                                <th> Designation </th>
-                                                <th> Phone </th>
-                                                <th> Email </th>
-                                                <th> Uploaded Signature </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach (var item in ViewBag.ClientSignatory)
-                                            {
-                                                <tr>
-                                                    <td>@(item.Surname + " " + item.OtherNames)</td>
-                                                    <td>@item.Designation</td>
-                                                    <td>@item.PhoneNumber</td>
-                                                    <td>@item.EmailAddress</td>
-                                                    <td>
-                                                        @if (item.Signature == null || item.Signature == "")
-                                                        {
-                                                            <img width="100" height="80" src="~/Content/images/signatures/no-signature-17.jpg" />
-                                                        }
-                                                        else
-                                                        {
-                                                            <img width="100" height="80" src="~/Content/images/signatures/@item.Signature" />
-                                                        }
-                                                    </td>
-                                                </tr>
-                                            }
-                                        </tbody>
-                                    </table>
-                                }
-                            </div>
-                            <div id="SignatoryDiv1" class="my-3">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <div class="alert alert-primary mb-0 t_align_c">  Add signatories as per your account mandate </div><hr />
-                                        <i class="fa fa-user-circle"></i> Account Signatory 1: <i>[My Details]</i>
-                                    </div>
-                                    <div class="card-body form-group form-row">
-
-                                        <div class="col-12 col-sm-3 col-lg-3">
-                                            <label>Surname <span>*</span></label>
-                                            <input type="text" class="form-control required" name="SignatorySurname1" id="SignatorySurname1" value="@ViewData["Surname"]" placeholder="Surname">
-                                        </div>
-                                        <div class="col-12 col-sm-3 col-lg-3">
-                                            <label>Other Names <span>*</span></label>
-                                            <input type="text" class="form-control required" name="SignatoryOtherNames1" id="SignatoryOtherNames1" value="@ViewData["OtherNames"]" placeholder="Other Names">
-                                        </div>
-                                        <div class="col-12 col-sm-3 col-lg-3">
-                                            <label>Designation: <span>*</span></label>
-                                            <input type="text" class="form-control required" name="SignatoryDesignation1" id="SignatoryDesignation1" placeholder="Signatory Designation">
-                                        </div>
-                                        <div class="col-12 col-sm-3 col-lg-3">
-                                            <label>Email Address: <span>*</span></label>
-                                            <input type="email" class="form-control required textToLower" name="SignatoryEmail1" id="SignatoryEmail1" value="@ViewData["CompanyEmail"]" placeholder="Email Address" readonly />
-                                        </div>
-                                        <div class="col-12 col-sm-3 col-lg-3">
-                                            <label>Phone Number: <span>*</span></label>
-                                            <input type="text" class="form-control required" name="SignatoryPhoneNumber1" id="SignatoryPhoneNumber1" placeholder="Include Country Code">
-                                        </div>
-                                        <div class="col-12 col-sm-3 col-lg-3 imgUp">
-                                            <div class="imagePreview"></div>
-                                            <label class="btn btn-primary" style="color:#fff">
-                                                Upload Signature <input id="inputFile" name="inputFile" type="file" class="uploadFile img" value="Upload Signature" style="width: 0px;height: 0px;overflow: hidden;">
-                                            </label>
-                                        </div>
-                                        <div class="col-12 col-sm-3 col-lg-3" style="margin-top:55px; line-height:15px;">
-                                            <h6><small>Image types to be uploaded</small></h6>
-                                            <ul>
-                                                <li style="color:red"><small>JPEG Image (.jpeg)</small></li>
-                                                <li style="color:red"><small>JPEG Image (.jpg)</small></li>
-                                                <li style="color:red"><small>Portable Network Graphic (.png)</small></li>
-                                            </ul>
-                                        </div>
-                                        <div class="col-12 col-sm-3 col-lg-3">
-                                            <button type="button" class="btn btn-success" style="margin-top: 110px;" id="btnAddSignatory2"><i class="fa fa-plus"></i> Add Signatory</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="SignatoryDiv2" class="my-3 d_none">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <i class="fa fa-user-circle"></i> Account Signatory 2:
-                                    </div>
-                                    <div class="card-body form-group form-row">
-                                        <div class="col-12 col-sm-3 col-lg-3">
-                                            <label>Surname <span>*</span></label>
-                                            <input type="text" class="form-control" name="SignatorySurname2" id="SignatorySurname2" placeholder="Surname">
-                                        </div>
-                                        <div class="col-12 col-sm-3 col-lg-3">
-                                            <label>Other Names <span>*</span></label>
-                                            <input type="text" class="form-control" name="SignatoryOtherNames2" id="SignatoryOtherNames2" placeholder="Other Names">
-                                        </div>
-                                        <div class="col-12 col-sm-3 col-lg-3">
-                                            <label>Designation: <span>*</span></label>
-                                            <input type="text" class="form-control" name="SignatoryDesignation2" id="SignatoryDesignation2" placeholder="Signatory Designation">
-                                        </div>
-                                        <div class="col-12 col-sm-3 col-lg-3">
-                                            <label>Email Address: <span>*</span></label>
-                                            <input type="email" class="form-control textToLower" name="SignatoryEmail2" id="SignatoryEmail2" placeholder="Email Address">
-                                        </div>
-                                        <div class="col-12 col-sm-3 col-lg-3">
-                                            <label>Phone Number: <span>*</span></label>
-                                            <input type="text" class="form-control" name="SignatoryPhoneNumber2" id="SignatoryPhoneNumber2" placeholder="Include Country Code">
-                                        </div>
-                                        <div class="col-12 col-sm-3 col-lg-3">
-                                            <button type="button" style="margin-top:25px;" class="btn btn-danger w_full" id="btnRemoveSignatory2"><i class="fa fa-trash"></i> Remove </button>
-                                        </div>
-                                        <div class="col-12 col-sm-3 col-lg-3">
-                                            <button type="button" style="margin-top:25px;" class="btn btn-success w_full" id="btnAddSignatory3"><i class="fa fa-plus"></i> Add Signatory</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="SignatoryDiv3" class="my-3 d_none">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <i class="fa fa-user-circle"></i> Account Signatory 3:
-                                    </div>
-                                    <div class="card-body form-group form-row">
-                                        <div class="col-12 col-sm-3 col-lg-3">
-                                            <label>Surname <span>*</span></label>
-                                            <input type="text" class="form-control" name="SignatorySurname3" id="SignatorySurname3" placeholder="Surname">
-                                        </div>
-                                        <div class="col-12 col-sm-3 col-lg-3">
-                                            <label>Other Names <span>*</span></label>
-                                            <input type="text" class="form-control" name="SignatoryOtherNames3" id="SignatoryOtherNames3" placeholder="Other Names">
-                                        </div>
-                                        <div class="col-12 col-sm-3 col-lg-3">
-                                            <label>Designation: <span>*</span></label>
-                                            <input type="text" class="form-control" name="SignatoryDesignation3" id="SignatoryDesignation3" placeholder="Signatory Designation">
-                                        </div>
-                                        <div class="col-12 col-sm-3 col-lg-3">
-                                            <label>Email Address: <span>*</span></label>
-                                            <input type="email" class="form-control textToLower" name="SignatoryEmail3" id="SignatoryEmail3" placeholder="Email Address">
-                                        </div>
-                                        <div class="col-12 col-sm-3 col-lg-3">
-                                            <label>Phone Number: <span>*</span></label>
-                                            <input type="text" class="form-control" name="SignatoryPhoneNumber3" id="SignatoryPhoneNumber3" placeholder="Include Country Code">
-                                        </div>
-                                        <div class="col-12 col-sm-3 col-lg-3">
-                                            <button type="button" style="margin-top:25px;" class="btn btn-danger w_full" id="btnRemoveSignatory3"><i class="fa fa-trash"></i> Remove </button>
-                                        </div>
-                                        <div class="col-12 col-sm-3 col-lg-3">
-                                            <button type="button" style="margin-top:25px;" class="btn btn-success w_full" id="btnAddSignatory4"><i class="fa fa-plus"></i> Add Signatory</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="SignatoryDiv4" class="my-3 d_none">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <i class="fa fa-user-circle"></i> Account Signatory 4:
-                                    </div>
-                                    <div class="card-body form-group form-row">
-                                        <div class="col-12 col-sm-3 col-lg-3">
-                                            <label>Surname <span>*</span></label>
-                                            <input type="text" class="form-control" name="SignatorySurname4" id="SignatorySurname4" placeholder="Surname">
-                                        </div>
-                                        <div class="col-12 col-sm-3 col-lg-3">
-                                            <label>Other Names <span>*</span></label>
-                                            <input type="text" class="form-control" name="SignatoryOtherNames4" id="SignatoryOtherNames4" placeholder="Other Names">
-                                        </div>
-                                        <div class="col-12 col-sm-3 col-lg-3">
-                                            <label>Designation: <span>*</span></label>
-                                            <input type="text" class="form-control" name="SignatoryDesignation4" id="SignatoryDesignation4" placeholder="Signatory Designation">
-                                        </div>
-                                        <div class="col-12 col-sm-3 col-lg-3">
-                                            <label>Email Address: <span>*</span></label>
-                                            <input type="email" class="form-control textToLower" name="SignatoryEmail4" id="SignatoryEmail4" placeholder="Email Address">
-                                        </div>
-                                        <div class="col-12 col-sm-3 col-lg-3">
-                                            <label>Phone Number: <span>*</span></label>
-                                            <input type="text" class="form-control" name="SignatoryPhoneNumber4" id="SignatoryPhoneNumber4" placeholder="Include Country Code">
-                                        </div>
-                                        <div class="col-12 col-sm-3 col-lg-3">
-                                            <button type="button" style="margin-top:25px;" class="btn btn-danger w_full" id="btnRemoveSignatory4"><i class="fa fa-trash"></i> Remove </button>
-                                        </div>
-                                        <div class="col-12 col-sm-3 col-lg-3">
-                                            <button type="button" style="margin-top:25px;" class="btn btn-success w_full" id="btnAddSignatory5"><i class="fa fa-plus"></i> Add Signatory</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="SignatoryDiv5" class="my-3 d_none">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <i class="fa fa-user-circle"></i> Account Signatory 5:
-                                    </div>
-                                    <div class="card-body form-group form-row">
-                                        <div class="col-12 col-sm-3 col-lg-3">
-                                            <label>Surname <span>*</span></label>
-                                            <input type="text" class="form-control" name="SignatorySurname5" id="SignatorySurname5" placeholder="Surname">
-                                        </div>
-                                        <div class="col-12 col-sm-3 col-lg-3">
-                                            <label>Other Names <span>*</span></label>
-                                            <input type="text" class="form-control" name="SignatoryOtherNames5" id="SignatoryOtherNames5" placeholder="Other Names">
-                                        </div>
-                                        <div class="col-12 col-sm-3 col-lg-3">
-                                            <label>Designation: <span>*</span></label>
-                                            <input type="text" class="form-control" name="SignatoryDesignation5" id="SignatoryDesignation5" placeholder="Signatory Designation">
-                                        </div>
-                                        <div class="col-12 col-sm-3 col-lg-3">
-                                            <label>Email Address: <span>*</span></label>
-                                            <input type="email" class="form-control textToLower" name="SignatoryEmail5" id="SignatoryEmail5" placeholder="Email Address">
-                                        </div>
-                                        <div class="col-12 col-sm-3 col-lg-3">
-                                            <label>Phone Number: <span>*</span></label>
-                                            <input type="text" class="form-control" name="SignatoryPhoneNumber5" id="SignatoryPhoneNumber5" placeholder="Include Country Code">
-                                        </div>
-                                        <div class="col-12 col-sm-3 col-lg-3">
-                                            <button type="button" style="margin-top:25px;" class="btn btn-danger w_full" id="btnRemoveSignatory5"><i class="fa fa-trash"></i> Remove </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="my-3 form-group">
-                                <div class="col-12 col-sm-3 col-lg-3">
-                                    <button id="savingsignatories" class="btn btn-outline-primary d_none" type="button">
-                                        <i class="fa fa-spinner fa-spin fa-2x fa-fw"></i> Saving Signatories Details ...
-                                    </button>
-                                    <button id="savedsignatories" class="btn btn-success d_none" type="button">
-                                        <i class="fa fa-check-circle"></i> Signatories Details Saved
-                                    </button>
-                                    <button id="btn-save-signatories" class="btn btn-outline-danger" type="button">
-                                        <i class="fa fa-save"></i> Save
-                                    </button>
-                                    <button id="btn-edit-signatories" class="btn btn-outline-info d_none" type="button">
-                                        <i class="fa fa-edit"></i> Edit Signatories
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="list-group-item py-3" data-acc-step>
-                        <h5 class="mb-0" data-acc-title>Authorized Representatives</h5>
-                        <div data-acc-content>
-                            <div class="my-3 form-group">
-                                <div class="col-12 col-sm-12 col-lg-12">
-                                    <h6><small>The following representatives of the counterparty are hereby designated Representatives of the counterparty, having the capacity to conclude transactions with the Bank and provide instructions to the Bank, whether in respect of a transaction or otherwise and the acts of any Authorized Representative listed hereunder shall be fully binding to the counterparty.</small></h6>
-                                </div>
-                            </div>
-                            <div id="RepresentativesDiv" class="col-12 col-sm-12 col-lg-12 d_none">
-                                @if (ViewBag.DesignatedUser.Count > 0)
-                                {
-                                    <table class="table table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th> Full Names</th>
-                                                <th> Email </th>
-                                                <th> Phone Number </th>
-                                                <th> Trading Limit </th>
-                                                <th> EMarket SignUp </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach (var item in ViewBag.DesignatedUser)
-                                            {
-                                                <tr>
-                                                    <td>@(item.Surname + " " + item.Othernames)</td>
-                                                    <td>@item.Email</td>
-                                                    <td>@item.Mobile</td>
-                                                    <td>@item.TradingLimit</td>
-                                                    <td>@(item.EMarketSignUp ? "Yes" : "No")</td>
-                                                </tr>
-                                            }
-                                        </tbody>
-                                    </table>
-                                }
-                            </div>
-                            <div id="UserDiv1" class="my-3">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <i class="fa fa-user-circle"></i> Authorized Representative 1
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="form-group form-row">
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label>Surname <span>*</span></label>
-                                                <input type="text" class="form-control required" name="UserSurname1" id="UserSurname1" placeholder="Surname">
-                                            </div>
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label>Other Names <span>*</span></label>
-                                                <input type="text" class="form-control required" name="UserOthernames1" id="UserOthernames1" placeholder="Other Names">
-                                            </div>
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label>Email Address: <span>*</span></label>
-                                                <input type="email" class="form-control required textToLower" name="UserEmail1" id="UserEmail1" placeholder="Email Address">
-                                            </div>
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label>Mobile Number: <span>*</span></label>
-                                                <input type="text" class="form-control required" name="UserMobileNumber1" id="UserMobileNumber1" placeholder="Include Country Code">
-                                            </div>
-                                        </div>
-                                        <div class="form-group form-row">
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label>Date of Birth: <span>*</span></label>
-                                                <div class="input-group bootstrap-timepicker">
-                                                    <div class="input-group-addon">
-                                                        <i class="fa fa-calendar"></i>
-                                                    </div>
-                                                    <input type="text" class="form-control datepicker required" id="DOB1" name="DOB1" placeholder="Date of Birth" style="margin:0px;" autocomplete="off">
-                                                </div>
-                                            </div>
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label>Postal Office Address <span>*</span></label>
-                                                <input type="text" class="form-control required" name="UserPOBox1" id="UserPOBox1" placeholder="Postal Address">
-                                            </div>
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label>ZIP/Postal Code <span>*</span></label>
-                                                <input type="text" class="form-control required" name="UserZipCode1" id="UserZipCode1" placeholder="ZIP/Postal Code">
-                                            </div>
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label>Town/City <span>*</span></label>
-                                                <input type="text" class="form-control required" name="UserTownCity1" id="UserTownCity1" placeholder="Town/City">
-                                            </div>
-                                        </div>
-                                        <div class="form-group form-row">
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label> Does your Representative have a Transaction Limit? <span>*</span></label>
-                                                <select id="TransactionLimitQ1" name="TransactionLimitQ1" class="form-control select2" style="width: 100%;">
-                                                    <option value="" selected> Choose Yes or No </option>
-                                                    <option value="Yes"> Yes </option>
-                                                    <option value="No"> No </option>
-                                                </select>
-                                            </div>
-                                            <div class="TransactionLimit1 col-12 col-sm-3 col-lg-3 d_none">
-                                                <label>Transaction Limit (Upto & Including in USD $) <span>*</span></label>
-                                                <input type="text" class="form-control" name="TransactionLimit1" id="TransactionLimit1" placeholder="Transaction Limit in dollar ($)">
-                                            </div>
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label>Would you like user to sign up for E-Market Trader?</label>
-                                                <select id="EMarketSignUp1" name="EMarketSignUp1" class="form-control select2" style="width: 100%;">
-                                                    <option value="" selected> Sign up for E-Market Trader? </option>
-                                                    <option value="true"> Yes</option>
-                                                    <option value="false">No</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <h6 id="disclaimerUser1" class="d_none" style="color:red;"><i><small>Please note that this authorized representative will be created as a user on the eMarket Trader Platform </small></i></h6>
-                                                <h6 id="disclaimerNotUser1" class="d_none" style="color:red;"><i><small>Please note that this authorized representative will <b>NOT</b> be created as a user on the eMarket Trader Platform </small></i></h6>
-                                            </div>
-                                        </div>
-                                        <div class="form-group form-row float-right">
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <button type="button" class="btn btn-success" id="btnAddUser2"><i class="fa fa-plus"></i> Add Representative</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="UserDiv2" class="my-3 d_none">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <i class="fa fa-user-circle"></i> Authorized Representative 2
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="form-group form-row">
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label>Surname <span>*</span></label>
-                                                <input type="text" class="form-control required" name="UserSurname2" id="UserSurname2" placeholder="Surname">
-                                            </div>
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label>Other Names <span>*</span></label>
-                                                <input type="text" class="form-control required" name="UserOthernames2" id="UserOthernames2" placeholder="Other Names">
-                                            </div>
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label>Email Address: <span>*</span></label>
-                                                <input type="email" class="form-control required textToLower" name="UserEmail2" id="UserEmail2" placeholder="Email Address">
-                                            </div>
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label>Mobile Number: <span>*</span></label>
-                                                <input type="text" class="form-control required" name="UserMobileNumber2" id="UserMobileNumber2" placeholder="Include Country Code">
-                                            </div>
-                                        </div>
-                                        <div class="form-group form-row">
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label>Date of Birth: <span>*</span></label>
-                                                <div class="input-group bootstrap-timepicker">
-                                                    <div class="input-group-addon">
-                                                        <i class="fa fa-calendar"></i>
-                                                    </div>
-                                                    <input type="text" class="form-control datepicker required" id="DOB2" name="DOB2" placeholder="Date of Birth" style="margin:0px;" autocomplete="off">
-                                                </div>
-                                            </div>
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label>Postal Office Address <span>*</span></label>
-                                                <input type="text" class="form-control required" name="UserPOBox2" id="UserPOBox2" placeholder="Postal Address">
-                                            </div>
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label>ZIP/Postal Code <span>*</span></label>
-                                                <input type="text" class="form-control required" name="UserZipCode2" id="UserZipCode2" placeholder="ZIP/Postal Code">
-                                            </div>
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label>Town/City <span>*</span></label>
-                                                <input type="text" class="form-control required" name="UserTownCity2" id="UserTownCity2" placeholder="Town/City">
-                                            </div>
-                                        </div>
-                                        <div class="form-group form-row">
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label> Does your Representative have a Transaction Limit? <span>*</span></label>
-                                                <select id="TransactionLimitQ2" name="TransactionLimitQ2" class="form-control select2" style="width: 100%;">
-                                                    <option value="" selected> Choose Yes or No </option>
-                                                    <option value="Yes"> Yes </option>
-                                                    <option value="No"> No </option>
-                                                </select>
-                                            </div>
-                                            <div class="TransactionLimit2 col-12 col-sm-3 col-lg-3 d_none">
-                                                <label>Transaction Limit (Upto & Including in USD $) <span>*</span></label>
-                                                <input type="text" class="form-control" name="TransactionLimit2" id="TransactionLimit2" placeholder="Transaction Limit in dollar ($)">
-                                            </div>
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label>Would you like user to sign up for E-Market Trader?</label>
-                                                <select id="EMarketSignUp2" name="EMarketSignUp2" class="form-control select2" style="width: 100%;">
-                                                    <option value="" selected> Sign up for E-Market Trader? </option>
-                                                    <option value="true"> Yes</option>
-                                                    <option value="false">No</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <h6 id="disclaimerUser2" class="d_none" style="color:red;"><i><small>Please note that this authorized representative will be created as a user on the eMarket Trader Platform </small></i></h6>
-                                                <h6 id="disclaimerNotUser2" class="d_none" style="color:red;"><i><small>Please note that this authorized representative will <b>NOT</b> be created as a user on the eMarket Trader Platform </small></i></h6>
-                                            </div>
-                                        </div>
-                                        <div class="form-group form-row">
-                                            <div class="col-12 col-sm-3 col-lg-3"></div>
-                                            <div class="col-12 col-sm-3 col-lg-3"></div>
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <button type="button" class="btn btn-danger w_full" id="btnRemoveUser2"><i class="fa fa-trash"></i> Remove </button>
-                                            </div>
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <button type="button" class="btn btn-success w_full" id="btnAddUser3"><i class="fa fa-plus"></i> Add Representative</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="UserDiv3" class="my-3 d_none">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <i class="fa fa-user-circle"></i> Authorized Representative 3
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="form-group form-row">
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label>Surname <span>*</span></label>
-                                                <input type="text" class="form-control required" name="UserSurname3" id="UserSurname3" placeholder="Surname">
-                                            </div>
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label>Other Names <span>*</span></label>
-                                                <input type="text" class="form-control required" name="UserOthernames3" id="UserOthernames3" placeholder="Other Names">
-                                            </div>
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label>Email Address: <span>*</span></label>
-                                                <input type="email" class="form-control required textToLower" name="UserEmail3" id="UserEmail3" placeholder="Email Address">
-                                            </div>
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label>Mobile Number: <span>*</span></label>
-                                                <input type="text" class="form-control required" name="UserMobileNumber3" id="UserMobileNumber3" placeholder="Include Country Code">
-                                            </div>
-                                        </div>
-                                        <div class="form-group form-row">
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label>Date of Birth: <span>*</span></label>
-                                                <div class="input-group bootstrap-timepicker">
-                                                    <div class="input-group-addon">
-                                                        <i class="fa fa-calendar"></i>
-                                                    </div>
-                                                    <input type="text" class="form-control datepicker required" id="DOB3" name="DOB3" placeholder="Date of Birth" style="margin:0px;" autocomplete="off">
-                                                </div>
-                                            </div>
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label>Postal Office Address <span>*</span></label>
-                                                <input type="text" class="form-control required" name="UserPOBox3" id="UserPOBox3" placeholder="Postal Address">
-                                            </div>
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label>ZIP/Postal Code <span>*</span></label>
-                                                <input type="text" class="form-control required" name="UserZipCode3" id="UserZipCode3" placeholder="ZIP/Postal Code">
-                                            </div>
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label>Town/City <span>*</span></label>
-                                                <input type="text" class="form-control required" name="UserTownCity3" id="UserTownCity3" placeholder="Town/City">
-                                            </div>
-                                        </div>
-                                        <div class="form-group form-row">
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label> Does your Representative have a Transaction Limit? <span>*</span></label>
-                                                <select id="TransactionLimitQ3" name="TransactionLimitQ3" class="form-control select2" style="width: 100%;">
-                                                    <option value="" selected> Choose Yes or No </option>
-                                                    <option value="Yes"> Yes </option>
-                                                    <option value="No"> No </option>
-                                                </select>
-                                            </div>
-                                            <div class="TransactionLimit3 col-12 col-sm-3 col-lg-3 d_none">
-                                                <label>Transaction Limit (Upto & Including in USD $) <span>*</span></label>
-                                                <input type="text" class="form-control" name="TransactionLimit3" id="TransactionLimit3" placeholder="Transaction Limit in dollar ($)">
-                                            </div>
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label>Would you like user to sign up for E-Market Trader?</label>
-                                                <select id="EMarketSignUp3" name="EMarketSignUp3" class="form-control select2" style="width: 100%;">
-                                                    <option value="" selected> Sign up for E-Market Trader? </option>
-                                                    <option value="true"> Yes</option>
-                                                    <option value="false">No</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <h6 id="disclaimerUser3" class="d_none" style="color:red;"><i><small>Please note that this authorized representative will be created as a user on the eMarket Trader Platform </small></i></h6>
-                                                <h6 id="disclaimerNotUser3" class="d_none" style="color:red;"><i><small>Please note that this authorized representative will <b>NOT</b> be created as a user on the eMarket Trader Platform </small></i></h6>
-                                            </div>
-                                        </div>
-                                        <div class="form-group form-row">
-                                            <div class="col-12 col-sm-3 col-lg-3"></div>
-                                            <div class="col-12 col-sm-3 col-lg-3"></div>
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <button type="button" class="btn btn-danger w_full" id="btnRemoveUser3"><i class="fa fa-trash"></i> Remove </button>
-                                            </div>
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <button type="button" class="btn btn-success w_full" id="btnAddUser4"><i class="fa fa-plus"></i> Add Representative</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="UserDiv4" class="my-3 d_none">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <i class="fa fa-user-circle"></i> Authorized Representative 4
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="form-group form-row">
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label>Surname <span>*</span></label>
-                                                <input type="text" class="form-control required" name="UserSurname4" id="UserSurname4" placeholder="Surname">
-                                            </div>
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label>Other Names <span>*</span></label>
-                                                <input type="text" class="form-control required" name="UserOthernames4" id="UserOthernames4" placeholder="Other Names">
-                                            </div>
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label>Email Address: <span>*</span></label>
-                                                <input type="email" class="form-control required textToLower" name="UserEmail4" id="UserEmail4" placeholder="Email Address">
-                                            </div>
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label>Mobile Number: <span>*</span></label>
-                                                <input type="text" class="form-control required" name="UserMobileNumber4" id="UserMobileNumber4" placeholder="Include Country Code">
-                                            </div>
-                                        </div>
-                                        <div class="form-group form-row">
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label>Date of Birth: <span>*</span></label>
-                                                <div class="input-group bootstrap-timepicker">
-                                                    <div class="input-group-addon">
-                                                        <i class="fa fa-calendar"></i>
-                                                    </div>
-                                                    <input type="text" class="form-control datepicker required" id="DOB4" name="DOB4" placeholder="Date of Birth" style="margin:0px;" autocomplete="off">
-                                                </div>
-                                            </div>
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label>Postal Office Address <span>*</span></label>
-                                                <input type="text" class="form-control required" name="UserPOBox4" id="UserPOBox4" placeholder="Postal Address">
-                                            </div>
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label>ZIP/Postal Code <span>*</span></label>
-                                                <input type="text" class="form-control required" name="UserZipCode4" id="UserZipCode4" placeholder="ZIP/Postal Code">
-                                            </div>
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label>Town/City <span>*</span></label>
-                                                <input type="text" class="form-control required" name="UserTownCity4" id="UserTownCity4" placeholder="Town/City">
-                                            </div>
-                                        </div>
-                                        <div class="form-group form-row">
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label> Does your Representative have a Transaction Limit? <span>*</span></label>
-                                                <select id="TransactionLimitQ4" name="TransactionLimitQ4" class="form-control select2" style="width: 100%;">
-                                                    <option value="" selected> Choose Yes or No </option>
-                                                    <option value="Yes"> Yes </option>
-                                                    <option value="No"> No </option>
-                                                </select>
-                                            </div>
-                                            <div class="TransactionLimit4 col-12 col-sm-3 col-lg-3 d_none">
-                                                <label>Transaction Limit (Upto & Including in USD $) <span>*</span></label>
-                                                <input type="text" class="form-control" name="TransactionLimit4" id="TransactionLimit4" placeholder="Transaction Limit in dollar ($)">
-                                            </div>
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label>Would you like user to sign up for E-Market Trader?</label>
-                                                <select id="EMarketSignUp4" name="EMarketSignUp4" class="form-control select2" style="width: 100%;">
-                                                    <option value="" selected> Sign up for E-Market Trader? </option>
-                                                    <option value="true"> Yes</option>
-                                                    <option value="false">No</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <h6 id="disclaimerUser4" class="d_none" style="color:red;"><i><small>Please note that this authorized representative will be created as a user on the eMarket Trader Platform </small></i></h6>
-                                                <h6 id="disclaimerNotUser4" class="d_none" style="color:red;"><i><small>Please note that this authorized representative will <b>NOT</b> be created as a user on the eMarket Trader Platform </small></i></h6>
-                                            </div>
-                                        </div>
-                                        <div class="form-group form-row">
-                                            <div class="col-12 col-sm-3 col-lg-3"></div>
-                                            <div class="col-12 col-sm-3 col-lg-3"></div>
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <button type="button" class="btn btn-danger w_full" id="btnRemoveUser4"><i class="fa fa-trash"></i> Remove </button>
-                                            </div>
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <button type="button" class="btn btn-success w_full" id="btnAddUser5"><i class="fa fa-plus"></i> Add Representative</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="UserDiv5" class="my-3 d_none">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <i class="fa fa-user-circle"></i> Authorized Representative 5
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="form-group form-row">
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label>Surname <span>*</span></label>
-                                                <input type="text" class="form-control required" name="UserSurname5" id="UserSurname5" placeholder="Surname">
-                                            </div>
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label>Other Names <span>*</span></label>
-                                                <input type="text" class="form-control required" name="UserOthernames5" id="UserOthernames5" placeholder="Other Names">
-                                            </div>
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label>Email Address: <span>*</span></label>
-                                                <input type="email" class="form-control required textToLower" name="UserEmail5" id="UserEmail5" placeholder="Email Address">
-                                            </div>
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label>Mobile Number: <span>*</span></label>
-                                                <input type="text" class="form-control required" name="UserMobileNumber5" id="UserMobileNumber5" placeholder="Include Country Code">
-                                            </div>
-                                        </div>
-                                        <div class="form-group form-row">
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label>Date of Birth: <span>*</span></label>
-                                                <div class="input-group bootstrap-timepicker">
-                                                    <div class="input-group-addon">
-                                                        <i class="fa fa-calendar"></i>
-                                                    </div>
-                                                    <input type="text" class="form-control datepicker required" id="DOB5" name="DOB5" placeholder="Date of Birth" style="margin:0px;" autocomplete="off">
-                                                </div>
-                                            </div>
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label>Postal Office Address <span>*</span></label>
-                                                <input type="text" class="form-control required" name="UserPOBox5" id="UserPOBox5" placeholder="Postal Address">
-                                            </div>
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label>ZIP/Postal Code <span>*</span></label>
-                                                <input type="text" class="form-control required" name="UserZipCode5" id="UserZipCode5" placeholder="ZIP/Postal Code">
-                                            </div>
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label>Town/City <span>*</span></label>
-                                                <input type="text" class="form-control required" name="UserTownCity5" id="UserTownCity5" placeholder="Town/City">
-                                            </div>
-                                        </div>
-                                        <div class="form-group form-row">
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label> Does your Representative have a Transaction Limit? <span>*</span></label>
-                                                <select id="TransactionLimitQ5" name="TransactionLimitQ5" class="form-control select2" style="width: 100%;">
-                                                    <option value="" selected> Choose Yes or No </option>
-                                                    <option value="Yes"> Yes </option>
-                                                    <option value="No"> No </option>
-                                                </select>
-                                            </div>
-                                            <div class="TransactionLimit4 col-12 col-sm-3 col-lg-3 d_none">
-                                                <label>Transaction Limit (Upto & Including in USD $) <span>*</span></label>
-                                                <input type="text" class="form-control" name="TransactionLimit5" id="TransactionLimit5" placeholder="Transaction Limit in dollar ($)">
-                                            </div>
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <label>Would you like user to sign up for E-Market Trader?</label>
-                                                <select id="EMarketSignUp5" name="EMarketSignUp5" class="form-control select2" style="width: 100%;">
-                                                    <option value="" selected> Sign up for E-Market Trader? </option>
-                                                    <option value="true"> Yes</option>
-                                                    <option value="false">No</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <h6 id="disclaimerUser5" class="d_none" style="color:red;"><i><small>Please note that this authorized representative will be created as a user on the eMarket Trader Platform </small></i></h6>
-                                                <h6 id="disclaimerNotUser5" class="d_none" style="color:red;"><i><small>Please note that this authorized representative will <b>NOT</b> be created as a user on the eMarket Trader Platform </small></i></h6>
-                                            </div>
-                                        </div>
-                                        <div class="form-group form-row">
-                                            <div class="col-12 col-sm-3 col-lg-3"></div>
-                                            <div class="col-12 col-sm-3 col-lg-3"></div>
-                                            <div class="col-12 col-sm-3 col-lg-3"></div>
-                                            <div class="col-12 col-sm-3 col-lg-3">
-                                                <button type="button" class="btn btn-danger w_full" id="btnRemoveUser5"><i class="fa fa-trash"></i> Remove </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="my-3 form-group">
-                                <div class="col-12 col-sm-3 col-lg-3">
-                                    <button id="savingrepresentatives" class="btn btn-outline-primary d_none" type="button">
-                                        <i class="fa fa-spinner fa-spin fa-2x fa-fw"></i> Saving Representative(s) Details ...
-                                    </button>
-                                    <button id="savedrepresentatives" class="btn btn-success d_none" type="button">
-                                        <i class="fa fa-check-circle"></i> Representative(s) Details Saved
-                                    </button>
-                                    <button id="btn-save-representatives" class="btn btn-outline-danger" type="button">
-                                        <i class="fa fa-save"></i> Save
-                                    </button>
-                                    <button id="btn-edit-representatives" class="btn btn-outline-info d_none" type="button">
-                                        <i class="fa fa-edit"></i> Edit Representative(s)
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="list-group-item py-3" data-acc-step>
-                        <div data-acc-content>
-                            <div class="my-3 form-group">
-                                <div class="col-12 col-sm-12 col-lg-12">
-                                    <div style="clear:both;"></div>
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered">
-                                            <tr class="success">
-                                                <th colspan="2">Company Details:</th>
-                                                <td colspan="3" style="text-align: right;"><i class="fa fa fa-info-circle"></i> Application Summary</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Company Name:</th> 
-                                                <td colspan="4" id="ConfirmCompany" name="ConfirmCompany"></td>
-                                            </tr>
-                                            <tr>
-                                                <th>Company Registration Number:</th> 
-                                                <td colspan="4" id="ConfirmRegistration" name="ConfirmRegistration"></td>
-                                            </tr>
-                                            <tr>
-                                                <th>Principal Place of Business:</th>
-                                                <td colspan="4" id="ConfirmAddress" name="ConfirmAddress"></td>
-                                            </tr>
-                                            <tr class="success">
-                                                <th colspan="5">Settlement Instructions:</th>
-                                            </tr>
-                                            <tr id="ConfirmKEStr">
-                                                <th id="ConfirmKEStrText">Settlement Instruction 1:</th>
-                                                <td colspan="4" id="ConfirmKES" name="ConfirmKES"></td>
-                                            </tr>
-                                            <tr id="ConfirmOthertr">
-                                                <th>Settlement Instruction 2:</th>
-                                                <td colspan="4" id="ConfirmOther" name="ConfirmOther"></td>
-                                            </tr>
-                                            <tr id="ConfirmOthertr3">
-                                                <th>Settlement Instruction 3:</th>
-                                                <td colspan="4" id="ConfirmAccount3" name="ConfirmAccount3"></td>
-                                            </tr>
-                                            <tr id="ConfirmOthertr4">
-                                                <th>Settlement Instruction 4:</th>
-                                                <td colspan="4" id="ConfirmAccount4" name="ConfirmAccount4"></td>
-                                            </tr>
-                                            <tr id="ConfirmOthertr5">
-                                                <th>Settlement Instruction 5:</th>
-                                                <td colspan="4" id="ConfirmAccount5" name="ConfirmAccount5"></td>
-                                            </tr>
-											@if (ViewBag.SettlementAccounts.Count > 0)
-											{
-												<tr id="SavedSettlements" class="d_none">
+						<h5 class="mb-0" data-acc-title> Company Details </h5>
+						<div data-acc-content>
+							<div class="my-3 form-group form-row">
+								<div class="col-12 col-sm-6 col-lg-6">
+									<h6>
+										Please select a company to proceed - OR - <small><i><a href="~/Client/AddCompanies">Click here to add company</a></i></small>
+									</h6>
+									<select id="SelectedCompany" name="SelectedCompany" class="form-control select2 required" style="width: 100%;"></select>
+									<input name="__RequestVerificationToken" type="hidden" value="<token_generated_here>">
+									<input name="ClientID" id="ClientID" type="hidden" value="@ViewBag.ClientInfo.Id">
+									<input name="AcceptedTerms" id="AcceptedTerms" type="hidden" value="@ViewBag.ClientInfo.AcceptedUserTerms.ToString()">
+									<input name="CompanyEmail" id="CompanyEmail" type="hidden" value="@ViewBag.ClientInfo.EmailAddress">
+								</div><hr />
+							</div>
+							<div id="CompanyInfo" class="d-none">
+								<div id="CompanyDetailsPartialView"></div>
+								<div class="my-3 form-group form-row">
+									<div class="col-12 col-sm-3 col-lg-3">
+										<button id="saving" class="btn btn-outline-primary d_none" type="button">
+											<i class="fa fa-spinner fa-spin fa-2x fa-fw"></i> Saving Company Details ...
+										</button>
+										<button id="saved" class="btn btn-success d_none" type="button">
+											<i class="fa fa-check-circle"></i> Company Details Saved
+										</button>
+										<button id="save" class="btn btn-danger" type="button">
+											<i class="fa fa-save"></i> Save
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="list-group-item py-3" data-acc-step>
+						<h5 class="mb-0" data-acc-title>Terms and Conditions</h5>
+						<div data-acc-content>
+							<div class="my-3 form-group">
+								<div id="accept_terms" class="col-12 col-sm-12 col-lg-12">
+									<h6>This agreement is entered into by and between: <b>Stanbic Bank Kenya Limited </b> (acting only through its Global Markets Division unless stated otherwise in the agreement) (the “Bank”); and <b>@ViewData["CompanyName"]</b>.</h6>
+									<div class="col-12 col-sm-12 col-lg-12" id="read_through_content" style="overflow-y: auto; border: 1px solid;">
+										<div id="applicant_esign_content" style="height:350px;"></div>
+									</div>
+									<div class="row" style="text-align:right;">
+										<div class="col-12 col-sm-6 col-lg-6"></div>
+										<div class="col-12 col-sm-6 col-lg-6 mt-3">
+											<input type="hidden" value="false" name="applicant_read_the_content" id="applicant_read_the_content" />
+											<label for="checkbox1"><b>I have read and hereby accept the above terms and conditions</b></label>
+											<input value="false" type="checkbox" name="terms[]" id="terms">
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="list-group-item py-3" data-acc-step>
+						<h5 class="mb-0" data-acc-title>Settlement Instructions</h5>
+						<div data-acc-content>
+							<div class="my-3 form-group">
+								<div class="col-12 col-sm-12 col-lg-12">
+									<h6><small>The Settlement Instructions guides settlement once you book a deal.</small></h6>
+									<h6><small>The accounts are credited or debited as per your deals. You should have a minimum of 2 accounts and a maximum of 8 </small></h6><hr class="nopadding" />
+									<h6><b><small>Do you have a settlement account? <i> Indicate by choosing YES or NO below. </i></small></b></h6>
+									<input name="SettlementAccountsCount" id="SettlementAccountsCount" type="hidden" value="@ViewBag.SettlementAccounts.Count">
+									<input name="ClientSignatoryCount" id="ClientSignatoryCount" type="hidden" value="@ViewBag.ClientSignatory.Count">
+									<input name="DesignatedUserCount" id="DesignatedUserCount" type="hidden" value="@ViewBag.DesignatedUser.Count">
+								</div>
+								<div id="SettlementAccountDiv" class="col-12 col-sm-3 col-lg-3">
+									<select id="HaveSettlementAccount" name="HaveSettlementAccount" class="form-control select2 required" style="width: 100%;">
+										<option value="" selected> Do you have a settlement Account? </option>
+										<option value="Yes"> Yes </option>
+										<option value="No"> No </option>
+									</select>
+								</div><br />
+								<div id="HaveSettlementsDiv" class="col-12 col-sm-6 col-lg-6 d_none">
+									@if (ViewBag.SettlementAccounts.Count > 0)
+									{
+										<table id="SettlementTable" class="table table-bordered">
+											<thead>
+												<tr>
+													<th>Currency</th>
+													<th>Account Number</th>
+												</tr>
+											</thead>
+											<tbody>
+												@foreach (var item in ViewBag.SettlementAccounts)
+												{
 													<tr>
-														<th>Currency</th>
-														<th colspan="4">Account Number</th>
+														<td>@item.CurrencyName</td>
+														<td>@item.AccountNumber</td>
+														<td class="d_none">@item.CurrencyId</td>
 													</tr>
-													@foreach (var item in ViewBag.SettlementAccounts)
-													{
-														<tr>
-															<td>@item.CurrencyName</td>
-															<td colspan="4">@item.AccountNumber</td>
-														</tr>
-													}
+												}
+											</tbody>
+										</table>
+									}
+								</div>
+							</div>
+							<div id="AccountDiv1" class="my-3 form-group form-row d_none">
+								<div class="col-12 col-sm-3 col-lg-3">
+									<label>Select Currency <span>*</span></label>
+									<select id="SelectCurrency1" name="SelectCurrency1" class="choose-currency form-control select2" style="width: 100%;"></select>
+								</div>
+								<div class="col-12 col-sm-3 col-lg-3 d_none" id="currencytypediv1">
+									<label>Indicate Currency Type <span>*</span></label>
+									<input type="text" class="form-control" name="InputCurrencyType1" id="InputCurrencyType1" placeholder="Currency" autocomplete="off" style="text-transform:uppercase">
+								</div>
+								<div class="col-12 col-sm-3 col-lg-3">
+									<label>Account Number <span>*</span></label>
+									<input type="text" class="form-control" name="SettlementAccount1" id="SettlementAccount1" placeholder="Account Number">
+								</div>
+							</div>
+							<div id="AccountDiv2" class="my-3 form-group form-row d_none">
+								<div class="col-12 col-sm-3 col-lg-3">
+									<label>Select Currency <span>*</span></label>
+									<select id="SelectCurrency2" name="SelectCurrency2" class="choose-currency form-control select2" style="width: 100%;"></select>
+								</div>
+								<div class="col-12 col-sm-3 col-lg-3 d_none" id="currencytypediv2">
+									<label>Indicate Currency Type <span>*</span></label>
+									<input type="text" class="form-control" name="InputCurrencyType2" id="InputCurrencyType2" placeholder="Indicate Currency Type" autocomplete="off">
+								</div>
+								<div class="col-12 col-sm-3 col-lg-3">
+									<label>Account Number <span>*</span></label>
+									<input type="text" class="form-control" name="SettlementAccount2" id="SettlementAccount2" placeholder="Account Number">
+								</div>
+								<div class="m_top_20">
+									<button type="button" class="btn btn-success" style="margin-top: 22px;" id="btnAddAccount3"><i class="fa fa-plus"></i> Add Another Account</button>
+								</div>
+							</div>
+							<div id="AccountDiv3" class="my-3 form-group form-row d_none">
+								<div class="col-12 col-sm-3 col-lg-3">
+									<label>Select Currency <span>*</span></label>
+									<select id="SelectCurrency3" name="SelectCurrency3" class="choose-currency form-control select2" style="width: 100%;"></select>
+								</div>
+								<div class="col-12 col-sm-3 col-lg-3 d_none" id="currencytypediv3">
+									<label>Indicate Currency Type <span>*</span></label>
+									<input type="text" class="form-control" name="InputCurrencyType3" id="InputCurrencyType3" placeholder="Indicate Currency Type" autocomplete="off">
+								</div>
+								<div class="col-12 col-sm-3 col-lg-3">
+									<label>Account Number <span>*</span></label>
+									<input type="text" class="form-control" name="SettlementAccount3" id="SettlementAccount3" placeholder="Account Number">
+								</div>
+								<div class="m_top_20">
+									<button type="button" class="btn btn-success" style="margin-top: 22px;" id="btnAddAccount4"><i class="fa fa-plus"></i> Add Another Account</button>
+									<button type="button" class="btn btn-danger" style="margin-top: 22px;" id="btnRemoveAccount3"><i class="fa fa-trash"></i> Remove Account</button>
+								</div>
+							</div>
+							<div id="AccountDiv4" class="my-3 form-group form-row d_none">
+								<div class="col-12 col-sm-3 col-lg-3">
+									<label>Select Currency <span>*</span></label>
+									<select id="SelectCurrency4" name="SelectCurrency4" class="choose-currency form-control select2" style="width: 100%;"></select>
+								</div>
+								<div class="col-12 col-sm-3 col-lg-3 d_none" id="currencytypediv4">
+									<label>Indicate Currency Type <span>*</span></label>
+									<input type="text" class="form-control" name="InputCurrencyType4" id="InputCurrencyType4" placeholder="Indicate Currency Type" autocomplete="off">
+								</div>
+								<div class="col-12 col-sm-3 col-lg-3">
+									<label>Account Number <span>*</span></label>
+									<input type="text" class="form-control" name="SettlementAccount4" id="SettlementAccount4" placeholder="Account Number">
+								</div>
+								<div class="m_top_20">
+									<button type="button" class="btn btn-success" style="margin-top: 22px;" id="btnAddAccount5"><i class="fa fa-plus"></i> Add Another Account</button>
+									<button type="button" class="d_none btn btn-danger" style="margin-top: 22px;" id="btnRemoveAccount4"><i class="fa fa-trash"></i> Remove Account</button>
+								</div>
+							</div>
+							<div id="AccountDiv5" class="my-3 form-group form-row d_none">
+								<div class="col-12 col-sm-3 col-lg-3">
+									<label>Select Currency <span>*</span></label>
+									<select id="SelectCurrency5" name="SelectCurrency5" class="choose-currency form-control select2" style="width: 100%;"></select>
+								</div>
+								<div class="col-12 col-sm-3 col-lg-3 d_none" id="currencytypediv5">
+									<label>Indicate Currency Type <span>*</span></label>
+									<input type="text" class="form-control" name="InputCurrencyType5" id="InputCurrencyType5" placeholder="Indicate Currency Type" autocomplete="off">
+								</div>
+								<div class="col-12 col-sm-3 col-lg-3">
+									<label>Account Number <span>*</span></label>
+									<input type="text" class="form-control" name="SettlementAccount5" id="SettlementAccount5" placeholder="Account Number">
+								</div>
+								<div class="m_top_10">
+									<button type="button" class="d_none btn btn-danger" style="margin-top: 22px;" id="btnRemoveAccount5"><i class="fa fa-trash"></i> Remove Account</button>
+								</div>
+							</div>
+							<div class="my-3 form-group form-row">
+								<div class="col-12 col-sm-3 col-lg-3">
+									<button id="savingsettlement" class="btn btn-outline-primary d_none" type="button">
+										<i class="fa fa-spinner fa-spin fa-2x fa-fw"></i> Saving Settlement Instructions ...
+									</button>
+									<button id="savedsettlement" class="btn btn-success d_none" type="button">
+										<i class="fa fa-check-circle"></i> Settlement Instructions Saved
+									</button>
+									<button id="btn-save-settlement" class="btn btn-outline-danger" type="button">
+										<i class="fa fa-save"></i> Save
+									</button>
+									<button id="btn-edit-settlement" class="btn btn-outline-info" type="button">
+										<i class="fa fa-edit"></i> Edit Settlements
+									</button>
+								</div>
+							</div><hr />
+							<div class="my-3 form-group form-row">
+								<h6 class="d_none" id="disclaimer"><i><small>The counterparty hereby indemnifies the Bank against all and any losses and any demages that the Bank may suffer as a result of settling any transaction in any of the aforementioned bank accounts.</small></i></h6>
+							</div>
+						</div>
+					</div>
+					<div class="list-group-item py-3" data-acc-step>
+						<h5 class="mb-0" data-acc-title>Account Signatories</h5>
+						<div data-acc-content>
+							<div class="my-3 form-group">
+								<div class="col-12 col-sm-12 col-lg-12">
+									<h6><small>The following representatives of the counterparty are hereby designated as Authorized Signatories of the counterparty, having the authority to sign any relevant document pertaining to these terms on behalf of the Counterparty.</small></h6>
+								</div>
+							</div>
+							<div id="SignatoriesDiv" class="col-12 col-sm-12 col-lg-12 d_none">
+								@if (ViewBag.ClientSignatory.Count > 0)
+								{
+									<table id="SignatoriesTable" class="table table-bordered">
+										<thead>
+											<tr>
+												<th> Full Names</th>
+												<th> Designation </th>
+												<th> Phone </th>
+												<th> Email </th>
+												<th> Uploaded Signature </th>
+											</tr>
+										</thead>
+										<tbody>
+											@foreach (var item in ViewBag.ClientSignatory)
+											{
+												<tr>
+													<td>@(item.Surname + " " + item.OtherNames)</td>
+													<td>@item.Designation</td>
+													<td>@item.PhoneNumber</td>
+													<td>@item.EmailAddress</td>
+													<td>
+														@if (item.Signature == null || item.Signature == "")
+														{
+															<img width="100" height="80" src="~/Content/images/signatures/no-signature-17.jpg" />
+														}
+														else
+														{
+															<img width="100" height="80" src="~/Content/images/signatures/@item.Signature" />
+														}
+													</td>
 												</tr>
 											}
-                                            <tr class="success">
-                                                <th>Terms and Conditions:</th>
-                                                <td colspan="4" id="ConfirmTerms" name="ConfirmTerms">Accepted</td>
-                                            </tr>
+										</tbody>
+									</table>
+								}
+							</div>
+							<div id="SignatoryDiv1" class="my-3">
+								<div class="card">
+									<div class="card-header">
+										<div class="alert alert-primary mb-0 t_align_c">  Add signatories as per your account mandate </div><hr />
+										<i class="fa fa-user-circle"></i> Account Signatory 1: <i>[My Details]</i>
+									</div>
+									<div class="card-body form-group form-row">
+
+										<div class="col-12 col-sm-3 col-lg-3">
+											<label>Surname <span>*</span></label>
+											<input type="text" class="form-control required" name="SignatorySurname1" id="SignatorySurname1" value="@ViewBag.ClientInfo.Surname" placeholder="Surname">
+										</div>
+										<div class="col-12 col-sm-3 col-lg-3">
+											<label>Other Names <span>*</span></label>
+											<input type="text" class="form-control required" name="SignatoryOtherNames1" id="SignatoryOtherNames1" value="@ViewBag.ClientInfo.OtherNames" placeholder="Other Names">
+										</div>
+										<div class="col-12 col-sm-3 col-lg-3">
+											<label>Designation: <span>*</span></label>
+											<input type="text" class="form-control required" name="SignatoryDesignation1" id="SignatoryDesignation1" placeholder="Signatory Designation">
+										</div>
+										<div class="col-12 col-sm-3 col-lg-3">
+											<label>Email Address: <span>*</span></label>
+											<input type="email" class="form-control required textToLower" name="SignatoryEmail1" id="SignatoryEmail1" value="@ViewBag.ClientInfo.EmailAddress" placeholder="Email Address" readonly />
+										</div>
+										<div class="col-12 col-sm-3 col-lg-3">
+											<label>Phone Number: <span>*</span></label>
+											<input type="text" class="form-control required" name="SignatoryPhoneNumber1" id="SignatoryPhoneNumber1" placeholder="Include Country Code">
+										</div>
+										<div class="col-12 col-sm-3 col-lg-3 imgUp">
+											<div class="imagePreview"></div>
+											<label class="btn btn-primary" style="color:#fff">
+												Upload Signature <input id="inputFile" name="inputFile" type="file" class="uploadFile img" value="Upload Signature" style="width: 0px;height: 0px;overflow: hidden;">
+											</label>
+										</div>
+										<div class="col-12 col-sm-3 col-lg-3" style="margin-top:55px; line-height:15px;">
+											<h6><small>Image types to be uploaded</small></h6>
+											<ul>
+												<li style="color:red"><small>JPEG Image (.jpeg)</small></li>
+												<li style="color:red"><small>JPEG Image (.jpg)</small></li>
+												<li style="color:red"><small>Portable Network Graphic (.png)</small></li>
+											</ul>
+										</div>
+										<div class="col-12 col-sm-3 col-lg-3">
+											<button type="button" class="btn btn-success" style="margin-top: 110px;" id="btnAddSignatory2"><i class="fa fa-plus"></i> Add Signatory</button>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div id="SignatoryDiv2" class="my-3 d_none">
+								<div class="card">
+									<div class="card-header">
+										<i class="fa fa-user-circle"></i> Account Signatory 2:
+									</div>
+									<div class="card-body form-group form-row">
+										<div class="col-12 col-sm-3 col-lg-3">
+											<label>Surname <span>*</span></label>
+											<input type="text" class="form-control" name="SignatorySurname2" id="SignatorySurname2" placeholder="Surname">
+										</div>
+										<div class="col-12 col-sm-3 col-lg-3">
+											<label>Other Names <span>*</span></label>
+											<input type="text" class="form-control" name="SignatoryOtherNames2" id="SignatoryOtherNames2" placeholder="Other Names">
+										</div>
+										<div class="col-12 col-sm-3 col-lg-3">
+											<label>Designation: <span>*</span></label>
+											<input type="text" class="form-control" name="SignatoryDesignation2" id="SignatoryDesignation2" placeholder="Signatory Designation">
+										</div>
+										<div class="col-12 col-sm-3 col-lg-3">
+											<label>Email Address: <span>*</span></label>
+											<input type="email" class="form-control textToLower" name="SignatoryEmail2" id="SignatoryEmail2" placeholder="Email Address">
+										</div>
+										<div class="col-12 col-sm-3 col-lg-3">
+											<label>Phone Number: <span>*</span></label>
+											<input type="text" class="form-control" name="SignatoryPhoneNumber2" id="SignatoryPhoneNumber2" placeholder="Include Country Code">
+										</div>
+										<div class="col-12 col-sm-3 col-lg-3">
+											<button type="button" style="margin-top:25px;" class="btn btn-danger w_full" id="btnRemoveSignatory2"><i class="fa fa-trash"></i> Remove </button>
+										</div>
+										<div class="col-12 col-sm-3 col-lg-3">
+											<button type="button" style="margin-top:25px;" class="btn btn-success w_full" id="btnAddSignatory3"><i class="fa fa-plus"></i> Add Signatory</button>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div id="SignatoryDiv3" class="my-3 d_none">
+								<div class="card">
+									<div class="card-header">
+										<i class="fa fa-user-circle"></i> Account Signatory 3:
+									</div>
+									<div class="card-body form-group form-row">
+										<div class="col-12 col-sm-3 col-lg-3">
+											<label>Surname <span>*</span></label>
+											<input type="text" class="form-control" name="SignatorySurname3" id="SignatorySurname3" placeholder="Surname">
+										</div>
+										<div class="col-12 col-sm-3 col-lg-3">
+											<label>Other Names <span>*</span></label>
+											<input type="text" class="form-control" name="SignatoryOtherNames3" id="SignatoryOtherNames3" placeholder="Other Names">
+										</div>
+										<div class="col-12 col-sm-3 col-lg-3">
+											<label>Designation: <span>*</span></label>
+											<input type="text" class="form-control" name="SignatoryDesignation3" id="SignatoryDesignation3" placeholder="Signatory Designation">
+										</div>
+										<div class="col-12 col-sm-3 col-lg-3">
+											<label>Email Address: <span>*</span></label>
+											<input type="email" class="form-control textToLower" name="SignatoryEmail3" id="SignatoryEmail3" placeholder="Email Address">
+										</div>
+										<div class="col-12 col-sm-3 col-lg-3">
+											<label>Phone Number: <span>*</span></label>
+											<input type="text" class="form-control" name="SignatoryPhoneNumber3" id="SignatoryPhoneNumber3" placeholder="Include Country Code">
+										</div>
+										<div class="col-12 col-sm-3 col-lg-3">
+											<button type="button" style="margin-top:25px;" class="btn btn-danger w_full" id="btnRemoveSignatory3"><i class="fa fa-trash"></i> Remove </button>
+										</div>
+										<div class="col-12 col-sm-3 col-lg-3">
+											<button type="button" style="margin-top:25px;" class="btn btn-success w_full" id="btnAddSignatory4"><i class="fa fa-plus"></i> Add Signatory</button>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div id="SignatoryDiv4" class="my-3 d_none">
+								<div class="card">
+									<div class="card-header">
+										<i class="fa fa-user-circle"></i> Account Signatory 4:
+									</div>
+									<div class="card-body form-group form-row">
+										<div class="col-12 col-sm-3 col-lg-3">
+											<label>Surname <span>*</span></label>
+											<input type="text" class="form-control" name="SignatorySurname4" id="SignatorySurname4" placeholder="Surname">
+										</div>
+										<div class="col-12 col-sm-3 col-lg-3">
+											<label>Other Names <span>*</span></label>
+											<input type="text" class="form-control" name="SignatoryOtherNames4" id="SignatoryOtherNames4" placeholder="Other Names">
+										</div>
+										<div class="col-12 col-sm-3 col-lg-3">
+											<label>Designation: <span>*</span></label>
+											<input type="text" class="form-control" name="SignatoryDesignation4" id="SignatoryDesignation4" placeholder="Signatory Designation">
+										</div>
+										<div class="col-12 col-sm-3 col-lg-3">
+											<label>Email Address: <span>*</span></label>
+											<input type="email" class="form-control textToLower" name="SignatoryEmail4" id="SignatoryEmail4" placeholder="Email Address">
+										</div>
+										<div class="col-12 col-sm-3 col-lg-3">
+											<label>Phone Number: <span>*</span></label>
+											<input type="text" class="form-control" name="SignatoryPhoneNumber4" id="SignatoryPhoneNumber4" placeholder="Include Country Code">
+										</div>
+										<div class="col-12 col-sm-3 col-lg-3">
+											<button type="button" style="margin-top:25px;" class="btn btn-danger w_full" id="btnRemoveSignatory4"><i class="fa fa-trash"></i> Remove </button>
+										</div>
+										<div class="col-12 col-sm-3 col-lg-3">
+											<button type="button" style="margin-top:25px;" class="btn btn-success w_full" id="btnAddSignatory5"><i class="fa fa-plus"></i> Add Signatory</button>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div id="SignatoryDiv5" class="my-3 d_none">
+								<div class="card">
+									<div class="card-header">
+										<i class="fa fa-user-circle"></i> Account Signatory 5:
+									</div>
+									<div class="card-body form-group form-row">
+										<div class="col-12 col-sm-3 col-lg-3">
+											<label>Surname <span>*</span></label>
+											<input type="text" class="form-control" name="SignatorySurname5" id="SignatorySurname5" placeholder="Surname">
+										</div>
+										<div class="col-12 col-sm-3 col-lg-3">
+											<label>Other Names <span>*</span></label>
+											<input type="text" class="form-control" name="SignatoryOtherNames5" id="SignatoryOtherNames5" placeholder="Other Names">
+										</div>
+										<div class="col-12 col-sm-3 col-lg-3">
+											<label>Designation: <span>*</span></label>
+											<input type="text" class="form-control" name="SignatoryDesignation5" id="SignatoryDesignation5" placeholder="Signatory Designation">
+										</div>
+										<div class="col-12 col-sm-3 col-lg-3">
+											<label>Email Address: <span>*</span></label>
+											<input type="email" class="form-control textToLower" name="SignatoryEmail5" id="SignatoryEmail5" placeholder="Email Address">
+										</div>
+										<div class="col-12 col-sm-3 col-lg-3">
+											<label>Phone Number: <span>*</span></label>
+											<input type="text" class="form-control" name="SignatoryPhoneNumber5" id="SignatoryPhoneNumber5" placeholder="Include Country Code">
+										</div>
+										<div class="col-12 col-sm-3 col-lg-3">
+											<button type="button" style="margin-top:25px;" class="btn btn-danger w_full" id="btnRemoveSignatory5"><i class="fa fa-trash"></i> Remove </button>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="my-3 form-group">
+								<div class="col-12 col-sm-3 col-lg-3">
+									<button id="savingsignatories" class="btn btn-outline-primary d_none" type="button">
+										<i class="fa fa-spinner fa-spin fa-2x fa-fw"></i> Saving Signatories Details ...
+									</button>
+									<button id="savedsignatories" class="btn btn-success d_none" type="button">
+										<i class="fa fa-check-circle"></i> Signatories Details Saved
+									</button>
+									<button id="btn-save-signatories" class="btn btn-outline-danger" type="button">
+										<i class="fa fa-save"></i> Save
+									</button>
+									<button id="btn-edit-signatories" class="btn btn-outline-info d_none" type="button">
+										<i class="fa fa-edit"></i> Edit Signatories
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="list-group-item py-3" data-acc-step>
+						<h5 class="mb-0" data-acc-title>Authorized Representatives</h5>
+						<div data-acc-content>
+							<div class="my-3 form-group">
+								<div class="col-12 col-sm-12 col-lg-12">
+									<h6><small>The following representatives of the counterparty are hereby designated Representatives of the counterparty, having the capacity to conclude transactions with the Bank and provide instructions to the Bank, whether in respect of a transaction or otherwise and the acts of any Authorized Representative listed hereunder shall be fully binding to the counterparty.</small></h6>
+								</div>
+							</div>
+							<div id="RepresentativesDiv" class="col-12 col-sm-12 col-lg-12 d_none">
+								@if (ViewBag.DesignatedUser.Count > 0)
+								{
+									<table id="RepresentativesTable" class="table table-bordered">
+										<thead>
+											<tr>
+												<th> Full Names</th>
+												<th> Email </th>
+												<th> Phone Number </th>
+												<th> Trading Limit </th>
+												<th> EMarket SignUp </th>
+											</tr>
+										</thead>
+										<tbody>
+											@foreach (var item in ViewBag.DesignatedUser)
+											{
+												<tr>
+													<td>@(item.Surname + " " + item.Othernames)</td>
+													<td>@item.Email</td>
+													<td>@item.Mobile</td>
+													<td>@item.TradingLimit</td>
+													<td>@(item.EMarketSignUp ? "Yes" : "No")</td>
+												</tr>
+											}
+										</tbody>
+									</table>
+								}
+							</div>
+							<div id="UserDiv1" class="my-3">
+								<div class="card">
+									<div class="card-header">
+										<i class="fa fa-user-circle"></i> Authorized Representative 1
+									</div>
+									<div class="card-body">
+										<div class="form-group form-row">
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label>Surname <span>*</span></label>
+												<input type="text" class="form-control required" name="UserSurname1" id="UserSurname1" placeholder="Surname">
+											</div>
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label>Other Names <span>*</span></label>
+												<input type="text" class="form-control required" name="UserOthernames1" id="UserOthernames1" placeholder="Other Names">
+											</div>
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label>Email Address: <span>*</span></label>
+												<input type="email" class="form-control required textToLower" name="UserEmail1" id="UserEmail1" placeholder="Email Address">
+											</div>
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label>Mobile Number: <span>*</span></label>
+												<input type="text" class="form-control required" name="UserMobileNumber1" id="UserMobileNumber1" placeholder="Include Country Code">
+											</div>
+										</div>
+										<div class="form-group form-row">
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label>Date of Birth: <span>*</span></label>
+												<div class="input-group bootstrap-timepicker">
+													<div class="input-group-addon">
+														<i class="fa fa-calendar"></i>
+													</div>
+													<input type="text" class="form-control datepicker required" id="DOB1" name="DOB1" placeholder="Date of Birth" style="margin:0px;" autocomplete="off">
+												</div>
+											</div>
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label>Postal Office Address <span>*</span></label>
+												<input type="text" class="form-control required" name="UserPOBox1" id="UserPOBox1" placeholder="Postal Address">
+											</div>
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label>ZIP/Postal Code <span>*</span></label>
+												<input type="text" class="form-control required" name="UserZipCode1" id="UserZipCode1" placeholder="ZIP/Postal Code">
+											</div>
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label>Town/City <span>*</span></label>
+												<input type="text" class="form-control required" name="UserTownCity1" id="UserTownCity1" placeholder="Town/City">
+											</div>
+										</div>
+										<div class="form-group form-row">
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label> Does your Representative have a Transaction Limit? <span>*</span></label>
+												<select id="TransactionLimitQ1" name="TransactionLimitQ1" class="form-control select2" style="width: 100%;">
+													<option value="" selected> Choose Yes or No </option>
+													<option value="Yes"> Yes </option>
+													<option value="No"> No </option>
+												</select>
+											</div>
+											<div class="TransactionLimit1 col-12 col-sm-3 col-lg-3 d_none">
+												<label>Transaction Limit (Upto & Including in USD $) <span>*</span></label>
+												<input type="text" class="form-control" name="TransactionLimit1" id="TransactionLimit1" placeholder="Transaction Limit in dollar ($)">
+											</div>
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label>Would you like user to sign up for E-Market Trader?</label>
+												<select id="EMarketSignUp1" name="EMarketSignUp1" class="form-control select2" style="width: 100%;">
+													<option value="" selected> Sign up for E-Market Trader? </option>
+													<option value="true"> Yes</option>
+													<option value="false">No</option>
+												</select>
+											</div>
+											<div class="col-md-3">
+												<h6 id="disclaimerUser1" class="d_none" style="color:red;"><i><small>Please note that this authorized representative will be created as a user on the eMarket Trader Platform </small></i></h6>
+												<h6 id="disclaimerNotUser1" class="d_none" style="color:red;"><i><small>Please note that this authorized representative will <b>NOT</b> be created as a user on the eMarket Trader Platform </small></i></h6>
+											</div>
+										</div>
+										<div class="form-group form-row float-right">
+											<div class="col-12 col-sm-3 col-lg-3">
+												<button type="button" class="btn btn-success" id="btnAddUser2"><i class="fa fa-plus"></i> Add Representative</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div id="UserDiv2" class="my-3 d_none">
+								<div class="card">
+									<div class="card-header">
+										<i class="fa fa-user-circle"></i> Authorized Representative 2
+									</div>
+									<div class="card-body">
+										<div class="form-group form-row">
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label>Surname <span>*</span></label>
+												<input type="text" class="form-control required" name="UserSurname2" id="UserSurname2" placeholder="Surname">
+											</div>
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label>Other Names <span>*</span></label>
+												<input type="text" class="form-control required" name="UserOthernames2" id="UserOthernames2" placeholder="Other Names">
+											</div>
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label>Email Address: <span>*</span></label>
+												<input type="email" class="form-control required textToLower" name="UserEmail2" id="UserEmail2" placeholder="Email Address">
+											</div>
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label>Mobile Number: <span>*</span></label>
+												<input type="text" class="form-control required" name="UserMobileNumber2" id="UserMobileNumber2" placeholder="Include Country Code">
+											</div>
+										</div>
+										<div class="form-group form-row">
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label>Date of Birth: <span>*</span></label>
+												<div class="input-group bootstrap-timepicker">
+													<div class="input-group-addon">
+														<i class="fa fa-calendar"></i>
+													</div>
+													<input type="text" class="form-control datepicker required" id="DOB2" name="DOB2" placeholder="Date of Birth" style="margin:0px;" autocomplete="off">
+												</div>
+											</div>
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label>Postal Office Address <span>*</span></label>
+												<input type="text" class="form-control required" name="UserPOBox2" id="UserPOBox2" placeholder="Postal Address">
+											</div>
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label>ZIP/Postal Code <span>*</span></label>
+												<input type="text" class="form-control required" name="UserZipCode2" id="UserZipCode2" placeholder="ZIP/Postal Code">
+											</div>
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label>Town/City <span>*</span></label>
+												<input type="text" class="form-control required" name="UserTownCity2" id="UserTownCity2" placeholder="Town/City">
+											</div>
+										</div>
+										<div class="form-group form-row">
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label> Does your Representative have a Transaction Limit? <span>*</span></label>
+												<select id="TransactionLimitQ2" name="TransactionLimitQ2" class="form-control select2" style="width: 100%;">
+													<option value="" selected> Choose Yes or No </option>
+													<option value="Yes"> Yes </option>
+													<option value="No"> No </option>
+												</select>
+											</div>
+											<div class="TransactionLimit2 col-12 col-sm-3 col-lg-3 d_none">
+												<label>Transaction Limit (Upto & Including in USD $) <span>*</span></label>
+												<input type="text" class="form-control" name="TransactionLimit2" id="TransactionLimit2" placeholder="Transaction Limit in dollar ($)">
+											</div>
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label>Would you like user to sign up for E-Market Trader?</label>
+												<select id="EMarketSignUp2" name="EMarketSignUp2" class="form-control select2" style="width: 100%;">
+													<option value="" selected> Sign up for E-Market Trader? </option>
+													<option value="true"> Yes</option>
+													<option value="false">No</option>
+												</select>
+											</div>
+											<div class="col-md-3">
+												<h6 id="disclaimerUser2" class="d_none" style="color:red;"><i><small>Please note that this authorized representative will be created as a user on the eMarket Trader Platform </small></i></h6>
+												<h6 id="disclaimerNotUser2" class="d_none" style="color:red;"><i><small>Please note that this authorized representative will <b>NOT</b> be created as a user on the eMarket Trader Platform </small></i></h6>
+											</div>
+										</div>
+										<div class="form-group form-row">
+											<div class="col-12 col-sm-3 col-lg-3"></div>
+											<div class="col-12 col-sm-3 col-lg-3"></div>
+											<div class="col-12 col-sm-3 col-lg-3">
+												<button type="button" class="btn btn-danger w_full" id="btnRemoveUser2"><i class="fa fa-trash"></i> Remove </button>
+											</div>
+											<div class="col-12 col-sm-3 col-lg-3">
+												<button type="button" class="btn btn-success w_full" id="btnAddUser3"><i class="fa fa-plus"></i> Add Representative</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div id="UserDiv3" class="my-3 d_none">
+								<div class="card">
+									<div class="card-header">
+										<i class="fa fa-user-circle"></i> Authorized Representative 3
+									</div>
+									<div class="card-body">
+										<div class="form-group form-row">
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label>Surname <span>*</span></label>
+												<input type="text" class="form-control required" name="UserSurname3" id="UserSurname3" placeholder="Surname">
+											</div>
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label>Other Names <span>*</span></label>
+												<input type="text" class="form-control required" name="UserOthernames3" id="UserOthernames3" placeholder="Other Names">
+											</div>
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label>Email Address: <span>*</span></label>
+												<input type="email" class="form-control required textToLower" name="UserEmail3" id="UserEmail3" placeholder="Email Address">
+											</div>
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label>Mobile Number: <span>*</span></label>
+												<input type="text" class="form-control required" name="UserMobileNumber3" id="UserMobileNumber3" placeholder="Include Country Code">
+											</div>
+										</div>
+										<div class="form-group form-row">
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label>Date of Birth: <span>*</span></label>
+												<div class="input-group bootstrap-timepicker">
+													<div class="input-group-addon">
+														<i class="fa fa-calendar"></i>
+													</div>
+													<input type="text" class="form-control datepicker required" id="DOB3" name="DOB3" placeholder="Date of Birth" style="margin:0px;" autocomplete="off">
+												</div>
+											</div>
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label>Postal Office Address <span>*</span></label>
+												<input type="text" class="form-control required" name="UserPOBox3" id="UserPOBox3" placeholder="Postal Address">
+											</div>
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label>ZIP/Postal Code <span>*</span></label>
+												<input type="text" class="form-control required" name="UserZipCode3" id="UserZipCode3" placeholder="ZIP/Postal Code">
+											</div>
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label>Town/City <span>*</span></label>
+												<input type="text" class="form-control required" name="UserTownCity3" id="UserTownCity3" placeholder="Town/City">
+											</div>
+										</div>
+										<div class="form-group form-row">
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label> Does your Representative have a Transaction Limit? <span>*</span></label>
+												<select id="TransactionLimitQ3" name="TransactionLimitQ3" class="form-control select2" style="width: 100%;">
+													<option value="" selected> Choose Yes or No </option>
+													<option value="Yes"> Yes </option>
+													<option value="No"> No </option>
+												</select>
+											</div>
+											<div class="TransactionLimit3 col-12 col-sm-3 col-lg-3 d_none">
+												<label>Transaction Limit (Upto & Including in USD $) <span>*</span></label>
+												<input type="text" class="form-control" name="TransactionLimit3" id="TransactionLimit3" placeholder="Transaction Limit in dollar ($)">
+											</div>
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label>Would you like user to sign up for E-Market Trader?</label>
+												<select id="EMarketSignUp3" name="EMarketSignUp3" class="form-control select2" style="width: 100%;">
+													<option value="" selected> Sign up for E-Market Trader? </option>
+													<option value="true"> Yes</option>
+													<option value="false">No</option>
+												</select>
+											</div>
+											<div class="col-md-3">
+												<h6 id="disclaimerUser3" class="d_none" style="color:red;"><i><small>Please note that this authorized representative will be created as a user on the eMarket Trader Platform </small></i></h6>
+												<h6 id="disclaimerNotUser3" class="d_none" style="color:red;"><i><small>Please note that this authorized representative will <b>NOT</b> be created as a user on the eMarket Trader Platform </small></i></h6>
+											</div>
+										</div>
+										<div class="form-group form-row">
+											<div class="col-12 col-sm-3 col-lg-3"></div>
+											<div class="col-12 col-sm-3 col-lg-3"></div>
+											<div class="col-12 col-sm-3 col-lg-3">
+												<button type="button" class="btn btn-danger w_full" id="btnRemoveUser3"><i class="fa fa-trash"></i> Remove </button>
+											</div>
+											<div class="col-12 col-sm-3 col-lg-3">
+												<button type="button" class="btn btn-success w_full" id="btnAddUser4"><i class="fa fa-plus"></i> Add Representative</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div id="UserDiv4" class="my-3 d_none">
+								<div class="card">
+									<div class="card-header">
+										<i class="fa fa-user-circle"></i> Authorized Representative 4
+									</div>
+									<div class="card-body">
+										<div class="form-group form-row">
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label>Surname <span>*</span></label>
+												<input type="text" class="form-control required" name="UserSurname4" id="UserSurname4" placeholder="Surname">
+											</div>
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label>Other Names <span>*</span></label>
+												<input type="text" class="form-control required" name="UserOthernames4" id="UserOthernames4" placeholder="Other Names">
+											</div>
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label>Email Address: <span>*</span></label>
+												<input type="email" class="form-control required textToLower" name="UserEmail4" id="UserEmail4" placeholder="Email Address">
+											</div>
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label>Mobile Number: <span>*</span></label>
+												<input type="text" class="form-control required" name="UserMobileNumber4" id="UserMobileNumber4" placeholder="Include Country Code">
+											</div>
+										</div>
+										<div class="form-group form-row">
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label>Date of Birth: <span>*</span></label>
+												<div class="input-group bootstrap-timepicker">
+													<div class="input-group-addon">
+														<i class="fa fa-calendar"></i>
+													</div>
+													<input type="text" class="form-control datepicker required" id="DOB4" name="DOB4" placeholder="Date of Birth" style="margin:0px;" autocomplete="off">
+												</div>
+											</div>
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label>Postal Office Address <span>*</span></label>
+												<input type="text" class="form-control required" name="UserPOBox4" id="UserPOBox4" placeholder="Postal Address">
+											</div>
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label>ZIP/Postal Code <span>*</span></label>
+												<input type="text" class="form-control required" name="UserZipCode4" id="UserZipCode4" placeholder="ZIP/Postal Code">
+											</div>
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label>Town/City <span>*</span></label>
+												<input type="text" class="form-control required" name="UserTownCity4" id="UserTownCity4" placeholder="Town/City">
+											</div>
+										</div>
+										<div class="form-group form-row">
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label> Does your Representative have a Transaction Limit? <span>*</span></label>
+												<select id="TransactionLimitQ4" name="TransactionLimitQ4" class="form-control select2" style="width: 100%;">
+													<option value="" selected> Choose Yes or No </option>
+													<option value="Yes"> Yes </option>
+													<option value="No"> No </option>
+												</select>
+											</div>
+											<div class="TransactionLimit4 col-12 col-sm-3 col-lg-3 d_none">
+												<label>Transaction Limit (Upto & Including in USD $) <span>*</span></label>
+												<input type="text" class="form-control" name="TransactionLimit4" id="TransactionLimit4" placeholder="Transaction Limit in dollar ($)">
+											</div>
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label>Would you like user to sign up for E-Market Trader?</label>
+												<select id="EMarketSignUp4" name="EMarketSignUp4" class="form-control select2" style="width: 100%;">
+													<option value="" selected> Sign up for E-Market Trader? </option>
+													<option value="true"> Yes</option>
+													<option value="false">No</option>
+												</select>
+											</div>
+											<div class="col-md-3">
+												<h6 id="disclaimerUser4" class="d_none" style="color:red;"><i><small>Please note that this authorized representative will be created as a user on the eMarket Trader Platform </small></i></h6>
+												<h6 id="disclaimerNotUser4" class="d_none" style="color:red;"><i><small>Please note that this authorized representative will <b>NOT</b> be created as a user on the eMarket Trader Platform </small></i></h6>
+											</div>
+										</div>
+										<div class="form-group form-row">
+											<div class="col-12 col-sm-3 col-lg-3"></div>
+											<div class="col-12 col-sm-3 col-lg-3"></div>
+											<div class="col-12 col-sm-3 col-lg-3">
+												<button type="button" class="btn btn-danger w_full" id="btnRemoveUser4"><i class="fa fa-trash"></i> Remove </button>
+											</div>
+											<div class="col-12 col-sm-3 col-lg-3">
+												<button type="button" class="btn btn-success w_full" id="btnAddUser5"><i class="fa fa-plus"></i> Add Representative</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div id="UserDiv5" class="my-3 d_none">
+								<div class="card">
+									<div class="card-header">
+										<i class="fa fa-user-circle"></i> Authorized Representative 5
+									</div>
+									<div class="card-body">
+										<div class="form-group form-row">
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label>Surname <span>*</span></label>
+												<input type="text" class="form-control required" name="UserSurname5" id="UserSurname5" placeholder="Surname">
+											</div>
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label>Other Names <span>*</span></label>
+												<input type="text" class="form-control required" name="UserOthernames5" id="UserOthernames5" placeholder="Other Names">
+											</div>
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label>Email Address: <span>*</span></label>
+												<input type="email" class="form-control required textToLower" name="UserEmail5" id="UserEmail5" placeholder="Email Address">
+											</div>
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label>Mobile Number: <span>*</span></label>
+												<input type="text" class="form-control required" name="UserMobileNumber5" id="UserMobileNumber5" placeholder="Include Country Code">
+											</div>
+										</div>
+										<div class="form-group form-row">
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label>Date of Birth: <span>*</span></label>
+												<div class="input-group bootstrap-timepicker">
+													<div class="input-group-addon">
+														<i class="fa fa-calendar"></i>
+													</div>
+													<input type="text" class="form-control datepicker required" id="DOB5" name="DOB5" placeholder="Date of Birth" style="margin:0px;" autocomplete="off">
+												</div>
+											</div>
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label>Postal Office Address <span>*</span></label>
+												<input type="text" class="form-control required" name="UserPOBox5" id="UserPOBox5" placeholder="Postal Address">
+											</div>
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label>ZIP/Postal Code <span>*</span></label>
+												<input type="text" class="form-control required" name="UserZipCode5" id="UserZipCode5" placeholder="ZIP/Postal Code">
+											</div>
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label>Town/City <span>*</span></label>
+												<input type="text" class="form-control required" name="UserTownCity5" id="UserTownCity5" placeholder="Town/City">
+											</div>
+										</div>
+										<div class="form-group form-row">
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label> Does your Representative have a Transaction Limit? <span>*</span></label>
+												<select id="TransactionLimitQ5" name="TransactionLimitQ5" class="form-control select2" style="width: 100%;">
+													<option value="" selected> Choose Yes or No </option>
+													<option value="Yes"> Yes </option>
+													<option value="No"> No </option>
+												</select>
+											</div>
+											<div class="TransactionLimit4 col-12 col-sm-3 col-lg-3 d_none">
+												<label>Transaction Limit (Upto & Including in USD $) <span>*</span></label>
+												<input type="text" class="form-control" name="TransactionLimit5" id="TransactionLimit5" placeholder="Transaction Limit in dollar ($)">
+											</div>
+											<div class="col-12 col-sm-3 col-lg-3">
+												<label>Would you like user to sign up for E-Market Trader?</label>
+												<select id="EMarketSignUp5" name="EMarketSignUp5" class="form-control select2" style="width: 100%;">
+													<option value="" selected> Sign up for E-Market Trader? </option>
+													<option value="true"> Yes</option>
+													<option value="false">No</option>
+												</select>
+											</div>
+											<div class="col-md-3">
+												<h6 id="disclaimerUser5" class="d_none" style="color:red;"><i><small>Please note that this authorized representative will be created as a user on the eMarket Trader Platform </small></i></h6>
+												<h6 id="disclaimerNotUser5" class="d_none" style="color:red;"><i><small>Please note that this authorized representative will <b>NOT</b> be created as a user on the eMarket Trader Platform </small></i></h6>
+											</div>
+										</div>
+										<div class="form-group form-row">
+											<div class="col-12 col-sm-3 col-lg-3"></div>
+											<div class="col-12 col-sm-3 col-lg-3"></div>
+											<div class="col-12 col-sm-3 col-lg-3"></div>
+											<div class="col-12 col-sm-3 col-lg-3">
+												<button type="button" class="btn btn-danger w_full" id="btnRemoveUser5"><i class="fa fa-trash"></i> Remove </button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="my-3 form-group">
+								<div class="col-12 col-sm-3 col-lg-3">
+									<button id="savingrepresentatives" class="btn btn-outline-primary d_none" type="button">
+										<i class="fa fa-spinner fa-spin fa-2x fa-fw"></i> Saving Representative(s) Details ...
+									</button>
+									<button id="savedrepresentatives" class="btn btn-success d_none" type="button">
+										<i class="fa fa-check-circle"></i> Representative(s) Details Saved
+									</button>
+									<button id="btn-save-representatives" class="btn btn-outline-danger" type="button">
+										<i class="fa fa-save"></i> Save
+									</button>
+									<button id="btn-edit-representatives" class="btn btn-outline-info d_none" type="button">
+										<i class="fa fa-edit"></i> Edit Representative(s)
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="list-group-item py-3" data-acc-step>
+						<div data-acc-content>
+							<div class="my-3 form-group">
+								<div class="col-12 col-sm-12 col-lg-12">
+									<div style="clear:both;"></div>
+									<div class="table-responsive">
+										<table class="table table-bordered">
+											<tr class="success">
+												<th colspan="2">Company Details:</th>
+												<td colspan="3" style="text-align: right;"><i class="fa fa fa-info-circle"></i> Application Summary</td>
+											</tr>
+											<tr>
+												<th>Company Name:</th>
+												<td colspan="4" id="ConfirmCompany" name="ConfirmCompany"></td>
+											</tr>
+											<tr>
+												<th>Company Registration Number:</th>
+												<td colspan="4" id="ConfirmRegistration" name="ConfirmRegistration"></td>
+											</tr>
+											<tr>
+												<th>Principal Place of Business:</th>
+												<td colspan="4" id="ConfirmAddress" name="ConfirmAddress"></td>
+											</tr>
+											<tr class="success">
+												<th colspan="5">Settlement Instructions:</th>
+											</tr>
+											<tr id="ConfirmKEStr">
+												<th id="ConfirmKEStrText">Settlement Instruction 1:</th>
+												<td colspan="4" id="ConfirmKES" name="ConfirmKES"></td>
+											</tr>
+											<tr id="ConfirmOthertr">
+												<th>Settlement Instruction 2:</th>
+												<td colspan="4" id="ConfirmOther" name="ConfirmOther"></td>
+											</tr>
+											<tr id="ConfirmOthertr3">
+												<th>Settlement Instruction 3:</th>
+												<td colspan="4" id="ConfirmAccount3" name="ConfirmAccount3"></td>
+											</tr>
+											<tr id="ConfirmOthertr4">
+												<th>Settlement Instruction 4:</th>
+												<td colspan="4" id="ConfirmAccount4" name="ConfirmAccount4"></td>
+											</tr>
+											<tr id="ConfirmOthertr5">
+												<th>Settlement Instruction 5:</th>
+												<td colspan="4" id="ConfirmAccount5" name="ConfirmAccount5"></td>
+											</tr>
+											<tr class="success">
+												<th>Terms and Conditions:</th>
+												<td colspan="4" id="ConfirmTerms" name="ConfirmTerms">Accepted</td>
+											</tr>
+>>>>>>> 4a57cb65d9ff4345fc860a183a3da86a25aa01d6
 											<tr>
 												<th> </th>
 												<td colspan="4"> </td>
 											</tr>
+<<<<<<< HEAD
                                             <tr class="success">
                                                 <th>Signatories:</th>
                                                 <td colspan="4"></td>
@@ -1131,10 +1080,100 @@
             </div>
         </div>
     </div>
+=======
+											<tr class="success">
+												<th>Signatories:</th>
+												<td colspan="4"></td>
+											</tr>
+											<tr id="Signatory1tr">
+												<th>Signatory 1:</th>
+												<td colspan="4" id="ConfirmSignatory1" name="ConfirmSignatory1"></td>
+											</tr>
+											<tr id="Signatory2tr">
+												<th>Signatory 2:</th>
+												<td colspan="4" id="ConfirmSignatory2" name="ConfirmSignatory1"></td>
+											</tr>
+											<tr id="Signatory3tr">
+												<th>Signatory 3:</th>
+												<td colspan="4" id="ConfirmSignatory3" name="ConfirmSignatory1"></td>
+											</tr>
+											<tr id="Signatory4tr">
+												<th>Signatory 4:</th>
+												<td colspan="4" id="ConfirmSignatory4" name="ConfirmSignatory1"></td>
+											</tr>
+											<tr id="Signatory5tr">
+												<th>Signatory 5:</th>
+												<td colspan="4" id="ConfirmSignatory5" name="ConfirmSignatory1"></td>
+											</tr>
+											<tr class="success">
+												<th colspan="5">Authorised Representatives</th>
+											</tr>
+											<tr id="AuthUser1tr">
+												<th>Representative 1:</th>
+												<td colspan="4" id="ConfirmUser1" name="ConfirmUser1"></td>
+											</tr>
+											<tr id="AuthUser2tr">
+												<th>Representative 2:</th>
+												<td colspan="4" id="ConfirmUser2" name="ConfirmUser2"></td>
+											</tr>
+											<tr id="AuthUser3tr">
+												<th>Representative 3:</th>
+												<td colspan="4" id="ConfirmUser3" name="ConfirmUser3"></td>
+											</tr>
+											<tr id="AuthUser4tr">
+												<th>Representative 4:</th>
+												<td colspan="4" id="ConfirmUser4" name="ConfirmUser4"></td>
+											</tr>
+											<tr id="AuthUser5tr">
+												<th>Representative 5:</th>
+												<td colspan="4" id="ConfirmUser5" name="ConfirmUser5"></td>
+											</tr>
+										</table>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
+			<!--Processing Submission -->
+			<div class="row">
+				<div id="Loading_Div" class="col-lg-12 d_none">
+					<center class="r_corners m_top_20">
+						<h4 class="m_top_20 m_bottom_20">Please wait... Processing Your Submission</h4>
+						<img src="~/Content/images/loading-bar.gif" class="img-thumbnail m_bottom_20" alt="Loading" style="max-width:160px;">
+					</center>
+				</div>
+			</div>
+			<!--End Submission Processing -->
+		</div>
+	</div>
+</section>
+<!--Start Confirm Approval Modal -->
+<div class="modal fade right" id="LoadUpModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<!-- Add class .modal-side and then add class .modal-top-right (or other classes from list above) to set a position to the modal -->
+	<div class="modal-dialog modal-side modal-top-right" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title w-100" id="myModalLabel"><i class="fa fa-info-circle"></i> Information</h4>
+				<button type="button" id="closemodalup" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				Welcome to the Global Markets Onboarding Portal. <br /> Let’s get started! Please ensure you are a signatory and you have scanned your signature for upload before beginning the application process.
+			</div>
+			<div class="modal-footer">
+				<button type="button" id="closemodal" class="btn btn-success">Okay</button>
+			</div>
+		</div>
+	</div>
+>>>>>>> 4a57cb65d9ff4345fc860a183a3da86a25aa01d6
 </div>
 <!--End Confirm Approval Modal-->
 <!--Start LoadUpSignatoryModal Modal -->
 <div class="modal fade right" id="LoadUpSignatoryModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<<<<<<< HEAD
     <!-- Add class .modal-side and then add class .modal-top-right (or other classes from list above) to set a position to the modal -->
     <div class="modal-dialog modal-side modal-top-right" role="document">
         <div class="modal-content">
@@ -1150,10 +1189,28 @@
             </div>
         </div>
     </div>
+=======
+	<!-- Add class .modal-side and then add class .modal-top-right (or other classes from list above) to set a position to the modal -->
+	<div class="modal-dialog modal-side modal-top-right" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title w-100" id="myModalLabel"><i class="fa fa-info-circle"></i> Warning </h4>
+			</div>
+			<div class="modal-body">
+				Are you sure? <br /> All previously saved signatory details will be cleared
+			</div>
+			<div class="modal-footer">
+				<button type="button" id="btnCloseModal" class="btn btn-success closemodal">No, Cancel</button>
+				<button type="button" id="btnEditSignatories" class="btn btn-danger">Yes, Edit</button>
+			</div>
+		</div>
+	</div>
+>>>>>>> 4a57cb65d9ff4345fc860a183a3da86a25aa01d6
 </div>
 <!--End Confirm Approval Modal-->
 <!--Start LoadUpSignatoryModal Modal -->
 <div class="modal fade right" id="LoadUpRepresentativeModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<<<<<<< HEAD
     <!-- Add class .modal-side and then add class .modal-top-right (or other classes from list above) to set a position to the modal -->
     <div class="modal-dialog modal-side modal-top-right" role="document">
         <div class="modal-content">
@@ -1169,25 +1226,42 @@
             </div>
         </div>
     </div>
+=======
+	<!-- Add class .modal-side and then add class .modal-top-right (or other classes from list above) to set a position to the modal -->
+	<div class="modal-dialog modal-side modal-top-right" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title w-100" id="myModalLabel"><i class="fa fa-info-circle"></i> Warning </h4>
+			</div>
+			<div class="modal-body">
+				Are you sure? <br /> All previously saved representative details will be cleared
+			</div>
+			<div class="modal-footer">
+				<button type="button" id="btnCloseRepModal" class="btn btn-success closemodal">No, Cancel</button>
+				<button type="button" id="btnEditRepresentatives" class="btn btn-danger">Yes, Edit</button>
+			</div>
+		</div>
+	</div>
 </div>
 <!--End Confirm Approval Modal-->
 <!--Start LoadUpSignatoryModal Modal -->
 <div class="modal fade right" id="LoadUpSettlementModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <!-- Add class .modal-side and then add class .modal-top-right (or other classes from list above) to set a position to the modal -->
-    <div class="modal-dialog modal-side modal-top-right" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title w-100" id="myModalLabel"><i class="fa fa-info-circle"></i> Warning </h4>
-            </div>
-            <div class="modal-body">
-                Are you sure? <br /> All previously saved settlement instructions details will be cleared
-            </div>
-            <div class="modal-footer">
-                <button type="button" id="btnCloseSetModal" class="btn btn-success closemodal">No, Cancel</button>
-                <button type="button" id="btnEditSettlements" class="btn btn-danger">Yes, Edit</button>
-            </div>
-        </div>
-    </div>
+	<!-- Add class .modal-side and then add class .modal-top-right (or other classes from list above) to set a position to the modal -->
+	<div class="modal-dialog modal-side modal-top-right" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title w-100" id="myModalLabel"><i class="fa fa-info-circle"></i> Warning </h4>
+			</div>
+			<div class="modal-body">
+				Are you sure? <br /> All previously saved settlement instructions details will be cleared
+			</div>
+			<div class="modal-footer">
+				<button type="button" id="btnCloseSetModal" class="btn btn-success closemodal">No, Cancel</button>
+				<button type="button" id="btnEditSettlements" class="btn btn-danger">Yes, Edit</button>
+			</div>
+		</div>
+	</div>
 </div>
 <!--End Confirm Approval Modal-->
+<!--Included JS For DOM Manipulation and Submission-->
 <script type="text/javascript" src="~/Scripts/js/client_application.js"></script>
