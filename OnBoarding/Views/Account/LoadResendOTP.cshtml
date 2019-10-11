@@ -79,16 +79,28 @@
 					type: 'POST',
 					data: formData,
 					async: true,
-					success: function () {
+					success: function (XmlHttpRequest) {
 						window.setTimeout(close, 1500);
 						window.setTimeout(closemodal, 6000);
-						function close() {
-							$("#ModalLoadingDiv").hide('fast');
-							$('.EditSuccess').show("fast");
+						if (XmlHttpRequest === 'success') {
+							function close() {
+								$("#ModalLoadingDiv").hide('fast');
+								$('.EditSuccess').show("fast");
+							}
+						}
+						else {
+							$('#LoadUpModal').modal('hide').effect('explode');
+							toastr.error(XmlHttpRequest);
 						}
 						function closemodal() {
 							$('#LoadUpModal').modal('hide').effect('explode');
 							$('.EditSuccess').hide("fast");
+						}
+					},
+					error: function (xhr, textStatus, errorThrown) {
+						if (textStatus === 'error') {
+							$("#ModalLoadingDiv").hide('fast');
+							toastr.error('Submission error! Code: ' + xhr.status + ' Details: ' + errorThrown);
 						}
 					},
 					cache: false,
