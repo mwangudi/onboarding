@@ -3127,6 +3127,15 @@
     <Content Include="Views\Gmo\ViewClient.cshtml" />
     <Content Include="Views\Gmo\ViewInCompleteApplication.cshtml" />
     <Content Include="Views\DigitalDesk\ApprovedApplications.cshtml" />
+    <Content Include="Views\Account\ChangePassword.cshtml" />
+    <Content Include="Views\Account\PasswordChanged.cshtml" />
+    <Content Include="Views\Client\AddCompanies.cshtml" />
+    <Content Include="Views\Client\_LoadCompanyDetails.cshtml" />
+    <Content Include="Views\Client\LoadDeleteRepresentative.cshtml" />
+    <Content Include="Views\Client\LoadDeleteSignatory.cshtml" />
+    <Content Include="Views\DigitalDesk\LoadDeleteSignatory.cshtml" />
+    <Content Include="Views\DigitalDesk\PendingApprovals.cshtml" />
+    <Content Include="Views\Shared\_AdminOldLayout.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

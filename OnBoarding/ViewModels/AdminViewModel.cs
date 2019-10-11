@@ -48,6 +48,7 @@ namespace OnBoarding.ViewModels
         public string From { get; set; }
         public string To { get; set; }
         public string DateCreated { get; set; }
+        public string Action { get; set; }
     }
 
     // Roles Post Model

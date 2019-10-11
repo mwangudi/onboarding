@@ -27,9 +27,9 @@ namespace OnBoarding.Controllers
                 var CompletedApplications = db.EMarketApplications.Count(a => a.Signatories == a.SignatoriesApproved && a.DesignatedUsers == a.UsersApproved);
                 var InCompleteApplications = db.EMarketApplications.Count(a => (a.Signatories != a.SignatoriesApproved || a.DesignatedUsers != a.UsersApproved) && (a.Status == 1 && a.OPSApproved == false && a.POAApproved == false));
                 var Approvals = db.EMarketApplications.Count(a => (a.OPSApproved == true && a.POAApproved == true));
-                var PendingOpsApprovals = db.EMarketApplications.Count(a => a.Signatories == a.SignatoriesApproved && a.DesignatedUsers == a.UsersApproved && (a.OPSApproved == false && a.OPSDeclined == false) && (a.POAApproved == false && a.POAApproved == false));
+                var PendingOpsApprovals = db.EMarketApplications.Count(a => a.Signatories == a.SignatoriesApproved && a.DesignatedUsers == a.UsersApproved && (a.OPSApproved == false && a.OPSDeclined == false));
                 var PendingPOAApprovals = db.EMarketApplications.Count(a => (a.OPSApproved == true && a.Status == 1 && (a.POAApproved == false && a.POADeclined == false)));
-                var PendingApprovals = db.EMarketApplications.Count(a => (a.OPSApproved == false || a.POAApproved == false));
+                var PendingApprovals = db.EMarketApplications.Count(a => (a.OPSApproved == false || a.POAApproved == false) && (a.POAApproved == false && a.POADeclined == false));
                 var DeclinedApplications = db.EMarketApplications.Count(a => a.Signatories == a.SignatoriesApproved && a.DesignatedUsers == a.UsersApproved && (a.POADeclined == true || a.OPSDeclined == true));
 
                 ViewData["RegisteredClients"] = RegisteredClients;
@@ -57,7 +57,7 @@ namespace OnBoarding.Controllers
 
                 //Chart ViewData
                 ViewData["Chart1Data"] = "[" + janStats + ", " + febStats + ", " + marStats + ", " + aprStats + ", " + mayStats + ", " + junStats + ", " + julStats + ", " + augStats + ", " + sepStats + ", " + octStats + ", " + novStats + ", " + decStats + "]";
-                ViewData["Chart2Data"] = "[" + Approvals + ", " + PendingOpsApprovals + ", " + InCompleteApplications + ", " + DeclinedApplications + "]";
+                ViewData["Chart2Data"] = "[" + Approvals + ", " + PendingApprovals + ", " + InCompleteApplications + ", " + DeclinedApplications + "]";
 
                 //Pending Applications
                 var ApprovedApplications = (from a in db.EMarketApplications
@@ -107,21 +107,21 @@ namespace OnBoarding.Controllers
             // Instance of DatabaseContext  
             using (var db = new DBModel())
             {
-                IEnumerable<NotificationsViewModel> query = db.Database.SqlQuery<NotificationsViewModel>("SELECT n.Id, n.[Type], n.[To], n.[From], n.MessageBody, n.[Sent], CONVERT(varchar, n.DateCreated, 120) DateCreated FROM Notifications n ORDER BY " + jtSorting + " OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY;");
+                IEnumerable<NotificationsViewModel> query = db.Database.SqlQuery<NotificationsViewModel>("SELECT n.Id, n.[Type], n.[To], n.[From], n.MessageBody, n.[Sent], CONVERT(varchar, n.DateCreated, 120) DateCreated, n.Action FROM Notifications n ORDER BY " + jtSorting + " OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY;");
 
                 //Search  
                 if (!string.IsNullOrEmpty(searchMessage) && string.IsNullOrEmpty(searchDate))
                 {
-                    query = db.Database.SqlQuery<NotificationsViewModel>("SELECT n.Id, n.[Type], n.[To], n.[From], n.MessageBody, n.[Sent], CONVERT(varchar, n.DateCreated, 120) DateCreated FROM Notifications n WHERE n.[To] LIKE '%" + searchMessage + "%' ORDER BY n.Id DESC OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY;");
+                    query = db.Database.SqlQuery<NotificationsViewModel>("SELECT n.Id, n.[Type], n.[To], n.[From], n.MessageBody, n.[Sent], CONVERT(varchar, n.DateCreated, 120) DateCreated, n.Action FROM Notifications n WHERE n.[To] LIKE '%" + searchMessage + "%' ORDER BY n.Id DESC OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY;");
 
                 }
                 else if (!string.IsNullOrEmpty(searchDate) && string.IsNullOrEmpty(searchMessage))
                 {
-                    query = db.Database.SqlQuery<NotificationsViewModel>("SELECT n.Id, n.[Type], n.[To], n.[From], n.MessageBody, n.[Sent], CONVERT(varchar, n.DateCreated, 120) DateCreated FROM Notifications n WHERE CAST(n.DateCreated AS date) = " + "'" + searchDate + "'" + " ORDER BY n.Id DESC OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY;");
+                    query = db.Database.SqlQuery<NotificationsViewModel>("SELECT n.Id, n.[Type], n.[To], n.[From], n.MessageBody, n.[Sent], CONVERT(varchar, n.DateCreated, 120) DateCreated, n.Action FROM Notifications n WHERE CAST(n.DateCreated AS date) = " + "'" + searchDate + "'" + " ORDER BY n.Id DESC OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY;");
                 }
                 else if (!string.IsNullOrEmpty(searchMessage) && !string.IsNullOrEmpty(searchDate))
                 {
-                    query = db.Database.SqlQuery<NotificationsViewModel>("SELECT n.Id, n.[Type], n.[To], n.[From], n.MessageBody, n.[Sent], CONVERT(varchar, n.DateCreated, 120) DateCreated FROM Notifications n WHERE CAST(n.DateCreated AS date) = " + "'" + searchDate + "'" + " AND n.[To] LIKE '%" + searchMessage + "%' ORDER BY n.Id DESC OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY;");
+                    query = db.Database.SqlQuery<NotificationsViewModel>("SELECT n.Id, n.[Type], n.[To], n.[From], n.MessageBody, n.[Sent], CONVERT(varchar, n.DateCreated, 120) DateCreated, n.Action FROM Notifications n WHERE CAST(n.DateCreated AS date) = " + "'" + searchDate + "'" + " AND n.[To] LIKE '%" + searchMessage + "%' ORDER BY n.Id DESC OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY;");
                 }
                 else
                 {

@@ -1251,7 +1251,7 @@ namespace OnBoarding.Controllers
                             EmailBody = EmailBody.Replace("{IP}", deviceIP.ToString());
                             EmailBody = EmailBody.Replace("{ResetUrl}", callbackUrl);
 
-                            var CompleteRegistrationEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, UserToUpdate.Email.ToLower(), "Confirm Registration", EmailBody);
+                            var CompleteRegistrationEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, UserToUpdate.Email.ToLower(), "Password Changed", EmailBody);
                             if (CompleteRegistrationEmail == true)
                             {
                                 //Log email sent notification

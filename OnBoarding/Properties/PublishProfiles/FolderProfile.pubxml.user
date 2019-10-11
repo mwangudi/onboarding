@@ -736,7 +736,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>06/11/2019 10:14:22</publishTime>
     </File>
     <File Include="Assets/datatables/DataTables-1.10.16/js/dataTables.semanticui.min.js">
-      <publishTime>06/11/2019 10:14:22</publishTime>
+      <publishTime>10/11/2019 12:26:00</publishTime>
     </File>
     <File Include="Assets/datatables/DataTables-1.10.16/js/jquery.dataTables.js">
       <publishTime>06/11/2019 10:14:22</publishTime>
@@ -7423,7 +7423,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>10/29/2018 15:59:52</publishTime>
     </File>
     <File Include="Assets/jquery/jquery.validate.js">
-      <publishTime>08/01/2019 09:00:28</publishTime>
+      <publishTime>10/11/2019 12:20:55</publishTime>
     </File>
     <File Include="Assets/jquery/jquery.validate.unobtrusive.js">
       <publishTime>05/24/2019 12:36:10</publishTime>
@@ -7927,7 +7927,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>10/29/2018 15:57:58</publishTime>
     </File>
     <File Include="Assets/jtable/themes/metro/blue/jtable.css">
-      <publishTime>07/31/2019 12:45:37</publishTime>
+      <publishTime>10/11/2019 12:27:31</publishTime>
     </File>
     <File Include="Assets/jtable/themes/metro/blue/jtable.less">
       <publishTime>10/29/2018 15:58:00</publishTime>
@@ -8719,10 +8719,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2014 19:33:56</publishTime>
     </File>
     <File Include="bin/OnBoarding.dll">
-      <publishTime>10/01/2019 15:51:24</publishTime>
+      <publishTime>10/11/2019 14:24:03</publishTime>
     </File>
     <File Include="bin/OnBoarding.pdb">
-      <publishTime>10/01/2019 15:51:24</publishTime>
+      <publishTime>10/11/2019 14:24:03</publishTime>
     </File>
     <File Include="bin/Owin.dll">
       <publishTime>10/31/2018 14:17:38</publishTime>
@@ -8812,7 +8812,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>07/12/2019 10:34:28</publishTime>
     </File>
     <File Include="Content/css/custom.css">
-      <publishTime>08/05/2019 10:25:04</publishTime>
+      <publishTime>10/11/2019 11:30:36</publishTime>
     </File>
     <File Include="Content/css/demo.css">
       <publishTime>06/11/2019 11:07:36</publishTime>
@@ -8824,16 +8824,46 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>07/22/2019 11:44:15</publishTime>
     </File>
     <File Include="Content/css/style.css">
-      <publishTime>08/01/2019 17:46:38</publishTime>
+      <publishTime>10/11/2019 11:32:12</publishTime>
     </File>
     <File Include="Content/css/style2.css">
-      <publishTime>08/01/2019 17:32:43</publishTime>
+      <publishTime>10/11/2019 11:33:40</publishTime>
     </File>
     <File Include="Content/documents/GM Onboarding Portal- access.pdf">
       <publishTime>10/29/2018 08:34:44</publishTime>
     </File>
     <File Include="Content/documents/Merged GTCs and eMT Agreement.pdf">
       <publishTime>11/06/2018 14:33:16</publishTime>
+    </File>
+    <File Include="Content/documents/Merged GTCs and eMT Agreement/eMT-Agreement_and_Terms.html">
+      <publishTime>10/11/2019 12:12:50</publishTime>
+    </File>
+    <File Include="Content/documents/Merged GTCs and eMT Agreement/files/background1.jpg">
+      <publishTime>10/11/2019 10:08:38</publishTime>
+    </File>
+    <File Include="Content/documents/Merged GTCs and eMT Agreement/files/background2.jpg">
+      <publishTime>10/11/2019 10:08:38</publishTime>
+    </File>
+    <File Include="Content/documents/Merged GTCs and eMT Agreement/files/background3.jpg">
+      <publishTime>10/11/2019 10:08:38</publishTime>
+    </File>
+    <File Include="Content/documents/Merged GTCs and eMT Agreement/files/background4.jpg">
+      <publishTime>10/11/2019 10:08:38</publishTime>
+    </File>
+    <File Include="Content/documents/Merged GTCs and eMT Agreement/files/background5.jpg">
+      <publishTime>10/11/2019 10:08:38</publishTime>
+    </File>
+    <File Include="Content/documents/Merged GTCs and eMT Agreement/files/background6.jpg">
+      <publishTime>10/11/2019 10:08:38</publishTime>
+    </File>
+    <File Include="Content/documents/Merged GTCs and eMT Agreement/files/background7.jpg">
+      <publishTime>10/11/2019 10:08:38</publishTime>
+    </File>
+    <File Include="Content/documents/Merged GTCs and eMT Agreement/files/background8.jpg">
+      <publishTime>10/11/2019 10:08:38</publishTime>
+    </File>
+    <File Include="Content/documents/Merged GTCs and eMT Agreement/files/background9.jpg">
+      <publishTime>10/11/2019 10:08:38</publishTime>
     </File>
     <File Include="Content/documents/Stanbic Global Markets Terms and Conditions.pdf">
       <publishTime>10/29/2018 09:19:02</publishTime>
@@ -8845,13 +8875,16 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>11/16/2018 17:26:58</publishTime>
     </File>
     <File Include="Content/emails/ClientRegistrationEmail.html">
-      <publishTime>08/01/2019 11:14:39</publishTime>
+      <publishTime>10/11/2019 11:34:02</publishTime>
     </File>
     <File Include="Content/emails/ConfirmRegistration.html">
       <publishTime>11/16/2018 17:26:32</publishTime>
     </File>
     <File Include="Content/emails/HtmlPage1.html">
       <publishTime>11/16/2018 16:39:19</publishTime>
+    </File>
+    <File Include="Content/emails/PasswordChange.html">
+      <publishTime>10/11/2019 10:08:38</publishTime>
     </File>
     <File Include="Content/emails/RepresentativeNomination.html">
       <publishTime>11/20/2018 12:28:22</publishTime>
@@ -9402,8 +9435,11 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="Scripts/js/app.js">
       <publishTime>06/11/2019 11:01:30</publishTime>
     </File>
+    <File Include="Scripts/js/chart.min.js">
+      <publishTime>10/11/2019 10:08:39</publishTime>
+    </File>
     <File Include="Scripts/js/client_application.js">
-      <publishTime>08/06/2019 12:33:41</publishTime>
+      <publishTime>10/11/2019 11:40:20</publishTime>
     </File>
     <File Include="Scripts/js/custom.js">
       <publishTime>06/11/2019 11:01:30</publishTime>
@@ -9411,11 +9447,23 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="Scripts/js/demo.js">
       <publishTime>06/11/2019 11:01:30</publishTime>
     </File>
+    <File Include="Scripts/js/fileSaver.js">
+      <publishTime>10/11/2019 10:08:39</publishTime>
+    </File>
+    <File Include="Scripts/js/jquery.accordion-wizard.js">
+      <publishTime>10/11/2019 10:08:39</publishTime>
+    </File>
+    <File Include="Scripts/js/popper.js">
+      <publishTime>10/11/2019 10:08:39</publishTime>
+    </File>
     <File Include="Scripts/js/sa-functions.js">
       <publishTime>06/11/2019 11:01:30</publishTime>
     </File>
     <File Include="Scripts/js/scripts.js">
-      <publishTime>06/11/2019 11:01:30</publishTime>
+      <publishTime>10/11/2019 11:41:11</publishTime>
+    </File>
+    <File Include="Scripts/js/tooltip.js">
+      <publishTime>10/11/2019 10:08:39</publishTime>
     </File>
     <File Include="Scripts/modernizr-2.6.2.js">
       <publishTime>10/29/2018 16:59:52</publishTime>
@@ -9444,8 +9492,11 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="Scripts/_references.js">
       <publishTime>07/03/2019 08:54:56</publishTime>
     </File>
+    <File Include="Views/Account/ChangePassword.cshtml">
+      <publishTime>10/11/2019 10:08:39</publishTime>
+    </File>
     <File Include="Views/Account/CompleteRegistration.cshtml">
-      <publishTime>07/22/2019 03:41:20</publishTime>
+      <publishTime>10/11/2019 11:44:59</publishTime>
     </File>
     <File Include="Views/Account/ConfirmRegistration.cshtml">
       <publishTime>07/03/2019 08:37:22</publishTime>
@@ -9457,19 +9508,22 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>07/03/2019 08:37:22</publishTime>
     </File>
     <File Include="Views/Account/ForgotPasswordConfirmation.cshtml">
-      <publishTime>08/07/2019 09:48:20</publishTime>
+      <publishTime>10/11/2019 11:45:13</publishTime>
     </File>
     <File Include="Views/Account/LoadResendOTP.cshtml">
-      <publishTime>07/22/2019 12:28:02</publishTime>
+      <publishTime>10/11/2019 12:12:50</publishTime>
     </File>
     <File Include="Views/Account/LoadResendRepresentativeOTP.cshtml">
-      <publishTime>07/22/2019 12:28:02</publishTime>
+      <publishTime>10/11/2019 12:12:50</publishTime>
     </File>
     <File Include="Views/Account/LoadResendSignatoryOTP.cshtml">
-      <publishTime>07/22/2019 12:28:02</publishTime>
+      <publishTime>10/11/2019 12:12:50</publishTime>
     </File>
     <File Include="Views/Account/Login.cshtml">
       <publishTime>07/03/2019 08:40:50</publishTime>
+    </File>
+    <File Include="Views/Account/PasswordChanged.cshtml">
+      <publishTime>10/11/2019 10:08:39</publishTime>
     </File>
     <File Include="Views/Account/Register.cshtml">
       <publishTime>07/03/2019 08:39:06</publishTime>
@@ -9487,7 +9541,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>07/22/2019 03:33:50</publishTime>
     </File>
     <File Include="Views/Account/UploadedClientCompleteRegistration.cshtml">
-      <publishTime>07/03/2019 08:37:22</publishTime>
+      <publishTime>10/11/2019 11:45:38</publishTime>
     </File>
     <File Include="Views/Account/_ExternalLoginsListPartial.cshtml">
       <publishTime>07/03/2019 08:36:00</publishTime>
@@ -9580,7 +9634,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>10/24/2018 12:38:42</publishTime>
     </File>
     <File Include="Views/Admin/ManageInternalUsers.cshtml">
-      <publishTime>09/03/2019 15:30:20</publishTime>
+      <publishTime>10/11/2019 11:46:09</publishTime>
     </File>
     <File Include="Views/Admin/ManageUserRoles.cshtml">
       <publishTime>09/03/2019 15:30:20</publishTime>
@@ -9630,26 +9684,38 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="Views/Admin/ViewUploadedClients.cshtml">
       <publishTime>09/06/2018 10:48:54</publishTime>
     </File>
+    <File Include="Views/Client/AddCompanies.cshtml">
+      <publishTime>10/11/2019 10:08:39</publishTime>
+    </File>
     <File Include="Views/Client/Applications.cshtml">
       <publishTime>06/11/2019 11:02:58</publishTime>
     </File>
     <File Include="Views/Client/EditApplication.cshtml">
-      <publishTime>10/22/2018 10:07:58</publishTime>
+      <publishTime>10/11/2019 11:47:33</publishTime>
     </File>
     <File Include="Views/Client/Index.cshtml">
-      <publishTime>08/01/2019 08:51:21</publishTime>
+      <publishTime>10/11/2019 11:48:46</publishTime>
+    </File>
+    <File Include="Views/Client/LoadDeleteRepresentative.cshtml">
+      <publishTime>10/11/2019 10:08:39</publishTime>
+    </File>
+    <File Include="Views/Client/LoadDeleteSignatory.cshtml">
+      <publishTime>10/11/2019 10:08:39</publishTime>
     </File>
     <File Include="Views/Client/NewApplications.cshtml">
-      <publishTime>10/01/2019 13:55:45</publishTime>
+      <publishTime>10/11/2019 12:25:08</publishTime>
     </File>
     <File Include="Views/Client/ViewAll.cshtml">
-      <publishTime>07/22/2019 06:56:32</publishTime>
+      <publishTime>10/11/2019 11:51:35</publishTime>
+    </File>
+    <File Include="Views/Client/_LoadCompanyDetails.cshtml">
+      <publishTime>10/11/2019 10:08:39</publishTime>
     </File>
     <File Include="Views/DesignatedUser/Index.cshtml">
       <publishTime>06/20/2019 09:58:38</publishTime>
     </File>
     <File Include="Views/DesignatedUser/ViewAll.cshtml">
-      <publishTime>06/24/2019 13:34:52</publishTime>
+      <publishTime>10/11/2019 11:52:34</publishTime>
     </File>
     <File Include="Views/DesignatedUser/ViewApproveNomination.cshtml">
       <publishTime>01/01/0001 00:00:00</publishTime>
@@ -9661,7 +9727,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>01/01/0001 00:00:00</publishTime>
     </File>
     <File Include="Views/DesignatedUser/ViewNominationDetails.cshtml">
-      <publishTime>07/22/2019 05:58:40</publishTime>
+      <publishTime>10/11/2019 11:53:35</publishTime>
     </File>
     <File Include="Views/DigitalDesk/ApplicationsApproved.cshtml">
       <publishTime>11/20/2018 13:15:27</publishTime>
@@ -9670,19 +9736,19 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>11/20/2018 08:03:09</publishTime>
     </File>
     <File Include="Views/DigitalDesk/ApprovedApplications.cshtml">
-      <publishTime>09/05/2019 08:28:08</publishTime>
+      <publishTime>10/11/2019 11:54:40</publishTime>
     </File>
     <File Include="Views/DigitalDesk/ClientRepresentatives.cshtml">
       <publishTime>09/03/2019 15:37:40</publishTime>
     </File>
     <File Include="Views/DigitalDesk/ClientSignatories.cshtml">
-      <publishTime>09/03/2019 15:37:40</publishTime>
+      <publishTime>10/11/2019 11:55:33</publishTime>
     </File>
     <File Include="Views/DigitalDesk/CompleteApplications.cshtml">
-      <publishTime>09/05/2019 08:23:00</publishTime>
+      <publishTime>10/11/2019 11:55:59</publishTime>
     </File>
     <File Include="Views/DigitalDesk/DeclinedApplications.cshtml">
-      <publishTime>09/05/2019 09:02:20</publishTime>
+      <publishTime>10/11/2019 11:56:51</publishTime>
     </File>
     <File Include="Views/DigitalDesk/EditClient.cshtml">
       <publishTime>11/09/2018 15:44:28</publishTime>
@@ -9694,7 +9760,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>09/03/2019 15:37:40</publishTime>
     </File>
     <File Include="Views/DigitalDesk/Index.cshtml">
-      <publishTime>09/03/2019 15:37:40</publishTime>
+      <publishTime>10/11/2019 11:57:37</publishTime>
     </File>
     <File Include="Views/DigitalDesk/LoadDeclineApplication.cshtml">
       <publishTime>06/25/2019 09:58:40</publishTime>
@@ -9702,11 +9768,14 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="Views/DigitalDesk/LoadDeleteClient.cshtml">
       <publishTime>09/03/2019 15:37:40</publishTime>
     </File>
+    <File Include="Views/DigitalDesk/LoadDeleteSignatory.cshtml">
+      <publishTime>10/11/2019 10:08:39</publishTime>
+    </File>
     <File Include="Views/DigitalDesk/LoadEditCurrency.cshtml">
-      <publishTime>09/03/2019 15:37:40</publishTime>
+      <publishTime>10/11/2019 11:58:12</publishTime>
     </File>
     <File Include="Views/DigitalDesk/LoadResendNotification.cshtml">
-      <publishTime>09/03/2019 15:37:40</publishTime>
+      <publishTime>10/11/2019 11:58:30</publishTime>
     </File>
     <File Include="Views/DigitalDesk/LoadResetClientOTP.cshtml">
       <publishTime>09/03/2019 15:37:40</publishTime>
@@ -9721,10 +9790,13 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>09/03/2019 15:37:40</publishTime>
     </File>
     <File Include="Views/DigitalDesk/ManageCurrencies.cshtml">
-      <publishTime>09/03/2019 15:37:40</publishTime>
+      <publishTime>10/11/2019 11:58:52</publishTime>
     </File>
     <File Include="Views/DigitalDesk/Notifications.cshtml">
       <publishTime>09/03/2019 15:37:40</publishTime>
+    </File>
+    <File Include="Views/DigitalDesk/PendingApprovals.cshtml">
+      <publishTime>10/11/2019 10:08:39</publishTime>
     </File>
     <File Include="Views/DigitalDesk/PendingOpsApproval.cshtml">
       <publishTime>11/20/2018 16:02:58</publishTime>
@@ -9736,7 +9808,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>09/03/2019 15:37:40</publishTime>
     </File>
     <File Include="Views/DigitalDesk/RegisteredClients.cshtml">
-      <publishTime>09/03/2019 15:37:40</publishTime>
+      <publishTime>10/11/2019 11:59:36</publishTime>
     </File>
     <File Include="Views/DigitalDesk/ResetExpiredOTP.cshtml">
       <publishTime>09/03/2019 15:37:40</publishTime>
@@ -9766,7 +9838,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>09/03/2019 15:37:40</publishTime>
     </File>
     <File Include="Views/DigitalDesk/ViewCompletedApplication.cshtml">
-      <publishTime>09/03/2019 15:37:40</publishTime>
+      <publishTime>10/11/2019 12:00:03</publishTime>
     </File>
     <File Include="Views/DigitalDesk/ViewDeclinedApplication.cshtml">
       <publishTime>09/03/2019 15:37:40</publishTime>
@@ -9775,7 +9847,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>11/05/2018 11:02:54</publishTime>
     </File>
     <File Include="Views/DigitalDesk/ViewInCompleteApplication.cshtml">
-      <publishTime>09/03/2019 15:37:40</publishTime>
+      <publishTime>10/11/2019 12:00:24</publishTime>
     </File>
     <File Include="Views/DigitalDesk/ViewInCompleteApplications.cshtml">
       <publishTime>06/25/2019 12:47:10</publishTime>
@@ -9793,7 +9865,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>09/03/2019 15:37:40</publishTime>
     </File>
     <File Include="Views/DigitalDesk/ViewSignatory.cshtml">
-      <publishTime>09/03/2019 15:37:40</publishTime>
+      <publishTime>10/11/2019 12:27:49</publishTime>
     </File>
     <File Include="Views/DigitalDesk/ViewUploadedClients.cshtml">
       <publishTime>09/03/2019 15:37:40</publishTime>
@@ -9835,7 +9907,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>06/08/2018 14:21:56</publishTime>
     </File>
     <File Include="Views/Home/Index.cshtml">
-      <publishTime>08/01/2019 09:02:09</publishTime>
+      <publishTime>10/11/2019 12:01:24</publishTime>
     </File>
     <File Include="Views/Home/TermsAndConditions.cshtml">
       <publishTime>07/03/2019 08:23:00</publishTime>
@@ -9871,13 +9943,13 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/01/2019 16:02:02</publishTime>
     </File>
     <File Include="Views/Ops/ViewApproval.cshtml">
-      <publishTime>08/05/2019 14:00:49</publishTime>
+      <publishTime>10/11/2019 12:02:02</publishTime>
     </File>
     <File Include="Views/Ops/ViewApproved.cshtml">
       <publishTime>11/05/2018 16:08:00</publishTime>
     </File>
     <File Include="Views/Poa/ApprovedApplications.cshtml">
-      <publishTime>07/22/2019 09:52:54</publishTime>
+      <publishTime>10/11/2019 12:02:25</publishTime>
     </File>
     <File Include="Views/Poa/Index.cshtml">
       <publishTime>08/02/2019 14:57:58</publishTime>
@@ -9889,7 +9961,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/01/2019 16:57:36</publishTime>
     </File>
     <File Include="Views/Poa/ViewApproval.cshtml">
-      <publishTime>08/05/2019 14:02:26</publishTime>
+      <publishTime>10/11/2019 12:03:02</publishTime>
     </File>
     <File Include="Views/Poa/ViewApproved.cshtml">
       <publishTime>10/26/2018 15:00:34</publishTime>
@@ -9898,22 +9970,25 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>07/03/2019 08:46:28</publishTime>
     </File>
     <File Include="Views/Shared/Lockout.cshtml">
-      <publishTime>07/03/2019 08:46:42</publishTime>
+      <publishTime>10/11/2019 12:05:38</publishTime>
     </File>
     <File Include="Views/Shared/_AdminLayout.cshtml">
-      <publishTime>08/26/2019 11:54:52</publishTime>
+      <publishTime>10/11/2019 12:03:46</publishTime>
     </File>
     <File Include="Views/Shared/_AdminNewLayout.cshtml">
-      <publishTime>08/26/2019 11:54:09</publishTime>
+      <publishTime>10/11/2019 12:04:01</publishTime>
     </File>
     <File Include="Views/Shared/_AdminNewNavbar.cshtml">
-      <publishTime>07/03/2019 08:43:00</publishTime>
+      <publishTime>10/11/2019 12:04:26</publishTime>
+    </File>
+    <File Include="Views/Shared/_AdminOldLayout.cshtml">
+      <publishTime>06/11/2019 11:21:08</publishTime>
     </File>
     <File Include="Views/Shared/_FrontendLayout.cshtml">
       <publishTime>12/07/2018 11:25:55</publishTime>
     </File>
     <File Include="Views/Shared/_Layout.cshtml">
-      <publishTime>08/26/2019 11:56:00</publishTime>
+      <publishTime>10/11/2019 12:05:11</publishTime>
     </File>
     <File Include="Views/Shared/_LayoutWithoutVideo.cshtml">
       <publishTime>07/03/2019 08:22:28</publishTime>
@@ -9931,10 +10006,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>01/01/0001 00:00:00</publishTime>
     </File>
     <File Include="Views/Signatory/Index.cshtml">
-      <publishTime>06/27/2019 14:24:58</publishTime>
+      <publishTime>10/11/2019 12:05:58</publishTime>
     </File>
     <File Include="Views/Signatory/ViewAll.cshtml">
-      <publishTime>07/22/2019 04:19:44</publishTime>
+      <publishTime>10/11/2019 12:06:23</publishTime>
     </File>
     <File Include="Views/Signatory/ViewApproveNomination.cshtml">
       <publishTime>01/01/0001 00:00:00</publishTime>
@@ -9946,7 +10021,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>01/01/0001 00:00:00</publishTime>
     </File>
     <File Include="Views/Signatory/ViewNominationDetails.cshtml">
-      <publishTime>08/05/2019 10:09:36</publishTime>
+      <publishTime>10/11/2019 12:07:20</publishTime>
     </File>
     <File Include="Views/Web.config">
       <publishTime>06/07/2018 13:54:20</publishTime>
@@ -9955,7 +10030,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>06/07/2018 13:31:54</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>10/01/2019 11:51:52</publishTime>
+      <publishTime>10/11/2019 12:37:34</publishTime>
     </File>
   </ItemGroup>
 </Project>
