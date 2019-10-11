@@ -457,38 +457,52 @@ namespace OnBoarding.Controllers
         {
             using (DBModel db = new DBModel())
             {
-                //Generate new OTP
-                var _activationCode = string.Concat(OTPGenerator.GetUniqueKey(6));
-                var _action = "SubmitResendOTP";
-                string activationCode = Shuffle.StringMixer(_activationCode);
-                //Send Email with OTP
-                var callbackUrl = Url.Action("UploadedClientCompleteRegistration", "Account", null, Request.Url.Scheme);
-                var ResendOTPMessageBody = "Dear " + model.CompanyName + ", <br/><br/> You have requested to reset your one time pin. " +
-                    "Your new One Time Pin (OTP) code is: " + activationCode + " <br/>" +
-                    "<a href=" + callbackUrl + "> Click here to complete your registration. </a><br/><br/>" +
-                    "<br/><br/> Kind Regards,<br/><img src=\"https://e-documents.stanbicbank.co.ke/Content/images/EmailSignature.png\"/>";
-                var CompleteRegistrationEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, model.EmailAddress, "Confirm Registration", ResendOTPMessageBody);
-                if (CompleteRegistrationEmail == true)
+                try
                 {
-                    //Log email sent notification
-                    LogNotification.AddSucsessNotification(MailHelper.EmailFrom, ResendOTPMessageBody, model.EmailAddress.ToLower(), _action);
-                }
-                else
-                {
-                    //Log Email failed notification
-                    LogNotification.AddFailureNotification(MailHelper.EmailFrom, ResendOTPMessageBody, model.EmailAddress.ToLower(), _action);
-                }
-                //Send an email with new OTP
+                    //Generate new OTP
+                    var _activationCode = string.Concat(OTPGenerator.GetUniqueKey(6));
+                    string activationCode = Shuffle.StringMixer(_activationCode);
+                    var _action = "SubmitResendOTP";
 
-                //Update Client account details
-                var ClientToUpdate = db.RegisteredClients.SingleOrDefault(b => b.Id == model.UserId);
-                ClientToUpdate.OTP = Functions.GenerateMD5Hash(activationCode);
-                ClientToUpdate.DateCreated = DateTime.Now;
-                db.SaveChanges();
+                    //Update Client account details
+                    var ClientToUpdate = db.RegisteredClients.SingleOrDefault(b => b.Id == model.UserId);
+                    ClientToUpdate.OTP = Functions.GenerateMD5Hash(activationCode);
+                    ClientToUpdate.DateCreated = DateTime.Now;
+                    var recordSaved = db.SaveChanges();
+                    if (recordSaved > 0)
+                    {
+                        //Send Email with new OTP
+                        var callbackUrl = Url.Action("UploadedClientCompleteRegistration", "Account", null, Request.Url.Scheme);
+                        var ResendOTPMessageBody = "Dear " + model.CompanyName + ", <br/><br/> You have requested to reset your one time pin. " +
+                            "Your new One Time Pin (OTP) code is: " + activationCode + " <br/>" +
+                            "<a href=" + callbackUrl + "> Click here to complete your registration. </a><br/><br/>" +
+                            "<br/><br/> Kind Regards,<br/><img src=\"https://e-documents.stanbicbank.co.ke/Content/images/EmailSignature.png\"/>";
+                        var CompleteRegistrationEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, model.EmailAddress, "Confirm Registration", ResendOTPMessageBody);
+                        if (CompleteRegistrationEmail == true)
+                        {
+                            //Log email sent notification
+                            LogNotification.AddSucsessNotification(MailHelper.EmailFrom, ResendOTPMessageBody, model.EmailAddress.ToLower(), _action);
+                            return Json("success", JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            //Log Email failed notification
+                            LogNotification.AddFailureNotification(MailHelper.EmailFrom, ResendOTPMessageBody, model.EmailAddress.ToLower(), _action);
+                            return Json("Error! Unable to resend your email.", JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                    else
+                    {
+                        return Json("Error! Unable to update your account OTP details", JsonRequestBehavior.AllowGet);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return Json("" + ex.Message+ "", JsonRequestBehavior.AllowGet);
+                }
             }
-
-            return Json("success", JsonRequestBehavior.AllowGet);
         }
+
         //
         // GET: /Account/SignatoryConfirmation
         [AllowAnonymous]
@@ -640,33 +654,41 @@ namespace OnBoarding.Controllers
                 var _activationCode = string.Concat(OTPGenerator.GetUniqueKey(6));
                 string activationCode = Shuffle.StringMixer(_activationCode);
                 var _action = "SubmitResendSignatoryOTP";
-                //Send Email with New OTP
-                var callbackUrl = Url.Action("SignatoryConfirmation", "Account", null, Request.Url.Scheme);
-                var ResendOTPMessageBody = "Dear " + model.CompanyName + ", <br/><br/> You have requested to reset your one time pin. " +
-                    "Your new One Time Pin (OTP) code is: " + activationCode + " <br/>" +
-                    "<a href=" + callbackUrl + "> Click here to complete your registration. </a><br/><br/>" +
-                    "<br/><br/> Kind Regards,<br/><img src=\"https://e-documents.stanbicbank.co.ke/Content/images/EmailSignature.png\"/>";
-                var CompleteRegistrationEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, model.EmailAddress, "Confirm Registration", ResendOTPMessageBody);
-                if (CompleteRegistrationEmail == true)
-                {
-                    //Log email sent notification
-                    LogNotification.AddSucsessNotification(MailHelper.EmailFrom, ResendOTPMessageBody, model.EmailAddress.ToLower(), _action);
-                }
-                else
-                {
-                    //Log Email failed notification
-                    LogNotification.AddFailureNotification(MailHelper.EmailFrom, ResendOTPMessageBody, model.EmailAddress.ToLower(), _action);
-                }
 
-                //Update Client account details
+                //Update Client OTP account details
                 var ClientToUpdate = db.ClientSignatories.SingleOrDefault(b => b.Id == model.UserId);
                 ClientToUpdate.OTP = Functions.GenerateMD5Hash(activationCode);
                 ClientToUpdate.DateCreated = DateTime.Now;
-                db.SaveChanges();
+                var recordSaved = db.SaveChanges();
+                if(recordSaved > 0)
+                {
+                    //Send Email with New OTP
+                    var callbackUrl = Url.Action("SignatoryConfirmation", "Account", null, Request.Url.Scheme);
+                    var ResendOTPMessageBody = "Dear " + model.CompanyName + ", <br/><br/> You have requested to reset your one time pin. " +
+                        "Your new One Time Pin (OTP) code is: " + activationCode + " <br/>" +
+                        "<a href=" + callbackUrl + "> Click here to complete your registration. </a><br/><br/>" +
+                        "<br/><br/> Kind Regards,<br/><img src=\"https://e-documents.stanbicbank.co.ke/Content/images/EmailSignature.png\"/>";
+                    var CompleteRegistrationEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, model.EmailAddress, "Confirm Registration", ResendOTPMessageBody);
+                    if (CompleteRegistrationEmail == true)
+                    {
+                        //Log email sent notification
+                        LogNotification.AddSucsessNotification(MailHelper.EmailFrom, ResendOTPMessageBody, model.EmailAddress.ToLower(), _action);
+                        return Json("success", JsonRequestBehavior.AllowGet);
+                    }
+                    else
+                    {
+                        //Log Email failed notification
+                        LogNotification.AddFailureNotification(MailHelper.EmailFrom, ResendOTPMessageBody, model.EmailAddress.ToLower(), _action);
+                        return Json("Error! Unable to resend your OTP.", JsonRequestBehavior.AllowGet);
+                    }
+                }
+                else
+                {
+                    return Json("Error! Unable to update your OTP account details", JsonRequestBehavior.AllowGet);
+                }
             }
-
-            return Json("success", JsonRequestBehavior.AllowGet);
         }
+
         //
         // GET: /Account/SignatoryConfirmation
         [AllowAnonymous]
@@ -813,36 +835,50 @@ namespace OnBoarding.Controllers
         {
             using (DBModel db = new DBModel())
             {
-                //Generate new OTP
-                var _activationCode = string.Concat(OTPGenerator.GetUniqueKey(6));
-                string activationCode = Shuffle.StringMixer(_activationCode);
-                var _action = "SubmitResendRepresentativeOTP";
-                //Send Email with New OTP
-                var callbackUrl = Url.Action("DesignatedUserConfirmation", "Account", null, Request.Url.Scheme);
-                var ResendOTPMessageBody = "Dear " + model.CompanyName + ", <br/><br/> You have requested to reset your one time pin. " +
-                    "Your new One Time Pin (OTP) code is: " + activationCode + " <br/>" +
-                    "<a href=" + callbackUrl + "> Click here to complete your registration. </a><br/><br/>" +
-                    "<br/><br/> Kind Regards,<br/><img src=\"https://e-documents.stanbicbank.co.ke/Content/images/EmailSignature.png\"/>";
-                var CompleteRegistrationEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, model.EmailAddress, "Confirm Registration", ResendOTPMessageBody);
-                if (CompleteRegistrationEmail == true)
+                try
                 {
-                    //Log email sent notification
-                    LogNotification.AddSucsessNotification(MailHelper.EmailFrom, ResendOTPMessageBody, model.EmailAddress.ToLower(), _action);
-                }
-                else
-                {
-                    //Log Email failed notification
-                    LogNotification.AddFailureNotification(MailHelper.EmailFrom, ResendOTPMessageBody, model.EmailAddress.ToLower(), _action);
-                }
+                    //Generate new OTP
+                    var _activationCode = string.Concat(OTPGenerator.GetUniqueKey(6));
+                    string activationCode = Shuffle.StringMixer(_activationCode);
+                    var _action = "SubmitResendRepresentativeOTP";
 
-                //Update Client account details
-                var ClientToUpdate = db.DesignatedUsers.SingleOrDefault(b => b.Id == model.UserId);
-                ClientToUpdate.OTP = Functions.GenerateMD5Hash(activationCode);
-                ClientToUpdate.DateCreated = DateTime.Now;
-                db.SaveChanges();
+                    //Update Client account details
+                    var ClientToUpdate = db.DesignatedUsers.SingleOrDefault(b => b.Id == model.UserId);
+                    ClientToUpdate.OTP = Functions.GenerateMD5Hash(activationCode);
+                    ClientToUpdate.DateCreated = DateTime.Now;
+                    var recordSaved = db.SaveChanges();
+                    if (recordSaved > 0)
+                    {
+                        //Send Email with New OTP
+                        var callbackUrl = Url.Action("DesignatedUserConfirmation", "Account", null, Request.Url.Scheme);
+                        var ResendOTPMessageBody = "Dear " + model.CompanyName + ", <br/><br/> You have requested to reset your one time pin. " +
+                            "Your new One Time Pin (OTP) code is: " + activationCode + " <br/>" +
+                            "<a href=" + callbackUrl + "> Click here to complete your registration. </a><br/><br/>" +
+                            "<br/><br/> Kind Regards,<br/><img src=\"https://e-documents.stanbicbank.co.ke/Content/images/EmailSignature.png\"/>";
+                        var CompleteRegistrationEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, model.EmailAddress, "Confirm Registration", ResendOTPMessageBody);
+                        if (CompleteRegistrationEmail == true)
+                        {
+                            //Log email sent notification
+                            LogNotification.AddSucsessNotification(MailHelper.EmailFrom, ResendOTPMessageBody, model.EmailAddress.ToLower(), _action);
+                            return Json("success", JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            //Log Email failed notification
+                            LogNotification.AddFailureNotification(MailHelper.EmailFrom, ResendOTPMessageBody, model.EmailAddress.ToLower(), _action);
+                            return Json("Error! Unable to resend your email", JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                    else
+                    {
+                        return Json("Error! Unable to save your OTP account details", JsonRequestBehavior.AllowGet);
+                    }
+                }
+                catch(Exception ex)
+                {
+                    return Json("" + ex.Message + "", JsonRequestBehavior.AllowGet);
+                }
             }
-
-            return Json("success", JsonRequestBehavior.AllowGet);
         }
 
         // GET: /Account/ConfirmEmail
