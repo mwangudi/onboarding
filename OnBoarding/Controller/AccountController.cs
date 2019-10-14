@@ -170,7 +170,7 @@ namespace OnBoarding.Controllers
                             }
                             else
                             {
-                                var user = new ApplicationUser { UserName = DBOTPToconfirm.EmailAddress, Email = DBOTPToconfirm.EmailAddress, CompanyName = DBOTPToconfirm.Surname +" "+ DBOTPToconfirm.OtherNames };
+                                var user = new ApplicationUser { UserName = DBOTPToconfirm.EmailAddress, Email = DBOTPToconfirm.EmailAddress, CompanyName = DBOTPToconfirm.Surname +" "+ DBOTPToconfirm.OtherNames, LastPasswordChangedDate = DateTime.Now };
                                 var result = await UserManager.CreateAsync(user, model.Password);
                                 if (result.Succeeded)
                                 {
@@ -552,7 +552,7 @@ namespace OnBoarding.Controllers
                     {
                         var SignatoryToUpdate = db.ClientSignatories.SingleOrDefault(b => b.EmailAddress == DBOTPToconfirm.EmailAddress);
                         var SignatoryClient = db.RegisteredClients.SingleOrDefault(b => b.Id == SignatoryToUpdate.ClientID);
-                        var user = new ApplicationUser { UserName = DBOTPToconfirm.EmailAddress, Email = DBOTPToconfirm.EmailAddress, CompanyName = DBOTPToconfirm.OtherNames };
+                        var user = new ApplicationUser { UserName = DBOTPToconfirm.EmailAddress, Email = DBOTPToconfirm.EmailAddress, CompanyName = DBOTPToconfirm.OtherNames, LastPasswordChangedDate = DateTime.Now };
                         var result = await UserManager.CreateAsync(user, model.Password);
                         if (result.Succeeded)
                         {
@@ -736,7 +736,7 @@ namespace OnBoarding.Controllers
                     }
                     else
                     {
-                        var user = new ApplicationUser { UserName = DBOTPToconfirm.Email, Email = DBOTPToconfirm.Email, CompanyName = DBOTPToconfirm.Othernames };
+                        var user = new ApplicationUser { UserName = DBOTPToconfirm.Email, Email = DBOTPToconfirm.Email, CompanyName = DBOTPToconfirm.Othernames, LastPasswordChangedDate = DateTime.Now };
                         var result = await UserManager.CreateAsync(user, model.Password);
                         if (result.Succeeded)
                         {

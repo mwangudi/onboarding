@@ -1179,6 +1179,7 @@ $(document).ready(function () {
 				error: function (xhr, textStatus, errorThrown) {
 					if (textStatus === 'error') {
 						$("#savedsettlement").addClass("d_none");
+						$("#savingsettlement").addClass("d_none");
 						$("#btn-save-settlement").removeClass("d_none");
 						toastr.error('Submission error!. Code: ' + xhr.status + ', Details: ' + errorThrown);
 					}
@@ -1418,6 +1419,7 @@ $(document).ready(function () {
 				error: function (xhr, textStatus, errorThrown) {
 					if (textStatus === 'error') {
 						$("#Loading_Div").hide('fast');
+						$('#form').show("fast");
 						toastr.error('Submission error!. Code: ' + xhr.status + ', Details: ' + errorThrown);
 					}
 				},
