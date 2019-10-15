@@ -231,7 +231,7 @@ namespace OnBoarding.Controllers
                 if (model.HaveSettlementAccount == "Yes")
                 {
                     var newAccountDetails = db.ClientSettlementAccounts.Create();
-                    if (model.SettlementAccount1 != null || model.InputCurrencyType1 != null)
+                    if (model.SettlementAccount1 != null && model.InputCurrencyType1 != null)
                     {
                         var SettlementAccount1Exists = db.ClientSettlementAccounts.Any(c => c.AccountNumber == model.SettlementAccount1 && c.CompanyID == model.CompanyID);
                         if (!SettlementAccount1Exists) 
@@ -252,7 +252,7 @@ namespace OnBoarding.Controllers
                             db.SaveChanges();
                         }
                     }
-                    if (model.SettlementAccount2 != null || model.InputCurrencyType2 != null)
+                    if (model.SettlementAccount2 != null && model.InputCurrencyType2 != null)
                     {
                         var SettlementAccount2Exists = db.ClientSettlementAccounts.Any(c => c.AccountNumber == model.SettlementAccount2 && c.CompanyID == model.CompanyID);
                         if (!SettlementAccount2Exists)
@@ -273,7 +273,7 @@ namespace OnBoarding.Controllers
                             db.SaveChanges();
                         }
                     }
-                    if (model.SettlementAccount3 != null || model.InputCurrencyType3 != null)
+                    if (model.SettlementAccount3 != null && model.InputCurrencyType3 != null)
                     {
                         var SettlementAccount3Exists = db.ClientSettlementAccounts.Any(c => c.AccountNumber == model.SettlementAccount3 && c.CompanyID == model.CompanyID);
                         if (!SettlementAccount3Exists)
@@ -294,7 +294,7 @@ namespace OnBoarding.Controllers
                             db.SaveChanges();
                         }
                     }
-                    if (model.SettlementAccount4 != null || model.InputCurrencyType4 != null)
+                    if (model.SettlementAccount4 != null && model.InputCurrencyType4 != null)
                     {
                         var SettlementAccount4Exists = db.ClientSettlementAccounts.Any(c => c.AccountNumber == model.SettlementAccount4 && c.CompanyID == model.CompanyID);
                         if (!SettlementAccount4Exists)
@@ -315,7 +315,7 @@ namespace OnBoarding.Controllers
                             db.SaveChanges();
                         }
                     }
-                    if (model.SettlementAccount5 != null || model.InputCurrencyType5 != null)
+                    if (model.SettlementAccount5 != null && model.InputCurrencyType5 != null)
                     {
                         var SettlementAccount5Exists = db.ClientSettlementAccounts.Any(c => c.AccountNumber == model.SettlementAccount5 && c.CompanyID == model.CompanyID);
                         if (!SettlementAccount5Exists)
@@ -336,7 +336,7 @@ namespace OnBoarding.Controllers
                             db.SaveChanges();
                         }
                     }
-                    if (model.SettlementAccount6 != null || model.InputCurrencyType6 != null)
+                    if (model.SettlementAccount6 != null && model.InputCurrencyType6 != null)
                     {
                         var SettlementAccount6Exists = db.ClientSettlementAccounts.Any(c => c.AccountNumber == model.SettlementAccount6 && c.CompanyID == model.CompanyID);
                         if (!SettlementAccount6Exists)
@@ -357,7 +357,7 @@ namespace OnBoarding.Controllers
                             db.SaveChanges();
                         }
                     }
-                    if (model.SettlementAccount7 != null || model.InputCurrencyType7 != null)
+                    if (model.SettlementAccount7 != null && model.InputCurrencyType7 != null)
                     {
                         var SettlementAccount7Exists = db.ClientSettlementAccounts.Any(c => c.AccountNumber == model.SettlementAccount7 && c.CompanyID == model.CompanyID);
                         if (!SettlementAccount7Exists)
@@ -378,7 +378,7 @@ namespace OnBoarding.Controllers
                             db.SaveChanges();
                         }
                     }
-                    if (model.SettlementAccount8 != null || model.InputCurrencyType8 != null)
+                    if (model.SettlementAccount8 != null && model.InputCurrencyType8 != null)
                     {
                         var SettlementAccount8Exists = db.ClientSettlementAccounts.Any(c => c.AccountNumber == model.SettlementAccount8 && c.CompanyID == model.CompanyID);
                         if (!SettlementAccount8Exists)
@@ -1128,7 +1128,7 @@ namespace OnBoarding.Controllers
                     {
                         //1. Check if signatory is among the representatives
                         var newApplication = db.EMarketApplications.Create();
-                        var signatoryIsARepresentative = db.DesignatedUsers.Any(c => c.Email == model.SignatoryEmail1.ToLower());
+                        var signatoryIsARepresentative = db.DesignatedUsers.Any(c => c.Email == model.SignatoryEmail1.ToLower() && c.CompanyID == model.CompanyID);
                         if (signatoryIsARepresentative)
                         {
                             //Update representative signature
@@ -1166,7 +1166,7 @@ namespace OnBoarding.Controllers
                             }
                             else
                             {
-                                return Json("Error!", JsonRequestBehavior.AllowGet);
+                                return Json("Error! Unable to add new application", JsonRequestBehavior.AllowGet);
                             }
                         }
                         else

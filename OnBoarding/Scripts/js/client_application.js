@@ -363,6 +363,7 @@ $(document).ready(function () {
 					$('#InputCurrencyType3 input').removeClass('help-inline-error');
 					$('#InputCurrencyType3').find('span').remove();
 					$('#SettlementAccount3').val("");
+					$('#InputCurrencyType3').val("");
 				},
 				error: function (xhr, textStatus, errorThrown) {
 					if (textStatus === 'error') {
@@ -387,7 +388,6 @@ $(document).ready(function () {
         $('#btnAddAccount4').addClass('d_none');
         $('#btnRemoveAccount3').addClass('d_none');
         $('#btnRemoveAccount4').removeClass('d_none');
-
     });
 	
 	//Remove Settlement Account 4
@@ -409,6 +409,7 @@ $(document).ready(function () {
 					$('#InputCurrencyType4 input').removeClass('help-inline-error');
 					$('#InputCurrencyType4').find('span').remove();
 					$('#SettlementAccount4').val("");
+					$('#InputCurrencyType4').val("");
 				},
 				error: function (xhr, textStatus, errorThrown) {
 					if (textStatus === 'error') {
@@ -454,6 +455,7 @@ $(document).ready(function () {
 					$('#InputCurrencyType5 input').removeClass('help-inline-error');
 					$('#InputCurrencyType5').find('span').remove();
 					$('#SettlementAccount5').val("");
+					$('#InputCurrencyType5').val("");
 				},
 				error: function (xhr, textStatus, errorThrown) {
 					if (textStatus === 'error') {
@@ -1084,6 +1086,18 @@ $(document).ready(function () {
         $('#SavedSettlements').removeClass('d_none');
         $('#HaveSettlementAccount').attr("disabled", true);
 		$("#HaveSettlementAccount").val("Yes");
+		//Clear Settlement Instructions textboxes
+		$("#SettlementAccount1").val("");
+		$("#SettlementAccount2").val("");
+		$("#SettlementAccount3").val("");
+		$("#SettlementAccount4").val("");
+		$("#SettlementAccount5").val("");
+		//Clear currency types
+		$("#InputCurrencyType1").val("");
+		$("#InputCurrencyType2").val("");
+		$("#InputCurrencyType3").val("");
+		$("#InputCurrencyType4").val("");
+		$("#InputCurrencyType5").val("");
     }
     else
     {
@@ -1091,6 +1105,18 @@ $(document).ready(function () {
 		$('#btn-save-settlement').addClass('d_none');
 		$('#HaveSettlementsDiv').addClass('d_none');
 		$('#SavedSettlements').addClass('d_none');
+		//Clear Settlement Instructions textboxes
+		$("#SettlementAccount1").val("");
+		$("#SettlementAccount2").val("");
+		$("#SettlementAccount3").val("");
+		$("#SettlementAccount4").val("");
+		$("#SettlementAccount5").val("");
+		//Clear currency types
+		$("#InputCurrencyType1").val("");
+		$("#InputCurrencyType2").val("");
+		$("#InputCurrencyType3").val("");
+		$("#InputCurrencyType4").val("");
+		$("#InputCurrencyType5").val("");
     }
 	
 	//btn-edit-settlements load modal
