@@ -145,7 +145,7 @@ namespace OnBoarding.Controllers
                         try
                         {
                             //Save File name to Database  //Update Representative Details
-                            var DesignatedUserToUpdate = db.DesignatedUsers.FirstOrDefault(c => c.UserAccountID == currentUserId && c.CompanyID == model.CompanyID);
+                            var DesignatedUserToUpdate = db.DesignatedUsers.FirstOrDefault(c => c.UserAccountID == currentUserId);
                             DesignatedUserToUpdate.Signature = pic;
                             DesignatedUserToUpdate.Mobile = model.VerifyPhone;
                             db.SaveChanges();
@@ -161,7 +161,7 @@ namespace OnBoarding.Controllers
                     }
 
                     //Update application Id
-                    var ApplicationUpdate = db.EMarketApplications.SingleOrDefault(c => c.Id == model.ApplicationID);
+                    var ApplicationUpdate = db.EMarketApplications.SingleOrDefault(c => c.Id == model.ApplicationID && c.CompanyID == model.CompanyID);
                     var Approvals = ApplicationUpdate.UsersApproved;
                     if (ApplicationUpdate != null)
                     {

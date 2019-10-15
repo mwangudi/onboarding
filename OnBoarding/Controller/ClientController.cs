@@ -1126,7 +1126,7 @@ namespace OnBoarding.Controllers
                 {
                     try
                     {
-                        //Check if signatory is among the representatives
+                        //1. Check if signatory is among the representatives
                         var newApplication = db.EMarketApplications.Create();
                         var signatoryIsARepresentative = db.DesignatedUsers.Any(c => c.Email == model.SignatoryEmail1.ToLower());
                         if (signatoryIsARepresentative)
@@ -1198,18 +1198,19 @@ namespace OnBoarding.Controllers
                             }
                             else
                             {
-                                return Json("Error!", JsonRequestBehavior.AllowGet);
+                                return Json("Error! Unable to add new application", JsonRequestBehavior.AllowGet);
                             }
                         }
                     }
                     catch (Exception ex)
                     {
-                        throw (ex);
+                        return Json("" + ex.Message + "", JsonRequestBehavior.AllowGet);
                     }
 
-                    //Send email to other representatives excluding the sole signatory
+                    //2. Send email to other representatives excluding the sole signatory
+                    var _dontSendEmail = db.AspNetUsers.Select(x => x.Email).ToList();
                     var UserToExclude = db.RegisteredClients.SingleOrDefault(c => c.Id == RegisteredClientId);
-                    foreach (var email in db.DesignatedUsers.Where(c => c.ClientID == RegisteredClientId && c.CompanyID == model.CompanyID && c.Email != UserToExclude.EmailAddress).ToList())
+                    foreach (var email in db.DesignatedUsers.Where(c => c.ClientID == RegisteredClientId && c.CompanyID == model.CompanyID && !_dontSendEmail.Contains(c.Email) && c.Email != UserToExclude.EmailAddress).ToList())
                     {
                         //Update Designated User with OTP to Login
                         var _OTPCode = OTPGenerator.GetUniqueKey(6);
@@ -1242,7 +1243,7 @@ namespace OnBoarding.Controllers
                         }
                     }
 
-                    //Send Application Complete Email to Company Email
+                    //3. Send Application Complete Email to Company Email
                     string EmailBody = string.Empty;
                     using (StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/ApplicationSubmitted.html")))
                     {
@@ -1262,7 +1263,7 @@ namespace OnBoarding.Controllers
                         LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBody, CompanyEmail, _action);
                     }
 
-                    //Send Email to Digital Desk Users
+                    //4. Send Email to Digital Desk Users
                     var DDUserRole = (from p in db.AspNetUserRoles
                                         join e in db.AspNetUsers on p.UserId equals e.Id
                                         where p.RoleId == "03d5e1e3-a8a9-441e-9122-30c3aafccccc"

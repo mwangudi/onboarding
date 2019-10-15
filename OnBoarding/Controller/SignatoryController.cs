@@ -83,6 +83,8 @@ namespace OnBoarding.Controllers
                     ViewData["Approved"] = 0;
                 }
 
+                ViewData["SignatoryPhone"] = signatoryId.PhoneNumber;
+
                 var getApplicationInfo = db.EMarketApplications.SingleOrDefault(c => c.Id == applicationId && c.CompanyID == companyId);
                 var clientID = getApplicationInfo.ClientID;
                 var clientDetails = db.RegisteredClients.SingleOrDefault(s => s.Id == clientID);
@@ -133,6 +135,7 @@ namespace OnBoarding.Controllers
                         //Save File name to Database
                         var SignatoryToUpdate = db.ClientSignatories.First(c => c.EmailAddress == _userDetails.Email && c.CompanyID == model.CompanyID);
                         SignatoryToUpdate.Signature = pic;
+                        SignatoryToUpdate.PhoneNumber = model.VerifyPhone; //Update phone number
                         db.SaveChanges();
                     }
 
@@ -147,6 +150,7 @@ namespace OnBoarding.Controllers
                         //Update representative's signature
                         var RepresentativeToUpdate = db.DesignatedUsers.First(c => c.Email == signatoryClientId.EmailAddress && c.CompanyID == model.CompanyID);
                         RepresentativeToUpdate.Signature = signatoryClientId.Signature;
+                        RepresentativeToUpdate.Mobile = model.VerifyPhone; //Update phone number
                         db.SaveChanges();
 
                         //Log Signatory Approval
@@ -183,7 +187,7 @@ namespace OnBoarding.Controllers
                         }
 
                         //Update application Id
-                        var ApplicationUpdate = db.EMarketApplications.SingleOrDefault(c => c.Id == model.ApplicationID);
+                        var ApplicationUpdate = db.EMarketApplications.SingleOrDefault(c => c.Id == model.ApplicationID && c.CompanyID == model.CompanyID);
                         if (ApplicationUpdate != null)
                         {
                             try
