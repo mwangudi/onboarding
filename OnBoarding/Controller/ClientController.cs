@@ -231,7 +231,7 @@ namespace OnBoarding.Controllers
                 if (model.HaveSettlementAccount == "Yes")
                 {
                     var newAccountDetails = db.ClientSettlementAccounts.Create();
-                    if (model.SettlementAccount1 != null || model.InputCurrencyType1 != null)
+                    if (model.SettlementAccount1 != null && model.InputCurrencyType1 != null)
                     {
                         var SettlementAccount1Exists = db.ClientSettlementAccounts.Any(c => c.AccountNumber == model.SettlementAccount1 && c.CompanyID == model.CompanyID);
                         if (!SettlementAccount1Exists) 
@@ -252,7 +252,7 @@ namespace OnBoarding.Controllers
                             db.SaveChanges();
                         }
                     }
-                    if (model.SettlementAccount2 != null || model.InputCurrencyType2 != null)
+                    if (model.SettlementAccount2 != null && model.InputCurrencyType2 != null)
                     {
                         var SettlementAccount2Exists = db.ClientSettlementAccounts.Any(c => c.AccountNumber == model.SettlementAccount2 && c.CompanyID == model.CompanyID);
                         if (!SettlementAccount2Exists)
@@ -273,7 +273,7 @@ namespace OnBoarding.Controllers
                             db.SaveChanges();
                         }
                     }
-                    if (model.SettlementAccount3 != null || model.InputCurrencyType3 != null)
+                    if (model.SettlementAccount3 != null && model.InputCurrencyType3 != null)
                     {
                         var SettlementAccount3Exists = db.ClientSettlementAccounts.Any(c => c.AccountNumber == model.SettlementAccount3 && c.CompanyID == model.CompanyID);
                         if (!SettlementAccount3Exists)
@@ -294,7 +294,7 @@ namespace OnBoarding.Controllers
                             db.SaveChanges();
                         }
                     }
-                    if (model.SettlementAccount4 != null || model.InputCurrencyType4 != null)
+                    if (model.SettlementAccount4 != null && model.InputCurrencyType4 != null)
                     {
                         var SettlementAccount4Exists = db.ClientSettlementAccounts.Any(c => c.AccountNumber == model.SettlementAccount4 && c.CompanyID == model.CompanyID);
                         if (!SettlementAccount4Exists)
@@ -315,7 +315,7 @@ namespace OnBoarding.Controllers
                             db.SaveChanges();
                         }
                     }
-                    if (model.SettlementAccount5 != null || model.InputCurrencyType5 != null)
+                    if (model.SettlementAccount5 != null && model.InputCurrencyType5 != null)
                     {
                         var SettlementAccount5Exists = db.ClientSettlementAccounts.Any(c => c.AccountNumber == model.SettlementAccount5 && c.CompanyID == model.CompanyID);
                         if (!SettlementAccount5Exists)
@@ -336,7 +336,7 @@ namespace OnBoarding.Controllers
                             db.SaveChanges();
                         }
                     }
-                    if (model.SettlementAccount6 != null || model.InputCurrencyType6 != null)
+                    if (model.SettlementAccount6 != null && model.InputCurrencyType6 != null)
                     {
                         var SettlementAccount6Exists = db.ClientSettlementAccounts.Any(c => c.AccountNumber == model.SettlementAccount6 && c.CompanyID == model.CompanyID);
                         if (!SettlementAccount6Exists)
@@ -357,7 +357,7 @@ namespace OnBoarding.Controllers
                             db.SaveChanges();
                         }
                     }
-                    if (model.SettlementAccount7 != null || model.InputCurrencyType7 != null)
+                    if (model.SettlementAccount7 != null && model.InputCurrencyType7 != null)
                     {
                         var SettlementAccount7Exists = db.ClientSettlementAccounts.Any(c => c.AccountNumber == model.SettlementAccount7 && c.CompanyID == model.CompanyID);
                         if (!SettlementAccount7Exists)
@@ -378,7 +378,7 @@ namespace OnBoarding.Controllers
                             db.SaveChanges();
                         }
                     }
-                    if (model.SettlementAccount8 != null || model.InputCurrencyType8 != null)
+                    if (model.SettlementAccount8 != null && model.InputCurrencyType8 != null)
                     {
                         var SettlementAccount8Exists = db.ClientSettlementAccounts.Any(c => c.AccountNumber == model.SettlementAccount8 && c.CompanyID == model.CompanyID);
                         if (!SettlementAccount8Exists)
@@ -401,7 +401,7 @@ namespace OnBoarding.Controllers
                     }
                 }
 
-                //Create account Signatory (Signatory 1)
+                //Create First Signatory (Signatory 1)
                 if (model.SignatorySurname1 != null || model.SignatoryOtherNames1 != null || model.SignatoryEmail1 != null || model.SignatoryDesignation1 != null)
                 {
                     //check if Signatory1 Exists
@@ -510,533 +510,198 @@ namespace OnBoarding.Controllers
                     }
                 }
 
-                //Send All Nominated and saved Signatories an email (added CompanyID and ClientID)
-                if (model.SignatorySurname2 == null || model.SignatoryOtherNames2 == null || model.SignatoryEmail2 == null || model.SignatoryDesignation2 == null)
-                {
-                    var _dontSendEmail = db.AspNetUsers.Select(x => x.Email).ToList();
-                    var SavedSignatories = (from p in db.ClientSignatories
-                                            join e in db.RegisteredClients on p.ClientID equals e.Id
-                                            where p.Status == 0 && p.ClientID == model.ClientID && p.CompanyID == model.CompanyID && !_dontSendEmail.Contains(p.EmailAddress)
-                                            select new
-                                            {
-                                                EmailID = p.EmailAddress
-                                            });
-                    if (SavedSignatories != null)
-                    {
-                        foreach (var email in SavedSignatories.ToList())
-                        {
-                            var _OTPCode2 = OTPGenerator.GetUniqueKey(6);
-                            string OTPCode2 = Shuffle.StringMixer(_OTPCode2);
-                            var SignatoryToUpdate = db.ClientSignatories.SingleOrDefault(c => c.EmailAddress == email.EmailID && c.Status == 0);
-                            SignatoryToUpdate.OTP = Functions.GenerateMD5Hash(OTPCode2);
-                            db.SaveChanges();
-
-                            //Send Email With OTP logins
-                            var callbackUrl = Url.Action("SignatoryConfirmation", "Account", null, Request.Url.Scheme);
-                            string EmailBody2 = string.Empty;
-                            using (StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/SignatoryNomination.html")))
-                            {
-                                EmailBody2 = reader.ReadToEnd();
-                            }
-                            EmailBody2 = EmailBody2.Replace("{SignatoryName}", SignatoryToUpdate.OtherNames);
-                            EmailBody2 = EmailBody2.Replace("{URL}", callbackUrl);
-                            EmailBody2 = EmailBody2.Replace("{ActivationCode}", OTPCode2);
-
-                            var EmailToSignatory2 = MailHelper.SendMailMessage(MailHelper.EmailFrom, SignatoryToUpdate.EmailAddress.ToLower(), "Confirm Signatory", EmailBody2);
-                            if (EmailToSignatory2 == true)
-                            {
-                                //Log email sent notification
-                                LogNotification.AddSucsessNotification(MailHelper.EmailFrom, EmailBody2, SignatoryToUpdate.EmailAddress.ToLower(), _action);
-                            }
-                            else
-                            {
-                                //Log Email failed notification
-                                LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBody2, SignatoryToUpdate.EmailAddress.ToLower(), _action);
-                            }
-                        }
-                    }
-                }
-
-                //Create Signatory and Send email notification And OTP (Signatory 2)
+                //Create Signatory (Signatory 2)
                 if (model.SignatorySurname2 != null || model.SignatoryOtherNames2 != null || model.SignatoryEmail2 != null || model.SignatoryDesignation2 != null)
                 {
-                    //Check if Signatory already exists in users table
-                    var Signatory2ExistInUsersTable = db.AspNetUsers.Any(c => c.Email == model.SignatoryEmail2);
-                    if (Signatory2ExistInUsersTable)
-                    {
-                        //Check if Signatory already exists in Signatories table
-                        var Signatory2Exist = db.ClientSignatories.Any(c => c.EmailAddress == model.SignatoryEmail2 && c.Status == 0 && c.CompanyID == model.CompanyID);
-                        if (!Signatory2Exist)
-                        {   
-                            //Add in Signatories table
-                            try
-                            {
-                                var addSignatory2 = db.ClientSignatories.Create();
-                                addSignatory2.ClientID = RegisteredClientId;
-                                addSignatory2.CompanyID = model.CompanyID;
-                                addSignatory2.Designation = model.SignatoryDesignation2;
-                                addSignatory2.Surname = model.SignatorySurname2;
-                                addSignatory2.OtherNames = model.SignatoryOtherNames2;
-                                addSignatory2.EmailAddress = model.SignatoryEmail2.ToLower();
-                                addSignatory2.PhoneNumber = model.SignatoryPhoneNumber2;
-                                addSignatory2.DateCreated = DateTime.Now;
-                                addSignatory2.Status = 0;
-                                db.ClientSignatories.Add(addSignatory2);
-                                db.SaveChanges();
-                            }
-                            catch (Exception)
-                            {
-                                //throw (ex);
-                                return Json("Error! Unable to save 2nd signatory details", JsonRequestBehavior.AllowGet);
-                            }
+                    //Check if Signatory already exists in Signatories table
+                    var Signatory2Exist = db.ClientSignatories.Any(c => c.EmailAddress == model.SignatoryEmail2 && c.Status == 0 && c.CompanyID == model.CompanyID);
+                    if (!Signatory2Exist)
+                    {   
+                        //Add new Signatory
+                        try
+                        {
+                            var addSignatory2 = db.ClientSignatories.Create();
+                            addSignatory2.ClientID = RegisteredClientId;
+                            addSignatory2.CompanyID = model.CompanyID;
+                            addSignatory2.Designation = model.SignatoryDesignation2;
+                            addSignatory2.Surname = model.SignatorySurname2;
+                            addSignatory2.OtherNames = model.SignatoryOtherNames2;
+                            addSignatory2.EmailAddress = model.SignatoryEmail2.ToLower();
+                            addSignatory2.PhoneNumber = model.SignatoryPhoneNumber2;
+                            addSignatory2.DateCreated = DateTime.Now;
+                            addSignatory2.Status = 0;
+                            db.ClientSignatories.Add(addSignatory2);
+                            db.SaveChanges();
+                        }
+                        catch (Exception)
+                        {
+                            //throw (ex);
+                            return Json("Error! Unable to save 2nd signatory details", JsonRequestBehavior.AllowGet);
                         }
                     }
                     else
                     {
-                        var Signatory2Exist = db.ClientSignatories.Any(c => c.EmailAddress == model.SignatoryEmail2 && c.Status == 0 && c.CompanyID == model.CompanyID);
-                        if (Signatory2Exist)
+                        //Update Details
+                        try
                         {
-                            var _OTPCode2 = OTPGenerator.GetUniqueKey(6);
-                            string OTPCode2 = Shuffle.StringMixer(_OTPCode2);
-                            //Update Status if signatory exists (was saved)
-                            var Signatory2ToUpdate = db.ClientSignatories.SingleOrDefault(c => c.EmailAddress == model.SignatoryEmail2 && c.Status == 0);
-                            Signatory2ToUpdate.OTP = Functions.GenerateMD5Hash(OTPCode2);
+                            var Signatory2ToUpdate = db.ClientSignatories.SingleOrDefault(c => c.EmailAddress == model.SignatoryEmail2 && c.CompanyID == model.CompanyID);
+                            Signatory2ToUpdate.Status = 0;
+                            Signatory2ToUpdate.CompanyID = model.CompanyID;
+                            Signatory2ToUpdate.DateCreated = DateTime.Now;
+                            Signatory2ToUpdate.AcceptedTerms = true;
                             db.SaveChanges();
-
-                            //Send Email With OTP logins
-                            var callbackUrl = Url.Action("SignatoryConfirmation", "Account", null, Request.Url.Scheme);
-                            string EmailBody2 = string.Empty;
-                            //using (StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/SignatoryNominationWithoutOTP.html")))
-                            using (StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/SignatoryNomination.html")))
-                            {
-                                EmailBody2 = reader.ReadToEnd();
-                            }
-                            EmailBody2 = EmailBody2.Replace("{SignatoryName}", model.SignatoryOtherNames2);
-                            EmailBody2 = EmailBody2.Replace("{URL}", callbackUrl);
-                            EmailBody2 = EmailBody2.Replace("{ActivationCode}", OTPCode2);
-
-                            var EmailToSignatory2 = MailHelper.SendMailMessage(MailHelper.EmailFrom, model.SignatoryEmail2.ToLower(), "Confirm Signatory", EmailBody2);
-                            if (EmailToSignatory2 == true)
-                            {
-                                //Log email sent notification
-                                LogNotification.AddSucsessNotification(MailHelper.EmailFrom, EmailBody2, model.SignatoryEmail2.ToLower(), _action);
-                            }
-                            else
-                            {
-                                //Log Email failed notification
-                                LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBody2, model.SignatoryEmail2.ToLower(), _action);
-                            }
                         }
-                        else
+                        catch (Exception)
                         {
-                            //Send OTP to create new account
-                            var _OTPCode2 = OTPGenerator.GetUniqueKey(6);
-                            string OTPCode2 = Shuffle.StringMixer(_OTPCode2);
-                            try
-                            {
-                                var addSignatory2 = db.ClientSignatories.Create();
-                                addSignatory2.ClientID = RegisteredClientId;
-                                addSignatory2.CompanyID = model.CompanyID;
-                                addSignatory2.Designation = model.SignatoryDesignation2;
-                                addSignatory2.Surname = model.SignatorySurname2;
-                                addSignatory2.OtherNames = model.SignatoryOtherNames2;
-                                addSignatory2.EmailAddress = model.SignatoryEmail2.ToLower();
-                                addSignatory2.PhoneNumber = model.SignatoryPhoneNumber2;
-                                addSignatory2.DateCreated = DateTime.Now;
-                                addSignatory2.Status = 0;
-                                addSignatory2.OTP = Functions.GenerateMD5Hash(OTPCode2);
-                                db.ClientSignatories.Add(addSignatory2);
-                                db.SaveChanges();
-                            }
-                            catch (Exception ex)
-                            {
-                                throw (ex);
-                            }
-
-                            //Send Email With OTP
-                            var callbackUrl = Url.Action("SignatoryConfirmation", "Account", null, Request.Url.Scheme);
-                            string EmailBody2 = string.Empty;
-                            using (StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/SignatoryNomination.html")))
-                            {
-                                EmailBody2 = reader.ReadToEnd();
-                            }
-                            EmailBody2 = EmailBody2.Replace("{SignatoryName}", model.SignatoryOtherNames2);
-                            EmailBody2 = EmailBody2.Replace("{ActivationCode}", OTPCode2);
-                            EmailBody2 = EmailBody2.Replace("{URL}", callbackUrl);
-
-                            var EmailToSignatory2 = MailHelper.SendMailMessage(MailHelper.EmailFrom, model.SignatoryEmail2.ToLower(), "Confirm Signatory", EmailBody2);
-                            if (EmailToSignatory2 == true)
-                            {
-                                //Log email sent notification
-                                LogNotification.AddSucsessNotification(MailHelper.EmailFrom, EmailBody2, model.SignatoryEmail2.ToLower(), _action);
-                            }
-                            else
-                            {
-                                //Log Email failed notification
-                                LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBody2, model.SignatoryEmail2.ToLower(), _action);
-                            }
+                            //throw (ex);
+                            return Json("Error! Unable to update 2nd signatory details", JsonRequestBehavior.AllowGet);
                         }
                     }
                 }
 
-                //Create Signatory and Send email notification and OTP (Signatory 3)
+                //Create Signatory (Signatory 3)
                 if (model.SignatorySurname3 != null || model.SignatoryOtherNames3 != null || model.SignatoryEmail3 != null || model.SignatoryDesignation3 != null)
                 {
-                    //Check if Signatory already exists in users table
-                    var Signatory3ExistInUsersTable = db.AspNetUsers.Any(c => c.Email == model.SignatoryEmail3);
-                    if (Signatory3ExistInUsersTable)
+                    //Check if Signatory already exists in Signatories table
+                    var Signatory3Exist = db.ClientSignatories.Any(c => c.EmailAddress == model.SignatoryEmail3 && c.Status == 0 && c.CompanyID == model.CompanyID);
+                    if (!Signatory3Exist)
                     {
-                        //Check if Signatory already exists in Signatories table
-                        var Signatory3Exist = db.ClientSignatories.Any(c => c.EmailAddress == model.SignatoryEmail3 && c.Status == 0 && c.CompanyID == model.CompanyID);
-                        if (!Signatory3Exist)
+                        //Add new Signatory
+                        try
                         {
-                            //Add in Signatories table
-                            try
-                            {
-                                var addSignatory3 = db.ClientSignatories.Create();
-                                addSignatory3.ClientID = RegisteredClientId;
-                                addSignatory3.CompanyID = model.CompanyID;
-                                addSignatory3.Designation = model.SignatoryDesignation3;
-                                addSignatory3.Surname = model.SignatorySurname3;
-                                addSignatory3.OtherNames = model.SignatoryOtherNames3;
-                                addSignatory3.EmailAddress = model.SignatoryEmail2.ToLower();
-                                addSignatory3.PhoneNumber = model.SignatoryPhoneNumber3;
-                                addSignatory3.DateCreated = DateTime.Now;
-                                addSignatory3.Status = 0;
-                                db.ClientSignatories.Add(addSignatory3);
-                                db.SaveChanges();
-                            }
-                            catch (Exception ex)
-                            {
-                                throw (ex);
-                            }
+                            var addSignatory3 = db.ClientSignatories.Create();
+                            addSignatory3.ClientID = RegisteredClientId;
+                            addSignatory3.CompanyID = model.CompanyID;
+                            addSignatory3.Designation = model.SignatoryDesignation3;
+                            addSignatory3.Surname = model.SignatorySurname3;
+                            addSignatory3.OtherNames = model.SignatoryOtherNames3;
+                            addSignatory3.EmailAddress = model.SignatoryEmail3.ToLower();
+                            addSignatory3.PhoneNumber = model.SignatoryPhoneNumber3;
+                            addSignatory3.DateCreated = DateTime.Now;
+                            addSignatory3.Status = 0;
+                            db.ClientSignatories.Add(addSignatory3);
+                            db.SaveChanges();
+                        }
+                        catch (Exception)
+                        {
+                            //throw (ex);
+                            return Json("Error! Unable to save 3rd signatory details", JsonRequestBehavior.AllowGet);
                         }
                     }
                     else
                     {
-                        //Check if Signatory already exists
-                        var Signatory3Exist = db.ClientSignatories.Any(c => c.EmailAddress == model.SignatoryEmail3 && c.Status == 0 && c.CompanyID == model.CompanyID);
-                        if (Signatory3Exist)
+                        //Update Details
+                        try
                         {
-                            var _OTPCode3 = OTPGenerator.GetUniqueKey(6);
-                            string OTPCode3 = Shuffle.StringMixer(_OTPCode3);
-                            //Update Status if signatory exists
-                            var Signatory3ToUpdate = db.ClientSignatories.SingleOrDefault(c => c.EmailAddress == model.SignatoryEmail3 && c.Status == 0 && c.CompanyID == model.CompanyID);
-                            Signatory3ToUpdate.OTP = Functions.GenerateMD5Hash(OTPCode3);
+                            var Signatory3ToUpdate = db.ClientSignatories.SingleOrDefault(c => c.EmailAddress == model.SignatoryEmail3 && c.CompanyID == model.CompanyID);
+                            Signatory3ToUpdate.Status = 0;
+                            Signatory3ToUpdate.CompanyID = model.CompanyID;
+                            Signatory3ToUpdate.DateCreated = DateTime.Now;
+                            Signatory3ToUpdate.AcceptedTerms = true;
                             db.SaveChanges();
-
-                            //Send Email Without OTP login details
-                            var callbackUrl = Url.Action("SignatoryConfirmation", "Account", null, Request.Url.Scheme);
-                            string EmailBody3 = string.Empty;
-                            using (StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/SignatoryNomination.html")))
-                            {
-                                EmailBody3 = reader.ReadToEnd();
-                            }
-                            EmailBody3 = EmailBody3.Replace("{SignatoryName}", model.SignatoryOtherNames3);
-                            EmailBody3 = EmailBody3.Replace("{URL}", callbackUrl);
-                            EmailBody3 = EmailBody3.Replace("{ActivationCode}", OTPCode3);
-
-                            var EmailToSignatory3 = MailHelper.SendMailMessage(MailHelper.EmailFrom, model.SignatoryEmail3.ToLower(), "Confirm Signatory", EmailBody3);
-                            if (EmailToSignatory3 == true)
-                            {
-                                //Log email sent notification
-                                LogNotification.AddSucsessNotification(MailHelper.EmailFrom, EmailBody3, model.SignatoryEmail3.ToLower(), _action);
-                            }
-                            else
-                            {
-                                //Log Email failed notification
-                                LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBody3, model.SignatoryEmail3.ToLower(), _action);
-                            }
                         }
-                        else
+                        catch (Exception)
                         {
-                            var _OTPCode3 = OTPGenerator.GetUniqueKey(6);
-                            string OTPCode3 = Shuffle.StringMixer(_OTPCode3);
-                            try
-                            {
-                                var addSignatory3 = db.ClientSignatories.Create();
-                                addSignatory3.ClientID = RegisteredClientId;
-                                addSignatory3.CompanyID = model.CompanyID;
-                                addSignatory3.Designation = model.SignatoryDesignation3;
-                                addSignatory3.Surname = model.SignatorySurname3;
-                                addSignatory3.OtherNames = model.SignatoryOtherNames3;
-                                addSignatory3.EmailAddress = model.SignatoryEmail3.ToLower();
-                                addSignatory3.PhoneNumber = model.SignatoryPhoneNumber3;
-                                addSignatory3.DateCreated = DateTime.Now;
-                                addSignatory3.Status = 0;
-                                addSignatory3.OTP = Functions.GenerateMD5Hash(OTPCode3);
-                                db.ClientSignatories.Add(addSignatory3);
-                                db.SaveChanges();
-                            }
-                            catch (Exception ex)
-                            {
-                                throw (ex);
-                            }
-
-                            //Send Email
-                            var callbackUrl = Url.Action("SignatoryConfirmation", "Account", null, Request.Url.Scheme);
-                            string EmailBody3 = string.Empty;
-                            using (StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/SignatoryNomination.html")))
-                            {
-                                EmailBody3 = reader.ReadToEnd();
-                            }
-                            EmailBody3 = EmailBody3.Replace("{SignatoryName}", model.SignatoryOtherNames3);
-                            EmailBody3 = EmailBody3.Replace("{ActivationCode}", OTPCode3);
-                            EmailBody3 = EmailBody3.Replace("{URL}", callbackUrl);
-
-                            var EmailToSignatory3 = MailHelper.SendMailMessage(MailHelper.EmailFrom, model.SignatoryEmail3.ToLower(), "Confirm Signatory", EmailBody3);
-                            if (EmailToSignatory3 == true)
-                            {
-                                //Log email sent notification
-                                LogNotification.AddSucsessNotification(MailHelper.EmailFrom, EmailBody3, model.SignatoryEmail3.ToLower(), _action);
-                            }
-                            else
-                            {
-                                //Log Email failed notification
-                                LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBody3, model.SignatoryEmail3.ToLower(), _action);
-                            }
+                            //throw (ex);
+                            return Json("Error! Unable to update 3rd signatory details", JsonRequestBehavior.AllowGet);
                         }
                     }
                 }
 
-                //Create Signatory and Send email notification And OTP (Signatory 4)
+                //Create Signatory (Signatory 4)
                 if (model.SignatorySurname4 != null || model.SignatoryOtherNames4 != null || model.SignatoryEmail4 != null || model.SignatoryDesignation4 != null)
                 {
-                    //Check if Signatory already exists in users table
-                    var Signatory4ExistInUsersTable = db.AspNetUsers.Any(c => c.Email == model.SignatoryEmail4);
-                    if (Signatory4ExistInUsersTable)
+                    //Check if Signatory already exists in Signatories table
+                    var Signatory4Exist = db.ClientSignatories.Any(c => c.EmailAddress == model.SignatoryEmail4 && c.Status == 0 && c.CompanyID == model.CompanyID);
+                    if (!Signatory4Exist)
                     {
-                        //Check if Signatory already exists in Signatories table
-                        var Signatory4Exist = db.ClientSignatories.Any(c => c.EmailAddress == model.SignatoryEmail4 && c.Status == 0 && c.CompanyID == model.CompanyID);
-                        if (!Signatory4Exist)
+                        //Add new Signatory
+                        try
                         {
-                            //Add in Signatories table
-                            try
-                            {
-                                var addSignatory4 = db.ClientSignatories.Create();
-                                addSignatory4.ClientID = RegisteredClientId;
-                                addSignatory4.CompanyID = model.CompanyID;
-                                addSignatory4.Designation = model.SignatoryDesignation4;
-                                addSignatory4.Surname = model.SignatorySurname4;
-                                addSignatory4.OtherNames = model.SignatoryOtherNames4;
-                                addSignatory4.EmailAddress = model.SignatoryEmail4.ToLower();
-                                addSignatory4.PhoneNumber = model.SignatoryPhoneNumber4;
-                                addSignatory4.DateCreated = DateTime.Now;
-                                addSignatory4.Status = 0;
-                                db.ClientSignatories.Add(addSignatory4);
-                                db.SaveChanges();
-                            }
-                            catch (Exception ex)
-                            {
-                                throw (ex);
-                            }
+                            var addSignatory4 = db.ClientSignatories.Create();
+                            addSignatory4.ClientID = RegisteredClientId;
+                            addSignatory4.CompanyID = model.CompanyID;
+                            addSignatory4.Designation = model.SignatoryDesignation4;
+                            addSignatory4.Surname = model.SignatorySurname4;
+                            addSignatory4.OtherNames = model.SignatoryOtherNames4;
+                            addSignatory4.EmailAddress = model.SignatoryEmail4.ToLower();
+                            addSignatory4.PhoneNumber = model.SignatoryPhoneNumber4;
+                            addSignatory4.DateCreated = DateTime.Now;
+                            addSignatory4.Status = 0;
+                            db.ClientSignatories.Add(addSignatory4);
+                            db.SaveChanges();
+                        }
+                        catch (Exception)
+                        {
+                            //throw (ex);
+                            return Json("Error! Unable to save 4th signatory details", JsonRequestBehavior.AllowGet);
                         }
                     }
                     else
                     {
-                        //Check if Signatory already exists
-                        var Signatory4Exist = db.ClientSignatories.Any(c => c.EmailAddress == model.SignatoryEmail4 && c.Status == 0 && c.CompanyID == model.CompanyID);
-                        if (Signatory4Exist)
+                        //Update Details
+                        try
                         {
-                            var _OTPCode4 = OTPGenerator.GetUniqueKey(6);
-                            string OTPCode4 = Shuffle.StringMixer(_OTPCode4);
-                            //Update Status if signatory exists
-                            var Signatory4ToUpdate = db.ClientSignatories.SingleOrDefault(c => c.EmailAddress == model.SignatoryEmail4 && c.Status == 0 && c.CompanyID == model.CompanyID);
-                            Signatory4ToUpdate.OTP = Functions.GenerateMD5Hash(OTPCode4);
+                            var Signatory4ToUpdate = db.ClientSignatories.SingleOrDefault(c => c.EmailAddress == model.SignatoryEmail4 && c.CompanyID == model.CompanyID);
+                            Signatory4ToUpdate.Status = 0;
+                            Signatory4ToUpdate.CompanyID = model.CompanyID;
+                            Signatory4ToUpdate.DateCreated = DateTime.Now;
+                            Signatory4ToUpdate.AcceptedTerms = false;
                             db.SaveChanges();
-
-                            //Send Email without otp login details
-                            var callbackUrl = Url.Action("SignatoryConfirmation", "Account", null, Request.Url.Scheme);
-                            string EmailBody4 = string.Empty;
-                            //using (StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/SignatoryNominationWithoutOTP.html")))
-                            using (StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/SignatoryNomination.html")))
-                            {
-                                EmailBody4 = reader.ReadToEnd();
-                            }
-                            EmailBody4 = EmailBody4.Replace("{SignatoryName}", model.SignatoryOtherNames4);
-                            EmailBody4 = EmailBody4.Replace("{URL}", callbackUrl);
-                            EmailBody4 = EmailBody4.Replace("{ActivationCode}", OTPCode4);
-
-                            var EmailToSignatory4 = MailHelper.SendMailMessage(MailHelper.EmailFrom, model.SignatoryEmail4.ToLower(), "Confirm Signatory", EmailBody4);
-                            if (EmailToSignatory4 == true)
-                            {
-                                //Log email sent notification
-                                LogNotification.AddSucsessNotification(MailHelper.EmailFrom, EmailBody4, model.SignatoryEmail4.ToLower(), _action);
-                            }
-                            else
-                            {
-                                //Log Email failed notification
-                                LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBody4, model.SignatoryEmail4.ToLower(), _action);
-                            }
                         }
-                        else
+                        catch (Exception)
                         {
-                            var _OTPCode4 = OTPGenerator.GetUniqueKey(6);
-                            string OTPCode4 = Shuffle.StringMixer(_OTPCode4);
-                            try
-                            {
-                                var addSignatory4 = db.ClientSignatories.Create();
-                                addSignatory4.ClientID = RegisteredClientId;
-                                addSignatory4.CompanyID = model.CompanyID;
-                                addSignatory4.Designation = model.SignatoryDesignation4;
-                                addSignatory4.Surname = model.SignatorySurname4;
-                                addSignatory4.OtherNames = model.SignatoryOtherNames4;
-                                addSignatory4.EmailAddress = model.SignatoryEmail4.ToLower();
-                                addSignatory4.PhoneNumber = model.SignatoryPhoneNumber4;
-                                addSignatory4.DateCreated = DateTime.Now;
-                                addSignatory4.Status = 0;
-                                addSignatory4.OTP = Functions.GenerateMD5Hash(OTPCode4);
-                                db.ClientSignatories.Add(addSignatory4);
-                                db.SaveChanges();
-                            }
-                            catch (Exception ex)
-                            {
-                                throw (ex);
-                            }
-
-                            //Send Email With OTP
-                            var callbackUrl = Url.Action("SignatoryConfirmation", "Account", null, Request.Url.Scheme);
-                            string EmailBody4 = string.Empty;
-                            using (StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/SignatoryNomination.html")))
-                            {
-                                EmailBody4 = reader.ReadToEnd();
-                            }
-                            EmailBody4 = EmailBody4.Replace("{SignatoryName}", model.SignatoryOtherNames4);
-                            EmailBody4 = EmailBody4.Replace("{ActivationCode}", OTPCode4);
-                            EmailBody4 = EmailBody4.Replace("{URL}", callbackUrl);
-
-                            var EmailToSignatory4 = MailHelper.SendMailMessage(MailHelper.EmailFrom, model.SignatoryEmail4.ToLower(), "Confirm Signatory", EmailBody4);
-                            if (EmailToSignatory4 == true)
-                            {
-                                //Log email sent notification
-                                LogNotification.AddSucsessNotification(MailHelper.EmailFrom, EmailBody4, model.SignatoryEmail4.ToLower(), _action);
-                            }
-                            else
-                            {
-                                //Log Email failed notification
-                                LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBody4, model.SignatoryEmail4.ToLower(), _action);
-                            }
+                            //throw (ex);
+                            return Json("Error! Unable to update 4th signatory details", JsonRequestBehavior.AllowGet);
                         }
-
                     }
                 }
 
-                //Create Signatory and Send email notification And OTP (Signatory 5)
+                //Create Signatory (Signatory 5)
                 if (model.SignatorySurname5 != null || model.SignatoryOtherNames5 != null || model.SignatoryEmail5 != null || model.SignatoryDesignation5 != null)
                 {
-                    //Check if Signatory already exists in users table
-                    var Signatory5ExistInUsersTable = db.AspNetUsers.Any(c => c.Email == model.SignatoryEmail5);
-                    if (Signatory5ExistInUsersTable)
+                    //Check if Signatory already exists in Signatories table
+                    var Signatory5Exist = db.ClientSignatories.Any(c => c.EmailAddress == model.SignatoryEmail5 && c.Status == 0 && c.CompanyID == model.CompanyID);
+                    if (!Signatory5Exist)
                     {
-                        //Check if Signatory already exists in Signatories table
-                        var Signatory5Exist = db.ClientSignatories.Any(c => c.EmailAddress == model.SignatoryEmail5 && c.Status == 0 && c.CompanyID == model.CompanyID);
-                        if (!Signatory5Exist)
+                        try
                         {
-                            //Add in Signatories table
-                            try
-                            {
-                                var addSignatory5 = db.ClientSignatories.Create();
-                                addSignatory5.ClientID = RegisteredClientId;
-                                addSignatory5.CompanyID = model.CompanyID;
-                                addSignatory5.Designation = model.SignatoryDesignation5;
-                                addSignatory5.Surname = model.SignatorySurname5;
-                                addSignatory5.OtherNames = model.SignatoryOtherNames5;
-                                addSignatory5.EmailAddress = model.SignatoryEmail5.ToLower();
-                                addSignatory5.PhoneNumber = model.SignatoryPhoneNumber5;
-                                addSignatory5.DateCreated = DateTime.Now;
-                                addSignatory5.Status = 0;
-                                db.ClientSignatories.Add(addSignatory5);
-                                db.SaveChanges();
-                            }
-                            catch (Exception ex)
-                            {
-                                throw (ex);
-                            }
+                            //Add new Signatory
+                            var addSignatory5 = db.ClientSignatories.Create();
+                            addSignatory5.ClientID = RegisteredClientId;
+                            addSignatory5.CompanyID = model.CompanyID;
+                            addSignatory5.Designation = model.SignatoryDesignation5;
+                            addSignatory5.Surname = model.SignatorySurname5;
+                            addSignatory5.OtherNames = model.SignatoryOtherNames5;
+                            addSignatory5.EmailAddress = model.SignatoryEmail5.ToLower();
+                            addSignatory5.PhoneNumber = model.SignatoryPhoneNumber5;
+                            addSignatory5.DateCreated = DateTime.Now;
+                            addSignatory5.Status = 0;
+                            db.ClientSignatories.Add(addSignatory5);
+                            db.SaveChanges();
+                        }
+                        catch (Exception)
+                        {
+                            //throw (ex);
+                            return Json("Error! Unable to save 5th signatory details", JsonRequestBehavior.AllowGet);
                         }
                     }
                     else
                     {
-                        //Check if Signatory already exists
-                        var Signatory5Exist = db.ClientSignatories.Any(c => c.EmailAddress == model.SignatoryEmail5 && c.Status == 0 && c.CompanyID == model.CompanyID);
-                        if (Signatory5Exist)
+                        try
                         {
-                            var _OTPCode5 = OTPGenerator.GetUniqueKey(6);
-                            string OTPCode5 = Shuffle.StringMixer(_OTPCode5);
-                            //Update Status if signatory exists
-                            var Signatory5ToUpdate = db.ClientSignatories.SingleOrDefault(c => c.EmailAddress == model.SignatoryEmail5 && c.Status == 0);
-                            Signatory5ToUpdate.OTP = Functions.GenerateMD5Hash(OTPCode5);
+                            //Update Details
+                            var Signatory5ToUpdate = db.ClientSignatories.SingleOrDefault(c => c.EmailAddress == model.SignatoryEmail5 && c.CompanyID == model.CompanyID);
+                            Signatory5ToUpdate.Status = 0;
+                            Signatory5ToUpdate.CompanyID = model.CompanyID;
+                            Signatory5ToUpdate.DateCreated = DateTime.Now;
+                            Signatory5ToUpdate.AcceptedTerms = false;
                             db.SaveChanges();
-
-                            //Send Email witout otp login details
-                            var callbackUrl = Url.Action("SignatoryConfirmation", "Account", null, Request.Url.Scheme);
-                            string EmailBody5 = string.Empty;
-                            //using (StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/SignatoryNominationWithoutOTP.html")))
-                            using (StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/SignatoryNomination.html")))
-                            {
-                                EmailBody5 = reader.ReadToEnd();
-                            }
-                            EmailBody5 = EmailBody5.Replace("{SignatoryName}", model.SignatoryOtherNames5);
-                            EmailBody5 = EmailBody5.Replace("{URL}", callbackUrl);
-                            EmailBody5 = EmailBody5.Replace("{ActivationCode}", OTPCode5);
-
-                            var EmailToSignatory2 = MailHelper.SendMailMessage(MailHelper.EmailFrom, model.SignatoryEmail5.ToLower(), "Confirm Signatory", EmailBody5);
-                            if (EmailToSignatory2 == true)
-                            {
-                                //Log email sent notification
-                                LogNotification.AddSucsessNotification(MailHelper.EmailFrom, EmailBody5, model.SignatoryEmail5.ToLower(), _action);
-                            }
-                            else
-                            {
-                                //Log Email failed notification
-                                LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBody5, model.SignatoryEmail5.ToLower(), _action);
-                            }
                         }
-                        else
+                        catch (Exception)
                         {
-                            var _OTPCode5 = OTPGenerator.GetUniqueKey(6);
-                            string OTPCode5 = Shuffle.StringMixer(_OTPCode5);
-                            try
-                            {
-                                var addSignatory5 = db.ClientSignatories.Create();
-                                addSignatory5.ClientID = RegisteredClientId;
-                                addSignatory5.CompanyID = model.CompanyID;
-                                addSignatory5.Designation = model.SignatoryDesignation5;
-                                addSignatory5.Surname = model.SignatorySurname5;
-                                addSignatory5.OtherNames = model.SignatoryOtherNames5;
-                                addSignatory5.EmailAddress = model.SignatoryEmail5.ToLower();
-                                addSignatory5.PhoneNumber = model.SignatoryPhoneNumber5;
-                                addSignatory5.DateCreated = DateTime.Now;
-                                addSignatory5.Status = 0;
-                                addSignatory5.OTP = Functions.GenerateMD5Hash(OTPCode5);
-                                db.ClientSignatories.Add(addSignatory5);
-                                db.SaveChanges();
-                            }
-                            catch (Exception ex)
-                            {
-                                throw (ex);
-                            }
-                            //Send Email with OTP
-                            var callbackUrl = Url.Action("SignatoryConfirmation", "Account", null, Request.Url.Scheme);
-                            string EmailBody5 = string.Empty;
-                            using (StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/SignatoryNomination.html")))
-                            {
-                                EmailBody5 = reader.ReadToEnd();
-                            }
-                            EmailBody5 = EmailBody5.Replace("{SignatoryName}", model.SignatoryOtherNames5);
-                            EmailBody5 = EmailBody5.Replace("{ActivationCode}", OTPCode5);
-                            EmailBody5 = EmailBody5.Replace("{URL}", callbackUrl);
-
-                            var EmailToSignatory2 = MailHelper.SendMailMessage(MailHelper.EmailFrom, model.SignatoryEmail5.ToLower(), "Confirm Signatory", EmailBody5);
-                            if (EmailToSignatory2 == true)
-                            {
-                                //Log email sent notification
-                                LogNotification.AddSucsessNotification(MailHelper.EmailFrom, EmailBody5, model.SignatoryEmail5.ToLower(), _action);
-                            }
-                            else
-                            {
-                                //Log Email failed notification
-                                LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBody5, model.SignatoryEmail5.ToLower(), _action);
-                            }
+                            //throw (ex);
+                            return Json("Error! Unable to update 5th signatory details", JsonRequestBehavior.AllowGet);
                         }
                     }
                 }
@@ -1236,7 +901,8 @@ namespace OnBoarding.Controllers
                 var DesignatedUsersCount = db.DesignatedUsers.Count(c => c.ClientID == userInfo.Id && c.Status != 2 && c.CompanyID == model.CompanyID);
 
                 //Create A new Application
-                //1). Scenario If signatory and representative are the same and one
+                //1). Scenario (Sole signatory application)
+                //If signatory and representative are the same and one
                 //Application process is complete ops can approve the application
                 if (SignatoryCount == 1 && DesignatedUsersCount == 1)
                 {
@@ -1452,16 +1118,17 @@ namespace OnBoarding.Controllers
                     }
                     return Json("success", JsonRequestBehavior.AllowGet);
                 }
-                //2). Scenario
+                
+                //2). Scenario (Sole signatory and representatives)
                 //If signatory is one (sole) and representatives are more than one
                 //Signatory is marked as approved and an email is sent to the representatives except the sole is also nominated under representatives
                 else if (SignatoryCount == 1 && DesignatedUsersCount > 1)
                 {
                     try
                     {
-                        //Check if signatory is among the representatives
+                        //1. Check if signatory is among the representatives
                         var newApplication = db.EMarketApplications.Create();
-                        var signatoryIsARepresentative = db.DesignatedUsers.Any(c => c.Email == model.SignatoryEmail1.ToLower());
+                        var signatoryIsARepresentative = db.DesignatedUsers.Any(c => c.Email == model.SignatoryEmail1.ToLower() && c.CompanyID == model.CompanyID);
                         if (signatoryIsARepresentative)
                         {
                             //Update representative signature
@@ -1499,7 +1166,7 @@ namespace OnBoarding.Controllers
                             }
                             else
                             {
-                                return Json("Error!", JsonRequestBehavior.AllowGet);
+                                return Json("Error! Unable to add new application", JsonRequestBehavior.AllowGet);
                             }
                         }
                         else
@@ -1531,18 +1198,19 @@ namespace OnBoarding.Controllers
                             }
                             else
                             {
-                                return Json("Error!", JsonRequestBehavior.AllowGet);
+                                return Json("Error! Unable to add new application", JsonRequestBehavior.AllowGet);
                             }
                         }
                     }
                     catch (Exception ex)
                     {
-                        throw (ex);
+                        return Json("" + ex.Message + "", JsonRequestBehavior.AllowGet);
                     }
 
-                    //Send email to other representatives excluding the sole signatory
+                    //2. Send email to other representatives excluding the sole signatory
+                    var _dontSendEmail = db.AspNetUsers.Select(x => x.Email).ToList();
                     var UserToExclude = db.RegisteredClients.SingleOrDefault(c => c.Id == RegisteredClientId);
-                    foreach (var email in db.DesignatedUsers.Where(c => c.ClientID == RegisteredClientId && c.CompanyID == model.CompanyID && c.Email != UserToExclude.EmailAddress).ToList())
+                    foreach (var email in db.DesignatedUsers.Where(c => c.ClientID == RegisteredClientId && c.CompanyID == model.CompanyID && !_dontSendEmail.Contains(c.Email) && c.Email != UserToExclude.EmailAddress).ToList())
                     {
                         //Update Designated User with OTP to Login
                         var _OTPCode = OTPGenerator.GetUniqueKey(6);
@@ -1575,7 +1243,7 @@ namespace OnBoarding.Controllers
                         }
                     }
 
-                    //Send Application Complete Email to Company Email
+                    //3. Send Application Complete Email to Company Email
                     string EmailBody = string.Empty;
                     using (StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/ApplicationSubmitted.html")))
                     {
@@ -1595,7 +1263,7 @@ namespace OnBoarding.Controllers
                         LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBody, CompanyEmail, _action);
                     }
 
-                    //Send Email to Digital Desk Users
+                    //4. Send Email to Digital Desk Users
                     var DDUserRole = (from p in db.AspNetUserRoles
                                         join e in db.AspNetUsers on p.UserId equals e.Id
                                         where p.RoleId == "03d5e1e3-a8a9-441e-9122-30c3aafccccc"
@@ -1622,23 +1290,27 @@ namespace OnBoarding.Controllers
                     }
                     return Json("success", JsonRequestBehavior.AllowGet);
                 }
-                //3) Scenario
+                
+                //3) Scenario (Multiple signatories and representatives -- including first signatory)
                 //If signatory are more than 1 including sole and representatives are also more than one
                 //Signatory will approve after  which the representatives will be invited to complete registration and also approve
                 else if (SignatoryCount > 1 && DesignatedUsersCount >= 1)
                 {
-                    //Check if nominee signatory is among the representatives
-                    var newApplication = db.EMarketApplications.Create();
-                    var signatoryIsARepresentative = db.DesignatedUsers.Any(c => c.Email == model.SignatoryEmail1.ToLower() && c.CompanyID == model.CompanyID);
+                    //1. Check if first signatory is among the representatives
+                    var signatoryIsARepresentative = db.DesignatedUsers.Any(c => c.Email == model.SignatoryEmail1.ToLower() && c.CompanyID == model.CompanyID && c.ClientID == model.ClientID);
                     if (signatoryIsARepresentative)
                     {
                         //Update representatives signature
-                        var RepresentativeToUpdate = db.DesignatedUsers.First(c => c.Email == model.SignatoryEmail1.ToLower() && c.CompanyID == model.CompanyID);
-                        var Signatory1 = db.ClientSignatories.SingleOrDefault(c => c.EmailAddress == model.SignatoryEmail1.ToLower() && c.CompanyID == model.CompanyID);
+                        var RepresentativeToUpdate = db.DesignatedUsers.First(c => c.Email == model.SignatoryEmail1.ToLower() && c.CompanyID == model.CompanyID && c.ClientID == model.ClientID);
+                        var Signatory1 = db.ClientSignatories.SingleOrDefault(c => c.EmailAddress == model.SignatoryEmail1.ToLower() && c.CompanyID == model.CompanyID && c.ClientID == model.ClientID);
                         RepresentativeToUpdate.Signature = Signatory1.Signature;
                         db.SaveChanges();
+                    }
 
-                        //Log new application
+                    //2. Log new application
+                    try
+                    {
+                        var newApplication = db.EMarketApplications.Create();
                         newApplication.AcceptedTAC = true; //model.terms;
                         newApplication.ClientID = RegisteredClientId;
                         newApplication.CompanyID = model.CompanyID;
@@ -1662,47 +1334,15 @@ namespace OnBoarding.Controllers
                         }
                         else
                         {
-                            return Json("Error!", JsonRequestBehavior.AllowGet);
+                            return Json("Error! Unable to create application details", JsonRequestBehavior.AllowGet);
                         }
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        //Mark Signatory 1 as status 1
-                        var updateSignatory1 = db.ClientSignatories.SingleOrDefault(c => c.EmailAddress == model.SignatoryEmail1.ToLower() && c.CompanyID == model.CompanyID);
-                        updateSignatory1.Status = 1;
-                        db.SaveChanges();
-
-                        ////Mark Representative 1 as status 1
-                        //var updateRepresentative1 = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.SignatoryEmail1.ToLower());
-                        //updateRepresentative1.Status = 1;
-                        //db.SaveChanges();
-
-                        newApplication.AcceptedTAC = true;// model.terms;
-                        newApplication.ClientID = RegisteredClientId;
-                        newApplication.CompanyID = model.CompanyID;
-                        newApplication.DesignatedUsers = DesignatedUsersCount;
-                        newApplication.DateCreated = DateTime.Now;
-                        newApplication.Signatories = SignatoryCount;
-                        newApplication.SignatoriesApproved = 1;
-                        newApplication.Status = 1;
-                        newApplication.Emt = EMarketSignUp;
-                        newApplication.SSI = SSI;
-                        db.EMarketApplications.Add(newApplication);
-                        var applicationSaved = db.SaveChanges();
-                        if (applicationSaved > 0)
-                        {
-                            //Mark HasApplication True for Client Company
-                            var updateClientCompany = db.ClientCompanies.SingleOrDefault(c => c.Id == model.CompanyID);
-                            updateClientCompany.HasApplication = true;
-                            db.SaveChanges();
-                        }
-                        else
-                        {
-                            return Json("Error!", JsonRequestBehavior.AllowGet);
-                        }
+                        return Json("" + ex.Message + "", JsonRequestBehavior.AllowGet);
                     }
 
-                    //Send Application Complete Email to Company Email
+                    //3. Send Application Complete Email to Company Email
                     string ApplicationCompleteEmailMessage = string.Empty;
                     using (StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/ApplicationSubmitted.html")))
                     {
@@ -1721,8 +1361,52 @@ namespace OnBoarding.Controllers
                         //Log Email failed notification
                         LogNotification.AddFailureNotification(MailHelper.EmailFrom, ApplicationCompleteEmailMessage, CompanyEmail, _action);
                     }
-                        
-                    //Send Email to Digital Desk Users
+
+                    //4. Send All Nominated Saved Signatories an email (With CompanyID and ClientID)
+                    var _dontSendEmail = db.AspNetUsers.Select(x => x.Email).ToList();
+                    var SavedSignatories = (from p in db.ClientSignatories
+                                            join e in db.RegisteredClients on p.ClientID equals e.Id
+                                            where p.Status == 0 && p.ClientID == model.ClientID && p.CompanyID == model.CompanyID && !_dontSendEmail.Contains(p.EmailAddress)
+                                            select new
+                                            {
+                                                EmailID = p.EmailAddress
+                                            });
+                    if (SavedSignatories != null)
+                    {
+                        foreach (var email in SavedSignatories.ToList())
+                        {
+                            var _OTPCode = OTPGenerator.GetUniqueKey(6);
+                            string OTPCode = Shuffle.StringMixer(_OTPCode);
+                            var SignatoryToUpdate = db.ClientSignatories.SingleOrDefault(c => c.EmailAddress == email.EmailID && c.Status == 0 && c.ClientID == model.ClientID && c.CompanyID == model.CompanyID);
+                            SignatoryToUpdate.OTP = Functions.GenerateMD5Hash(OTPCode);
+                            db.SaveChanges();
+
+                            //Send Email With OTP logins
+                            var callbackUrl = Url.Action("SignatoryConfirmation", "Account", null, Request.Url.Scheme);
+                            string EmailBody2 = string.Empty;
+                            using (StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/SignatoryNomination.html")))
+                            {
+                                EmailBody2 = reader.ReadToEnd();
+                            }
+                            EmailBody2 = EmailBody2.Replace("{SignatoryName}", SignatoryToUpdate.OtherNames);
+                            EmailBody2 = EmailBody2.Replace("{URL}", callbackUrl);
+                            EmailBody2 = EmailBody2.Replace("{ActivationCode}", OTPCode);
+
+                            var EmailToSignatory2 = MailHelper.SendMailMessage(MailHelper.EmailFrom, SignatoryToUpdate.EmailAddress.ToLower(), "Confirm Signatory", EmailBody2);
+                            if (EmailToSignatory2 == true)
+                            {
+                                //Log email sent notification
+                                LogNotification.AddSucsessNotification(MailHelper.EmailFrom, EmailBody2, SignatoryToUpdate.EmailAddress.ToLower(), _action);
+                            }
+                            else
+                            {
+                                //Log Email failed notification
+                                LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBody2, SignatoryToUpdate.EmailAddress.ToLower(), _action);
+                            }
+                        }
+                    }
+
+                    //5. Send Email to Digital Desk Users
                     var DDUserRole = (from p in db.AspNetUserRoles
                                         join e in db.AspNetUsers on p.UserId equals e.Id
                                         where p.RoleId == "03d5e1e3-a8a9-441e-9122-30c3aafccccc"

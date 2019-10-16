@@ -173,58 +173,66 @@
             </fieldset>
             <!-- End Form Step 1 -->
             <!-- Form Step 2 -->
-            <fieldset>
-                <h4>Terms and Conditions <span>Step 2 - 3</span></h4>
-                <h6>Read the below terms and conditions carefully and accept by clicking on the checkbox below the terms and conditions</h6>
-                <div class="form-group scroll-terms">
-                    <embed id="scroll" src="~/Content/documents/Merged GTCs and eMT Agreement.pdf" width="950" height="500" alt="Terms and Conditions pdf" pluginspage="http://www.adobe.com/products/acrobat/readstep2.html" />
-                </div>
-                <div class="form-group row">
-                    <div class="col-12 col-lg-8 col-xs-12">
-                        <div class="input-group accept-terms">
-                            <input type="text" id="error-check" class="form-control">
-                            <input type="hidden" id="ApplicationId" name="ApplicationId" value="@ViewData["ApplicationId"]" class="form-control">
-                            <input type="hidden" id="CompanyEmail" name="CompanyEmail" value="@ViewBag.ClientInfo.EmailAddress" class="form-control">
-                            <input type="hidden" id="CompanyName" name="CompanyName" value="@ViewBag.CompanyInfo.CompanyName" class="form-control">
-                            <input type="hidden" id="CompanySurname" name="CompanySurname" value="@ViewBag.ClientInfo.Surname" class="form-control">
-                            <input type="hidden" id="Approved" name="Approved" value="@ViewData["Approved"]" class="form-control">
-                            <input type="hidden" id="CompanyID" name="CompanyID" value="@ViewBag.CompanyInfo.Id" class="form-control">
-                            <span class="input-group-addon beautiful" id="beautifulcheckbox">
-                                <input value="true" type="checkbox" id="terms" name="terms" class="form-control">
-                            </span>
-                        </div>
-                    </div>
-                    <div class="col-12 col-md-4 col-xs-12">
-                        <div class="form-wizard-buttons">
-                            <button type="button" class="btn btn-previous"><i class="fa fa-angle-left"></i> Back</button>
-                            <button type="button" class="btn btn-twende-mbele" id="acceptterms"> Next <i class="fa fa-angle-right"></i></button>
-                        </div>
-                    </div>
-                </div><br /><br />
-            </fieldset>
+			<fieldset>
+				<h4>Terms and Conditions <span>Step 2 - 3</span></h4>
+				<h6>Read the below terms and conditions carefully and accept by clicking on the checkbox below the terms and conditions</h6>
+				<!--<div class="form-group scroll-terms">
+					<embed id="scroll" src="~/Content/documents/Merged GTCs and eMT Agreement.pdf" width="950" height="500" alt="Terms and Conditions pdf" pluginspage="http://www.adobe.com/products/acrobat/readstep2.html" />
+				</div>-->
+				<div class="col-12 col-sm-12 col-lg-12 mb-3" id="read_through_content" style="overflow-y: auto; border: 1px solid;">
+					<div id="applicant_esign_content" style="height:350px;"></div>
+				</div>
+				<div class="form-group row">
+					<div class="col-12 col-lg-8 col-xs-12">
+						<div class="input-group accept-terms">
+							<input type="text" id="error-check" class="form-control">
+							<input type="hidden" id="ApplicationId" name="ApplicationId" value="@ViewData["ApplicationId"]" class="form-control">
+							<input type="hidden" id="CompanyEmail" name="CompanyEmail" value="@ViewBag.ClientInfo.EmailAddress" class="form-control">
+							<input type="hidden" id="CompanyName" name="CompanyName" value="@ViewBag.CompanyInfo.CompanyName" class="form-control">
+							<input type="hidden" id="CompanySurname" name="CompanySurname" value="@ViewBag.ClientInfo.Surname" class="form-control">
+							<input type="hidden" id="Approved" name="Approved" value="@ViewData["Approved"]" class="form-control">
+							<input type="hidden" id="CompanyID" name="CompanyID" value="@ViewBag.CompanyInfo.Id" class="form-control">
+							<input type="hidden" value="false" name="applicant_read_the_content" id="applicant_read_the_content" />
+							<span class="input-group-addon beautiful" id="beautifulcheckbox">
+								<input value="true" type="checkbox" id="terms" name="terms" class="form-control">
+							</span>
+						</div>
+					</div>
+					<div class="col-12 col-md-4 col-xs-12">
+						<div class="form-wizard-buttons">
+							<button type="button" class="btn btn-previous"><i class="fa fa-angle-left"></i> Back</button>
+							<button type="button" class="btn btn-twende-mbele" id="acceptterms"> Next <i class="fa fa-angle-right"></i></button>
+						</div>
+					</div>
+				</div><br /><br />
+			</fieldset>
             <!-- End Form Step 2 -->
             <!-- Form Step 3 -->
             <fieldset class="d_none">
                 <h4>Confirm Details <span>Step 3 - 3</span></h4>
                 <div style="clear:both;"></div>
-                    <div class="card-body form-group form-row">
-                        <div class="col-12 col-lg-3 col-sm-3 imgUp">
-                            <label>Upload your scanned signature: <span>*</span></label>
-                            <div class="imagePreview"></div>
-                            <label class="btn btn-primary" style="color:#fff">
-                                Upload Signature <input id="inputFile" name="inputFile" type="file" class="uploadFile img" value="Upload Signature" style="width: 0px;height: 0px;overflow: hidden;">
-                            </label>
-                        </div>
-                        <div class="col-12 col-lg-4 m_top_30">
-                            <h6><b>Image types to be uploaded</b></h6>
-                            <ul>
-                                <li style="color:red"><small>JPEG Image (.jpeg)</small></li>
-                                <li style="color:red"><small>JPEG Image (.jpg)</small></li>
-                                <li style="color:red"><small>Portable Network Graphic (.png)</small></li>
-                                <li style="color:red"><small>Image Size (100 by 80)</small></li>
-                            </ul>
-                        </div>
-                    </div>
+				<div class="card-body form-group form-row">
+					<div class="col-12 col-lg-4 col-sm-4">
+						<h6><b>Verify Your Phone Number</b><span>*</span></h6>
+						<input name="VerifyPhone" id="VerifyPhone" type="text" class="form-control" placeholder="SignatoryPhone" value="@ViewData["SignatoryPhone"]">
+					</div>
+					<div class="col-12 col-lg-4 col-sm-4 imgUp">
+						<h6><b>Upload your scanned signature</b><span>*</span></h6>
+						<div class="imagePreview"></div>
+						<label class="btn btn-primary" style="color:#fff">
+							Upload Signature <input id="inputFile" name="inputFile" type="file" class="uploadFile img" value="Upload Signature" style="width: 0px;height: 0px;overflow: hidden;">
+						</label>
+					</div>
+					<div class="col-12 col-lg-4 m_top_30">
+						<h6><b>Image types to be uploaded</b></h6>
+						<ul>
+							<li style="color:red"><small>JPEG Image (.jpeg)</small></li>
+							<li style="color:red"><small>JPEG Image (.jpg)</small></li>
+							<li style="color:red"><small>Portable Network Graphic (.png)</small></li>
+							<li style="color:red"><small>Image Size (100 by 80)</small></li>
+						</ul>
+					</div>
+				</div>
                     <div class="row d_none">
                         <h5>Provide notes upon approval (if any) </h5>
                         <div class="col-md-12">
@@ -309,10 +317,29 @@
                 }
             }
 		});
+
+		//Load applicant_terms_content
+		$.get('../Content/documents/Merged GTCs and eMT Agreement/eMT-Agreement_and_Terms.html', function (data) {
+			/* data is the pure html returned from action method, load it to your page */
+			$('#applicant_esign_content').html(data);
+			/* little fade in effect */
+			$('#applicant_esign_content').fadeIn('fast');
+		});
+
 	});
 
     $(document).ready(function () {
-        //Close modal
+		//Enable User to read through the terms and conditions to bottom
+		$("#read_through_content").scroll(function () {
+			var totalScrollHeight = $("#read_through_content")[0].scrollHeight;
+			var scrollBarHeight = $("#read_through_content")[0].clientHeight;
+			var scrollBarTopPosition = $("#read_through_content")[0].scrollTop;
+			if (totalScrollHeight === scrollBarHeight + scrollBarTopPosition) {
+				$("#applicant_read_the_content").val("true");
+			}
+		});
+
+		//Close modal
 		$('#closemodal').on('click', function (e) {
 			e.preventDefault();
             $('#LoadUpModal').modal('hide');
@@ -367,9 +394,15 @@
                 };
 
                 $widget.prepend('<span class="' + settings[type].off.icon + '"></span>');
-                $widget.on('click', function () {
-                    $input.prop('checked', !$input.is(':checked'));
-                    updateDisplay();
+				$widget.on('click', function () {
+					if ($("#applicant_read_the_content").val() !== "true") {
+						toastr.error('Please read through the terms and conditions to bottom before accepting!', { positionClass: 'toast-top-center' });
+						return false;
+					}
+					else {
+						$input.prop('checked', !$input.is(':checked'));
+						updateDisplay();
+					}
                 });
 
                 function updateDisplay() {
@@ -403,7 +436,13 @@
                             $('#Success_Div').show("fast");
                             window.location.reload();
                         }
-                    },
+					},
+					error: function (xhr, textStatus, errorThrown) {
+						if (textStatus === 'error') {
+							$("#Loading_Div").hide('fast');
+							toastr.error('Submission error!. Code: ' + xhr.status + ', Details: ' + errorThrown);
+						}
+					},
                     cache: false,
                     contentType: false,
                     processData: false
@@ -431,7 +470,13 @@
                             $('#Success_Div').show("fast");
                             window.location.reload();
                         }
-                    },
+					},
+					error: function (xhr, textStatus, errorThrown) {
+						if (textStatus === 'error') {
+							$("#Loading_Div").hide('fast');
+							toastr.error('Submission error!. Code: ' + xhr.status + ', Details: ' + errorThrown);
+						}
+					},
                     cache: false,
                     contentType: false,
                     processData: false
