@@ -120,7 +120,7 @@ namespace OnBoarding.Controllers
 
                     try
                     {
-                        //Log approval
+                        //1. Log approval
                         var LogApproval = db.DesignatedUserApprovals.Create();
                         LogApproval.ApplicationID = model.ApplicationID;
                         LogApproval.UserID = userClientId.Id;
@@ -134,14 +134,13 @@ namespace OnBoarding.Controllers
                         return Json("Error! Unable to update representatives details", JsonRequestBehavior.AllowGet);
                     }
 
-                    //Upload Signature
+                    //2. Upload Signature
                     if (inputFile != null)
                     {
                         string pic = DateTime.Now.ToString("yyyyMMdd") + currentUserId + System.IO.Path.GetFileName(inputFile.FileName);
                         string path = System.IO.Path.Combine(Server.MapPath("~/Content/images/signatures/"), pic);
                         // Upload file
                         inputFile.SaveAs(path);
-
                         try
                         {
                             //Save File name to Database  //Update Representative Details
@@ -160,7 +159,7 @@ namespace OnBoarding.Controllers
                         return Json("Error! Unable to upload representative signature", JsonRequestBehavior.AllowGet);
                     }
 
-                    //Update application Id
+                    //3. Update application Id
                     var ApplicationUpdate = db.EMarketApplications.SingleOrDefault(c => c.Id == model.ApplicationID && c.CompanyID == model.CompanyID);
                     var Approvals = ApplicationUpdate.UsersApproved;
                     if (ApplicationUpdate != null)
@@ -170,37 +169,7 @@ namespace OnBoarding.Controllers
                             ApplicationUpdate.UsersApproved = Approvals + 1;
                             ApplicationUpdate.UsersDateApproved = DateTime.Now;
                             db.SaveChanges();
-
-                            //Check if all Users have approved
-                            if (ApplicationUpdate.SignatoriesApproved >= ApplicationUpdate.Signatories)
-                            {
-                                //Send Email to Digital Desk
-                                var DDUserRole = (from p in db.AspNetUserRoles
-                                                  join e in db.AspNetUsers on p.UserId equals e.Id
-                                                  where p.RoleId == "03d5e1e3-a8a9-441e-9122-30c3aafccccc"
-                                                  select new
-                                                  {
-                                                      EmailID = e.Email
-                                                  }).ToList();
-                                var ClientInfo = db.RegisteredClients.SingleOrDefault(c => c.Id == ApplicationUpdate.ClientID);
-                                foreach (var email in DDUserRole)
-                                {
-                                    var DDMessageBody = "Dear Team <br/><br/> Kindly note that the all signatories and representatives of the following client have all approved their nomination. <br/>" +
-                                                  "Company Name: " + ClientInfo.Surname + ", Company Email: " + ClientInfo.EmailAddress + ", Company PhoneNumber: " + ClientInfo.PhoneNumber + " " +
-                                                  "<br/><br/> Kind Regards, <br /><img src=\"https://e-documents.stanbicbank.co.ke/Content/images/EmailSignature.png\"/>";
-                                    var SendDDNotificationEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, email.EmailID, "Signatories/Representatives Completed Approval", DDMessageBody);
-                                    if (SendDDNotificationEmail == true)
-                                    {
-                                        //Log email sent notification
-                                        LogNotification.AddSucsessNotification(MailHelper.EmailFrom, DDMessageBody, email.EmailID, _action);
-                                    }
-                                    else
-                                    {
-                                        //Log Email failed notification
-                                        LogNotification.AddFailureNotification(MailHelper.EmailFrom, DDMessageBody, email.EmailID, _action);
-                                    }
-                                }
-                            }
+                            
                         }
                         catch (Exception)
                         {
@@ -208,13 +177,44 @@ namespace OnBoarding.Controllers
                             return Json("Error! Unable to update application details", JsonRequestBehavior.AllowGet);
                         }
                     }
-
                     else
                     {
                         return Json("Unable to Update Details!", JsonRequestBehavior.AllowGet);
                     }
 
-                    //Send email to authorized representative
+                    //4. Check if all Representatives have approved and send complete email to digital desk
+                    var ApplicationToCheck = db.EMarketApplications.SingleOrDefault(c => c.Id == model.ApplicationID && c.CompanyID == model.CompanyID);
+                    if (ApplicationToCheck.UsersApproved == ApplicationUpdate.DesignatedUsers)
+                    {
+                        //Send Email to Digital Desk
+                        var DDUserRole = (from p in db.AspNetUserRoles
+                                          join e in db.AspNetUsers on p.UserId equals e.Id
+                                          where p.RoleId == "03d5e1e3-a8a9-441e-9122-30c3aafccccc"
+                                          select new
+                                          {
+                                              EmailID = e.Email
+                                          }).ToList();
+                        var ClientInfo = db.RegisteredClients.SingleOrDefault(c => c.Id == ApplicationUpdate.ClientID);
+                        foreach (var email in DDUserRole)
+                        {
+                            var DDMessageBody = "Dear Team <br/><br/> Kindly note that the all signatories and representatives of the following client have all approved their nomination. <br/>" +
+                                          "Company Name: " + ClientInfo.Surname + ", Company Email: " + ClientInfo.EmailAddress + ", Company PhoneNumber: " + ClientInfo.PhoneNumber + " " +
+                                          "<br/><br/> Kind Regards, <br /><img src=\"https://e-documents.stanbicbank.co.ke/Content/images/EmailSignature.png\"/>";
+                            var SendDDNotificationEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, email.EmailID, "Signatories/Representatives Completed Approval", DDMessageBody);
+                            if (SendDDNotificationEmail == true)
+                            {
+                                //Log email sent notification
+                                LogNotification.AddSucsessNotification(MailHelper.EmailFrom, DDMessageBody, email.EmailID, _action);
+                            }
+                            else
+                            {
+                                //Log Email failed notification
+                                LogNotification.AddFailureNotification(MailHelper.EmailFrom, DDMessageBody, email.EmailID, _action);
+                            }
+                        }
+                    }
+
+                    //5. Send email to authorized representative
                     var ApprovalCompleteEmailMessage = "Dear " + userClientId.Surname + ", <br/><br/> Thank you for accepting nomination as an authorized representative from " + model.CompanyName + ".<br/>" +
                         "You have also accepted our terms and conditions for trading on the portal. <br/><br/>" +
                          "Thank you for your continued custom." +
@@ -231,10 +231,9 @@ namespace OnBoarding.Controllers
                         LogNotification.AddFailureNotification(MailHelper.EmailFrom, ApprovalCompleteEmailMessage, userClientId.Email, _action);
                     }
 
-                    //Send email to company
-                    var ApprovalCompleteEmailMessage2 = "Dear " + model.CompanySurname + ", <br/><br/> " + userClientId.Surname + " " + userClientId.Othernames + " has confirmed the information submitted and completed the process.<br/>" +
-                                        "Thank you for your continued custom." +
-                                        "<br/><br/> Kind Regards,<br/><img src=\"https://e-documents.stanbicbank.co.ke/Content/images/EmailSignature.png\"/>";
+                    //6. Send email to company
+                    var ApprovalCompleteEmailMessage2 = "Dear " + model.CompanySurname + ", <br/><br/> " + userClientId.Surname + " " + userClientId.Othernames + " has confirmed the information submitted and completed the process.<br/> Thank you for your continued custom." +
+                    "<br/><br/> Kind Regards,<br/><img src=\"https://e-documents.stanbicbank.co.ke/Content/images/EmailSignature.png\"/>";
                     var ApprovalCompleteEmail2 = MailHelper.SendMailMessage(MailHelper.EmailFrom, model.CompanyEmail, "Authorised Representative Approval", ApprovalCompleteEmailMessage2);
                     if (ApprovalCompleteEmail2 == true)
                     {
