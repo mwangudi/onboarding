@@ -416,7 +416,7 @@ namespace OnBoarding.Controllers
                                 var file = Request.Files[0];
                                 if (file != null && inputFile.ContentLength > 0)
                                 {
-                                    var fileName = DateTime.Now.ToString("yyyyMMdd") + RegisteredClientId + Path.GetFileName(inputFile.FileName);
+                                    var fileName = DateTime.Now.ToString("yyyyMMdd") + RegisteredClientId + System.IO.Path.GetFileName(inputFile.FileName);
                                     string path = System.IO.Path.Combine(Server.MapPath("~/Content/images/signatures/"), fileName);
                                     file.SaveAs(path);
                                 }
@@ -440,7 +440,7 @@ namespace OnBoarding.Controllers
                             var savedDetails = db.SaveChanges();
                             if(savedDetails <= 0)
                             {
-                                return Json("Error! Unable to save signatory details a", JsonRequestBehavior.AllowGet);
+                                return Json("Error! Unable to save signatory details", JsonRequestBehavior.AllowGet);
                             }
                         }
                         catch (Exception)
@@ -464,7 +464,7 @@ namespace OnBoarding.Controllers
                                         var file = Request.Files[0];
                                         if (file != null && inputFile.ContentLength > 0)
                                         {
-                                            var fileName = DateTime.Now.ToString("yyyyMMdd") + RegisteredClientId + Path.GetFileName(inputFile.FileName);
+                                            var fileName = DateTime.Now.ToString("yyyyMMdd") + RegisteredClientId + System.IO.Path.GetFileName(inputFile.FileName);
                                             string path = System.IO.Path.Combine(Server.MapPath("~/Content/images/signatures/"), fileName);
                                             file.SaveAs(path);
                                             Signatory1ToUpdate.Signature = fileName;
@@ -1485,7 +1485,7 @@ namespace OnBoarding.Controllers
                                 var file = Request.Files[0];
                                 if (file != null && inputFile.ContentLength > 0)
                                 {
-                                    var fileName = DateTime.Now.ToString("yyyyMMdd") + RegisteredClientId + Path.GetFileName(inputFile.FileName);
+                                    var fileName = DateTime.Now.ToString("yyyyMMdd") + RegisteredClientId + System.IO.Path.GetFileName(inputFile.FileName);
                                     string path = System.IO.Path.Combine(Server.MapPath("~/Content/images/signatures/"), fileName);
                                     file.SaveAs(path);
                                 }
@@ -1493,7 +1493,7 @@ namespace OnBoarding.Controllers
 
                             //Add Details
                             var addSignatory1 = db.ClientSignatories.Create();
-                            var newFileName = DateTime.Now.ToString("yyyyMMdd") + RegisteredClientId + Path.GetFileName(inputFile.FileName);
+                            var newFileName = DateTime.Now.ToString("yyyyMMdd") + RegisteredClientId + System.IO.Path.GetFileName(inputFile.FileName);
                             addSignatory1.ClientID = RegisteredClientId;
                             addSignatory1.Designation = model.SignatoryDesignation1;
                             addSignatory1.Surname = model.SignatorySurname1;
@@ -1522,14 +1522,14 @@ namespace OnBoarding.Controllers
                                 var file = Request.Files[0];
                                 if (file != null && inputFile.ContentLength > 0)
                                 {
-                                    var fileName = DateTime.Now.ToString("yyyyMMdd") + RegisteredClientId + Path.GetFileName(inputFile.FileName);
+                                    var fileName = DateTime.Now.ToString("yyyyMMdd") + RegisteredClientId + System.IO.Path.GetFileName(inputFile.FileName);
                                     string path = System.IO.Path.Combine(Server.MapPath("~/Content/images/signatures/"), fileName);
                                     file.SaveAs(path);
                                 }
                             }
                             //Edit Details
                             var Signatory1ToUpdate = db.ClientSignatories.SingleOrDefault(c => c.EmailAddress == model.SignatoryEmail1);
-                            var newFileName = DateTime.Now.ToString("yyyyMMdd") + RegisteredClientId + Path.GetFileName(inputFile.FileName);
+                            var newFileName = DateTime.Now.ToString("yyyyMMdd") + RegisteredClientId + System.IO.Path.GetFileName(inputFile.FileName);
                             Signatory1ToUpdate.Status = 1;
                             Signatory1ToUpdate.Designation = model.SignatoryDesignation1;
                             Signatory1ToUpdate.Surname = model.SignatorySurname1;
