@@ -66,7 +66,8 @@ namespace OnBoarding.Controllers
                 var ApplicationsCount = db.ClientCompanies.Count(c => c.ClientId == userInfo.Id && c.Status == 1 && c.HasApplication == false);
                 if (ApplicationsCount <= 0)
                 {
-                    return Json("Error! All your companies have made an application.", JsonRequestBehavior.AllowGet);
+                    //return Json("Error! All your companies have made an application.", JsonRequestBehavior.AllowGet);
+                    return Json("success", JsonRequestBehavior.AllowGet);
                 }
                 else
                 {
@@ -234,7 +235,7 @@ namespace OnBoarding.Controllers
                     var newAccountDetails = db.ClientSettlementAccounts.Create();
                     if (model.SettlementAccount1 != null && model.SelectCurrency1 != null)
                     {
-                        var SettlementAccount1Exists = db.ClientSettlementAccounts.Any(c => c.AccountNumber == model.SettlementAccount1 && c.CompanyID == model.CompanyID);
+                        var SettlementAccount1Exists = db.ClientSettlementAccounts.Any(c => c.AccountNumber == model.SettlementAccount1 && c.ClientID == model.ClientID && c.CompanyID == model.CompanyID);
                         if (!SettlementAccount1Exists) 
                         {
                             newAccountDetails.ClientID = RegisteredClientId;
@@ -244,12 +245,6 @@ namespace OnBoarding.Controllers
                             newAccountDetails.CurrencyID = model.SelectCurrency1;
                             newAccountDetails.Status = 1;
                             db.ClientSettlementAccounts.Add(newAccountDetails);
-                            db.SaveChanges();
-                        }
-                        else
-                        {
-                            var SettlementAccountUpdate1 = db.ClientSettlementAccounts.SingleOrDefault(c => c.AccountNumber == model.SettlementAccount1 && c.CompanyID == model.CompanyID);
-                            SettlementAccountUpdate1.Status = 1;
                             db.SaveChanges();
                         }
                     }
@@ -267,12 +262,6 @@ namespace OnBoarding.Controllers
                             db.ClientSettlementAccounts.Add(newAccountDetails);
                             db.SaveChanges();
                         }
-                        else
-                        {
-                            var SettlementAccountUpdate2 = db.ClientSettlementAccounts.SingleOrDefault(c => c.AccountNumber == model.SettlementAccount2 && c.CompanyID == model.CompanyID);
-                            SettlementAccountUpdate2.Status = 1;
-                            db.SaveChanges();
-                        }
                     }
                     if (model.SettlementAccount3 != null && model.SelectCurrency3 != null)
                     {
@@ -286,12 +275,6 @@ namespace OnBoarding.Controllers
                             newAccountDetails.CurrencyID = model.SelectCurrency3;
                             newAccountDetails.Status = 1;
                             db.ClientSettlementAccounts.Add(newAccountDetails);
-                            db.SaveChanges();
-                        }
-                        else
-                        {
-                            var SettlementAccountUpdate3 = db.ClientSettlementAccounts.SingleOrDefault(c => c.AccountNumber == model.SettlementAccount3 && c.CompanyID == model.CompanyID);
-                            SettlementAccountUpdate3.Status = 1;
                             db.SaveChanges();
                         }
                     }
@@ -309,12 +292,6 @@ namespace OnBoarding.Controllers
                             db.ClientSettlementAccounts.Add(newAccountDetails);
                             db.SaveChanges();
                         }
-                        else
-                        {
-                            var SettlementAccountUpdate4 = db.ClientSettlementAccounts.SingleOrDefault(c => c.AccountNumber == model.SettlementAccount4 && c.CompanyID == model.CompanyID);
-                            SettlementAccountUpdate4.Status = 1;
-                            db.SaveChanges();
-                        }
                     }
                     if (model.SettlementAccount5 != null && model.SelectCurrency5 != null)
                     {
@@ -328,12 +305,6 @@ namespace OnBoarding.Controllers
                             newAccountDetails.CurrencyID = model.SelectCurrency5;
                             newAccountDetails.Status = 1;
                             db.ClientSettlementAccounts.Add(newAccountDetails);
-                            db.SaveChanges();
-                        }
-                        else
-                        {
-                            var SettlementAccountUpdate5 = db.ClientSettlementAccounts.SingleOrDefault(c => c.AccountNumber == model.SettlementAccount5 && c.CompanyID == model.CompanyID);
-                            SettlementAccountUpdate5.Status = 1;
                             db.SaveChanges();
                         }
                     }
