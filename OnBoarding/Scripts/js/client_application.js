@@ -15,12 +15,14 @@ $(document).ready(function () {
 			}
 		});
 
+		//Not working for Chrome
 		$("#terms").click(function () {
 			if ($("#applicant_read_the_content").val() !== "true") {
 				toastr.error('Please scroll through the disclosure text before clicking I Accept.', { positionClass: 'toast-top-center' });
 				return false;
 			}
 		});
+
 	});
 
 	//On Load
@@ -1314,7 +1316,7 @@ $(document).ready(function () {
     });
 
     // Have Representatives
-    var representatives = $('#DesignatedUserCount').val();
+	var representatives = $('#DesignatedUserCount').val();
     if (representatives > 0) {
         $('#RepresentativesDiv').removeClass('d_none');
         $('#UserDiv1').addClass('d_none');
@@ -1322,7 +1324,7 @@ $(document).ready(function () {
         $('#btn-edit-representatives').removeClass('d_none');
     }
     else {
-        $('#RepresentativesDiv').removeClass('d_none');
+        $('#RepresentativesDiv').addClass('d_none');
         $('#btn-save-representatives').removeClass('d_none');
         $('#btn-edit-representatives').addClass('d_none');
     }

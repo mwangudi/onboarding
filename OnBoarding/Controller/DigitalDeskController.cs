@@ -1146,7 +1146,7 @@ namespace OnBoarding.Controllers
                 {
                     Directory.CreateDirectory(path);
                 }
-                filePath = path + DateTime.Now.ToString("yyyyMMdd") + User.Identity.GetUserId() + Path.GetFileName(FileUpload.FileName);
+                filePath = path + DateTime.Now.ToString("yyyyMMdd") + User.Identity.GetUserId() + System.IO.Path.GetFileName(FileUpload.FileName);
                 string extension = Path.GetExtension(FileUpload.FileName);
                 FileUpload.SaveAs(filePath);
 
@@ -1348,7 +1348,7 @@ namespace OnBoarding.Controllers
                 {
                     Directory.CreateDirectory(path);
                 }
-                filePath = path + DateTime.Now.ToString("yyyyMMdd") + User.Identity.GetUserId() + Path.GetFileName(FileUpload.FileName);
+                filePath = path + DateTime.Now.ToString("yyyyMMdd") + User.Identity.GetUserId() + System.IO.Path.GetFileName(FileUpload.FileName);
                 string extension = Path.GetExtension(FileUpload.FileName);
                 FileUpload.SaveAs(filePath);
 

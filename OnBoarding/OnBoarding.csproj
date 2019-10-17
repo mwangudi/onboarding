@@ -2976,7 +2976,6 @@
     <Content Include="Views\Manage\ManageLogins.cshtml" />
     <Content Include="Views\Manage\SetPassword.cshtml" />
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
-    <Content Include="Views\Client\Applications.cshtml" />
     <Content Include="Views\Client\Index.cshtml" />
     <Content Include="Views\Client\ViewAll.cshtml" />
     <Content Include="Assets\jtable\themes\metro\red\jtable.less" />

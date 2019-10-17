@@ -230,6 +230,7 @@ namespace OnBoarding.Controllers
                 //Log Settlement Account Details when yes is selected
                 if (model.HaveSettlementAccount == "Yes")
                 {
+                    //Log Settlement Accounts (1-5)
                     var newAccountDetails = db.ClientSettlementAccounts.Create();
                     if (model.SettlementAccount1 != null && model.InputCurrencyType1 != null)
                     {
@@ -336,73 +337,10 @@ namespace OnBoarding.Controllers
                             db.SaveChanges();
                         }
                     }
-                    if (model.SettlementAccount6 != null && model.InputCurrencyType6 != null)
-                    {
-                        var SettlementAccount6Exists = db.ClientSettlementAccounts.Any(c => c.AccountNumber == model.SettlementAccount6 && c.CompanyID == model.CompanyID);
-                        if (!SettlementAccount6Exists)
-                        {
-                            newAccountDetails.ClientID = RegisteredClientId;
-                            newAccountDetails.CompanyID = model.CompanyID;
-                            newAccountDetails.AccountNumber = model.SettlementAccount6;
-                            newAccountDetails.OtherCurrency = model.InputCurrencyType6;
-                            newAccountDetails.CurrencyID = model.SelectCurrency6;
-                            newAccountDetails.Status = 1;
-                            db.ClientSettlementAccounts.Add(newAccountDetails);
-                            db.SaveChanges();
-                        }
-                        else
-                        {
-                            var SettlementAccountUpdate6 = db.ClientSettlementAccounts.SingleOrDefault(c => c.AccountNumber == model.SettlementAccount6 && c.CompanyID == model.CompanyID);
-                            SettlementAccountUpdate6.Status = 1;
-                            db.SaveChanges();
-                        }
-                    }
-                    if (model.SettlementAccount7 != null && model.InputCurrencyType7 != null)
-                    {
-                        var SettlementAccount7Exists = db.ClientSettlementAccounts.Any(c => c.AccountNumber == model.SettlementAccount7 && c.CompanyID == model.CompanyID);
-                        if (!SettlementAccount7Exists)
-                        {
-                            newAccountDetails.ClientID = RegisteredClientId;
-                            newAccountDetails.CompanyID = model.CompanyID;
-                            newAccountDetails.AccountNumber = model.SettlementAccount7;
-                            newAccountDetails.OtherCurrency = model.InputCurrencyType7;
-                            newAccountDetails.CurrencyID = model.SelectCurrency7;
-                            newAccountDetails.Status = 1;
-                            db.ClientSettlementAccounts.Add(newAccountDetails);
-                            db.SaveChanges();
-                        }
-                        else
-                        {
-                            var SettlementAccountUpdate7 = db.ClientSettlementAccounts.SingleOrDefault(c => c.AccountNumber == model.SettlementAccount7 && c.CompanyID == model.CompanyID);
-                            SettlementAccountUpdate7.Status = 1;
-                            db.SaveChanges();
-                        }
-                    }
-                    if (model.SettlementAccount8 != null && model.InputCurrencyType8 != null)
-                    {
-                        var SettlementAccount8Exists = db.ClientSettlementAccounts.Any(c => c.AccountNumber == model.SettlementAccount8 && c.CompanyID == model.CompanyID);
-                        if (!SettlementAccount8Exists)
-                        {
-                            newAccountDetails.ClientID = RegisteredClientId;
-                            newAccountDetails.CompanyID = model.CompanyID;
-                            newAccountDetails.AccountNumber = model.SettlementAccount8;
-                            newAccountDetails.OtherCurrency = model.InputCurrencyType8;
-                            newAccountDetails.CurrencyID = model.SelectCurrency8;
-                            newAccountDetails.Status = 1;
-                            db.ClientSettlementAccounts.Add(newAccountDetails);
-                            db.SaveChanges();
-                        }
-                        else
-                        {
-                            var SettlementAccountUpdate8 = db.ClientSettlementAccounts.SingleOrDefault(c => c.AccountNumber == model.SettlementAccount6 && c.CompanyID == model.CompanyID);
-                            SettlementAccountUpdate8.Status = 1;
-                            db.SaveChanges();
-                        }
-                    }
                 }
 
                 //Create First Signatory (Signatory 1)
-                if (model.SignatorySurname1 != null || model.SignatoryOtherNames1 != null || model.SignatoryEmail1 != null || model.SignatoryDesignation1 != null)
+                if (model.SignatorySurname1 != null && model.SignatoryOtherNames1 != null && model.SignatoryEmail1 != null && model.SignatoryDesignation1 != null)
                 {
                     //check if Signatory1 Exists
                     var Signatory1Exists = db.ClientSignatories.Any(s => s.EmailAddress == model.SignatoryEmail1 && s.CompanyID == model.CompanyID);
@@ -416,7 +354,7 @@ namespace OnBoarding.Controllers
                                 var file = Request.Files[0];
                                 if (file != null && inputFile.ContentLength > 0)
                                 {
-                                    var fileName = DateTime.Now.ToString("yyyyMMdd") + RegisteredClientId + Path.GetFileName(inputFile.FileName);
+                                    var fileName = DateTime.Now.ToString("yyyyMMdd") + RegisteredClientId + System.IO.Path.GetFileName(inputFile.FileName);
                                     string path = System.IO.Path.Combine(Server.MapPath("~/Content/images/signatures/"), fileName);
                                     file.SaveAs(path);
                                 }
@@ -440,7 +378,7 @@ namespace OnBoarding.Controllers
                             var savedDetails = db.SaveChanges();
                             if(savedDetails <= 0)
                             {
-                                return Json("Error! Unable to save signatory details a", JsonRequestBehavior.AllowGet);
+                                return Json("Error! Unable to save signatory details", JsonRequestBehavior.AllowGet);
                             }
                         }
                         catch (Exception)
@@ -464,7 +402,7 @@ namespace OnBoarding.Controllers
                                         var file = Request.Files[0];
                                         if (file != null && inputFile.ContentLength > 0)
                                         {
-                                            var fileName = DateTime.Now.ToString("yyyyMMdd") + RegisteredClientId + Path.GetFileName(inputFile.FileName);
+                                            var fileName = DateTime.Now.ToString("yyyyMMdd") + RegisteredClientId + System.IO.Path.GetFileName(inputFile.FileName);
                                             string path = System.IO.Path.Combine(Server.MapPath("~/Content/images/signatures/"), fileName);
                                             file.SaveAs(path);
                                             Signatory1ToUpdate.Signature = fileName;
@@ -511,7 +449,7 @@ namespace OnBoarding.Controllers
                 }
 
                 //Create Signatory (Signatory 2)
-                if (model.SignatorySurname2 != null || model.SignatoryOtherNames2 != null || model.SignatoryEmail2 != null || model.SignatoryDesignation2 != null)
+                if (model.SignatorySurname2 != null && model.SignatoryOtherNames2 != null && model.SignatoryEmail2 != null && model.SignatoryDesignation2 != null)
                 {
                     //Check if Signatory already exists in Signatories table
                     var Signatory2Exist = db.ClientSignatories.Any(c => c.EmailAddress == model.SignatoryEmail2 && c.Status == 0 && c.CompanyID == model.CompanyID);
@@ -560,7 +498,7 @@ namespace OnBoarding.Controllers
                 }
 
                 //Create Signatory (Signatory 3)
-                if (model.SignatorySurname3 != null || model.SignatoryOtherNames3 != null || model.SignatoryEmail3 != null || model.SignatoryDesignation3 != null)
+                if (model.SignatorySurname3 != null && model.SignatoryOtherNames3 != null && model.SignatoryEmail3 != null && model.SignatoryDesignation3 != null)
                 {
                     //Check if Signatory already exists in Signatories table
                     var Signatory3Exist = db.ClientSignatories.Any(c => c.EmailAddress == model.SignatoryEmail3 && c.Status == 0 && c.CompanyID == model.CompanyID);
@@ -609,7 +547,7 @@ namespace OnBoarding.Controllers
                 }
 
                 //Create Signatory (Signatory 4)
-                if (model.SignatorySurname4 != null || model.SignatoryOtherNames4 != null || model.SignatoryEmail4 != null || model.SignatoryDesignation4 != null)
+                if (model.SignatorySurname4 != null && model.SignatoryOtherNames4 != null && model.SignatoryEmail4 != null && model.SignatoryDesignation4 != null)
                 {
                     //Check if Signatory already exists in Signatories table
                     var Signatory4Exist = db.ClientSignatories.Any(c => c.EmailAddress == model.SignatoryEmail4 && c.Status == 0 && c.CompanyID == model.CompanyID);
@@ -658,7 +596,7 @@ namespace OnBoarding.Controllers
                 }
 
                 //Create Signatory (Signatory 5)
-                if (model.SignatorySurname5 != null || model.SignatoryOtherNames5 != null || model.SignatoryEmail5 != null || model.SignatoryDesignation5 != null)
+                if (model.SignatorySurname5 != null && model.SignatoryOtherNames5 != null && model.SignatoryEmail5 != null && model.SignatoryDesignation5 != null)
                 {
                     //Check if Signatory already exists in Signatories table
                     var Signatory5Exist = db.ClientSignatories.Any(c => c.EmailAddress == model.SignatoryEmail5 && c.Status == 0 && c.CompanyID == model.CompanyID);
@@ -707,7 +645,7 @@ namespace OnBoarding.Controllers
                 }
 
                 //Log authorised representative (Representative 1)
-                if (model.UserEmail1 != null || model.UserSurname1 != null || model.UserOthernames1 != null || model.UserMobileNumber1 != null)
+                if (model.UserEmail1 != null && model.UserSurname1 != null && model.UserOthernames1 != null && model.UserMobileNumber1 != null)
                 {
                     //Check if representative exists
                     var Representative1Exists = db.DesignatedUsers.Any(c => c.Email == model.UserEmail1 && c.CompanyID == model.CompanyID);
@@ -759,7 +697,7 @@ namespace OnBoarding.Controllers
                 }
 
                 //Log authorised Representative (Representative 2)
-                if (model.UserEmail2 != null || model.UserSurname2 != null || model.UserOthernames2 != null || model.UserMobileNumber2 != null)
+                if (model.UserEmail2 != null && model.UserSurname2 != null && model.UserOthernames2 != null && model.UserMobileNumber2 != null)
                 {
                     var Representative2Exists = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.UserEmail2 && c.Status != 2 && c.CompanyID == model.CompanyID);
                     var RepresentativeIsAClient = db.RegisteredClients.SingleOrDefault(c => c.EmailAddress == model.UserEmail2);
@@ -795,7 +733,7 @@ namespace OnBoarding.Controllers
                 }
 
                 //Log authorised Representative (Representative 3)
-                if (model.UserEmail3 != null || model.UserSurname3 != null || model.UserOthernames3 != null || model.UserMobileNumber3 != null)
+                if (model.UserEmail3 != null && model.UserSurname3 != null && model.UserOthernames3 != null && model.UserMobileNumber3 != null)
                 {
                     var Representative3Exists = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.UserEmail3 && c.CompanyID == model.CompanyID);
                     if (Representative3Exists == null)
@@ -829,7 +767,7 @@ namespace OnBoarding.Controllers
                 }
 
                 //Log authorised Representative (Representative 4)
-                if (model.UserEmail4 != null || model.UserSurname4 != null || model.UserOthernames4 != null || model.UserMobileNumber4 != null)
+                if (model.UserEmail4 != null && model.UserSurname4 != null && model.UserOthernames4 != null && model.UserMobileNumber4 != null)
                 {
                     var Representative4Exists = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.UserEmail4 && c.CompanyID == model.CompanyID);
                     if (Representative4Exists == null)
@@ -862,8 +800,8 @@ namespace OnBoarding.Controllers
                     }
                 }
 
-                //Log authorised Representative (Representative 6)
-                if (model.UserEmail5 != null || model.UserSurname5 != null || model.UserOthernames5 != null || model.UserMobileNumber5 != null)
+                //Log authorised Representative (Representative 5)
+                if (model.UserEmail5 != null && model.UserSurname5 != null && model.UserOthernames5 != null && model.UserMobileNumber5 != null)
                 {
                     var Representative5Exists = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.UserEmail5 && c.CompanyID == model.CompanyID);
                     if (Representative5Exists == null)
@@ -1451,6 +1389,18 @@ namespace OnBoarding.Controllers
             {
                 var CompanyDetails = db.ClientCompanies.SingleOrDefault(a => a.Id == id);
                 ViewBag.CompanyDetails = CompanyDetails;
+
+                //Signatories List
+                List<ClientSignatory> SignatoryList = db.ClientSignatories.Where(a => a.ClientID == CompanyDetails.ClientId && a.CompanyID == id && a.Status != 4).ToList();
+                ViewBag.ClientSignatory = SignatoryList;
+
+                //Designated Users List
+                List<DesignatedUser> DesignatedUsersList = db.DesignatedUsers.Where(a => a.ClientID == CompanyDetails.ClientId && a.CompanyID == id && a.Status != 4).ToList();
+                ViewBag.DesignatedUser = DesignatedUsersList;
+
+                //Get the list of all client's settlement accounts
+                var Query = db.Database.SqlQuery<SettlementAccountsViewModel>("SELECT c.CurrencyName, s.AccountNumber FROM ClientSettlementAccounts s INNER JOIN Currencies c ON c.Id = s.CurrencyID WHERE s.ClientID =  " + "'" + CompanyDetails.ClientId + "'" + " AND s.CompanyID =  " + "'" + id + "'" + " AND s.Status = 1");
+                ViewBag.SettlementAccounts = Query.ToList();
             }
 
             return PartialView();
@@ -1485,7 +1435,7 @@ namespace OnBoarding.Controllers
                                 var file = Request.Files[0];
                                 if (file != null && inputFile.ContentLength > 0)
                                 {
-                                    var fileName = DateTime.Now.ToString("yyyyMMdd") + RegisteredClientId + Path.GetFileName(inputFile.FileName);
+                                    var fileName = DateTime.Now.ToString("yyyyMMdd") + RegisteredClientId + System.IO.Path.GetFileName(inputFile.FileName);
                                     string path = System.IO.Path.Combine(Server.MapPath("~/Content/images/signatures/"), fileName);
                                     file.SaveAs(path);
                                 }
@@ -1493,7 +1443,7 @@ namespace OnBoarding.Controllers
 
                             //Add Details
                             var addSignatory1 = db.ClientSignatories.Create();
-                            var newFileName = DateTime.Now.ToString("yyyyMMdd") + RegisteredClientId + Path.GetFileName(inputFile.FileName);
+                            var newFileName = DateTime.Now.ToString("yyyyMMdd") + RegisteredClientId + System.IO.Path.GetFileName(inputFile.FileName);
                             addSignatory1.ClientID = RegisteredClientId;
                             addSignatory1.Designation = model.SignatoryDesignation1;
                             addSignatory1.Surname = model.SignatorySurname1;
@@ -1522,14 +1472,14 @@ namespace OnBoarding.Controllers
                                 var file = Request.Files[0];
                                 if (file != null && inputFile.ContentLength > 0)
                                 {
-                                    var fileName = DateTime.Now.ToString("yyyyMMdd") + RegisteredClientId + Path.GetFileName(inputFile.FileName);
+                                    var fileName = DateTime.Now.ToString("yyyyMMdd") + RegisteredClientId + System.IO.Path.GetFileName(inputFile.FileName);
                                     string path = System.IO.Path.Combine(Server.MapPath("~/Content/images/signatures/"), fileName);
                                     file.SaveAs(path);
                                 }
                             }
                             //Edit Details
                             var Signatory1ToUpdate = db.ClientSignatories.SingleOrDefault(c => c.EmailAddress == model.SignatoryEmail1);
-                            var newFileName = DateTime.Now.ToString("yyyyMMdd") + RegisteredClientId + Path.GetFileName(inputFile.FileName);
+                            var newFileName = DateTime.Now.ToString("yyyyMMdd") + RegisteredClientId + System.IO.Path.GetFileName(inputFile.FileName);
                             Signatory1ToUpdate.Status = 1;
                             Signatory1ToUpdate.Designation = model.SignatoryDesignation1;
                             Signatory1ToUpdate.Surname = model.SignatorySurname1;
@@ -2729,22 +2679,22 @@ namespace OnBoarding.Controllers
                 var clientCompanyDetails = db.ClientCompanies.SingleOrDefault(s => s.Id == CompanyID);
                 ViewBag.ApplicationInfo = clientDetails;
                 ViewBag.CompanyInfo = clientCompanyDetails;
-
-                //Signatories List
-                List<ClientSignatory> SignatoryList = db.ClientSignatories.Where(a => a.ClientID == clientID && a.CompanyID == CompanyID && a.Status != 4).ToList();
-                ViewBag.ClientSignatory = SignatoryList;
-
-                //Designated Users List
-                List<DesignatedUser> DesignatedUsersList = db.DesignatedUsers.Where(a => a.ClientID == clientID && a.CompanyID == CompanyID && a.Status != 4).ToList();
-                ViewBag.DesignatedUser = DesignatedUsersList;
-
-                //Get the list of all client's settlement accounts
-                var Query = db.Database.SqlQuery<SettlementAccountsViewModel>("SELECT c.CurrencyName, s.AccountNumber FROM ClientSettlementAccounts s INNER JOIN Currencies c ON c.Id = s.CurrencyID WHERE s.ClientID =  " + "'" + getApplicationInfo.ClientID + "'" + " AND s.CompanyID =  " + "'" + getApplicationInfo.CompanyID + "'" + " AND s.Status = 1");
-                ViewBag.SettlementAccounts = Query.ToList();
-
+                
                 //Data For Controller Post
                 ViewData["ApplicationId"] = getApplicationInfo.Id;
                 ViewData["CompanyEmail"] = clientDetails.EmailAddress;
+
+                //Get the list of all client's settlement accounts
+                var Query = db.Database.SqlQuery<SettlementAccountsViewModel>("SELECT c.CurrencyName, s.AccountNumber, s.CurrencyId FROM ClientSettlementAccounts s INNER JOIN Currencies c ON c.Id = s.CurrencyID WHERE s.Status = 1 AND s.ClientID =  " + "'" + clientDetails.Id + "'" + " AND  s.CompanyID =  " + "'" + CompanyID + "'" + " AND s.Status = 1");
+                ViewBag.SettlementAccounts = Query.ToList();
+
+                //Signatories List
+                List<ClientSignatory> SignatoryList = db.ClientSignatories.Where(a => a.ClientID == clientDetails.Id && a.CompanyID == CompanyID && a.Status != 4).ToList();
+                ViewBag.ClientSignatory = SignatoryList;
+
+                //Designated Users List
+                List<DesignatedUser> DesignatedUsersList = db.DesignatedUsers.Where(a => a.ClientID == clientDetails.Id && a.CompanyID == CompanyID && a.Status != 4).ToList();
+                ViewBag.DesignatedUser = DesignatedUsersList;
             }
             return PartialView();
         }

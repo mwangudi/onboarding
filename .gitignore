@@ -342,3 +342,7 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+
+# Local directories
+OnBoarding/Content/clientuploads/
+OnBoarding/Content/images/
