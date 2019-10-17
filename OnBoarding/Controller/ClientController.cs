@@ -1209,16 +1209,55 @@ namespace OnBoarding.Controllers
                     var signatoryIsARepresentative = db.DesignatedUsers.Any(c => c.Email == model.SignatoryEmail1.ToLower() && c.CompanyID == model.CompanyID && c.ClientID == model.ClientID);
                     if (signatoryIsARepresentative)
                     {
-                        //Update representatives signature
-                        var RepresentativeToUpdate = db.DesignatedUsers.First(c => c.Email == model.SignatoryEmail1.ToLower() && c.CompanyID == model.CompanyID && c.ClientID == model.ClientID);
-                        var Signatory1 = db.ClientSignatories.SingleOrDefault(c => c.EmailAddress == model.SignatoryEmail1.ToLower() && c.CompanyID == model.CompanyID && c.ClientID == model.ClientID);
-                        RepresentativeToUpdate.Signature = Signatory1.Signature;
-                        db.SaveChanges();
-                    }
+                        try
+                        {
+                            //1. Update representatives signature
+                            var RepresentativeToUpdate = db.DesignatedUsers.First(c => c.Email == model.SignatoryEmail1.ToLower() && c.CompanyID == model.CompanyID && c.ClientID == model.ClientID);
+                            var Signatory1 = db.ClientSignatories.SingleOrDefault(c => c.EmailAddress == model.SignatoryEmail1.ToLower() && c.CompanyID == model.CompanyID && c.ClientID == model.ClientID);
+                            RepresentativeToUpdate.Signature = Signatory1.Signature;
+                            db.SaveChanges();
 
-                    //2. Log new application
-                    try
+                            //2. Log new application
+                            var newApplication = db.EMarketApplications.Create();
+                            newApplication.AcceptedTAC = true; //model.terms;
+                            newApplication.ClientID = RegisteredClientId;
+                            newApplication.CompanyID = model.CompanyID;
+                            newApplication.DesignatedUsers = DesignatedUsersCount;
+                            newApplication.DateCreated = DateTime.Now;
+                            newApplication.Signatories = SignatoryCount;
+                            newApplication.SignatoriesApproved = 1;
+                            newApplication.UsersApproved = 1;
+                            newApplication.UsersDateApproved = DateTime.Now;
+                            newApplication.Status = 1;
+                            newApplication.Emt = EMarketSignUp;
+                            newApplication.SSI = SSI;
+                            db.EMarketApplications.Add(newApplication);
+                            var applicationSaved = db.SaveChanges();
+                            if (applicationSaved > 0)
+                            {
+                                //Mark HasApplication True for Client Company
+                                var updateClientCompany = db.ClientCompanies.SingleOrDefault(c => c.Id == model.CompanyID);
+                                updateClientCompany.HasApplication = true;
+                                db.SaveChanges();
+                            }
+                            else
+                            {
+                                return Json("Error! Unable to create application details", JsonRequestBehavior.AllowGet);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            return Json("" + ex.Message + "", JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                    else
                     {
+                        // 1. Mark Signatory 1 as status 1
+                        var updateSignatory1 = db.ClientSignatories.SingleOrDefault(c => c.EmailAddress == model.SignatoryEmail1.ToLower() && c.CompanyID == model.CompanyID && c.ClientID == model.ClientID);
+                        updateSignatory1.Status = 1;
+                        db.SaveChanges();
+
+                        //2. Log new application
                         var newApplication = db.EMarketApplications.Create();
                         newApplication.AcceptedTAC = true; //model.terms;
                         newApplication.ClientID = RegisteredClientId;
@@ -1227,8 +1266,6 @@ namespace OnBoarding.Controllers
                         newApplication.DateCreated = DateTime.Now;
                         newApplication.Signatories = SignatoryCount;
                         newApplication.SignatoriesApproved = 1;
-                        newApplication.UsersApproved = 1;
-                        newApplication.UsersDateApproved = DateTime.Now;
                         newApplication.Status = 1;
                         newApplication.Emt = EMarketSignUp;
                         newApplication.SSI = SSI;
@@ -1245,10 +1282,6 @@ namespace OnBoarding.Controllers
                         {
                             return Json("Error! Unable to create application details", JsonRequestBehavior.AllowGet);
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        return Json("" + ex.Message + "", JsonRequestBehavior.AllowGet);
                     }
 
                     //3. Send Application Complete Email to Company Email
