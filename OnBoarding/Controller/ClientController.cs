@@ -438,6 +438,7 @@ namespace OnBoarding.Controllers
                             addSignatory2.EmailAddress = model.SignatoryEmail2.ToLower();
                             addSignatory2.PhoneNumber = model.SignatoryPhoneNumber2;
                             addSignatory2.DateCreated = DateTime.Now;
+                            addSignatory2.AcceptedTerms = false;
                             addSignatory2.Status = 0;
                             db.ClientSignatories.Add(addSignatory2);
                             db.SaveChanges();
@@ -487,6 +488,7 @@ namespace OnBoarding.Controllers
                             addSignatory3.EmailAddress = model.SignatoryEmail3.ToLower();
                             addSignatory3.PhoneNumber = model.SignatoryPhoneNumber3;
                             addSignatory3.DateCreated = DateTime.Now;
+                            addSignatory3.AcceptedTerms = false;
                             addSignatory3.Status = 0;
                             db.ClientSignatories.Add(addSignatory3);
                             db.SaveChanges();
@@ -536,6 +538,7 @@ namespace OnBoarding.Controllers
                             addSignatory4.EmailAddress = model.SignatoryEmail4.ToLower();
                             addSignatory4.PhoneNumber = model.SignatoryPhoneNumber4;
                             addSignatory4.DateCreated = DateTime.Now;
+                            addSignatory4.AcceptedTerms = false;
                             addSignatory4.Status = 0;
                             db.ClientSignatories.Add(addSignatory4);
                             db.SaveChanges();
@@ -585,6 +588,7 @@ namespace OnBoarding.Controllers
                             addSignatory5.EmailAddress = model.SignatoryEmail5.ToLower();
                             addSignatory5.PhoneNumber = model.SignatoryPhoneNumber5;
                             addSignatory5.DateCreated = DateTime.Now;
+                            addSignatory5.AcceptedTerms = false;
                             addSignatory5.Status = 0;
                             db.ClientSignatories.Add(addSignatory5);
                             db.SaveChanges();
