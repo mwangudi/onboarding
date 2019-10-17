@@ -52,7 +52,6 @@ namespace OnBoarding.Controllers
             {
                 var currentUserId = User.Identity.GetUserId();
                 var _userDetails = db.AspNetUsers.SingleOrDefault(e => e.Id == currentUserId);
-                //var signatoryClientId = db.ClientSignatories.SingleOrDefault(c => c.EmailAddress == _userDetails.Email);
 
                 var Query = db.Database.SqlQuery<ClientApplicationsViewModel>("SELECT e.Id ApplicationID, c.ClientID, c.CompanyID, o.CompanyName Client, t.StatusName Status, c.AcceptedTerms AcceptedTAC, CAST(c.DateCreated AS DATETIME) DateCreated FROM ClientSignatories c INNER JOIN ClientCompanies o ON o.Id = c.CompanyID INNER JOIN EMarketApplications e ON e.CompanyID = c.CompanyID  INNER JOIN tblStatus t ON t.Id = e.Status WHERE c.EmailAddress = " + "'" + _userDetails.Email + "'" + " ORDER BY e.Id DESC");
                 return Query.ToList();
@@ -73,7 +72,7 @@ namespace OnBoarding.Controllers
                 
                 //Check if application has been approved
                 var ApprovedApplications = db.SignatoryApprovals.Any(e => e.SignatoryID == signatoryId.Id && e.ApplicationID == applicationId);
-                var DeclinedApplication = db.EMarketApplications.Any(e => e.Id == applicationId && e.Status == 2);
+                var DeclinedApplication = db.EMarketApplications.Any(e => e.Id == applicationId && e.Status == 4);
                 if (ApprovedApplications || DeclinedApplication)
                 {
                     ViewData["Approved"] = 1;

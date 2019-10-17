@@ -51,18 +51,18 @@
                                     <td> @item.AcceptedTAC</td>
                                     <td> @item.DateCreated</td>
                                     <td>
-                                        @if (ViewData["Approved"] == null)
+                                        @if (item.Status == "Active")
                                         {
-											<center>
-												<button data-id='@item.ApplicationID' data-cid='@item.CompanyID' type="submit" name="submit" class="btn btn-outline-primary btn-md btn-agent-id w_full">
-													<i class="fa fa fa-check-circle"></i> View Details
-												</button>
-											</center>
+                                            <center>
+                                                <button data-id='@item.ApplicationID' data-cid='@item.CompanyID' type="submit" name="submit" class="btn btn-outline-primary btn-md btn-agent-id w_full">
+                                                    <i class="fa fa fa-check-circle"></i> View Details
+                                                </button>
+                                            </center>
                                         }
                                         else
                                         {
                                             <center>
-                                                <p class="text-success"><i class="fa fa-check-circle"></i> Approved </p>
+                                                <i class="fa fa-shield-alt fa-2x" style="color:red;"></i>
                                             </center>
                                         }
                                     </td>

@@ -48,7 +48,8 @@ namespace OnBoarding.Controllers
             using (DBModel db = new DBModel())
             {
                 var currentUserId = User.Identity.GetUserId();
-                var userClientId = db.DesignatedUsers.First(c => c.UserAccountID == currentUserId);
+                var _userDetails = db.AspNetUsers.SingleOrDefault(e => e.Id == currentUserId);
+                var userClientId = db.DesignatedUsers.FirstOrDefault(c => c.Email == _userDetails.Email);
                 var ApprovedApplications = db.DesignatedUserApprovals.Count(e => e.UserID == userClientId.Id);
 
                 if (ApprovedApplications >= 1)
@@ -82,7 +83,8 @@ namespace OnBoarding.Controllers
                 ViewBag.CompanyInfo = companyDetails;
 
                 var currentUserId = User.Identity.GetUserId();
-                var representativeDetails = db.DesignatedUsers.SingleOrDefault(d => d.UserAccountID == currentUserId && d.CompanyID == companyId);
+                var _userDetails = db.AspNetUsers.SingleOrDefault(e => e.Id == currentUserId);
+                var representativeDetails = db.DesignatedUsers.SingleOrDefault(d => d.Email == _userDetails.Email && d.CompanyID == companyId);
                 
                 //Data For Controller Post
                 ViewData["ApplicationId"] = getApplicationInfo.Id;
@@ -97,6 +99,18 @@ namespace OnBoarding.Controllers
                 //Get the list of all client's settlement accounts
                 var Query = db.Database.SqlQuery<SettlementAccountsViewModel>("SELECT c.CurrencyName, s.AccountNumber FROM ClientSettlementAccounts s INNER JOIN Currencies c ON c.Id = s.CurrencyID WHERE s.Status = 1 AND s.ClientID =  " + "'" + clientID + "'" + " AND s.CompanyID =  " + "'" + getApplicationInfo.CompanyID + "'" + "  AND s.Status = 1");
                 ViewBag.SettlementAccounts = Query.ToList();
+
+                //Check if application has been approved
+                var ApprovedApplications = db.DesignatedUserApprovals.Any(e => e.UserID == representativeDetails.Id && e.ApplicationID == applicationId);
+                var DeclinedApplication = db.EMarketApplications.Any(e => e.Id == applicationId && e.Status == 4);
+                if (ApprovedApplications || DeclinedApplication)
+                {
+                    ViewData["Approved"] = 1;
+                }
+                else
+                {
+                    ViewData["Approved"] = 0;
+                }
             }
 
             return PartialView();
@@ -115,7 +129,8 @@ namespace OnBoarding.Controllers
                 using (DBModel db = new DBModel())
                 {
                     var currentUserId = User.Identity.GetUserId();
-                    var userClientId = db.DesignatedUsers.First(c => c.UserAccountID == currentUserId && c.CompanyID == model.CompanyID);
+                    var _userDetails = db.AspNetUsers.SingleOrDefault(e => e.Id == currentUserId);
+                    var userClientId = db.DesignatedUsers.FirstOrDefault(c => c.Email == _userDetails.Email && c.CompanyID == model.CompanyID);
                     var _action = "ApproveNomination";
 
                     try
@@ -144,7 +159,7 @@ namespace OnBoarding.Controllers
                         try
                         {
                             //Save File name to Database  //Update Representative Details
-                            var DesignatedUserToUpdate = db.DesignatedUsers.FirstOrDefault(c => c.UserAccountID == currentUserId);
+                            var DesignatedUserToUpdate = db.DesignatedUsers.FirstOrDefault(c => c.Email == userClientId.Email);
                             DesignatedUserToUpdate.Signature = pic;
                             DesignatedUserToUpdate.Mobile = model.VerifyPhone;
                             db.SaveChanges();

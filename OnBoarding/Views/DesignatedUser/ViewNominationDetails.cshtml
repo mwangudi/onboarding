@@ -141,18 +141,19 @@
 				</div>
 				<div class="form-group row">
 					<div class="col-12 col-lg-8 col-xs-12">
-						<div class="input-group accept-terms">
-							<input type="text" id="error-check" class="form-control">
-							<input type="hidden" id="ApplicationId" name="ApplicationId" value="@ViewData["ApplicationId"]" class="form-control">
-							<input type="hidden" id="CompanyEmail" name="CompanyEmail" value="@ViewData["CompanyEmail"]" class="form-control">
-							<input type="hidden" id="CompanyName" name="CompanyName" value="@ViewBag.CompanyInfo.CompanyName" class="form-control">
-							<input type="hidden" id="CompanySurname" name="CompanySurname" value="@ViewBag.ApplicationInfo.Surname" class="form-control">
-							<input type="hidden" id="CompanyID" name="CompanyID" value="@ViewBag.CompanyInfo.Id" class="form-control">
-							<input type="hidden" value="false" name="applicant_read_the_content" id="applicant_read_the_content" />
-							<span class="input-group-addon beautiful" id="beautifulcheckbox">
-								<input value="true" type="checkbox" id="terms" name="terms" class="form-control">
-							</span>
-						</div>
+                        <div class="input-group accept-terms">
+                            <input type="text" id="error-check" class="form-control">
+                            <input type="hidden" id="ApplicationId" name="ApplicationId" value="@ViewData["ApplicationId"]" class="form-control">
+                            <input type="hidden" id="CompanyEmail" name="CompanyEmail" value="@ViewData["CompanyEmail"]" class="form-control">
+                            <input type="hidden" id="CompanyName" name="CompanyName" value="@ViewBag.CompanyInfo.CompanyName" class="form-control">
+                            <input type="hidden" id="CompanySurname" name="CompanySurname" value="@ViewBag.ApplicationInfo.Surname" class="form-control">
+                            <input type="hidden" id="CompanyID" name="CompanyID" value="@ViewBag.CompanyInfo.Id" class="form-control">
+                            <input type="hidden" id="Approved" name="Approved" value="@ViewData["Approved"]" class="form-control">
+                            <input type="hidden" value="false" name="applicant_read_the_content" id="applicant_read_the_content" />
+                            <span class="input-group-addon beautiful" id="beautifulcheckbox">
+                                <input value="true" type="checkbox" id="terms" name="terms" class="form-control">
+                            </span>
+                        </div>
 					</div>
 					<div class="col-12 col-md-4 col-xs-12">
 						<div class="form-wizard-buttons">
@@ -173,7 +174,7 @@
 						<input name="VerifyPhone" id="VerifyPhone" type="text" class="form-control" value="@ViewData["RepresentativePhone"]">
 					</div>
 					<div class="col-12 col-lg-4 col-sm-4 imgUp">
-						<label>Upload your scanned signature: <span>*</span></label>
+                        <h6><b>Upload your scanned signature</b><span>*</span></h6>
 						<div class="imagePreview"></div>
 						<label class="btn btn-primary" style="color:#fff">
 							Upload Signature <input id="inputFile" name="inputFile" type="file" class="uploadFile img" value="Upload Signature" style="width: 0px;height: 0px;overflow: hidden;">
@@ -298,7 +299,14 @@
 				$("#applicant_read_the_content").val("true");
 			}
 		});
-		
+
+        if ($('#Approved').val() == 1) {
+            $('.btn-next').addClass('d_none');
+        }
+        else {
+            $('.btn-next').removeClass('d_none');
+        }
+
 		//Close modal
 		$('#closemodal').on('click', function () {
 			$('#LoadUpModal').modal('hide');
