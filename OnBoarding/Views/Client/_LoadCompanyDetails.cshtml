@@ -3,6 +3,9 @@
 		<label>Company Name: <span>*</span></label>
 		<input type="text" id="CompanyName" name="CompanyName" placeholder="Company Name" value="@ViewBag.CompanyDetails.CompanyName" class="form-control" />
 		<input name="CompanyID" id="CompanyID" type="hidden" value="@ViewBag.CompanyDetails.Id">
+		<input name="SettlementAccountsCount" id="SettlementAccountsCount" type="hidden" value="@ViewBag.SettlementAccounts.Count">
+		<input name="ClientSignatoryCount" id="ClientSignatoryCount" type="hidden" value="@ViewBag.ClientSignatory.Count">
+		<input name="DesignatedUserCount" id="DesignatedUserCount" type="hidden" value="@ViewBag.DesignatedUser.Count">
 	</div>
 	<div class="col-12 col-sm-6 col-lg-6">
 		<label>Company Registration Number: <span>*</span></label>
