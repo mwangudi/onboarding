@@ -2683,6 +2683,18 @@ namespace OnBoarding.Controllers
                 //Data For Controller Post
                 ViewData["ApplicationId"] = getApplicationInfo.Id;
                 ViewData["CompanyEmail"] = clientDetails.EmailAddress;
+
+                //Get the list of all client's settlement accounts
+                var Query = db.Database.SqlQuery<SettlementAccountsViewModel>("SELECT c.CurrencyName, s.AccountNumber, s.CurrencyId FROM ClientSettlementAccounts s INNER JOIN Currencies c ON c.Id = s.CurrencyID WHERE s.Status = 1 AND s.ClientID =  " + "'" + clientDetails.Id + "'" + " AND  s.CompanyID =  " + "'" + CompanyID + "'" + " AND s.Status = 1");
+                ViewBag.SettlementAccounts = Query.ToList();
+
+                //Signatories List
+                List<ClientSignatory> SignatoryList = db.ClientSignatories.Where(a => a.ClientID == clientDetails.Id && a.CompanyID == CompanyID && a.Status != 4).ToList();
+                ViewBag.ClientSignatory = SignatoryList;
+
+                //Designated Users List
+                List<DesignatedUser> DesignatedUsersList = db.DesignatedUsers.Where(a => a.ClientID == clientDetails.Id && a.CompanyID == CompanyID && a.Status != 4).ToList();
+                ViewBag.DesignatedUser = DesignatedUsersList;
             }
             return PartialView();
         }

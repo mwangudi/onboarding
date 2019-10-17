@@ -15,6 +15,7 @@ $(document).ready(function () {
 			}
 		});
 
+		//Not working for Chrome
 		$("#terms").click(function () {
 			if ($("#applicant_read_the_content").val() !== "true") {
 				toastr.error('Please scroll through the disclosure text before clicking I Accept.', { positionClass: 'toast-top-center' });
