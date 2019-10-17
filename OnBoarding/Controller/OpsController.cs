@@ -247,15 +247,15 @@ namespace OnBoarding.Controllers
                             var deleteApplication = db.SaveChanges();
 
                             //Delete Signatories
-                            db.ClientSignatories.RemoveRange(db.ClientSignatories.Where(c => c.ClientID == ClientDetails.Id));
+                            db.ClientSignatories.RemoveRange(db.ClientSignatories.Where(c => c.ClientID == ClientDetails.Id && c.CompanyID == ApplicationUpdate.CompanyID));
                             var deleteSignatories = db.SaveChanges();
 
                             //Delete Representatives
-                            db.DesignatedUsers.RemoveRange(db.DesignatedUsers.Where(c => c.ClientID == ClientDetails.Id));
+                            db.DesignatedUsers.RemoveRange(db.DesignatedUsers.Where(c => c.ClientID == ClientDetails.Id && c.CompanyID == ApplicationUpdate.CompanyID));
                             var deleteUsers = db.SaveChanges();
 
                             //Delete Settlement Accounts
-                            db.ClientSettlementAccounts.RemoveRange(db.ClientSettlementAccounts.Where(c => c.ClientID == ClientDetails.Id));
+                            db.ClientSettlementAccounts.RemoveRange(db.ClientSettlementAccounts.Where(c => c.ClientID == ClientDetails.Id && c.CompanyID == ApplicationUpdate.CompanyID));
                             db.SaveChanges();
 
                             if (deleteApplication > 0 && deleteUsers > 0 && deleteSignatories > 0)

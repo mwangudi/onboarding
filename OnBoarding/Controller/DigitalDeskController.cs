@@ -2605,36 +2605,15 @@ namespace OnBoarding.Controllers
                             db.SaveChanges();
 
                             //Delete Signatories
-                            db.ClientSignatories.RemoveRange(db.ClientSignatories.Where(c => c.ClientID == ClientDetails.Id));
+                            db.ClientSignatories.RemoveRange(db.ClientSignatories.Where(c => c.ClientID == ClientDetails.Id && c.CompanyID == ApplicationUpdate.CompanyID));
                             db.SaveChanges();
 
-                            /*var newDeletedEntry = db.DeletedEntities.Create();
-                            newDeletedEntry.EntityId = ClientDetails.Id;
-                            newDeletedEntry.EntityTable = "ClientSignatories";
-                            newDeletedEntry.EntityUId = ClientDetails.UserAccountID;
-                            newDeletedEntry.DeletedBy = currentUserId;
-                            newDeletedEntry.DateDeleted = DateTime.Now;
-                            newDeletedEntry.EntityName = ClientDetails.Surname + " " + ClientDetails.OtherNames;
-                            newDeletedEntry.EntityEmail = ClientDetails.EmailAddress;
-                            newDeletedEntry.EntityPhone = ClientDetails.PhoneNumber;
-                            db.DeletedEntities.Add(newDeletedEntry);
-                            var recordDeleted = db.SaveChanges();
-                            if (recordDeleted > 0)
-                            {
-                                db.ClientSignatories.RemoveRange(db.ClientSignatories.Where(c => c.ClientID == ClientDetails.Id));
-                                db.SaveChanges();
-                            }
-                            else
-                            {
-                                return Json("Unable to delete signatory details!", JsonRequestBehavior.AllowGet);
-                            }*/
-
                             //Delete Representatives
-                            db.DesignatedUsers.RemoveRange(db.DesignatedUsers.Where(c => c.ClientID == ClientDetails.Id));
+                            db.DesignatedUsers.RemoveRange(db.DesignatedUsers.Where(c => c.ClientID == ClientDetails.Id && c.CompanyID == ApplicationUpdate.CompanyID));
                             db.SaveChanges();
 
                             //Delete Settlement Accounts
-                            db.ClientSettlementAccounts.RemoveRange(db.ClientSettlementAccounts.Where(c => c.ClientID == ClientDetails.Id));
+                            db.ClientSettlementAccounts.RemoveRange(db.ClientSettlementAccounts.Where(c => c.ClientID == ClientDetails.Id && c.CompanyID == ApplicationUpdate.CompanyID));
                             var recordSaved = db.SaveChanges();
 
                             //Send email if true
