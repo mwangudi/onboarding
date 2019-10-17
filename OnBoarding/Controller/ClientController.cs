@@ -232,7 +232,7 @@ namespace OnBoarding.Controllers
                 {
                     //Log Settlement Accounts (1-5)
                     var newAccountDetails = db.ClientSettlementAccounts.Create();
-                    if (model.SettlementAccount1 != null && model.InputCurrencyType1 != null)
+                    if (model.SettlementAccount1 != null && model.SelectCurrency1 != null)
                     {
                         var SettlementAccount1Exists = db.ClientSettlementAccounts.Any(c => c.AccountNumber == model.SettlementAccount1 && c.CompanyID == model.CompanyID);
                         if (!SettlementAccount1Exists) 
@@ -253,7 +253,7 @@ namespace OnBoarding.Controllers
                             db.SaveChanges();
                         }
                     }
-                    if (model.SettlementAccount2 != null && model.InputCurrencyType2 != null)
+                    if (model.SettlementAccount2 != null && model.SelectCurrency2 != null)
                     {
                         var SettlementAccount2Exists = db.ClientSettlementAccounts.Any(c => c.AccountNumber == model.SettlementAccount2 && c.CompanyID == model.CompanyID);
                         if (!SettlementAccount2Exists)
@@ -274,7 +274,7 @@ namespace OnBoarding.Controllers
                             db.SaveChanges();
                         }
                     }
-                    if (model.SettlementAccount3 != null && model.InputCurrencyType3 != null)
+                    if (model.SettlementAccount3 != null && model.SelectCurrency3 != null)
                     {
                         var SettlementAccount3Exists = db.ClientSettlementAccounts.Any(c => c.AccountNumber == model.SettlementAccount3 && c.CompanyID == model.CompanyID);
                         if (!SettlementAccount3Exists)
@@ -295,7 +295,7 @@ namespace OnBoarding.Controllers
                             db.SaveChanges();
                         }
                     }
-                    if (model.SettlementAccount4 != null && model.InputCurrencyType4 != null)
+                    if (model.SettlementAccount4 != null && model.SelectCurrency4 != null)
                     {
                         var SettlementAccount4Exists = db.ClientSettlementAccounts.Any(c => c.AccountNumber == model.SettlementAccount4 && c.CompanyID == model.CompanyID);
                         if (!SettlementAccount4Exists)
@@ -316,7 +316,7 @@ namespace OnBoarding.Controllers
                             db.SaveChanges();
                         }
                     }
-                    if (model.SettlementAccount5 != null && model.InputCurrencyType5 != null)
+                    if (model.SettlementAccount5 != null && model.SelectCurrency5 != null)
                     {
                         var SettlementAccount5Exists = db.ClientSettlementAccounts.Any(c => c.AccountNumber == model.SettlementAccount5 && c.CompanyID == model.CompanyID);
                         if (!SettlementAccount5Exists)
@@ -2017,19 +2017,18 @@ namespace OnBoarding.Controllers
                 //Log New Settlement Account Details when yes is selected
                 if (model.HaveSettlementAccount == "Yes")
                 {
-                    try
+                    //Check if settlements exist
+                    var SettlementAccountExists = db.ClientSettlementAccounts.Any(c => c.ClientID == RegisteredClientId && c.CompanyID == model.CompanyID);
+                    if (SettlementAccountExists)
                     {
-                        //Check if settlements exist
-                        var SettlementAccountExists = db.ClientSettlementAccounts.Any(c => c.ClientID == RegisteredClientId && c.CompanyID == model.CompanyID);
-                        if (SettlementAccountExists)
+                        //Clear all if exists exist
+                        db.ClientSettlementAccounts.RemoveRange(db.ClientSettlementAccounts.Where(r => r.ClientID == RegisteredClientId && r.CompanyID == model.CompanyID));
+                        //Add new SettlementAccounts 1-5 after clear
+                        try
                         {
-                            //Clear all if exists exist
-                            db.ClientSettlementAccounts.RemoveRange(db.ClientSettlementAccounts.Where(r => r.ClientID == RegisteredClientId && r.CompanyID == model.CompanyID));
-
-                            //Add new SettlementAccounts 1-8 after clear
                             //Add SettlementAccount1
                             var newAccountDetails = db.ClientSettlementAccounts.Create();
-                            if (model.SettlementAccount1 != null || model.InputCurrencyType1 != null)
+                            if (model.SettlementAccount1 != null && model.SelectCurrency1 != null)
                             {
                                 newAccountDetails.ClientID = RegisteredClientId;
                                 newAccountDetails.CompanyID = model.CompanyID;
@@ -2040,7 +2039,8 @@ namespace OnBoarding.Controllers
                                 db.ClientSettlementAccounts.Add(newAccountDetails);
                                 db.SaveChanges();
                             }
-                            if (model.SettlementAccount2 != null || model.InputCurrencyType2 != null)
+                                 
+                            if (model.SettlementAccount2 != null && model.SelectCurrency2 != null)
                             {
                                 newAccountDetails.ClientID = RegisteredClientId;
                                 newAccountDetails.CompanyID = model.CompanyID;
@@ -2051,7 +2051,7 @@ namespace OnBoarding.Controllers
                                 db.ClientSettlementAccounts.Add(newAccountDetails);
                                 db.SaveChanges();
                             }
-                            if (model.SettlementAccount3 != null || model.InputCurrencyType3 != null)
+                            if (model.SettlementAccount3 != null && model.SelectCurrency3 != null)
                             {
                                 newAccountDetails.ClientID = RegisteredClientId;
                                 newAccountDetails.CompanyID = model.CompanyID;
@@ -2062,7 +2062,7 @@ namespace OnBoarding.Controllers
                                 db.ClientSettlementAccounts.Add(newAccountDetails);
                                 db.SaveChanges();
                             }
-                            if (model.SettlementAccount4 != null || model.InputCurrencyType4 != null)
+                            if (model.SettlementAccount4 != null && model.SelectCurrency4 != null)
                             {
                                 newAccountDetails.ClientID = RegisteredClientId;
                                 newAccountDetails.CompanyID = model.CompanyID;
@@ -2073,7 +2073,7 @@ namespace OnBoarding.Controllers
                                 db.ClientSettlementAccounts.Add(newAccountDetails);
                                 db.SaveChanges();
                             }
-                            if (model.SettlementAccount5 != null || model.InputCurrencyType5 != null)
+                            if (model.SettlementAccount5 != null && model.SelectCurrency5 != null)
                             {
                                 newAccountDetails.ClientID = RegisteredClientId;
                                 newAccountDetails.CompanyID = model.CompanyID;
@@ -2084,46 +2084,21 @@ namespace OnBoarding.Controllers
                                 db.ClientSettlementAccounts.Add(newAccountDetails);
                                 db.SaveChanges();
                             }
-                            if (model.SettlementAccount6 != null || model.InputCurrencyType6 != null)
-                            {
-                                newAccountDetails.ClientID = RegisteredClientId;
-                                newAccountDetails.CompanyID = model.CompanyID;
-                                newAccountDetails.AccountNumber = model.SettlementAccount6;
-                                newAccountDetails.OtherCurrency = model.InputCurrencyType6;
-                                newAccountDetails.CurrencyID = model.SelectCurrency6;
-                                newAccountDetails.Status = 1;
-                                db.ClientSettlementAccounts.Add(newAccountDetails);
-                                db.SaveChanges();
-                            }
-                            if (model.SettlementAccount7 != null || model.InputCurrencyType7 != null)
-                            {
-                                newAccountDetails.ClientID = RegisteredClientId;
-                                newAccountDetails.CompanyID = model.CompanyID;
-                                newAccountDetails.AccountNumber = model.SettlementAccount7;
-                                newAccountDetails.OtherCurrency = model.InputCurrencyType7;
-                                newAccountDetails.CurrencyID = model.SelectCurrency7;
-                                newAccountDetails.Status = 1;
-                                db.ClientSettlementAccounts.Add(newAccountDetails);
-                                db.SaveChanges();
-                            }
-                            if (model.SettlementAccount8 != null || model.InputCurrencyType8 != null)
-                            {
-                                newAccountDetails.ClientID = RegisteredClientId;
-                                newAccountDetails.CompanyID = model.CompanyID;
-                                newAccountDetails.AccountNumber = model.SettlementAccount8;
-                                newAccountDetails.OtherCurrency = model.InputCurrencyType8;
-                                newAccountDetails.CurrencyID = model.SelectCurrency8;
-                                newAccountDetails.Status = 1;
-                                db.ClientSettlementAccounts.Add(newAccountDetails);
-                                db.SaveChanges();
-                            } 
+
                             return Json("success", JsonRequestBehavior.AllowGet);
                         }
-                        else
+                        catch (Exception ex)
+                        {
+                            return Json("" + ex.Message + "", JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                    else
+                    {
+                        try
                         {
                             //Add SettlementAccount 1-8 if exists
                             var newAccountDetails = db.ClientSettlementAccounts.Create();
-                            if (model.SettlementAccount1 != null || model.InputCurrencyType1 != null)
+                            if (model.SettlementAccount1 != null && model.SelectCurrency1 != null)
                             {
                                 newAccountDetails.ClientID = RegisteredClientId;
                                 newAccountDetails.CompanyID = model.CompanyID;
@@ -2134,7 +2109,7 @@ namespace OnBoarding.Controllers
                                 db.ClientSettlementAccounts.Add(newAccountDetails);
                                 db.SaveChanges();
                             }
-                            if (model.SettlementAccount2 != null || model.InputCurrencyType2 != null)
+                            if (model.SettlementAccount2 != null && model.SelectCurrency2 != null)
                             {
                                 newAccountDetails.ClientID = RegisteredClientId;
                                 newAccountDetails.CompanyID = model.CompanyID;
@@ -2145,7 +2120,7 @@ namespace OnBoarding.Controllers
                                 db.ClientSettlementAccounts.Add(newAccountDetails);
                                 db.SaveChanges();
                             }
-                            if (model.SettlementAccount3 != null || model.InputCurrencyType3 != null)
+                            if (model.SettlementAccount3 != null && model.SelectCurrency3 != null)
                             {
                                 newAccountDetails.ClientID = RegisteredClientId;
                                 newAccountDetails.CompanyID = model.CompanyID;
@@ -2156,7 +2131,7 @@ namespace OnBoarding.Controllers
                                 db.ClientSettlementAccounts.Add(newAccountDetails);
                                 db.SaveChanges();
                             }
-                            if (model.SettlementAccount4 != null || model.InputCurrencyType4 != null)
+                            if (model.SettlementAccount4 != null && model.SelectCurrency4 != null)
                             {
                                 newAccountDetails.ClientID = RegisteredClientId;
                                 newAccountDetails.CompanyID = model.CompanyID;
@@ -2167,7 +2142,7 @@ namespace OnBoarding.Controllers
                                 db.ClientSettlementAccounts.Add(newAccountDetails);
                                 db.SaveChanges();
                             }
-                            if (model.SettlementAccount5 != null || model.InputCurrencyType5 != null)
+                            if (model.SettlementAccount5 != null && model.SelectCurrency5 != null)
                             {
                                 newAccountDetails.ClientID = RegisteredClientId;
                                 newAccountDetails.CompanyID = model.CompanyID;
@@ -2178,45 +2153,13 @@ namespace OnBoarding.Controllers
                                 db.ClientSettlementAccounts.Add(newAccountDetails);
                                 db.SaveChanges();
                             }
-                            if (model.SettlementAccount6 != null || model.InputCurrencyType6 != null)
-                            {
-                                newAccountDetails.ClientID = RegisteredClientId;
-                                newAccountDetails.CompanyID = model.CompanyID;
-                                newAccountDetails.AccountNumber = model.SettlementAccount6;
-                                newAccountDetails.OtherCurrency = model.InputCurrencyType6;
-                                newAccountDetails.CurrencyID = model.SelectCurrency6;
-                                newAccountDetails.Status = 1;
-                                db.ClientSettlementAccounts.Add(newAccountDetails);
-                                db.SaveChanges();
-                            }
-                            if (model.SettlementAccount7 != null || model.InputCurrencyType7 != null)
-                            {
-                                newAccountDetails.ClientID = RegisteredClientId;
-                                newAccountDetails.CompanyID = model.CompanyID;
-                                newAccountDetails.AccountNumber = model.SettlementAccount7;
-                                newAccountDetails.OtherCurrency = model.InputCurrencyType7;
-                                newAccountDetails.CurrencyID = model.SelectCurrency7;
-                                newAccountDetails.Status = 1;
-                                db.ClientSettlementAccounts.Add(newAccountDetails);
-                                db.SaveChanges();
-                            }
-                            if (model.SettlementAccount8 != null || model.InputCurrencyType8 != null)
-                            {
-                                newAccountDetails.ClientID = RegisteredClientId;
-                                newAccountDetails.CompanyID = model.CompanyID;
-                                newAccountDetails.AccountNumber = model.SettlementAccount8;
-                                newAccountDetails.OtherCurrency = model.InputCurrencyType8;
-                                newAccountDetails.CurrencyID = model.SelectCurrency8;
-                                newAccountDetails.Status = 1;
-                                db.ClientSettlementAccounts.Add(newAccountDetails);
-                                db.SaveChanges();
-                            }
+
                             return Json("success", JsonRequestBehavior.AllowGet);
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        return Json(ex, JsonRequestBehavior.AllowGet);
+                        catch (Exception ex)
+                        {
+                            return Json("" + ex.Message + "", JsonRequestBehavior.AllowGet);
+                        }
                     }
                 }
                 //If the client has chosen NO (does not to have settlement accounts) and in case he had indicated
