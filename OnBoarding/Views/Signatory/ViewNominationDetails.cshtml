@@ -395,14 +395,17 @@
 
                 $widget.prepend('<span class="' + settings[type].off.icon + '"></span>');
 				$widget.on('click', function () {
-					if ($("#applicant_read_the_content").val() !== "true") {
+					/*if ($("#applicant_read_the_content").val() !== "true") {
 						toastr.error('Please read through the terms and conditions to bottom before accepting!', { positionClass: 'toast-top-center' });
 						return false;
 					}
 					else {
 						$input.prop('checked', !$input.is(':checked'));
 						updateDisplay();
-					}
+					}*/
+
+					$input.prop('checked', !$input.is(':checked'));
+					updateDisplay();
                 });
 
                 function updateDisplay() {

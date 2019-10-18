@@ -16,12 +16,12 @@ $(document).ready(function () {
 		});
 
 		//Not working for Chrome
-		$("#terms").click(function () {
+		/*$("#terms").click(function () {
 			if ($("#applicant_read_the_content").val() !== "true") {
 				toastr.error('Please scroll through the disclosure text before clicking I Accept.', { positionClass: 'toast-top-center' });
 				return false;
 			}
-		});
+		});*/
 
 	});
 
@@ -1263,6 +1263,7 @@ $(document).ready(function () {
 				},
 				error: function (xhr, textStatus, errorThrown) {
 					if (textStatus === 'error') {
+						$("#savingsignatories").addClass("d_none");
 						$("#savedsignatories").addClass("d_none");
 						$("#btn-save-signatories").removeClass("d_none");
 						toastr.error('Submission error!. Code: ' + xhr.status + ', Details: ' + errorThrown);
@@ -1393,6 +1394,7 @@ $(document).ready(function () {
 				},
 				error: function (xhr, textStatus, errorThrown) {
 					if (textStatus === 'error') {
+						$("#savingrepresentatives").addClass("d_none");
 						$("#savedrepresentatives").addClass("d_none");
 						$("#btn-save-representatives").removeClass("d_none");
 						toastr.error('Submission error!. Code: ' + xhr.status + ', Details: ' + errorThrown);

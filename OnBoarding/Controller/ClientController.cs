@@ -1432,7 +1432,7 @@ namespace OnBoarding.Controllers
                 if (model.SignatorySurname1 != null || model.SignatoryOtherNames1 != null || model.SignatoryEmail1 != null || model.SignatoryDesignation1 != null)
                 {
                     //check if Signatory1 Exists
-                    var Signatory1Exists = db.ClientSignatories.SingleOrDefault(s => s.EmailAddress == model.SignatoryEmail1);
+                    var Signatory1Exists = db.ClientSignatories.SingleOrDefault(s => s.EmailAddress == model.SignatoryEmail1 && s.ClientID == model.ClientID && s.CompanyID == model.CompanyID);
                     if (Signatory1Exists == null) //Add New if not Exists
                     {
                         try
@@ -1509,7 +1509,7 @@ namespace OnBoarding.Controllers
                 if (model.SignatorySurname2 != null || model.SignatoryOtherNames2 != null || model.SignatoryEmail2 != null || model.SignatoryDesignation2 != null)
                 {
                     //Check for signatory2
-                    var Signatory2Exists = db.ClientSignatories.SingleOrDefault(s => s.EmailAddress == model.SignatoryEmail2);
+                    var Signatory2Exists = db.ClientSignatories.SingleOrDefault(s => s.EmailAddress == model.SignatoryEmail2 && s.ClientID == model.ClientID && s.CompanyID == model.CompanyID);
                     if (Signatory2Exists == null) //Add New if not Exists
                     {
                         try
@@ -1537,7 +1537,7 @@ namespace OnBoarding.Controllers
                     {
                         try
                         {
-                            var Signatory2ToUpdate = db.ClientSignatories.SingleOrDefault(c => c.EmailAddress == model.SignatoryEmail2);
+                            var Signatory2ToUpdate = db.ClientSignatories.SingleOrDefault(s => s.EmailAddress == model.SignatoryEmail2 && s.ClientID == model.ClientID && s.CompanyID == model.CompanyID);
                             Signatory2ToUpdate.Status = 0;
                             Signatory2ToUpdate.Designation = model.SignatoryDesignation2;
                             Signatory2ToUpdate.Surname = model.SignatorySurname2;
@@ -1558,7 +1558,7 @@ namespace OnBoarding.Controllers
                 if (model.SignatorySurname3 != null || model.SignatoryOtherNames3 != null || model.SignatoryEmail3 != null || model.SignatoryDesignation3 != null)
                 {
                     //Check for signatory3
-                    var Signatory3Exists = db.ClientSignatories.SingleOrDefault(s => s.EmailAddress == model.SignatoryEmail3);
+                    var Signatory3Exists = db.ClientSignatories.SingleOrDefault(s => s.EmailAddress == model.SignatoryEmail3 && s.ClientID == model.ClientID && s.CompanyID == model.CompanyID);
                     if (Signatory3Exists == null) 
                     {
                         //Add New if not Exists
@@ -1587,7 +1587,7 @@ namespace OnBoarding.Controllers
                     {
                         try
                         {
-                            var Signatory3ToUpdate = db.ClientSignatories.SingleOrDefault(c => c.EmailAddress == model.SignatoryEmail3);
+                            var Signatory3ToUpdate = db.ClientSignatories.SingleOrDefault(s => s.EmailAddress == model.SignatoryEmail3 && s.ClientID == model.ClientID && s.CompanyID == model.CompanyID);
                             Signatory3ToUpdate.Status = 0;
                             Signatory3ToUpdate.Designation = model.SignatoryDesignation3;
                             Signatory3ToUpdate.Surname = model.SignatorySurname3;
@@ -1607,7 +1607,7 @@ namespace OnBoarding.Controllers
                 //Signatory 4
                 if (model.SignatorySurname4 != null || model.SignatoryOtherNames4 != null || model.SignatoryEmail4 != null || model.SignatoryDesignation4 != null)
                 { //Check for signatory4
-                    var Signatory4Exists = db.ClientSignatories.SingleOrDefault(s => s.EmailAddress == model.SignatoryEmail4);
+                    var Signatory4Exists = db.ClientSignatories.SingleOrDefault(s => s.EmailAddress == model.SignatoryEmail4 && s.ClientID == model.ClientID && s.CompanyID == model.CompanyID);
                     if (Signatory4Exists == null) //Add New if not Exists
                     {
                         try
@@ -1635,7 +1635,7 @@ namespace OnBoarding.Controllers
                     {
                         try
                         {
-                            var Signatory4ToUpdate = db.ClientSignatories.SingleOrDefault(c => c.EmailAddress == model.SignatoryEmail4);
+                            var Signatory4ToUpdate = db.ClientSignatories.SingleOrDefault(s => s.EmailAddress == model.SignatoryEmail4 && s.ClientID == model.ClientID && s.CompanyID == model.CompanyID);
                             Signatory4ToUpdate.Status = 0;
                             Signatory4ToUpdate.Designation = model.SignatoryDesignation4;
                             Signatory4ToUpdate.Surname = model.SignatorySurname4;
@@ -1656,7 +1656,7 @@ namespace OnBoarding.Controllers
                 if (model.SignatorySurname5 != null || model.SignatoryOtherNames5 != null || model.SignatoryEmail5 != null || model.SignatoryDesignation5 != null)
                 {
                     //Check for signatory5
-                    var Signatory5Exists = db.ClientSignatories.SingleOrDefault(s => s.EmailAddress == model.SignatoryEmail5);
+                    var Signatory5Exists = db.ClientSignatories.SingleOrDefault(s => s.EmailAddress == model.SignatoryEmail5 && s.ClientID == model.ClientID && s.CompanyID == model.CompanyID);
                     if (Signatory5Exists == null) //Add New if not Exists
                     {
                         try
@@ -1685,7 +1685,7 @@ namespace OnBoarding.Controllers
                     {
                         try
                         {
-                            var Signatory5ToUpdate = db.ClientSignatories.SingleOrDefault(c => c.EmailAddress == model.SignatoryEmail5);
+                            var Signatory5ToUpdate = db.ClientSignatories.SingleOrDefault(c => c.EmailAddress == model.SignatoryEmail5 && c.ClientID == model.ClientID && c.CompanyID == model.CompanyID);
                             Signatory5ToUpdate.Status = 0;
                             Signatory5ToUpdate.Designation = model.SignatoryDesignation5;
                             Signatory5ToUpdate.Surname = model.SignatorySurname5;
@@ -1724,7 +1724,7 @@ namespace OnBoarding.Controllers
                 if (model.UserEmail1 != null && model.UserSurname1 != null && model.UserOthernames1 != null && model.UserMobileNumber1 != null)
                 {
                     //Check if representative exists
-                    var Representative1Exists = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.UserEmail1);
+                    var Representative1Exists = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.UserEmail1 && c.ClientID == model.ClientID && c.CompanyID == model.CompanyID);
                     if (Representative1Exists == null)
                     {
                         //Create new representative if false
@@ -1756,7 +1756,7 @@ namespace OnBoarding.Controllers
                     else
                     {
                         //Update representative exists
-                        var Representative1ToUpdate = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.UserEmail1);
+                        var Representative1ToUpdate = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.UserEmail1 && c.ClientID == model.ClientID && c.CompanyID == model.CompanyID);
                         Representative1ToUpdate.Status = 0;
                         Representative1ToUpdate.DateCreated = DateTime.Now;
                         Representative1ToUpdate.DOB = model.DOB1;
@@ -1777,9 +1777,7 @@ namespace OnBoarding.Controllers
                 //Log authorised Representative 2
                 if (model.UserEmail2 != null && model.UserSurname2 != null && model.UserOthernames2 != null && model.UserMobileNumber2 != null)
                 {
-                    var Representative2Exists = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.UserEmail2);
-                    var RepresentativeIsAClient = db.RegisteredClients.SingleOrDefault(c => c.EmailAddress == model.UserEmail2);
-
+                    var Representative2Exists = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.UserEmail2 && c.ClientID == model.ClientID && c.CompanyID == model.CompanyID);
                     if (Representative2Exists == null)
                     {
                         var addDesignatedUser2 = db.DesignatedUsers.Create();
@@ -1803,7 +1801,7 @@ namespace OnBoarding.Controllers
                     else
                     {
                         //Update representative exists
-                        var Representative2ToUpdate = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.UserEmail2);
+                        var Representative2ToUpdate = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.UserEmail2 && c.ClientID == model.ClientID && c.CompanyID == model.CompanyID);
                         Representative2ToUpdate.Status = 0;
                         Representative2ToUpdate.DateCreated = DateTime.Now;
                         Representative2ToUpdate.DOB = model.DOB2;
@@ -1824,7 +1822,7 @@ namespace OnBoarding.Controllers
                 //Log authorised Representative 3
                 if (model.UserEmail3 != null && model.UserSurname3 != null && model.UserOthernames3 != null && model.UserMobileNumber3 != null)
                 {
-                    var Representative3Exists = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.UserEmail3);
+                    var Representative3Exists = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.UserEmail3 && c.ClientID == model.ClientID && c.CompanyID == model.CompanyID);
                     if (Representative3Exists == null)
                     {
                         var addDesignatedUser3 = db.DesignatedUsers.Create();
@@ -1848,7 +1846,7 @@ namespace OnBoarding.Controllers
                     else
                     {
                         //Update representative exists
-                        var Representative3ToUpdate = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.UserEmail3);
+                        var Representative3ToUpdate = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.UserEmail3 && c.ClientID == model.ClientID && c.CompanyID == model.CompanyID);
                         Representative3ToUpdate.Status = 0;
                         Representative3ToUpdate.DateCreated = DateTime.Now;
                         Representative3ToUpdate.DOB = model.DOB3;
@@ -1869,7 +1867,7 @@ namespace OnBoarding.Controllers
                 //Log authorised Representative 4
                 if (model.UserEmail4 != null && model.UserSurname4 != null && model.UserOthernames4 != null && model.UserMobileNumber4 != null)
                 {
-                    var Representative4Exists = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.UserEmail4);
+                    var Representative4Exists = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.UserEmail4 && c.ClientID == model.ClientID && c.CompanyID == model.CompanyID);
                     if (Representative4Exists == null)
                     {
                         var addDesignatedUser4 = db.DesignatedUsers.Create();
@@ -1893,7 +1891,7 @@ namespace OnBoarding.Controllers
                     else
                     {
                         //Update Status if representative exists
-                        var Representative4ToUpdate = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.UserEmail4);
+                        var Representative4ToUpdate = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.UserEmail4 && c.ClientID == model.ClientID && c.CompanyID == model.CompanyID);
                         Representative4ToUpdate.Status = 0;
                         Representative4ToUpdate.DateCreated = DateTime.Now;
                         Representative4ToUpdate.DOB = model.DOB4;
@@ -1914,7 +1912,7 @@ namespace OnBoarding.Controllers
                 //Log authorised Representative 5
                 if (model.UserEmail5 != null && model.UserSurname5 != null && model.UserOthernames5 != null && model.UserMobileNumber5 != null)
                 {
-                    var Representative5Exists = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.UserEmail5);
+                    var Representative5Exists = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.UserEmail5 && c.ClientID == model.ClientID && c.CompanyID == model.CompanyID);
                     if (Representative5Exists == null)
                     {
                         var addDesignatedUser5 = db.DesignatedUsers.Create();
@@ -1938,7 +1936,7 @@ namespace OnBoarding.Controllers
                     else
                     {
                         //Update representative exists
-                        var Representative5ToUpdate = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.UserEmail5);
+                        var Representative5ToUpdate = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.UserEmail5 && c.ClientID == model.ClientID && c.CompanyID == model.CompanyID);
                         Representative5ToUpdate.Status = 0;
                         Representative5ToUpdate.DateCreated = DateTime.Now;
                         Representative5ToUpdate.DOB = model.DOB5;

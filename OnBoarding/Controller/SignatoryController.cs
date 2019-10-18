@@ -29,10 +29,8 @@ namespace OnBoarding.Controllers
                         
                         ViewData["Signatories"] = SignatoriesCount;
                         ViewData["Nominations"] = ApplicationNominations;
-
                     }
                 }
-
             }
 
             return View();

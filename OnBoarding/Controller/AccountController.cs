@@ -550,7 +550,7 @@ namespace OnBoarding.Controllers
                     }
                     else
                     {
-                        var SignatoryToUpdate = db.ClientSignatories.SingleOrDefault(b => b.EmailAddress == DBOTPToconfirm.EmailAddress);
+                        var SignatoryToUpdate = db.ClientSignatories.SingleOrDefault(b => b.EmailAddress == DBOTPToconfirm.EmailAddress && b.OTP == EncryptedOTP);
                         var SignatoryClient = db.RegisteredClients.SingleOrDefault(b => b.Id == SignatoryToUpdate.ClientID);
                         var user = new ApplicationUser { UserName = DBOTPToconfirm.EmailAddress, Email = DBOTPToconfirm.EmailAddress, CompanyName = DBOTPToconfirm.OtherNames, LastPasswordChangedDate = DateTime.Now };
                         var result = await UserManager.CreateAsync(user, model.Password);
@@ -741,7 +741,7 @@ namespace OnBoarding.Controllers
                         if (result.Succeeded)
                         {
                             //Update Signatory Confirmation Date 
-                            var DesignatedUserToUpdate = db.DesignatedUsers.SingleOrDefault(b => b.Email == DBOTPToconfirm.Email);
+                            var DesignatedUserToUpdate = db.DesignatedUsers.SingleOrDefault(b => b.Email == DBOTPToconfirm.Email && b.OTP == EncryptedOTP);
                             if (DesignatedUserToUpdate != null)
                             {
                                 try
