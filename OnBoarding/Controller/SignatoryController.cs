@@ -206,9 +206,8 @@ namespace OnBoarding.Controllers
                             if (ApplicationUpdate.SignatoriesApproved >= ApplicationUpdate.Signatories)
                             {
                                 //Send Emails to representatives for approval excluding the signatory and sole signatory if in list
-                                var UserToExclude = db.RegisteredClients.SingleOrDefault(c => c.Id == signatoryClientId.ClientID);
-                                var UserToExclude2 = getUserInfo.Email;
-                                foreach (var email in db.DesignatedUsers.Where(c => c.ClientID == signatoryClientId.ClientID && c.CompanyID == model.CompanyID && (c.Email != UserToExclude.EmailAddress && c.Email != UserToExclude2)).ToList())
+                                var _dontSendEmail = db.AspNetUsers.Select(x => x.Email).ToList();
+                                foreach (var email in db.DesignatedUsers.Where(c => c.ClientID == signatoryClientId.ClientID && c.CompanyID == model.CompanyID && !_dontSendEmail.Contains(c.Email)).ToList())
                                 {
                                     //Update Designated User with OTP to Login
                                     var _OTPCode = OTPGenerator.GetUniqueKey(6);
@@ -336,8 +335,8 @@ namespace OnBoarding.Controllers
                             if (ApplicationUpdate.SignatoriesApproved >= ApplicationUpdate.Signatories)
                             {
                                 //Send Emails to representatives for approval
-                                var UserToExclude = db.RegisteredClients.SingleOrDefault(c => c.Id == signatoryClientId.ClientID);
-                                foreach (var email in db.DesignatedUsers.Where(c => c.ClientID == signatoryClientId.ClientID && c.CompanyID == model.CompanyID && c.Email != UserToExclude.EmailAddress).ToList())
+                                var _dontSendEmail = db.AspNetUsers.Select(x => x.Email).ToList();
+                                foreach (var email in db.DesignatedUsers.Where(c => c.ClientID == signatoryClientId.ClientID && c.CompanyID == model.CompanyID && !_dontSendEmail.Contains(c.Email)).ToList())
                                 {
                                     //Update representatives with OTP for Login
                                     var _OTPCode = OTPGenerator.GetUniqueKey(6);
