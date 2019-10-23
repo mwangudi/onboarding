@@ -157,13 +157,13 @@ namespace OnBoarding.Controllers
                     // Added Uploaded Details to reflect on the applications page
                     ViewBag.ClientInfo = userInfo;
 
-                    var Signatory1Details = db.ClientSignatories.SingleOrDefault(a => a.ClientID == userInfo.Id && a.EmailAddress == userInfo.EmailAddress && a.Status == 0);
+                    var Signatory1Details = db.ClientSignatories.FirstOrDefault(a => a.ClientID == userInfo.Id && a.EmailAddress == userInfo.EmailAddress && a.Status == 1);
                     if (Signatory1Details != null)
                     {
                         ViewBag.SignatoryDetails = Signatory1Details;
                     }
 
-                    var Representative1Details = db.DesignatedUsers.SingleOrDefault(a => a.ClientID == userInfo.Id && a.Email == userInfo.EmailAddress && a.Status == 0);
+                    var Representative1Details = db.DesignatedUsers.FirstOrDefault(a => a.ClientID == userInfo.Id && a.Email == userInfo.EmailAddress && a.Status == 1);
                     if (Representative1Details != null)
                     {
                         ViewBag.RepresentativesDetails = Representative1Details;
