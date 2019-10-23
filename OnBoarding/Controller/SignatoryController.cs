@@ -120,7 +120,7 @@ namespace OnBoarding.Controllers
                     var currentUserId = User.Identity.GetUserId();
                     var _userDetails = db.AspNetUsers.SingleOrDefault(e => e.Id == currentUserId);
                     var _action = "ApproveNomination";
-                    
+
                     //Upload Signature
                     if (inputFile != null)
                     {
@@ -132,6 +132,7 @@ namespace OnBoarding.Controllers
                         //Save File name to Database
                         var SignatoryToUpdate = db.ClientSignatories.First(c => c.EmailAddress == _userDetails.Email && c.CompanyID == model.CompanyID);
                         SignatoryToUpdate.Signature = pic;
+                        SignatoryToUpdate.UserAccountID = _userDetails.Id;
                         SignatoryToUpdate.PhoneNumber = model.VerifyPhone; //Update phone number
                         db.SaveChanges();
                     }
@@ -141,8 +142,7 @@ namespace OnBoarding.Controllers
                     var signatoryIsARepresentative = db.DesignatedUsers.Any(c => c.Email == getUserInfo.Email && c.CompanyID == model.CompanyID);
                     if (signatoryIsARepresentative)
                     {
-                        //var signatoryClientId = db.ClientSignatories.First(c => c.UserAccountID == currentUserId);
-                        var signatoryClientId = db.ClientSignatories.First(c => c.EmailAddress == _userDetails.Email && c.CompanyID == model.CompanyID);
+                        var signatoryClientId = db.ClientSignatories.First(c => c.UserAccountID == currentUserId);
 
                         //Update representative's signature
                         var RepresentativeToUpdate = db.DesignatedUsers.First(c => c.Email == signatoryClientId.EmailAddress && c.CompanyID == model.CompanyID);
@@ -161,9 +161,9 @@ namespace OnBoarding.Controllers
                             db.SignatoryApprovals.Add(LogApproval);
                             db.SaveChanges();
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         {
-                            throw (ex);
+                            return Json("Error! Unable to log signatory approval", JsonRequestBehavior.AllowGet);
                         }
 
                         //Log Representative Approval
@@ -178,9 +178,9 @@ namespace OnBoarding.Controllers
                             db.DesignatedUserApprovals.Add(LogDesignatedUserApproval);
                             db.SaveChanges();
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         {
-                            throw (ex);
+                            return Json("Error! Unable to log representative approval", JsonRequestBehavior.AllowGet);
                         }
 
                         //Update application Id
@@ -197,9 +197,9 @@ namespace OnBoarding.Controllers
                                 ApplicationUpdate.UsersDateApproved = DateTime.Now;
                                 db.SaveChanges();
                             }
-                            catch (Exception ex)
+                            catch (Exception)
                             {
-                                throw (ex);
+                                return Json("Error! Unable to update application details", JsonRequestBehavior.AllowGet);
                             }
 
                             //Check if all signatories have approved
@@ -212,7 +212,7 @@ namespace OnBoarding.Controllers
                                     //Update Designated User with OTP to Login
                                     var _OTPCode = OTPGenerator.GetUniqueKey(6);
                                     string OTPCode = Shuffle.StringMixer(_OTPCode);
-                                    var UserToUpdate = db.DesignatedUsers.SingleOrDefault(c => c.Email == email.Email);
+                                    var UserToUpdate = db.DesignatedUsers.SingleOrDefault(c => c.Email == email.Email && c.CompanyID == model.CompanyID);
                                     UserToUpdate.OTP = Functions.GenerateMD5Hash(OTPCode);
                                     UserToUpdate.DateCreated = DateTime.Now;
                                     db.SaveChanges();
@@ -310,9 +310,9 @@ namespace OnBoarding.Controllers
                             db.SignatoryApprovals.Add(LogApproval);
                             db.SaveChanges();
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         {
-                            throw (ex);
+                            return Json("Error! Unable to log signatory approval", JsonRequestBehavior.AllowGet);
                         }
 
                         //Update application Id
@@ -326,9 +326,9 @@ namespace OnBoarding.Controllers
                                 ApplicationUpdate.SignatoriesDateApproved = DateTime.Now;
                                 db.SaveChanges();
                             }
-                            catch (Exception ex)
+                            catch (Exception)
                             {
-                                throw (ex);
+                                return Json("Error! Unable to update application details", JsonRequestBehavior.AllowGet);
                             }
 
                             //Check if all signatories have approved

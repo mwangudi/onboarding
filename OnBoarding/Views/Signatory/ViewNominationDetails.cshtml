@@ -431,13 +431,20 @@
                     type: 'POST',
                     data: formData,
                     async: true,
-                    success: function () {
+                    success: function (XmlHttpRequest) {
                         window.setTimeout(close, 500);
                         function close() {
-                            $('#ApplicationForm')[0].reset();
-                            $("#Loading_Div").hide('fast');
-                            $('#Success_Div').show("fast");
-                            window.location.reload();
+                            if (XmlHttpRequest === 'success') {
+                                $('#ApplicationForm')[0].reset();
+                                $("#Loading_Div").hide('fast');
+                                $('#Success_Div').show("fast");
+                                window.location.reload();
+                            }
+                            else {
+                                toastr.error(XmlHttpRequest, { positionClass: 'toast-top-center' });
+                                $("#Loading_Div").hide('fast');
+                                $('#ApplicationForm').show("fast");
+                            }
                         }
 					},
 					error: function (xhr, textStatus, errorThrown) {
