@@ -309,6 +309,16 @@ namespace OnBoarding.Controllers
                         }
                     }
                 }
+                else
+                {
+                    var SettlementAccountExists = db.ClientSettlementAccounts.Any(c => c.ClientID == RegisteredClientId && c.CompanyID == model.CompanyID);
+                    if (SettlementAccountExists)
+                    {
+                        //Clear any settlement accounts if saved
+                        db.ClientSettlementAccounts.RemoveRange(db.ClientSettlementAccounts.Where(r => r.ClientID == RegisteredClientId && r.CompanyID == model.CompanyID));
+                        db.SaveChanges();
+                    }
+                }
 
                 //Create First Signatory (Signatory 1)
                 if (model.SignatorySurname1 != null && model.SignatoryOtherNames1 != null && model.SignatoryEmail1 != null && model.SignatoryDesignation1 != null)
@@ -2029,6 +2039,8 @@ namespace OnBoarding.Controllers
                     {
                         //Clear all if exists exist
                         db.ClientSettlementAccounts.RemoveRange(db.ClientSettlementAccounts.Where(r => r.ClientID == RegisteredClientId && r.CompanyID == model.CompanyID));
+                        db.SaveChanges();
+
                         //Add new SettlementAccounts 1-5 after clear
                         try
                         {

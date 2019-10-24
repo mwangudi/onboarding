@@ -159,14 +159,14 @@ namespace OnBoarding.Controllers
                         try
                         {
                             //Save File name to Database  //Update Representative Details
-                            var DesignatedUserToUpdate = db.DesignatedUsers.FirstOrDefault(c => c.Email == userClientId.Email);
+                            var DesignatedUserToUpdate = db.DesignatedUsers.FirstOrDefault(c => c.Email == userClientId.Email && c.CompanyID == model.CompanyID);
                             DesignatedUserToUpdate.Signature = pic;
                             DesignatedUserToUpdate.Mobile = model.VerifyPhone;
                             db.SaveChanges();
                         }
                         catch (Exception)
                         {
-                            return Json("Error! Unable to update signature details", JsonRequestBehavior.AllowGet);
+                            return Json("Error! Unable to update representative details", JsonRequestBehavior.AllowGet);
                         }
                     }
                     else
