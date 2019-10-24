@@ -112,14 +112,14 @@ namespace OnBoarding.Controllers
         //POST //Remove One Representative after Save
         [HttpPost]
         [AllowAnonymous]
-        public ActionResult RemoveRepresentative(string email)
+        public ActionResult RemoveRepresentative(string email, int companyId)
         {
             using (DBModel db = new DBModel())
             {
-                var ClientRepresentativesExist = db.DesignatedUsers.Any(c => c.Email == email);
+                var ClientRepresentativesExist = db.DesignatedUsers.Any(c => c.Email == email && c.CompanyID == companyId);
                 if (ClientRepresentativesExist)
                 {
-                    db.DesignatedUsers.RemoveRange(db.DesignatedUsers.Where(r => r.Email == email));
+                    db.DesignatedUsers.RemoveRange(db.DesignatedUsers.Where(r => r.Email == email && r.CompanyID == companyId));
                     var recordSaved = db.SaveChanges();
                     if (recordSaved > 0)
                     {
@@ -2283,14 +2283,14 @@ namespace OnBoarding.Controllers
         //Remove Signatories on click of removebtn1-5
         [HttpPost]
         [AllowAnonymous]
-        public ActionResult RemoveSignatory(string email)
+        public ActionResult RemoveSignatory(string email, int companyId)
         {
             using (DBModel db = new DBModel())
             {
-                var ClientSignatoriesExist = db.ClientSignatories.Any(c => c.EmailAddress == email);
+                var ClientSignatoriesExist = db.ClientSignatories.Any(c => c.EmailAddress == email && c.CompanyID == companyId);
                 if (ClientSignatoriesExist)
                 {
-                    db.ClientSignatories.RemoveRange(db.ClientSignatories.Where(r => r.EmailAddress == email));
+                    db.ClientSignatories.RemoveRange(db.ClientSignatories.Where(r => r.EmailAddress == email && r.CompanyID == companyId));
                     var recordSaved = db.SaveChanges();
                     if (recordSaved > 0)
                     {
