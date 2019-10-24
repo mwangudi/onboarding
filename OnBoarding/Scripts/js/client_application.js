@@ -351,11 +351,12 @@ $(document).ready(function () {
 		e.preventDefault();
 		//Post to check & remove if sett account was saved
 		var account = $('#SettlementAccount3').val();
+		var companyid = $('#CompanyID').val();
 		if (jQuery.trim(account).length > 0) {
 			$.ajax({
 				url: '/Client/RemoveSettlementAccount',
 				type: 'POST',
-				data: '{account: "' + account + '" }',
+				data: '{account: "' + account + '", companyId: "' + companyid + '" }',
 				contentType: "application/json; charset=utf-8",
 				dataType: "html",
 				success: function () {
@@ -397,11 +398,12 @@ $(document).ready(function () {
 		e.preventDefault();
 		//Post to check & remove if sett account was saved
 		var account = $('#SettlementAccount4').val();
+		var companyid = $('#CompanyID').val();
 		if (jQuery.trim(account).length > 0) {
 			$.ajax({
 				url: '/Client/RemoveSettlementAccount',
 				type: 'POST',
-				data: '{account: "' + account + '" }',
+				data: '{account: "' + account + '", companyId: "' + companyid + '" }',
 				contentType: "application/json; charset=utf-8",
 				dataType: "html",
 				success: function () {
@@ -443,11 +445,12 @@ $(document).ready(function () {
 		e.preventDefault();
 		//Post to check & remove if sett account was saved
 		var account = $('#SettlementAccount5').val();
+		var companyid = $('#CompanyID').val();
 		if (jQuery.trim(account).length > 0) {
 			$.ajax({
 				url: '/Client/RemoveSettlementAccount',
 				type: 'POST',
-				data: '{account: "' + account + '" }',
+				data: '{account: "' + account + '", companyId: "' + companyid + '" }',
 				contentType: "application/json; charset=utf-8",
 				dataType: "html",
 				success: function () {
@@ -634,11 +637,12 @@ $(document).ready(function () {
 		e.preventDefault();
 		//Post to check & remove if sett account was saved
 		var email = $('#UserEmail2').val();
+		var companyid = $('#CompanyID').val();
 		if (jQuery.trim(email).length > 0) {
 			$.ajax({
 				url: '/Client/RemoveRepresentative',
 				type: 'POST',
-				data: '{email: "' + email + '" }',
+				data: '{email: "' + email + '", companyId: "' + companyid + '" }',
 				contentType: "application/json; charset=utf-8",
 				dataType: "html",
 				success: function () {
@@ -687,11 +691,12 @@ $(document).ready(function () {
 		e.preventDefault();
 		//Post to check & remove if sett account was saved
 		var email = $('#UserEmail3').val();
+		var companyid = $('#CompanyID').val();
 		if (jQuery.trim(email).length > 0) {
 			$.ajax({
 				url: '/Client/RemoveRepresentative',
 				type: 'POST',
-				data: '{email: "' + email + '" }',
+				data: '{email: "' + email + '", companyId: "' + companyid + '" }',
 				contentType: "application/json; charset=utf-8",
 				dataType: "html",
 				success: function () {
@@ -741,11 +746,12 @@ $(document).ready(function () {
 		e.preventDefault();
 		//Post to check & remove if sett account was saved
 		var email = $('#UserEmail4').val();
+		var companyid = $('#CompanyID').val();
 		if (jQuery.trim(email).length > 0) {
 			$.ajax({
 				url: '/Client/RemoveRepresentative',
 				type: 'POST',
-				data: '{email: "' + email + '" }',
+				data: '{email: "' + email + '", companyId: "' + companyid + '" }',
 				contentType: "application/json; charset=utf-8",
 				dataType: "html",
 				success: function () {
@@ -796,11 +802,12 @@ $(document).ready(function () {
 		e.preventDefault();
 		//Post to check & remove if sett account was saved
 		var email = $('#UserEmail5').val();
+		var companyid = $('#CompanyID').val();
 		if (jQuery.trim(email).length > 0) {
 			$.ajax({
 				url: '/Client/RemoveRepresentative',
 				type: 'POST',
-				data: '{email: "' + email + '" }',
+				data: '{email: "' + email + '", companyId: "' + companyid + '" }',
 				contentType: "application/json; charset=utf-8",
 				dataType: "html",
 				success: function () {
@@ -875,11 +882,12 @@ $(document).ready(function () {
 		e.preventDefault();
 		//Post to check & remove if account was saved
 		var email = $('#SignatoryEmail2').val();
+		var companyid = $('#CompanyID').val();
 		if (jQuery.trim(email).length > 0) {
 			$.ajax({
 				url: '/Client/RemoveSignatory',
 				type: 'POST',
-				data: '{email: "' + email + '" }',
+				data: '{email: "' + email + '", companyId: "' + companyid + '" }',
 				contentType: "application/json; charset=utf-8",
 				dataType: "html",
 				success: function () {
@@ -917,11 +925,12 @@ $(document).ready(function () {
 		e.preventDefault();
 		//Post to check & remove if account was saved
 		var email = $('#btnRemoveSignatory3').val();
+		var companyid = $('#CompanyID').val();
 		if (jQuery.trim(email).length > 0) {
 			$.ajax({
 				url: '/Client/RemoveSignatory',
 				type: 'POST',
-				data: '{email: "' + email + '" }',
+				data: '{email: "' + email + '", companyId: "' + companyid + '" }',
 				contentType: "application/json; charset=utf-8",
 				dataType: "html",
 				success: function () {
@@ -961,11 +970,12 @@ $(document).ready(function () {
 		e.preventDefault();
 		//Post to check & remove if account was saved
 		var email = $('#btnRemoveSignatory4').val();
+		var companyid = $('#CompanyID').val();
 		if (jQuery.trim(email).length > 0) {
 			$.ajax({
 				url: '/Client/RemoveSignatory',
 				type: 'POST',
-				data: '{email: "' + email + '" }',
+				data: '{email: "' + email + '", companyId: "' + companyid + '" }',
 				contentType: "application/json; charset=utf-8",
 				dataType: "html",
 				success: function () {
@@ -1005,11 +1015,12 @@ $(document).ready(function () {
 		e.preventDefault();
 		//Post to check & remove if account was saved
 		var email = $('#btnRemoveSignatory5').val();
+		var companyid = $('#CompanyID').val();
 		if (jQuery.trim(email).length > 0) {
 			$.ajax({
 				url: '/Client/RemoveSignatory',
 				type: 'POST',
-				data: '{email: "' + email + '" }',
+				data: '{email: "' + email + '", companyId: "' + companyid + '" }',
 				contentType: "application/json; charset=utf-8",
 				dataType: "html",
 				success: function () {
