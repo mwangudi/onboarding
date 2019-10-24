@@ -351,11 +351,12 @@ $(document).ready(function () {
 		e.preventDefault();
 		//Post to check & remove if sett account was saved
 		var account = $('#SettlementAccount3').val();
+		var companyid = $('#CompanyID').val();
 		if (jQuery.trim(account).length > 0) {
 			$.ajax({
 				url: '/Client/RemoveSettlementAccount',
 				type: 'POST',
-				data: '{account: "' + account + '" }',
+				data: '{account: "' + account + '", companyId: "' + companyid + '" }',
 				contentType: "application/json; charset=utf-8",
 				dataType: "html",
 				success: function () {
@@ -397,11 +398,12 @@ $(document).ready(function () {
 		e.preventDefault();
 		//Post to check & remove if sett account was saved
 		var account = $('#SettlementAccount4').val();
+		var companyid = $('#CompanyID').val();
 		if (jQuery.trim(account).length > 0) {
 			$.ajax({
 				url: '/Client/RemoveSettlementAccount',
 				type: 'POST',
-				data: '{account: "' + account + '" }',
+				data: '{account: "' + account + '", companyId: "' + companyid + '" }',
 				contentType: "application/json; charset=utf-8",
 				dataType: "html",
 				success: function () {
@@ -443,11 +445,12 @@ $(document).ready(function () {
 		e.preventDefault();
 		//Post to check & remove if sett account was saved
 		var account = $('#SettlementAccount5').val();
+		var companyid = $('#CompanyID').val();
 		if (jQuery.trim(account).length > 0) {
 			$.ajax({
 				url: '/Client/RemoveSettlementAccount',
 				type: 'POST',
-				data: '{account: "' + account + '" }',
+				data: '{account: "' + account + '", companyId: "' + companyid + '" }',
 				contentType: "application/json; charset=utf-8",
 				dataType: "html",
 				success: function () {

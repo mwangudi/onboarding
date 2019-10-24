@@ -2224,14 +2224,14 @@ namespace OnBoarding.Controllers
         //Clear Settlement accounts for users to add new
         [HttpPost]
         [AllowAnonymous]
-        public ActionResult RemoveSettlementAccount(string account)
+        public ActionResult RemoveSettlementAccount(string account, int companyId)
         {
             using (DBModel db = new DBModel())
             {
-                var SettlementAccountsExist = db.ClientSettlementAccounts.Any(c => c.AccountNumber == account);
+                var SettlementAccountsExist = db.ClientSettlementAccounts.Any(c => c.AccountNumber == account && c.CompanyID == companyId);
                 if (SettlementAccountsExist)
                 {
-                    db.ClientSettlementAccounts.RemoveRange(db.ClientSettlementAccounts.Where(r => r.AccountNumber == account));
+                    db.ClientSettlementAccounts.RemoveRange(db.ClientSettlementAccounts.Where(c => c.AccountNumber == account && c.CompanyID == companyId));
                     var recordSaved = db.SaveChanges();
                     if (recordSaved > 0)
                     {
