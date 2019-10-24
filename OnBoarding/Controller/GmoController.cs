@@ -6,9 +6,7 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
 using System.Web.Mvc;
-using System.Web.Script.Serialization;
 
 namespace OnBoarding.Controllers
 {
@@ -67,12 +65,12 @@ namespace OnBoarding.Controllers
             // Instance of DatabaseContext  
             using (var db = new DBModel())
             {
-                IEnumerable<ClientApplicationsViewModel> query = db.Database.SqlQuery<ClientApplicationsViewModel>("SELECT s.Id ApplicationID, b.CompanyName Client, c.StatusName Status, s.Emt, s.SSI, CAST(s.DateCreated AS DATE) DateCreated, s.Signatories, s.DesignatedUsers, s.SignatoriesApproved, s.UsersApproved RepresentativesApproved, s.OPSApproved, s.POAApproved, s.AcceptedTAC FROM EMarketApplications s INNER JOIN RegisteredClients b on b.Id = s.ClientID INNER JOIN tblStatus c on c.Id = s.Status WHERE s.Status = 1 AND s.OPSApproved = 1 AND s.POAApproved = 1 ORDER BY s.Id DESC OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY;");
+                IEnumerable<ClientApplicationsViewModel> query = db.Database.SqlQuery<ClientApplicationsViewModel>("SELECT s.Id ApplicationID, b.CompanyName Client, c.StatusName Status, s.Emt, s.SSI, CAST(s.DateCreated AS DATE) DateCreated, s.Signatories, s.DesignatedUsers, s.SignatoriesApproved, s.UsersApproved RepresentativesApproved, s.OPSApproved, s.POAApproved, s.AcceptedTAC FROM EMarketApplications s INNER JOIN ClientCompanies b on b.Id = s.CompanyID INNER JOIN tblStatus c on c.Id = s.Status WHERE s.Status = 1 AND s.Signatories = s.SignatoriesApproved AND s.DesignatedUsers = s.UsersApproved AND s.OPSApproved = 1 AND s.POAApproved = 1 ORDER BY s.Id DESC OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY;");
 
                 //Search  
                 if (!string.IsNullOrEmpty(searchMessage))
                 {
-                    query = db.Database.SqlQuery<ClientApplicationsViewModel>("SELECT s.Id ApplicationID, b.CompanyName Client, c.StatusName Status, s.Emt, s.SSI, CAST(s.DateCreated AS DATE) DateCreated, s.Signatories, s.DesignatedUsers, s.SignatoriesApproved, s.UsersApproved RepresentativesApproved, s.OPSApproved, s.POAApproved, s.AcceptedTAC FROM EMarketApplications s INNER JOIN RegisteredClients b on b.Id = s.ClientID INNER JOIN tblStatus c on c.Id = s.Status WHERE s.Status = 1 AND s.OPSApproved = 1 AND s.POAApproved = 1 AND (b.CompanyName LIKE '%" + searchMessage + "%' OR b.EmailAddress LIKE '%" + searchMessage + "%') ORDER BY s.Id DESC OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY;");
+                    query = db.Database.SqlQuery<ClientApplicationsViewModel>("SELECT s.Id ApplicationID, b.CompanyName Client, c.StatusName Status, s.Emt, s.SSI, CAST(s.DateCreated AS DATE) DateCreated, s.Signatories, s.DesignatedUsers, s.SignatoriesApproved, s.UsersApproved RepresentativesApproved, s.OPSApproved, s.POAApproved, s.AcceptedTAC FROM EMarketApplications s INNER JOIN ClientCompanies b on b.Id = s.CompanyID INNER JOIN tblStatus c on c.Id = s.Status WHERE s.Status = 1 AND s.OPSApproved = 1 AND s.POAApproved = 1 AND (b.CompanyName LIKE '%" + searchMessage + "%' OR b.EmailAddress LIKE '%" + searchMessage + "%') ORDER BY s.Id DESC OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY;");
 
                 }
 
@@ -134,46 +132,59 @@ namespace OnBoarding.Controllers
                 var getApplicationInfo = db.EMarketApplications.SingleOrDefault(c => c.Id == applicationId);
                 var clientID = getApplicationInfo.ClientID;
                 var clientDetails = db.RegisteredClients.SingleOrDefault(s => s.Id == clientID);
+                var companyDetails = db.ClientCompanies.SingleOrDefault(s => s.Id == getApplicationInfo.CompanyID);
                 ViewBag.ApplicationInfo = clientDetails;
+                ViewBag.CompanyInfo = companyDetails;
 
                 //Signatories List
-                List<ClientSignatory> SignatoryList = db.ClientSignatories.Where(a => a.ClientID == clientID).ToList();
+                List<ClientSignatory> SignatoryList = db.ClientSignatories.Where(a => a.ClientID == clientID && a.CompanyID == getApplicationInfo.CompanyID).ToList();
                 ViewBag.ClientSignatory = SignatoryList;
 
                 //Designated Users List
-                List<DesignatedUser> DesignatedUsersList = db.DesignatedUsers.Where(a => a.ClientID == clientID).ToList();
+                List<DesignatedUser> DesignatedUsersList = db.DesignatedUsers.Where(a => a.ClientID == clientID && a.CompanyID == getApplicationInfo.CompanyID).ToList();
                 ViewBag.DesignatedUser = DesignatedUsersList;
 
                 //Get the list of all client's settlement accounts
-                var Query = db.Database.SqlQuery<SettlementAccountsViewModel>("SELECT c.CurrencyName, s.AccountNumber FROM ClientSettlementAccounts s INNER JOIN Currencies c ON c.Id = s.CurrencyID WHERE s.ClientID =  " + "'" + clientID + "'" + " AND s.Status = 1");
+                var Query = db.Database.SqlQuery<SettlementAccountsViewModel>("SELECT c.CurrencyName, s.AccountNumber FROM ClientSettlementAccounts s INNER JOIN Currencies c ON c.Id = s.CurrencyID WHERE s.Status = 1 AND s.ClientID =  " + "'" + clientID + "'" + " AND s.CompanyID =  " + "'" + getApplicationInfo.CompanyID + "'" + " AND s.Status = 1");
                 ViewBag.SettlementAccounts = Query.ToList();
 
                 //Data For Controller Post
                 ViewData["ApplicationId"] = getApplicationInfo.Id;
+                ViewData["OpsComments"] = getApplicationInfo.OPSComments;
                 ViewData["CompanyEmail"] = clientDetails.EmailAddress;
                 //ViewData["CompanyName"] = clientDetails.CompanyName;
-                ViewData["OpsComments"] = getApplicationInfo.OPSComments;
-                ViewData["PoaComments"] = getApplicationInfo.POAComments;
 
-                //Get the person who approved
+                //Get the OPS who approved
                 var OpsApproved = db.AspNetUsers.FirstOrDefault(a => a.Id == getApplicationInfo.OPSWhoApproved);
                 var OpsDeclined = db.AspNetUsers.FirstOrDefault(a => a.Id == getApplicationInfo.OPSWhoDeclined);
-                var POAApproved = db.AspNetUsers.FirstOrDefault(a => a.Id == getApplicationInfo.POAWhoApproved);
-                var POADeclined = db.AspNetUsers.FirstOrDefault(a => a.Id == getApplicationInfo.POAWhoDeclined);
-                //Ops Approved
                 ViewData["OPSNames"] = OpsApproved.CompanyName;
                 ViewData["OPSEmail"] = OpsApproved.Email;
                 ViewData["OPSPhone"] = OpsApproved.PhoneNumber;
                 DateTime dtByUser = DateTime.Parse(getApplicationInfo.OPSDateApproved.ToString());
                 ViewData["OPSDateApproved"] = dtByUser.ToString("dd/MM/yyyy hh:mm:ss tt");
-               
-                //Poa Approved
-                ViewData["POANames"] = POAApproved.CompanyName;
-                ViewData["POAEmail"] = POAApproved.Email;
-                ViewData["POAPhone"] = POAApproved.PhoneNumber;
-                DateTime dtByUserPoa = DateTime.Parse(getApplicationInfo.POADateApproved.ToString());
-                ViewData["POADateApproved"] = dtByUserPoa.ToString("dd/MM/yyyy hh:mm:ss tt");
+
+                //Get the POA who approved
+                var POAApproved = db.AspNetUsers.FirstOrDefault(a => a.Id == getApplicationInfo.POAWhoApproved);
+                var POADeclined = db.AspNetUsers.FirstOrDefault(a => a.Id == getApplicationInfo.POAWhoDeclined);
+                ViewData["POANames"] = OpsApproved.CompanyName;
+                ViewData["POAEmail"] = OpsApproved.Email;
+                ViewData["POAPhone"] = OpsApproved.PhoneNumber;
+                DateTime dtByUser2 = DateTime.Parse(getApplicationInfo.POADateApproved.ToString());
+                ViewData["POADateApproved"] = dtByUser2.ToString("dd/MM/yyyy hh:mm:ss tt");
+
+                //Can approve application
+                var POAHasApproved = getApplicationInfo.POAApproved;
+                var POAHasDeclined = getApplicationInfo.POADeclined;
+                if (POAHasApproved == true || POAHasDeclined == true)
+                {
+                    ViewData["POACanApprove"] = 0;
+                }
+                else
+                {
+                    ViewData["POACanApprove"] = 1;
+                }
             }
+
             return PartialView();
         }
 
@@ -240,144 +251,6 @@ namespace OnBoarding.Controllers
         }
 
         //
-        //GET /Get Notifications Count
-        public int GetRegisteredClientsCount()
-        {
-            using (DBModel db = new DBModel())
-            {
-                return db.RegisteredClients.Where(x => x.Status == 1).Count();
-            }
-        }
-
-        //
-        //GET /Get Currencies List
-        public List<RegisteredClient> GetRegisteredClientsList(string searchMessage, string searchFromDate, string searchToDate, int jtStartIndex, int count, string jtSorting)
-        {
-            // Instance of DatabaseContext  
-            using (DBModel db = new DBModel())
-            {
-                IEnumerable<RegisteredClient> query = db.Database.SqlQuery<RegisteredClient>("SELECT * FROM RegisteredClients r WHERE r.Status = 1;");
-
-                //Search
-                if (!string.IsNullOrEmpty(searchMessage) && !string.IsNullOrEmpty(searchFromDate) && !string.IsNullOrEmpty(searchToDate))
-                {
-                    query = db.Database.SqlQuery<RegisteredClient>("SELECT * FROM RegisteredClients n WHERE (n.CompanyName LIKE '%" + searchMessage + "%' OR n.EmailAddress LIKE '%" + searchMessage + "%') AND n.Status = 1 AND (n.DateCreated >= CAST('" + searchFromDate + "' AS DATE) AND n.DateCreated <= CAST('" + searchToDate + "' AS DATE));");
-                }
-                else if (!string.IsNullOrEmpty(searchMessage) && string.IsNullOrEmpty(searchFromDate) && string.IsNullOrEmpty(searchToDate))
-                {
-                    query = db.Database.SqlQuery<RegisteredClient>("SELECT * FROM RegisteredClients n WHERE (n.CompanyName LIKE '%" + searchMessage + "%' OR n.EmailAddress LIKE '%" + searchMessage + "%') AND n.Status = 1;");
-                }
-                else if (!string.IsNullOrEmpty(searchMessage) && !string.IsNullOrEmpty(searchFromDate) && string.IsNullOrEmpty(searchToDate))
-                {
-                    query = db.Database.SqlQuery<RegisteredClient>("SELECT * FROM RegisteredClients n WHERE (n.CompanyName LIKE '%" + searchMessage + "%' OR n.EmailAddress LIKE '%" + searchMessage + "%') AND n.Status = 1 AND n.DateCreated >= CAST('" + searchFromDate + "' AS DATE);");
-                }
-                else if (!string.IsNullOrEmpty(searchMessage) && string.IsNullOrEmpty(searchFromDate) && !string.IsNullOrEmpty(searchToDate))
-                {
-                    query = db.Database.SqlQuery<RegisteredClient>("SELECT * FROM RegisteredClients n WHERE (n.CompanyName LIKE '%" + searchMessage + "%' OR n.EmailAddress LIKE '%" + searchMessage + "%') AND n.Status = 1 AND n.DateCreated <= CAST('" + searchToDate + "' AS DATE);");
-                }
-                else if (string.IsNullOrEmpty(searchMessage) && !string.IsNullOrEmpty(searchFromDate) && !string.IsNullOrEmpty(searchToDate))
-                {
-                    query = db.Database.SqlQuery<RegisteredClient>("SELECT * FROM RegisteredClients n WHERE n.Status = 1 AND (n.DateCreated >= CAST('" + searchFromDate + "' AS DATE) AND n.DateCreated <= CAST('" + searchToDate + "' AS DATE));");
-                }
-                else
-                {
-                    query = query.OrderByDescending(p => p.Id);
-                }
-
-                //Sorting Ascending and Descending  
-                /*if (string.IsNullOrEmpty(jtSorting) || jtSorting.Equals("CompanyName ASC"))
-                {
-                    query = query.OrderBy(p => p.CompanyName);
-                }
-                else if (jtSorting.Equals("CompanyName DESC"))
-                {
-                    query = query.OrderByDescending(p => p.CompanyName);
-                }*/
-                if (jtSorting.Equals("DateCreated ASC"))
-                {
-                    query = query.OrderBy(p => p.DateCreated);
-                }
-                else if (jtSorting.Equals("DateCreated DESC"))
-                {
-                    query = query.OrderByDescending(p => p.DateCreated);
-                }
-                else if (jtSorting.Equals("EmailAddress ASC"))
-                {
-                    query = query.OrderBy(p => p.EmailAddress);
-                }
-                else if (jtSorting.Equals("EmailAddress DESC"))
-                {
-                    query = query.OrderByDescending(p => p.EmailAddress);
-                }
-                else if (jtSorting.Equals("Status ASC"))
-                {
-                    query = query.OrderBy(p => p.Status);
-                }
-                else if (jtSorting.Equals("Status DESC"))
-                {
-                    query = query.OrderByDescending(p => p.Status);
-                }
-                else if (jtSorting.Equals("AcceptedTAC ASC"))
-                {
-                    query = query.OrderBy(p => p.AcceptedTerms);
-                }
-                else if (jtSorting.Equals("AcceptedTAC DESC"))
-                {
-                    query = query.OrderByDescending(p => p.AcceptedTerms);
-                }
-                else
-                {
-                    //Default!
-                    query = query.OrderByDescending(p => p.Id);
-                }
-                return count > 0
-                           ? query.Skip(jtStartIndex).Take(count).ToList()  //Paging  
-                           : query.ToList(); //No paging  
-            }
-        }
-
-        //
-        //GET //Gets the  
-        [HttpPost]
-        public JsonResult GetRegisteredClients(string searchMessage = "", string searchFromDate = "", string searchToDate = "", int jtStartIndex = 0, int jtPageSize = 0, string jtSorting = null)
-        {
-            using (var db = new DBModel())
-            {
-                var data = GetRegisteredClientsList(searchMessage, searchFromDate, searchToDate, jtStartIndex, jtPageSize, jtSorting);
-                //Search  
-                if (!string.IsNullOrEmpty(searchMessage) && !string.IsNullOrEmpty(searchFromDate) && !string.IsNullOrEmpty(searchToDate))
-                {
-                    var count = db.Database.SqlQuery<int>("SELECT COUNT(n.Id) AS COUNT FROM RegisteredClients n WHERE (n.CompanyName LIKE '%" + searchMessage + "%' OR n.EmailAddress LIKE '%" + searchMessage + "%') AND (n.DateCreated >= CAST('"+searchFromDate+ "' AS DATE) AND n.DateCreated <= CAST('" + searchToDate + "' AS DATE)) AND n.Status = 1;").First();
-                    return Json(new { Result = "OK", Records = data, TotalRecordCount = count });
-                }
-                else if(!string.IsNullOrEmpty(searchMessage) && string.IsNullOrEmpty(searchFromDate) && string.IsNullOrEmpty(searchToDate))
-                {
-                    var count = db.Database.SqlQuery<int>("SELECT COUNT(n.Id) AS COUNT FROM RegisteredClients n WHERE (n.CompanyName LIKE '%" + searchMessage + "%' OR n.EmailAddress LIKE '%" + searchMessage + "%') AND n.Status = 1;").First();
-                    return Json(new { Result = "OK", Records = data, TotalRecordCount = count });
-                }
-                else if(!string.IsNullOrEmpty(searchMessage) && !string.IsNullOrEmpty(searchFromDate) && string.IsNullOrEmpty(searchToDate))
-                {
-                    var count = db.Database.SqlQuery<int>("SELECT COUNT(n.Id) AS COUNT FROM RegisteredClients n WHERE (n.CompanyName LIKE '%" + searchMessage + "%' OR n.EmailAddress LIKE '%" + searchMessage + "%') AND n.DateCreated >= CAST('" + searchFromDate + "' AS DATE) AND n.Status = 1;").First();
-                    return Json(new { Result = "OK", Records = data, TotalRecordCount = count });
-                }
-                else if (!string.IsNullOrEmpty(searchMessage) && string.IsNullOrEmpty(searchFromDate) && !string.IsNullOrEmpty(searchToDate))
-                {
-                    var count = db.Database.SqlQuery<int>("SELECT COUNT(n.Id) AS COUNT FROM RegisteredClients n WHERE (n.CompanyName LIKE '%" + searchMessage + "%' OR n.EmailAddress LIKE '%" + searchMessage + "%') AND n.DateCreated <= CAST('" + searchToDate + "' AS DATE) AND n.Status = 1;").First();
-                    return Json(new { Result = "OK", Records = data, TotalRecordCount = count });
-                }
-                else if (string.IsNullOrEmpty(searchMessage) && !string.IsNullOrEmpty(searchFromDate) && !string.IsNullOrEmpty(searchToDate))
-                {
-                    var count = db.Database.SqlQuery<int>("SELECT COUNT(n.Id) AS COUNT FROM RegisteredClients n WHERE (n.DateCreated >= CAST('" + searchFromDate + "' AS DATE) AND n.DateCreated <= CAST('" + searchToDate + "' AS DATE)) AND n.Status = 1;").First();
-                    return Json(new { Result = "OK", Records = data, TotalRecordCount = count });
-                }
-                else
-                {
-                    var count = GetRegisteredClientsCount();
-                    return Json(new { Result = "OK", Records = data, TotalRecordCount = count });
-                }
-            }
-        }
-
         //GET //ExportSearchResults
         [HttpGet]
         public void ExportRegisteredClients(string searchText, string DateFrom, string DateTo)
