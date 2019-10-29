@@ -722,7 +722,7 @@ namespace OnBoarding.Controllers
                 else
                 {
                     //Create User with Password after confirmation with OTP
-                    var DBOTPToconfirm = db.DesignatedUsers.First(f => f.OTP == EncryptedOTP && f.Email == model.SignatoryEmail);
+                    var DBOTPToconfirm = db.DesignatedUsers.FirstOrDefault(f => f.OTP == EncryptedOTP && f.Email == model.SignatoryEmail);
                     TimeSpan diff = DateTime.Now - DBOTPToconfirm.DateCreated;
                     if (DBOTPToconfirm.Status == 1)
                     {
@@ -734,6 +734,7 @@ namespace OnBoarding.Controllers
                     {
                         ModelState.AddModelError(string.Empty, "Your OTP has expired. Reset it by providing it in the OTP field below");
                     }
+
                     else
                     {
                         var user = new ApplicationUser { UserName = DBOTPToconfirm.Email, Email = DBOTPToconfirm.Email, CompanyName = DBOTPToconfirm.Othernames, LastPasswordChangedDate = DateTime.Now };
@@ -752,11 +753,16 @@ namespace OnBoarding.Controllers
                                     DesignatedUserToUpdate.AcceptedTerms = model.terms;
                                     db.SaveChanges();
                                 }
-                                catch (Exception ex)
+                                catch (Exception)
                                 {
-                                    throw (ex);
+                                    ModelState.AddModelError(string.Empty, "Error! Unable to update representative details");
                                 }
                             }
+                            else
+                            {
+                                ModelState.AddModelError(string.Empty, "Error! Unable to update representative details");
+                            }
+
                             //Add Signatory user role
                             UserManager.AddToRole(user.Id, "DesignatedUser");
                             //SignIn Signatory to landing page
@@ -771,6 +777,10 @@ namespace OnBoarding.Controllers
 
                             var homePage = db.SystemMenus.SingleOrDefault(c => c.Id == menuId);
                             return RedirectToAction(homePage.action, homePage.controller);
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, "Error! Unable to update representative user account details");
                         }
                     }
                 }
