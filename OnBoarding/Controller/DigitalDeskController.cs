@@ -23,7 +23,7 @@ namespace OnBoarding.Controllers
         {
             using (DBModel db = new DBModel())
             {
-                var RegisteredClients = db.RegisteredClients.Count(a => a.Status != 4);
+                var RegisteredClients = db.RegisteredClients.Count(a => a.Status == 1);
                 var CompletedApplications = db.EMarketApplications.Count(a => a.Signatories == a.SignatoriesApproved && a.DesignatedUsers == a.UsersApproved);
                 var InCompleteApplications = db.EMarketApplications.Count(a => (a.Signatories != a.SignatoriesApproved || a.DesignatedUsers != a.UsersApproved) && (a.Status == 1 && a.OPSApproved == false && a.POAApproved == false));
                 var Approvals = db.EMarketApplications.Count(a => (a.OPSApproved == true && a.POAApproved == true));
@@ -259,7 +259,7 @@ namespace OnBoarding.Controllers
         {
             using (DBModel db = new DBModel())
             {
-                return db.RegisteredClients.Count();
+                return db.RegisteredClients.Where(e => e.Status == 1).Count();
             }
         }
 
