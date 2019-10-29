@@ -220,18 +220,8 @@
 							if (XmlHttpRequest == 'success') {
 								$('#UploadForm')[0].reset();
 								$("#Loading_Div").hide('fast');
-								//Load Uploaded Clients html
-								$.ajax({
-									type: "POST",
-									url: "/DigitalDesk/ViewUploadedClients",
-									contentType: "application/json; charset=utf-8",
-									dataType: "html",
-									success: function (data) {
-										$('.item-data-retriving').show();
-										$(".select-another-item").show('fast');
-										$('.item-data-retrived').html(data);
-									}
-								});
+								$('#UploadForm').show("fast");
+								toastr.success('Your data has been uploaded successfully');
 							}
 							else {
 								LoadUpModal();

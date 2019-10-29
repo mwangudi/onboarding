@@ -196,6 +196,7 @@
     <Compile Include="Models\DBModel.cs" />
     <Compile Include="Models\DesignatedUser.cs" />
     <Compile Include="Models\EMarketApplication.cs" />
+    <Compile Include="Models\ExistingClientsUpload.cs" />
     <Compile Include="Models\Notification.cs" />
     <Compile Include="Models\RegisteredClient.cs" />
     <Compile Include="Models\SignatoryApproval.cs" />

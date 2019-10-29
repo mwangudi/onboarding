@@ -14,6 +14,7 @@ namespace OnBoarding.Models
             Currencies = new HashSet<Currency>();
             EMarketApplications = new HashSet<EMarketApplication>();
             RegisteredClients = new HashSet<RegisteredClient>();
+            ExistingClientsUploads = new HashSet<ExistingClientsUpload>();
         }
 
         public string Id { get; set; }
@@ -75,6 +76,8 @@ namespace OnBoarding.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<RegisteredClient> RegisteredClients { get; set; }
-        
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ExistingClientsUpload> ExistingClientsUploads { get; set; }
     }
 }

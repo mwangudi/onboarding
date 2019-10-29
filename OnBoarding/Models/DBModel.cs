@@ -56,6 +56,16 @@ namespace OnBoarding.Models
                 .WithOptional(e => e.AspNetUser)
                 .HasForeignKey(e => e.UserAccountID);
 
+            modelBuilder.Entity<AspNetUser>()
+               .HasMany(e => e.ExistingClientsUploads)
+               .WithOptional(e => e.AspNetUser)
+               .HasForeignKey(e => e.UploadedBy);
+
+            modelBuilder.Entity<AspNetUser>()
+               .HasMany(e => e.ExistingClientsUploads)
+               .WithOptional(e => e.AspNetUser)
+               .HasForeignKey(e => e.ApprovedBy);
+
             modelBuilder.Entity<ClientSignatory>()
                 .Property(e => e.Signature)
                 .IsUnicode(false);
@@ -193,6 +203,12 @@ namespace OnBoarding.Models
 
             modelBuilder.Entity<tblStatus>()
                .HasMany(e => e.ClientCompanies)
+               .WithRequired(e => e.tblStatus)
+               .HasForeignKey(e => e.Status)
+               .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tblStatus>()
+               .HasMany(e => e.ExistingClientsUploads)
                .WithRequired(e => e.tblStatus)
                .HasForeignKey(e => e.Status)
                .WillCascadeOnDelete(false);
