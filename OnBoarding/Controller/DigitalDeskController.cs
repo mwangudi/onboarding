@@ -637,12 +637,12 @@ namespace OnBoarding.Controllers
             // Instance of DatabaseContext  
             using (DBModel db = new DBModel())
             {
-                IEnumerable<ClientSignatoriesViewModel> query = db.Database.SqlQuery<ClientSignatoriesViewModel>("SELECT a.Id AS SignatoryId, CONCAT(a.Surname,' ',a.OtherNames) AS Names, a.EmailAddress AS Email, a.PhoneNumber, a.AcceptedTerms, s.StatusName Status, r.CompanyName ClientName, a.AcceptedTerms AcceptedTAC, convert(varchar, a.DateCreated, 120) AS DateCreated FROM ClientSignatories a INNER JOIN RegisteredClients r ON r.Id = a.ClientID INNER JOIN tblStatus s ON s.Id = a.Status");
+                IEnumerable<ClientSignatoriesViewModel> query = db.Database.SqlQuery<ClientSignatoriesViewModel>("SELECT a.Id AS SignatoryId, CONCAT(a.Surname,' ',a.OtherNames) AS Names, a.EmailAddress AS Email, a.PhoneNumber, a.AcceptedTerms, s.StatusName Status, r.CompanyName ClientName, a.AcceptedTerms AcceptedTAC, convert(varchar, a.DateCreated, 120) AS DateCreated FROM ClientSignatories a INNER JOIN ClientCompanies r ON r.Id = a.CompanyID INNER JOIN tblStatus s ON s.Id = a.Status");
 
                 //Search  
                 if (!string.IsNullOrEmpty(searchMessage))
                 {
-                    query = db.Database.SqlQuery<ClientSignatoriesViewModel>("SELECT a.Id AS SignatoryId, CONCAT(a.Surname,' ',a.OtherNames) AS Names, a.EmailAddress AS Email, a.PhoneNumber, a.AcceptedTerms, s.StatusName Status, r.CompanyName ClientName, a.AcceptedTerms AcceptedTAC, convert(varchar, a.DateCreated, 120) AS DateCreated FROM ClientSignatories a INNER JOIN RegisteredClients r ON r.Id = a.ClientID INNER JOIN tblStatus s ON s.Id = a.Status WHERE (a.Surname LIKE '%" + searchMessage + "%' OR a.OtherNames LIKE '%" + searchMessage + "%' OR a.EmailAddress LIKE '%" + searchMessage + "%');");
+                    query = db.Database.SqlQuery<ClientSignatoriesViewModel>("SELECT a.Id AS SignatoryId, CONCAT(a.Surname,' ',a.OtherNames) AS Names, a.EmailAddress AS Email, a.PhoneNumber, a.AcceptedTerms, s.StatusName Status, r.CompanyName ClientName, a.AcceptedTerms AcceptedTAC, convert(varchar, a.DateCreated, 120) AS DateCreated FROM ClientSignatories a INNER JOIN ClientCompanies r ON r.Id = a.CompanyID INNER JOIN tblStatus s ON s.Id = a.Status WHERE (a.Surname LIKE '%" + searchMessage + "%' OR a.OtherNames LIKE '%" + searchMessage + "%' OR a.EmailAddress LIKE '%" + searchMessage + "%');");
                 }
 
                 else
@@ -903,11 +903,9 @@ namespace OnBoarding.Controllers
                 var SignatoryInfo = db.ClientSignatories.SingleOrDefault(s => s.Id == signatoryId);
                 ViewBag.SignatoryInfo = SignatoryInfo;
 
-                var RegisteredClientInfo = db.RegisteredClients.SingleOrDefault(s => s.Id == SignatoryInfo.ClientID);
+                var RegisteredClientInfo = db.ClientCompanies.SingleOrDefault(s => s.Id == SignatoryInfo.CompanyID);
                 ViewBag.RegisteredClientInfo = RegisteredClientInfo;
-
-                var HasApproval = db.SignatoryApprovals.Any(s => s.SignatoryID == SignatoryInfo.Id);
-                ViewBag.ApprovalDetails = HasApproval;
+                
             }
             return PartialView();
         }
@@ -936,12 +934,12 @@ namespace OnBoarding.Controllers
             // Instance of DatabaseContext  
             using (DBModel db = new DBModel())
             {
-                IEnumerable<ClientSignatoriesViewModel> query = db.Database.SqlQuery<ClientSignatoriesViewModel>("SELECT a.Id AS SignatoryId, CONCAT(a.Surname,' ', a.OtherNames) AS Names, a.Email, a.Mobile AS PhoneNumber, a.AcceptedTerms, s.StatusName AS Status, r.CompanyName ClientName, a.AcceptedTerms AcceptedTAC, convert(varchar, a.DateCreated, 120) AS DateCreated FROM DesignatedUsers a INNER JOIN RegisteredClients r ON r.Id = a.ClientID INNER JOIN tblStatus s ON s.Id = a.Status");
+                IEnumerable<ClientSignatoriesViewModel> query = db.Database.SqlQuery<ClientSignatoriesViewModel>("SELECT a.Id AS SignatoryId, CONCAT(a.Surname,' ', a.OtherNames) AS Names, a.Email, a.Mobile AS PhoneNumber, a.AcceptedTerms, s.StatusName AS Status, r.CompanyName ClientName, a.AcceptedTerms AcceptedTAC, convert(varchar, a.DateCreated, 120) AS DateCreated FROM DesignatedUsers a INNER JOIN ClientCompanies r ON r.Id = a.CompanyID INNER JOIN tblStatus s ON s.Id = a.Status");
 
                 //Search  
                 if (!string.IsNullOrEmpty(searchMessage))
                 {
-                    query = db.Database.SqlQuery<ClientSignatoriesViewModel>("SELECT a.Id AS SignatoryId, CONCAT(a.Surname,' ', a.OtherNames) AS Names, a.Email, a.Mobile AS PhoneNumber, a.AcceptedTerms, s.StatusName AS Status, r.CompanyName ClientName, a.AcceptedTerms AcceptedTAC, convert(varchar, a.DateCreated, 120) AS DateCreated FROM DesignatedUsers a INNER JOIN RegisteredClients r ON r.Id = a.ClientID INNER JOIN tblStatus s ON s.Id = a.Status WHERE (a.Surname LIKE '%" + searchMessage + "%' OR a.Othernames LIKE '%" + searchMessage + "%' OR a.Email LIKE '%" + searchMessage + "%');");
+                    query = db.Database.SqlQuery<ClientSignatoriesViewModel>("SELECT a.Id AS SignatoryId, CONCAT(a.Surname,' ', a.OtherNames) AS Names, a.Email, a.Mobile AS PhoneNumber, a.AcceptedTerms, s.StatusName AS Status, r.CompanyName ClientName, a.AcceptedTerms AcceptedTAC, convert(varchar, a.DateCreated, 120) AS DateCreated FROM DesignatedUsers a INNER JOIN ClientCompanies r ON r.Id = a.CompanyID INNER JOIN tblStatus s ON s.Id = a.Status WHERE (a.Surname LIKE '%" + searchMessage + "%' OR a.Othernames LIKE '%" + searchMessage + "%' OR a.Email LIKE '%" + searchMessage + "%');");
                 }
 
                 else
@@ -1042,7 +1040,7 @@ namespace OnBoarding.Controllers
                 var representativesDetails = db.DesignatedUsers.SingleOrDefault(s => s.Id == representativeId);
                 ViewBag.RepresentativeInfo = representativesDetails;
 
-                var RegisteredClientInfo = db.RegisteredClients.SingleOrDefault(s => s.Id == representativesDetails.ClientID);
+                var RegisteredClientInfo = db.ClientCompanies.SingleOrDefault(s => s.Id == representativesDetails.CompanyID);
                 ViewBag.RegisteredClientInfo = RegisteredClientInfo;
             }
             return PartialView();
