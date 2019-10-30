@@ -2400,10 +2400,13 @@
     <Content Include="Content\documents\Merged GTCs and eMT Agreement\files\background7.jpg" />
     <Content Include="Content\documents\Merged GTCs and eMT Agreement\files\background8.jpg" />
     <Content Include="Content\documents\Merged GTCs and eMT Agreement\files\background9.jpg" />
+    <Content Include="Content\emails\ClientConfirmationRepresentativeApproval.html" />
     <Content Include="Content\emails\ClientRegistrationEmail.html" />
     <Content Include="Content\emails\PasswordChange.html" />
     <Content Include="Content\emails\PasswordReset.html" />
     <Content Include="Content\emails\PasswordResetSuccess.html" />
+    <Content Include="Content\emails\RepresentativeApproval.html" />
+    <Content Include="Content\emails\RepresentativeDecline.html" />
     <Content Include="Content\emails\RequestResendOTP.html" />
     <Content Include="Content\emails\ResendOTP.html" />
     <Content Include="Content\emails\ConfirmRegistration.html" />

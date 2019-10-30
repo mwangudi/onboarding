@@ -4,6 +4,7 @@ using OnBoarding.Services;
 using OnBoarding.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -230,35 +231,47 @@ namespace OnBoarding.Controllers
                     }
 
                     //5. Send email to authorized representative
-                    var ApprovalCompleteEmailMessage = "Dear " + userClientId.Surname + ", <br/><br/> Thank you for accepting nomination as an authorized representative from " + model.CompanyName + ".<br/>" +
-                        "You have also accepted our terms and conditions for trading on the portal. <br/><br/>" +
-                         "Thank you for your continued custom." +
-                        "<br/><br/> Kind Regards,<br/><img src=\"https://e-documents.stanbicbank.co.ke/Content/images/EmailSignature.png\"/>";
-                    var ApprovalCompleteEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, userClientId.Email, "Authorised Representative Approval", ApprovalCompleteEmailMessage);
-                    if (ApprovalCompleteEmail == true)
+                    string EmailBody = string.Empty;
+                    using (System.IO.StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/RepresentativeApproval.html")))
+                    {
+                        EmailBody = reader.ReadToEnd();
+                    }
+                    EmailBody = EmailBody.Replace("{Othernames}", userClientId.Othernames);
+                    EmailBody = EmailBody.Replace("{CompanyName}", model.CompanyName);
+
+                    var SendRegistrationCompleteEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, userClientId.Email, "Authorised Representative Approval", EmailBody);
+
+                    if (SendRegistrationCompleteEmail == true)
                     {
                         //Log email sent notification
-                        LogNotification.AddSucsessNotification(MailHelper.EmailFrom, ApprovalCompleteEmailMessage, userClientId.Email, _action);
+                        LogNotification.AddSucsessNotification(MailHelper.EmailFrom, EmailBody, userClientId.Email, _action);
                     }
                     else
                     {
                         //Log Email failed notification
-                        LogNotification.AddFailureNotification(MailHelper.EmailFrom, ApprovalCompleteEmailMessage, userClientId.Email, _action);
+                        LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBody, userClientId.Email, _action);
                     }
 
                     //6. Send email to company
-                    var ApprovalCompleteEmailMessage2 = "Dear " + model.CompanySurname + ", <br/><br/> " + userClientId.Surname + " " + userClientId.Othernames + " has confirmed the information submitted and completed the process.<br/> Thank you for your continued custom." +
-                    "<br/><br/> Kind Regards,<br/><img src=\"https://e-documents.stanbicbank.co.ke/Content/images/EmailSignature.png\"/>";
-                    var ApprovalCompleteEmail2 = MailHelper.SendMailMessage(MailHelper.EmailFrom, model.CompanyEmail, "Authorised Representative Approval", ApprovalCompleteEmailMessage2);
-                    if (ApprovalCompleteEmail2 == true)
+                    string EmailBody2 = string.Empty;
+                    using (System.IO.StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/ClientConfirmationApproval.html")))
+                    {
+                        EmailBody2 = reader.ReadToEnd();
+                    }
+                    EmailBody2 = EmailBody2.Replace("{Othernames}", model.CompanySurname);
+                    EmailBody2 = EmailBody2.Replace("{ApproversName}", userClientId.Surname + " " + userClientId.Othernames);
+
+                    var SendClientConfirmationEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, userClientId.Email, "Authorised Representative Approval", EmailBody2);
+
+                    if (SendClientConfirmationEmail == true)
                     {
                         //Log email sent notification
-                        LogNotification.AddSucsessNotification(MailHelper.EmailFrom, ApprovalCompleteEmailMessage2, model.CompanyEmail, _action);
+                        LogNotification.AddSucsessNotification(MailHelper.EmailFrom, EmailBody2, userClientId.Email, _action);
                     }
                     else
                     {
                         //Log Email failed notification
-                        LogNotification.AddFailureNotification(MailHelper.EmailFrom, ApprovalCompleteEmailMessage2, model.CompanyEmail, _action);
+                        LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBody2, userClientId.Email, _action);
                     }
                 }
 
@@ -285,7 +298,7 @@ namespace OnBoarding.Controllers
                 {
                     var currentUserId = User.Identity.GetUserId();
                     var userClientId = db.DesignatedUsers.First(c => c.UserAccountID == currentUserId && c.CompanyID == model.CompanyID);
-                    var _action = "DeclineNomination";
+                    var _action = "RepresentativeDeclineNomination";
                     //Log approval
                     //Upload Signature
                     if (inputFile != null)
@@ -323,44 +336,58 @@ namespace OnBoarding.Controllers
                             ApplicationUpdate.UsersDateApproved = DateTime.Now;
                             db.SaveChanges();
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         {
-                            throw (ex);
+                            return Json("Error! Unable to update application status details!", JsonRequestBehavior.AllowGet);
                         }
                     }
                     else
                     {
-                        return Json("Unable to Update Application Status Details!", JsonRequestBehavior.AllowGet);
+                        return Json("Error! Unable to update application status details!", JsonRequestBehavior.AllowGet);
                     }
 
-                    //Send email to Authorized User
-                    var ApprovalCompleteEmailMessage = "Dear " + userClientId.Surname + ", <br/><br/> Thank you for declining nomination as an authorized user from " + model.CompanyName + ".<br/>" +
-                         "<br/><br/> Kind Regards,<br/><img src=\"https://e-documents.stanbicbank.co.ke/Content/images/EmailSignature.png\"/>";
-                    var ApprovalCompleteEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, userClientId.Email, "Authorized User Decline", ApprovalCompleteEmailMessage);
-                    if (ApprovalCompleteEmail == true)
+                    //1. Send email to Authorized Representative
+                    string EmailBody = string.Empty;
+                    using (System.IO.StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/RepresentativeDecline.html")))
+                    {
+                        EmailBody = reader.ReadToEnd();
+                    }
+                    EmailBody = EmailBody.Replace("{Othernames}", userClientId.Othernames);
+                    EmailBody = EmailBody.Replace("{CompanyName}", model.CompanyName);
+
+                    var SendRegistrationCompleteEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, userClientId.Email, "Authorised Representative Decline", EmailBody);
+
+                    if (SendRegistrationCompleteEmail == true)
                     {
                         //Log email sent notification
-                        LogNotification.AddSucsessNotification(MailHelper.EmailFrom, ApprovalCompleteEmailMessage, userClientId.Email, _action);
+                        LogNotification.AddSucsessNotification(MailHelper.EmailFrom, EmailBody, userClientId.Email, _action);
                     }
                     else
                     {
                         //Log Email failed notification
-                        LogNotification.AddFailureNotification(MailHelper.EmailFrom, ApprovalCompleteEmailMessage, userClientId.Email, _action);
+                        LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBody, userClientId.Email, _action);
                     }
 
-                    //Send email to client company
-                    var ApprovalCompleteEmailMessage2 = "Dear " + model.CompanyName + ", <br/><br/> " + userClientId.Surname + " " + userClientId.Othernames + " has declined your nomination as  an authorized representative.<br/><br/>" +
-                        "Kind Regards,<br/><img src=\"https://e-documents.stanbicbank.co.ke/Content/images/EmailSignature.png\"/>";
-                    var ApprovalCompleteEmail2 = MailHelper.SendMailMessage(MailHelper.EmailFrom, model.CompanyEmail, "Authorized User Decline", ApprovalCompleteEmailMessage2);
-                    if (ApprovalCompleteEmail2 == true)
+                    //2. Send confirmation email to client company
+                    string EmailBody2 = string.Empty;
+                    using (System.IO.StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/ClientConfirmationRepresentativeDecline.html")))
+                    {
+                        EmailBody2 = reader.ReadToEnd();
+                    }
+                    EmailBody2 = EmailBody2.Replace("{RepresentativeName}", userClientId.Surname + " " + userClientId.Othernames);
+                    EmailBody2 = EmailBody2.Replace("{CompanyName}", model.CompanyName);
+
+                    var SendClientConfirmationEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, model.CompanyEmail, "Authorised Representative Decline", EmailBody2);
+
+                    if (SendClientConfirmationEmail == true)
                     {
                         //Log email sent notification
-                        LogNotification.AddSucsessNotification(MailHelper.EmailFrom, ApprovalCompleteEmailMessage2, model.CompanyEmail, _action);
+                        LogNotification.AddSucsessNotification(MailHelper.EmailFrom, EmailBody2, model.CompanyEmail, _action);
                     }
                     else
                     {
                         //Log Email failed notification
-                        LogNotification.AddFailureNotification(MailHelper.EmailFrom, ApprovalCompleteEmailMessage2, model.CompanyEmail, _action);
+                        LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBody2, model.CompanyEmail, _action);
                     }
                 }
                 return Json("success", JsonRequestBehavior.AllowGet);

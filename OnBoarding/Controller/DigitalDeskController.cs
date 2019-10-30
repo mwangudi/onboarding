@@ -2584,12 +2584,14 @@ namespace OnBoarding.Controllers
                     var currentUserId = User.Identity.GetUserId();
                     var ApplicationUpdate = db.EMarketApplications.SingleOrDefault(c => c.Id == model.ApplicationId);
                     var ClientDetails = db.RegisteredClients.SingleOrDefault(s => s.Id == ApplicationUpdate.ClientID);
+                    var CompanyDetails = db.ClientCompanies.SingleOrDefault(s => s.Id == ApplicationUpdate.CompanyID);
+
                     var _action = "DeclineApplication";
                     if (ApplicationUpdate != null)
                     {
                         try
                         {
-                            //Update application status
+                            //1. Update application status
                             ApplicationUpdate.DigitalDeskDeclined = true;
                             ApplicationUpdate.DateDeclined = DateTime.Now;
                             ApplicationUpdate.DigWhoDeclined = currentUserId;
@@ -2597,56 +2599,56 @@ namespace OnBoarding.Controllers
                             ApplicationUpdate.OPSComments = model.Comments;
                             db.SaveChanges();
 
-                            //Mark HasApplication False for Client Company
+                            //2. Mark HasApplication False for Client Company
                             var updateClientCompany = db.ClientCompanies.SingleOrDefault(c => c.Id == ApplicationUpdate.CompanyID);
                             updateClientCompany.HasApplication = false;
                             db.SaveChanges();
 
-                            //Delete Signatories
+                            //3. Delete Signatories
                             db.ClientSignatories.RemoveRange(db.ClientSignatories.Where(c => c.ClientID == ClientDetails.Id && c.CompanyID == ApplicationUpdate.CompanyID));
                             db.SaveChanges();
 
-                            //Delete Representatives
+                            //4. Delete Representatives
                             db.DesignatedUsers.RemoveRange(db.DesignatedUsers.Where(c => c.ClientID == ClientDetails.Id && c.CompanyID == ApplicationUpdate.CompanyID));
                             db.SaveChanges();
 
-                            //Delete Settlement Accounts
+                            //5. Delete Settlement Accounts
                             db.ClientSettlementAccounts.RemoveRange(db.ClientSettlementAccounts.Where(c => c.ClientID == ClientDetails.Id && c.CompanyID == ApplicationUpdate.CompanyID));
-                            var recordSaved = db.SaveChanges();
+                            db.SaveChanges();
 
-                            //Send email if true
-                            if (recordSaved > 0)
+                            //6. Send email notification to Client Company
+                            string EmailBody = string.Empty;
+                            using (System.IO.StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/DigitalDeskApplicationDeclined.html")))
                             {
-                                //Send email notification to Client
-                                var ApplicationApprovedEmailMessage = "Dear " + ClientDetails.Surname + ", <br/><br/> Your application has been declined. <br/>" +
-                                "Kindly login to submit another application.<br/><br/>" +
-                                "Kind Regards, <br /> Global Markets Digital Team <br/><img src=\"/Content/images/EmailSignature.png\"/>";
-                                var ApplicationCompleteEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, ClientDetails.EmailAddress, "Application Declined", ApplicationApprovedEmailMessage);
+                                EmailBody = reader.ReadToEnd();
+                            }
+                            EmailBody = EmailBody.Replace("{CompanyName}", CompanyDetails.CompanyName);
+                            var SendEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, ClientDetails.EmailAddress, "Application Declined", EmailBody);
 
-                                if (ApplicationCompleteEmail == true)
-                                {
-                                    //Log email sent notification
-                                    LogNotification.AddSucsessNotification(MailHelper.EmailFrom, ApplicationApprovedEmailMessage, ClientDetails.EmailAddress, _action);
-                                }
-                                else
-                                {
-                                    //Log Email failed notification
-                                    LogNotification.AddFailureNotification(MailHelper.EmailFrom, ApplicationApprovedEmailMessage, ClientDetails.EmailAddress, _action);
-                                }
+                            if (SendEmail == true)
+                            {
+                                //Log email sent notification
+                                LogNotification.AddSucsessNotification(MailHelper.EmailFrom, EmailBody, ClientDetails.EmailAddress, _action);
+                            }
+                            else
+                            {
+                                //Log Email failed notification
+                                LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBody, ClientDetails.EmailAddress, _action);
                             }
 
+                            return Json("success", JsonRequestBehavior.AllowGet);
                         }
                         catch (Exception ex)
                         {
-                            throw (ex);
+                            //throw (ex);
+                            return Json("Error! "+ ex +" ", JsonRequestBehavior.AllowGet);
                         }
                     }
                     else
                     {
-                        return Json("Unable to update application details!", JsonRequestBehavior.AllowGet);
+                        return Json("Error! Unable to update application details!", JsonRequestBehavior.AllowGet);
                     }
                 }
-                return Json("success", JsonRequestBehavior.AllowGet);
             }
             else
             {

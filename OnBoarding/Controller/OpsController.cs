@@ -4,6 +4,7 @@ using OnBoarding.Services;
 using OnBoarding.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web.Mvc;
 
@@ -232,6 +233,8 @@ namespace OnBoarding.Controllers
                     var currentUserId = User.Identity.GetUserId();
                     var ApplicationUpdate = db.EMarketApplications.SingleOrDefault(c => c.Id == model.ApplicationId);
                     var ClientDetails = db.RegisteredClients.SingleOrDefault(s => s.Id == ApplicationUpdate.ClientID);
+                    var CompanyDetails = db.ClientCompanies.SingleOrDefault(s => s.Id == ApplicationUpdate.CompanyID);
+
                     var _action = "DeclineApplication";
                     if (ApplicationUpdate != null)
                     {
@@ -246,37 +249,42 @@ namespace OnBoarding.Controllers
                             ApplicationUpdate.OPSComments = model.Comments;
                             var deleteApplication = db.SaveChanges();
 
-                            //Delete Signatories
+                            //1. Delete Signatories
                             db.ClientSignatories.RemoveRange(db.ClientSignatories.Where(c => c.ClientID == ClientDetails.Id && c.CompanyID == ApplicationUpdate.CompanyID));
                             var deleteSignatories = db.SaveChanges();
 
-                            //Delete Representatives
+                            //2. Delete Representatives
                             db.DesignatedUsers.RemoveRange(db.DesignatedUsers.Where(c => c.ClientID == ClientDetails.Id && c.CompanyID == ApplicationUpdate.CompanyID));
                             var deleteUsers = db.SaveChanges();
 
-                            //Delete Settlement Accounts
+                            //3. Delete Settlement Accounts
                             db.ClientSettlementAccounts.RemoveRange(db.ClientSettlementAccounts.Where(c => c.ClientID == ClientDetails.Id && c.CompanyID == ApplicationUpdate.CompanyID));
                             db.SaveChanges();
 
                             if (deleteApplication > 0 && deleteUsers > 0 && deleteSignatories > 0)
                             {
-                                //Send email notification to Client
-                                var ApplicationApprovedEmailMessage = "Dear " + ClientDetails.Surname + ", <br/><br/> Kindly note that your application is unsuccessful and has been declined. The Digital desk will contact you shortly and advise you on the way forward. <br/>" +
-                                "Thank you for your continued custom, <br /> Global Markets Digital Team <br/><img src=\"/Content/images/EmailSignature.png\"/>";
-                                var ApplicationCompleteEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, ClientDetails.EmailAddress, "Application Declined", ApplicationApprovedEmailMessage);
+                                //4. Send email notification to Client Company
+                                string EmailBody = string.Empty;
+                                using (System.IO.StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/ApplicationDeclined.html")))
+                                {
+                                    EmailBody = reader.ReadToEnd();
+                                }
+                                EmailBody = EmailBody.Replace("{CompanyName}", CompanyDetails.CompanyName);
 
-                                if (ApplicationCompleteEmail == true)
+                                var SendRegistrationCompleteEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, ClientDetails.EmailAddress, "Application Declined", EmailBody);
+
+                                if (SendRegistrationCompleteEmail == true)
                                 {
                                     //Log email sent notification
-                                    LogNotification.AddSucsessNotification(MailHelper.EmailFrom, ApplicationApprovedEmailMessage, ClientDetails.EmailAddress, _action);
+                                    LogNotification.AddSucsessNotification(MailHelper.EmailFrom, EmailBody, ClientDetails.EmailAddress, _action);
                                 }
                                 else
                                 {
                                     //Log Email failed notification
-                                    LogNotification.AddFailureNotification(MailHelper.EmailFrom, ApplicationApprovedEmailMessage, ClientDetails.EmailAddress, _action);
+                                    LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBody, ClientDetails.EmailAddress, _action);
                                 }
 
-                                //Send email notification to Digital Desk
+                                //5. Send email notification to Digital Desk
                                 var DDUserRole = (from p in db.AspNetUserRoles
                                                   join e in db.AspNetUsers on p.UserId equals e.Id
                                                   where p.RoleId == "03d5e1e3-a8a9-441e-9122-30c3aafccccc"
