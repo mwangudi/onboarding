@@ -1371,7 +1371,6 @@ namespace OnBoarding.Controllers
                 dt.Columns.Add("ColStatus").DefaultValue = 0;
                 dt.Columns.Add("ColDateCreated").DefaultValue = DateTime.Now;
                 dt.Columns.Add("ColUploadedBy").DefaultValue = User.Identity.GetUserId();
-                dt.Columns.Add("ColApproved").DefaultValue = false;
 
                 //Read the contents of CSV file.
                 string csvData = System.IO.File.ReadAllText(filePath);
@@ -1418,7 +1417,6 @@ namespace OnBoarding.Controllers
                         sqlBulkCopy.ColumnMappings.Add("ColStatus", "Status");
                         sqlBulkCopy.ColumnMappings.Add("ColDateCreated", "DateCreated");
                         sqlBulkCopy.ColumnMappings.Add("ColUploadedBy", "UploadedBy");
-                        sqlBulkCopy.ColumnMappings.Add("ColApproved", "Approved");
 
                         try
                         {

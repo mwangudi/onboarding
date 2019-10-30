@@ -3097,6 +3097,8 @@
     <Content Include="Views\DigitalDesk\LoadDeleteSignatory.cshtml" />
     <Content Include="Views\DigitalDesk\PendingApprovals.cshtml" />
     <Content Include="Views\Shared\_AdminOldLayout.cshtml" />
+    <Content Include="Views\Gmo\ApproveUploads.cshtml" />
+    <Content Include="Views\Gmo\ViewUploadedClient.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

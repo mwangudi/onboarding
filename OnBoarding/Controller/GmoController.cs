@@ -47,7 +47,7 @@ namespace OnBoarding.Controllers
         {
             return View();
         }
-                
+
         //
         //GET //Count
         public int GetApprovedApplicationsCount()
@@ -120,7 +120,7 @@ namespace OnBoarding.Controllers
                 }
             }
         }
-               
+
         //
         // POST: /Admin/ViewApproval
         [HttpPost]
@@ -525,7 +525,7 @@ namespace OnBoarding.Controllers
                 }
                 else if (string.IsNullOrEmpty(searchMessage) && !string.IsNullOrEmpty(searchFromDate) && !string.IsNullOrEmpty(searchToDate))
                 {
-                    var recordCount = db.Database.SqlQuery<int>("SELECT count(c.Id) AS COUNT FROM ClientSettlementAccounts c INNER JOIN RegisteredClients r ON r.Id = c.ClientID INNER JOIN EMarketApplications e ON e.ClientID = c.ClientID WHERE c.Status = 1 AND (c.DateCreated >= CAST('" + searchFromDate + "' AS DATE) AND c.DateCreated <= CAST('"+ searchToDate +"' AS DATE)").First();
+                    var recordCount = db.Database.SqlQuery<int>("SELECT count(c.Id) AS COUNT FROM ClientSettlementAccounts c INNER JOIN RegisteredClients r ON r.Id = c.ClientID INNER JOIN EMarketApplications e ON e.ClientID = c.ClientID WHERE c.Status = 1 AND (c.DateCreated >= CAST('" + searchFromDate + "' AS DATE) AND c.DateCreated <= CAST('" + searchToDate + "' AS DATE)").First();
                     return Json(new { Result = "OK", Records = data, TotalRecordCount = recordCount });
                 }
                 else if (string.IsNullOrEmpty(searchMessage) && !string.IsNullOrEmpty(searchFromDate) && !string.IsNullOrEmpty(searchToDate))
@@ -663,6 +663,106 @@ namespace OnBoarding.Controllers
                     }
                 }
             }
+        }
+
+        //
+        //Get: //ApproveUploads
+        public ActionResult ApproveUploads()
+        {
+            return View();
+        }
+
+        //
+        //Get //Count
+        public int GetUploadedClientsCount()
+        {
+            using (DBModel db = new DBModel())
+            {
+                return db.ExistingClientsUploads.Count();
+            }
+        }
+
+        //
+        //GET /Get Currencies List
+        public List<ExistingClientsUploadViewModel> GetUploadedClientsList(int jtStartIndex, int jtPageSize, int count, string jtSorting)
+        {
+            // Instance of DatabaseContext
+            using (DBModel db = new DBModel())
+            {
+                IEnumerable<ExistingClientsUploadViewModel> query = db.Database.SqlQuery<ExistingClientsUploadViewModel>("SELECT a.CompanyName, a.AcceptedTerms, a.Status, a.DateCreated FROM ExistingClientsUploads a GROUP BY a.CompanyName, a.AcceptedTerms, a.Status, a.DateCreated ORDER BY " + jtSorting + " OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY;");
+
+                //No Search parameters
+
+                //Sorting Ascending and Descending  
+                if (string.IsNullOrEmpty(jtSorting) || jtSorting.Equals("DateCreated ASC"))
+                {
+                    query = query.OrderBy(p => p.DateCreated);
+                }
+                else if (jtSorting.Equals("DateCreated DESC"))
+                {
+                    query = query.OrderByDescending(p => p.DateCreated);
+                }
+                else if (jtSorting.Equals("CompanyName ASC"))
+                {
+                    query = query.OrderBy(p => p.CompanyName);
+                }
+                else if (jtSorting.Equals("CompanyName DESC"))
+                {
+                    query = query.OrderByDescending(p => p.CompanyName);
+                }
+                else if (jtSorting.Equals("Status ASC"))
+                {
+                    query = query.OrderBy(p => p.Status);
+                }
+                else if (jtSorting.Equals("Status DESC"))
+                {
+                    query = query.OrderByDescending(p => p.Status);
+                }
+                else
+                {
+                    //Default!
+                    query = query.OrderByDescending(p => p.DateCreated);
+                }
+                return count > 0
+                           ? query.Skip(jtStartIndex).Take(count).ToList()  //Paging  
+                           : query.ToList(); //No paging 
+            }
+        }
+
+        //
+        //GET //Gets the list and returns Json object
+        [HttpPost]
+        public JsonResult GetUploadedClients(int jtStartIndex = 0, int jtPageSize = 0, int count = 0, string jtSorting = null)
+        {
+            using (var db = new DBModel())
+            {
+                var data = GetUploadedClientsList(jtStartIndex, jtPageSize, count, jtSorting);
+                var recordCount = GetUploadedClientsCount();
+                return Json(new { Result = "OK", Records = data, TotalRecordCount = recordCount });
+            }
+        }
+
+        //
+        //GET //ViewUploadedClient
+        [HttpPost]
+        [AllowAnonymous]
+        public PartialViewResult ViewUploadedClient(string CompanyName)
+        {
+            using (DBModel db = new DBModel())
+            {
+                var getUploadedClientInfo = db.ExistingClientsUploads.FirstOrDefault(c => c.CompanyName == CompanyName && c.Status == 0);
+                ViewBag.ClientInfo = getUploadedClientInfo;
+
+                //SSI List
+                var Query = db.Database.SqlQuery<UploadedClientSSIViewModel>("SELECT a.AccountNumber, a.Currency FROM ExistingClientsUploads a WHERE a.CompanyName = '"+ CompanyName+"';").ToList();
+                ViewBag.SettlementAccounts = Query;
+
+                //Representative List
+                var Query1 = db.Database.SqlQuery<UploadedClientRepresentativeViewModel>("SELECT a.RepresentativeName, a.RepresentativeEmail, a.RepresentativePhonenumber, a.RepresentativeLimit, a.IsGM, a.IsEMTUser FROM ExistingClientsUploads a WHERE a.CompanyName = '" + CompanyName + "';").ToList();
+                ViewBag.DesignatedUsers = Query1;
+            }
+
+            return PartialView();
         }
     }
 }

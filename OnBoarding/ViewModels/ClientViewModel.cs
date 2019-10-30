@@ -129,4 +129,37 @@ namespace OnBoarding.ViewModels
     {
         public int getClientId { get; set; }
     }
+
+    public class UploadedClientViewModel
+    {
+        public int ClientID { get; set; }
+        public string CompanyName { get; set; }
+        public string Status { get; set; }
+        public string EmailAddress { get; set; }
+        public DateTime DateCreated { get; set; }
+    }
+
+    public class ExistingClientsUploadViewModel
+    {
+        public string CompanyName { get; set; }
+        public string AcceptedTerms { get; set; }
+        public int Status { get; set; }
+        public DateTime DateCreated { get; set; }
+    }
+
+    public class UploadedClientSSIViewModel
+    {
+        public string AccountNumber { get; set; }
+        public string Currency { get; set; }
+    }
+
+    public class UploadedClientRepresentativeViewModel
+    {
+        public string RepresentativeName { get; set; }
+        public string RepresentativeEmail { get; set; }
+        public string RepresentativePhonenumber { get; set; }
+        public string RepresentativeLimit { get; set; }
+        public string IsGM { get; set; }
+        public string IsEMTUser { get; set; }
+    }
 }

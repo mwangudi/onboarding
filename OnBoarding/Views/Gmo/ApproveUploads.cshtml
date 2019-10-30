@@ -1,0 +1,175 @@
+﻿@{
+	Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<section class="section">
+	<div class="col-12 col-sm-12 col-lg-12">
+		<div class="card">
+			<div class="card-header">
+				<h4> Uploaded Clients </h4>
+			</div>
+			<div class="card-body">
+				<ul class="nav nav-tabs" id="myTab" role="tablist">
+					<li class="nav-item">
+						<a class="nav-link active show" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">
+							<i class="fa fa-list"></i> Recently Uploaded Clients
+						</a>
+					</li>
+				</ul>
+				<div class="tab-content" id="myTabContent">
+					<div class="tab-pane fade active show" id="home" role="tabpanel" aria-labelledby="home-tab">
+						<div class="item-data-retriving d_none">
+							<div class="form-group form-row" style="margin-left: 0px !important;">
+								<div class="col-12 col-sm-9 col-lg-9">
+									<h6><i class="fa fa-adjust"></i> View Uploaded Client Details </h6>
+								</div>
+								<div class="col-12 col-sm-3 col-lg-3">
+									<button id="selectanother" class="btn btn-outline-primary w_full" type="button"><i class="fa fa-check-circle"></i> Select Another Client </button>
+								</div>
+							</div>
+						</div>
+						<!--Load Up Data -->
+						<center id="RMDLoading_ID" class="d_none r_corners">
+							<h6 class="m_top_20 m_bottom_20"> Please wait... Fetching Client Details </h6>
+							<img src="~/Content/images/loading-bar.gif" class="img-thumbnail" alt="Loading" style="max-width:160px;">
+						</center>
+						<!--End Loading Up Data -->
+					</div>
+					<div class="item-data-retrived"></div>
+					<div class="row" id="ViewAll">
+						<div class="col-lg-12 col-md-12 col-12">
+							<div id="UploadedClientsTableContainer"></div>
+						</div>
+						<script>
+							$(document).ready(function () {
+								$('#UploadedClientsTableContainer').jtable({
+									title: '<i class="fa fa-list"></i> Recently Uploaded Clients',
+									paging: true,
+									pageSize: 10,
+									sorting: true,
+									openChildAsAccordion: true,
+									defaultSorting: 'DateCreated DESC',
+									actions:
+									{
+										listAction: '/Gmo/GetUploadedClients'
+									},
+									fields: {
+										CompanyName: {
+											title: 'Company Name',
+											width: '30%'
+										},
+										AcceptedTerms: {
+											title: 'AcceptedTerms',
+											width: '10%'
+										},
+										Status: {
+											title: 'Approval Status',
+											width: '20%',
+											display: function (data) {
+												var approved = data.record.Status;
+												if (approved == 0) {
+													return '<center><p class="text-warning"><i class="fa fa-check-circle"></i> Pending Approval </p></center>';
+												}
+												else if (approved == 1) {
+													return '<center><p class="text-success"><i class="fa fa-check-circle"></i> Approved </p></center>';
+												}
+												else {
+													return '<center><p class="text-danger"><i class="fa fa-times-circle"></i> Declined </p></center>';
+												}
+											}
+										},
+										DateCreated: {
+											title: 'DateUploaded',
+											width: '10%',
+											type: 'date',
+											displayFormat: 'yy-mm-dd'
+										},
+										MyButton: {
+											title: 'Action',
+											width: '10%',
+											display: function (data) {
+												 return '<center><button class="btn btn-outline-primary w_full btn-small" onclick="LoadUpModal(\'' + data.record.CompanyName + '\')">' +
+													'<span class="fa fa-check-circle"></span> View & Approve </button></center>';
+											}
+										},
+									}
+								});
+								
+								//Load list from server
+								$('#UploadedClientsTableContainer').jtable('load');
+							});
+						</script>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<!--Start Confirm Approve Modal -->
+<div class="modal fade right" id="LoadUpDeleteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<!-- Add class .modal-side and then add class .modal-top-right (or other classes from list above) to set a position to the modal -->
+	<div class="modal-dialog modal-side modal-top-right" role="document" style="width:500px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title w-100" id="myModalLabel"><i class="fa fa-trash"></i> Delete Client </h4>
+				<button type="button" id="closemodalup" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body students-data mb-0"></div>
+			<div class="modal-footer mb-0">
+				<div class="col-lg-12">
+					<center> <b> Global Markets Onboarding System  &copy; Stanbic Bank Kenya </b> </center>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--End Confirm Delete Modal -->
+<script type="text/javascript">
+
+	//select-another-item
+	$('#selectanother').click(function (e) {
+		e.preventDefault();
+		$('.item-data-retrived').hide('fast');
+		$('.item-data-retriving').hide('fast');
+		$('#RMDLoading_ID').hide('fast');
+		$('#searchform').show();
+		$('#ViewAll').show('fast');
+	});
+
+	//Function Load modal
+	function LoadUpModal(CompanyName) {
+		// Hide Default DIV's
+		$('#ViewAll').hide();
+		$('#RMDLoading_ID').show('fast');
+		$('.item-data-retriving').show();
+		// LoadUp User Data
+		$.ajax({
+			type: "POST",
+			url: "/Gmo/ViewUploadedClient",
+			data: '{CompanyName: "' + CompanyName + '" }',
+			async: true,
+			contentType: "application/json; charset=utf-8",
+			dataType: "html",
+			success: function (data) {
+				$('#RMDLoading_ID').hide();
+				$('.item-data-retrived').show();
+				$('.item-data-retrived').html(data);
+
+				//btnRemoveRepresentative
+				$("#btnDeleteClient").click(function (e) {
+					e.preventDefault();
+				});
+			},
+			error: function (xhr, textStatus, errorThrown) {
+				if (textStatus === 'error') {
+					$('#ViewAll').show();
+					$('#RMDLoading_ID').hide();
+					$('.item-data-retriving').hide();
+					toastr.error('Submission error! Code: ' + xhr.status + ' Details: ' + errorThrown);
+				}
+			},
+		});
+	}
+
+</script>

@@ -23,6 +23,7 @@ namespace OnBoarding.Models
         public virtual DbSet<SystemMenuAccess> SystemMenuAccess { get; set; }
         public virtual DbSet<AuditTrail> AuditTrails { get; set; }
         public virtual DbSet<ClientCompany> ClientCompanies { get; set; }
+        public virtual DbSet<ExistingClientsUpload> ExistingClientsUploads { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
