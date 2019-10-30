@@ -97,24 +97,20 @@
 						</tr>
 					</table>
 				</div>
-				<div class="form-wizard-buttons">
-					<div class="col-md-6">
-						
-					</div>
-				</div>
 				<div class="row d_none">
 					<div class="col-12 col-md-12">
 						<h5>Provide notes upon decline (if any) </h5>
 						<div class="form-group">
 							<textarea cols="12" rows="4" placeholder="Approval Notes ..." id="Comments" name="Comments" class="form-control"></textarea>
+							<input type="hidden" id="Approved" name="Approved" value="@ViewData["Approved"]" class="form-control">
 						</div>
 					</div>
 				</div>
-				<div class="row d_none">
+				<div id="HideShowApproveButtons" class="row d_none">
 					<div class="col-md-12">
 						<div class="form-wizard-buttons">
 							<button type="submit" class="btn btn-danger btnDecline"><i class="fa fa-trash"></i> Decline </button>
-							<button type="submit" class="btn btn-submit btnApprove d_none"><i class="fa fa-check-circle-o"></i> Approve </button>
+							<button type="submit" class="btn btn-submit btnApprove"><i class="fa fa-check-circle"></i> Approve </button>
 						</div>
 					</div>
 				</div>
@@ -147,6 +143,13 @@
     });
 
     $(document).ready(function () {
+		//Hide/Show Approve Buttons
+		if ($('#Approved').val() == 1) {
+			$('#HideShowApproveButtons').addClass('d_none');
+		}
+		else {
+			$('#HideShowApproveButtons').removeClass('d_none');
+		}
 
         //Submit Form (Decline Action)
         $('.btnDecline').on('click', function (e) {

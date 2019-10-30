@@ -760,6 +760,17 @@ namespace OnBoarding.Controllers
                 //Representative List
                 var Query1 = db.Database.SqlQuery<UploadedClientRepresentativeViewModel>("SELECT a.RepresentativeName, a.RepresentativeEmail, a.RepresentativePhonenumber, a.RepresentativeLimit, a.IsGM, a.IsEMTUser FROM ExistingClientsUploads a WHERE a.CompanyName = '" + CompanyName + "';").ToList();
                 ViewBag.DesignatedUsers = Query1;
+
+                //Check if upload has been approved
+                var ApprovedUpload = db.ExistingClientsUploads.Any(c => c.CompanyName == CompanyName && (c.Status == 1 || c.Status == 2));
+                if (ApprovedUpload)
+                {
+                    ViewData["Approved"] = 1;
+                }
+                else
+                {
+                    ViewData["Approved"] = 0;
+                }
             }
 
             return PartialView();
