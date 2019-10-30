@@ -262,7 +262,7 @@ namespace OnBoarding.Controllers
                         }
 
                         //Send email to signatory after approval
-                        var ApprovalCompleteEmailMessage = "Dear " + signatoryClientId.Surname + ", <br/><br/> Thank you for accepting nomination as signatory and authorized representative from " + model.CompanyName + ".<br/>" +
+                        var ApprovalCompleteEmailMessage = "Dear " + signatoryClientId.OtherNames + ", <br/><br/> Thank you for accepting nomination as signatory and authorized representative from " + model.CompanyName + ".<br/>" +
                             "You have also accepted our terms and conditions for trading on eMarket Trader. <br/>" +
                             "Thank you for your continued custom." +
                             "<br/><br/> Kind Regards,<br/><img src=\"https://e-documents.stanbicbank.co.ke/Content/images/EmailSignature.png\"/>";

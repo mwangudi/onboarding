@@ -471,7 +471,33 @@ namespace OnBoarding.Controllers
                     var recordSaved = db.SaveChanges();
                     if (recordSaved > 0)
                     {
-                        //Send Email with new OTP
+                        //Send Success Email New
+                        string EmailBody = string.Empty;
+                        var callbackUrl = Url.Action("UploadedClientCompleteRegistration", "Account", null, Request.Url.Scheme);
+                        using (StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/RequestResendOTP.html")))
+                        {
+                            EmailBody = reader.ReadToEnd();
+                        }
+                        EmailBody = EmailBody.Replace("{CompanyName}", model.CompanyName);
+                        EmailBody = EmailBody.Replace("{Url}", callbackUrl);
+                        EmailBody = EmailBody.Replace("{NewOTP}", activationCode);
+
+                        var SendRegistrationCompleteEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, model.EmailAddress, "Confirm Registration", EmailBody);
+
+                        if (SendRegistrationCompleteEmail == true)
+                        {
+                            //Log email sent notification
+                            LogNotification.AddSucsessNotification(MailHelper.EmailFrom, EmailBody, model.EmailAddress, _action);
+                            return Json("success", JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            //Log Email failed notification
+                            LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBody, model.EmailAddress, _action);
+                            return Json("Error! Unable to resend your email.", JsonRequestBehavior.AllowGet);
+                        }
+
+                       /* //Send Email with new OTP
                         var callbackUrl = Url.Action("UploadedClientCompleteRegistration", "Account", null, Request.Url.Scheme);
                         var ResendOTPMessageBody = "Dear " + model.CompanyName + ", <br/><br/> You have requested to reset your one time pin. " +
                             "Your new One Time Pin (OTP) code is: " + activationCode + " <br/>" +
@@ -489,7 +515,7 @@ namespace OnBoarding.Controllers
                             //Log Email failed notification
                             LogNotification.AddFailureNotification(MailHelper.EmailFrom, ResendOTPMessageBody, model.EmailAddress.ToLower(), _action);
                             return Json("Error! Unable to resend your email.", JsonRequestBehavior.AllowGet);
-                        }
+                        }*/
                     }
                     else
                     {
@@ -663,6 +689,32 @@ namespace OnBoarding.Controllers
                 if(recordSaved > 0)
                 {
                     //Send Email with New OTP
+                    string EmailBody = string.Empty;
+                    var callbackUrl = Url.Action("SignatoryConfirmation", "Account", null, Request.Url.Scheme);
+                    using (StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/RequestResendOTP.html")))
+                    {
+                        EmailBody = reader.ReadToEnd();
+                    }
+                    EmailBody = EmailBody.Replace("{CompanyName}", model.CompanyName);
+                    EmailBody = EmailBody.Replace("{Url}", callbackUrl);
+                    EmailBody = EmailBody.Replace("{NewOTP}", activationCode);
+
+                    var SendRegistrationCompleteEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, model.EmailAddress, "Confirm Registration", EmailBody);
+
+                    if (SendRegistrationCompleteEmail == true)
+                    {
+                        //Log email sent notification
+                        LogNotification.AddSucsessNotification(MailHelper.EmailFrom, EmailBody, model.EmailAddress, _action);
+                        return Json("success", JsonRequestBehavior.AllowGet);
+                    }
+                    else
+                    {
+                        //Log Email failed notification
+                        LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBody, model.EmailAddress, _action);
+                        return Json("Error! Unable to resend your email.", JsonRequestBehavior.AllowGet);
+                    }
+
+                    /*//Send Email with New OTP
                     var callbackUrl = Url.Action("SignatoryConfirmation", "Account", null, Request.Url.Scheme);
                     var ResendOTPMessageBody = "Dear " + model.CompanyName + ", <br/><br/> You have requested to reset your one time pin. " +
                         "Your new One Time Pin (OTP) code is: " + activationCode + " <br/>" +
@@ -680,7 +732,7 @@ namespace OnBoarding.Controllers
                         //Log Email failed notification
                         LogNotification.AddFailureNotification(MailHelper.EmailFrom, ResendOTPMessageBody, model.EmailAddress.ToLower(), _action);
                         return Json("Error! Unable to resend your OTP.", JsonRequestBehavior.AllowGet);
-                    }
+                    }*/
                 }
                 else
                 {
@@ -860,6 +912,32 @@ namespace OnBoarding.Controllers
                     if (recordSaved > 0)
                     {
                         //Send Email with New OTP
+                        string EmailBody = string.Empty;
+                        var callbackUrl = Url.Action("DesignatedUserConfirmation", "Account", null, Request.Url.Scheme);
+                        using (StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/RequestResendOTP.html")))
+                        {
+                            EmailBody = reader.ReadToEnd();
+                        }
+                        EmailBody = EmailBody.Replace("{CompanyName}", model.CompanyName);
+                        EmailBody = EmailBody.Replace("{Url}", callbackUrl);
+                        EmailBody = EmailBody.Replace("{NewOTP}", activationCode);
+
+                        var SendRegistrationCompleteEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, model.EmailAddress, "Confirm Registration", EmailBody);
+
+                        if (SendRegistrationCompleteEmail == true)
+                        {
+                            //Log email sent notification
+                            LogNotification.AddSucsessNotification(MailHelper.EmailFrom, EmailBody, model.EmailAddress, _action);
+                            return Json("success", JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            //Log Email failed notification
+                            LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBody, model.EmailAddress, _action);
+                            return Json("Error! Unable to resend your email.", JsonRequestBehavior.AllowGet);
+                        }
+
+                        /*//Send Email with New OTP
                         var callbackUrl = Url.Action("DesignatedUserConfirmation", "Account", null, Request.Url.Scheme);
                         var ResendOTPMessageBody = "Dear " + model.CompanyName + ", <br/><br/> You have requested to reset your one time pin. " +
                             "Your new One Time Pin (OTP) code is: " + activationCode + " <br/>" +
@@ -877,7 +955,7 @@ namespace OnBoarding.Controllers
                             //Log Email failed notification
                             LogNotification.AddFailureNotification(MailHelper.EmailFrom, ResendOTPMessageBody, model.EmailAddress.ToLower(), _action);
                             return Json("Error! Unable to resend your email", JsonRequestBehavior.AllowGet);
-                        }
+                        }*/
                     }
                     else
                     {
@@ -943,6 +1021,7 @@ namespace OnBoarding.Controllers
                     //string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
                     string _code = OTPGenerator.GetUniqueKey(6);
                     string code = Shuffle.StringMixer(_code);
+                    
                     //Insert Code id AspnetUsers table
                     using (DBModel db = new DBModel())
                     {
@@ -953,27 +1032,34 @@ namespace OnBoarding.Controllers
                             updateUser.AccessFailedCount = 0;
                             db.SaveChanges();
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         {
-                            throw (ex);
+                            ModelState.AddModelError(string.Empty, "Error! Unable to complete password reset. Please contact administrator or try again later.");
                         }
                     }
 
                     var callbackUrl = Url.Action("ResetPassword", "Account", null, protocol: Request.Url.Scheme);
-                    //var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    var PasswordResetMessageBody = "Dear " + model.Email + ", <br/><br/> You have initiated to change your password on Stanbic's Global Markets onboarding system." +
-                                "Your password reset code is " + code + ". <a href=" + callbackUrl + "> Click here to reset your password. </a><br/><br/>" +
-                                "<br/><br/> Kind Regards,<br/><img src=\"https://e-documents.stanbicbank.co.ke/Content/images/EmailSignature.png\"/>";
-                    var PasswordResetEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, model.Email, "Reset Password", PasswordResetMessageBody);
-                    if (PasswordResetEmail == true)
+                    string EmailBody = string.Empty;
+                    using (StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/PasswordReset.html")))
+                    {
+                        EmailBody = reader.ReadToEnd();
+                    }
+                    EmailBody = EmailBody.Replace("{EmailAddress}", model.Email);
+                    EmailBody = EmailBody.Replace("{Url}", callbackUrl);
+                    EmailBody = EmailBody.Replace("{ResetCode}", code);
+
+                    var SendRegistrationCompleteEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, model.Email, "Password Reset", EmailBody);
+
+                    if (SendRegistrationCompleteEmail == true)
                     {
                         //Log email sent notification
-                        LogNotification.AddSucsessNotification(MailHelper.EmailFrom, PasswordResetMessageBody, model.Email, _action);
+                        LogNotification.AddSucsessNotification(MailHelper.EmailFrom, EmailBody, model.Email, _action);
                     }
                     else
                     {
                         //Log Email failed notification
-                        LogNotification.AddFailureNotification(MailHelper.EmailFrom, PasswordResetMessageBody, model.Email, _action);
+                        LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBody, model.Email, _action);
+                        ModelState.AddModelError(string.Empty, "Error! Unable to send your password reset code.");
                     }
 
                     return View("ForgotPasswordConfirmation");
@@ -1025,24 +1111,34 @@ namespace OnBoarding.Controllers
                         {
                             //Send Password reset success email
                             var callbackUrl = Url.Action("Index", "Home", null, protocol: Request.Url.Scheme);
-                            var PasswordResetMessageBody = "Dear " + model.Email + ", <br/><br/> Your account has been reset." +
-                            "<a href=" + callbackUrl + "> Click here to login to Global Markets Onboarding System. </a><br/><br/>" +
-                             "<br/><br/> Kind Regards,<br/><img src=\"https://e-documents.stanbicbank.co.ke/Content/images/EmailSignature.png\"/>";
-                            var PasswordResetEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, model.Email, "Reset Password", PasswordResetMessageBody);
-                            if (PasswordResetEmail == true)
+                            string EmailBody = string.Empty;
+                            using (StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/PasswordResetSuccess.html")))
+                            {
+                                EmailBody = reader.ReadToEnd();
+                            }
+                            EmailBody = EmailBody.Replace("{EmailAddress}", model.Email);
+                            EmailBody = EmailBody.Replace("{Url}", callbackUrl);
+
+                            var SendRegistrationCompleteEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, model.Email, "Password Reset", EmailBody);
+
+                            if (SendRegistrationCompleteEmail == true)
                             {
                                 //Log email sent notification
-                                LogNotification.AddSucsessNotification(MailHelper.EmailFrom, PasswordResetMessageBody, model.Email, _action);
+                                LogNotification.AddSucsessNotification(MailHelper.EmailFrom, EmailBody, model.Email, _action);
                             }
                             else
                             {
                                 //Log Email failed notification
-                                LogNotification.AddFailureNotification(MailHelper.EmailFrom, PasswordResetMessageBody, model.Email, _action);
+                                LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBody, model.Email, _action);
+                                ModelState.AddModelError(string.Empty, "Error! Unable to complete your password reset process.");
                             }
 
                             return RedirectToAction("ResetPasswordConfirmation", "Account");
                         }
-                        ModelState.AddModelError(string.Empty, "Error changing your password please contact your system administrator");
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, "Error changing your password please contact system administrator or try again later");
+                        }
                     }
                     else
                     {
