@@ -1354,7 +1354,7 @@ namespace OnBoarding.Controllers
 
                 //Create a DataTable.
                 DataTable dt = new DataTable();
-                dt.Columns.AddRange(new DataColumn[12] {
+                dt.Columns.AddRange(new DataColumn[13] {
                             new DataColumn("ColCompanyName", typeof(string)),
                             new DataColumn("ColAcceptedTerms".ToUpper(), typeof(string)),
                             new DataColumn("ColEMTSignUp".ToUpper(), typeof(string)),
@@ -1366,30 +1366,36 @@ namespace OnBoarding.Controllers
                             new DataColumn("ColRepresentativePhonenumber", typeof(string)),
                             new DataColumn("ColIsGM".ToUpper(), typeof(string)),
                             new DataColumn("ColIsEMTUser".ToUpper(), typeof(string)),
-                            new DataColumn("ColIsUserLimit", typeof(string))
+                            new DataColumn("ColIsUserLimit", typeof(string)),
+                            new DataColumn("ColDateOfContract", typeof(string))
                 });
                 dt.Columns.Add("ColStatus").DefaultValue = 0;
                 dt.Columns.Add("ColDateCreated").DefaultValue = DateTime.Now;
+                dt.Columns.Add("ColFileName").DefaultValue = DateTime.Now.ToString("yyyyMMddHH") + System.IO.Path.GetFileName(FileUpload.FileName);
                 dt.Columns.Add("ColUploadedBy").DefaultValue = User.Identity.GetUserId();
 
                 //Read the contents of CSV file.
                 string csvData = System.IO.File.ReadAllText(filePath);
-
+                //Add to help skip the first column
+                Boolean headerRowHasBeenSkipped = false;
                 //Execute a loop over the rows.
                 foreach (string row in csvData.Split('\n'))
                 {
-                    if (!string.IsNullOrEmpty(row))
+                    if (headerRowHasBeenSkipped)
                     {
-                        dt.Rows.Add();
-                        int i = 0;
-
-                        //Execute a loop over the columns.
-                        foreach (string cell in row.Split(','))
+                        if (!string.IsNullOrEmpty(row))
                         {
-                            dt.Rows[dt.Rows.Count - 1][i] = cell;
-                            i++;
+                            dt.Rows.Add();
+                            int i = 0;
+                            //Execute a loop over the columns.
+                            foreach (string cell in row.Split(','))
+                            {
+                                dt.Rows[dt.Rows.Count - 1][i] = cell;
+                                i++;
+                            }
                         }
-                    }
+                    } // outer if
+                    headerRowHasBeenSkipped = true;
                 }
 
                 string consString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
@@ -1417,6 +1423,8 @@ namespace OnBoarding.Controllers
                         sqlBulkCopy.ColumnMappings.Add("ColStatus", "Status");
                         sqlBulkCopy.ColumnMappings.Add("ColDateCreated", "DateCreated");
                         sqlBulkCopy.ColumnMappings.Add("ColUploadedBy", "UploadedBy");
+                        sqlBulkCopy.ColumnMappings.Add("ColFileName", "FileName");
+                        sqlBulkCopy.ColumnMappings.Add("ColDateOfContract", "DateOfContract");
 
                         try
                         {
@@ -1444,41 +1452,6 @@ namespace OnBoarding.Controllers
                 return Json("Error! Please choose a valid CSV file for upload", JsonRequestBehavior.AllowGet);
             }
         }
-
-        //
-        // GET: Admin Get/Edit Uploaded Clients
-        public ActionResult EditUploadedClients()
-        {
-            return PartialView(GetUploadedClients());
-        }
-
-        //Get Registered Clients List
-        public IEnumerable<UploadedClientsViewModel> GetUploadedClients()
-        {
-            using (DBModel db = new DBModel())
-            {
-                //Query List
-                var userid = User.Identity.GetUserId();
-                //Get Clients with completed profiles
-                var CompletedClients = db.EMarketApplications.Select(t => t.ClientID).ToList();
-                var Query = from a in db.RegisteredClients.Where(r => r.UploadedBy == userid && !CompletedClients.Contains(r.Id))
-                            join b in db.tblStatus on a.Status equals b.Id
-                            select new UploadedClientsViewModel
-                            {
-                                ClientID = a.Id,
-                                //CompanyName = a.CompanyName,
-                                CompanyRegistration = a.IDRegNumber,
-                                PhoneNumber = a.PhoneNumber,
-                                Status = b.StatusName,
-                                AcceptedTAC = a.AcceptedTerms,
-                                EmailAddress = a.EmailAddress.ToLower(),
-                                DateCreated = a.DateCreated
-                            };
-                return Query.OrderByDescending(x => x.ClientID).ToList();
-            }
-        }
-
-        //Rmoved Edit Client for Digital Desk do not edit clients
 
         //
         //Get //list

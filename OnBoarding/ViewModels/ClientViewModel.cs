@@ -141,8 +141,8 @@ namespace OnBoarding.ViewModels
 
     public class ExistingClientsUploadViewModel
     {
-        public string CompanyName { get; set; }
-        public string AcceptedTerms { get; set; }
+        public string UploadedBy { get; set; }
+        public string FileName { get; set; }
         public int Status { get; set; }
         public DateTime DateCreated { get; set; }
     }

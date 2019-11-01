@@ -1,4 +1,5 @@
-﻿using OnBoarding.Models;
+﻿using Microsoft.AspNet.Identity;
+using OnBoarding.Models;
 using OnBoarding.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -689,7 +690,7 @@ namespace OnBoarding.Controllers
             // Instance of DatabaseContext
             using (DBModel db = new DBModel())
             {
-                IEnumerable<ExistingClientsUploadViewModel> query = db.Database.SqlQuery<ExistingClientsUploadViewModel>("SELECT a.CompanyName, a.AcceptedTerms, a.Status, a.DateCreated FROM ExistingClientsUploads a GROUP BY a.CompanyName, a.AcceptedTerms, a.Status, a.DateCreated ORDER BY " + jtSorting + " OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY;");
+                IEnumerable<ExistingClientsUploadViewModel> query = db.Database.SqlQuery<ExistingClientsUploadViewModel>("SELECT a.[FileName], u.CompanyName UploadedBy, a.Status, a.DateCreated FROM ExistingClientsUploads a INNER JOIN AspNetUsers u ON u.Id = a.UploadedBy WHERE a.UploadedBy <> '" + User.Identity.GetUserId() + "' GROUP BY u.CompanyName, a.[FileName], a.Status, a.DateCreated ORDER BY " + jtSorting + " OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY;");
 
                 //No Search parameters
 
@@ -702,13 +703,21 @@ namespace OnBoarding.Controllers
                 {
                     query = query.OrderByDescending(p => p.DateCreated);
                 }
-                else if (jtSorting.Equals("CompanyName ASC"))
+                else if (jtSorting.Equals("UploadedBy ASC"))
                 {
-                    query = query.OrderBy(p => p.CompanyName);
+                    query = query.OrderBy(p => p.UploadedBy);
                 }
-                else if (jtSorting.Equals("CompanyName DESC"))
+                else if (jtSorting.Equals("UploadedBy DESC"))
                 {
-                    query = query.OrderByDescending(p => p.CompanyName);
+                    query = query.OrderByDescending(p => p.UploadedBy);
+                }
+                else if (jtSorting.Equals("FileName ASC"))
+                {
+                    query = query.OrderBy(p => p.FileName);
+                }
+                else if (jtSorting.Equals("FileName DESC"))
+                {
+                    query = query.OrderByDescending(p => p.FileName);
                 }
                 else if (jtSorting.Equals("Status ASC"))
                 {
@@ -746,23 +755,23 @@ namespace OnBoarding.Controllers
         //GET //ViewUploadedClient
         [HttpPost]
         [AllowAnonymous]
-        public PartialViewResult ViewUploadedClient(string CompanyName)
+        public PartialViewResult ViewUploadedClient(string fileName)
         {
             using (DBModel db = new DBModel())
             {
-                var getUploadedClientInfo = db.ExistingClientsUploads.FirstOrDefault(c => c.CompanyName == CompanyName && c.Status == 0);
+                var getUploadedClientInfo = db.ExistingClientsUploads.FirstOrDefault(c => c.FileName == fileName && c.Status == 0);
                 ViewBag.ClientInfo = getUploadedClientInfo;
 
                 //SSI List
-                var Query = db.Database.SqlQuery<UploadedClientSSIViewModel>("SELECT a.AccountNumber, a.Currency FROM ExistingClientsUploads a WHERE a.CompanyName = '"+ CompanyName+"';").ToList();
+                var Query = db.Database.SqlQuery<UploadedClientSSIViewModel>("SELECT a.AccountNumber, a.Currency FROM ExistingClientsUploads a WHERE a.FileName = '"+ fileName + "';").ToList();
                 ViewBag.SettlementAccounts = Query;
 
                 //Representative List
-                var Query1 = db.Database.SqlQuery<UploadedClientRepresentativeViewModel>("SELECT a.RepresentativeName, a.RepresentativeEmail, a.RepresentativePhonenumber, a.RepresentativeLimit, a.IsGM, a.IsEMTUser FROM ExistingClientsUploads a WHERE a.CompanyName = '" + CompanyName + "';").ToList();
+                var Query1 = db.Database.SqlQuery<UploadedClientRepresentativeViewModel>("SELECT a.RepresentativeName, a.RepresentativeEmail, a.RepresentativePhonenumber, a.RepresentativeLimit, a.IsGM, a.IsEMTUser FROM ExistingClientsUploads a WHERE a.FileName = '" + fileName + "';").ToList();
                 ViewBag.DesignatedUsers = Query1;
 
                 //Check if upload has been approved
-                var ApprovedUpload = db.ExistingClientsUploads.Any(c => c.CompanyName == CompanyName && (c.Status == 1 || c.Status == 2));
+                var ApprovedUpload = db.ExistingClientsUploads.Any(c => c.FileName == fileName && (c.Status == 1 || c.Status == 2));
                 if (ApprovedUpload)
                 {
                     ViewData["Approved"] = 1;

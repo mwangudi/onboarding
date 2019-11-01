@@ -19,7 +19,10 @@
         public string RepresentativeLimit { get; set; }
         public string IsGM { get; set; }
         public string IsEMTUser { get; set; }
+        public string DateOfContract { get; set; }
         public int Status { get; set; }
+
+        public string FileName { get; set; }
 
         [StringLength(128)]
         public string UploadedBy { get; set; }
