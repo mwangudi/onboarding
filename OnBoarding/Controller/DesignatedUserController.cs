@@ -62,8 +62,7 @@ namespace OnBoarding.Controllers
                     ViewData["Approved"] = null;
                 }
 
-                var Query = db.Database.SqlQuery<ClientApplicationsViewModel>("SELECT e.Id ApplicationID, c.ClientID, c.CompanyID, o.CompanyName Client, t.StatusName Status, c.AcceptedTerms AcceptedTAC, CAST(c.DateCreated AS DATETIME) DateCreated FROM DesignatedUsers c INNER JOIN ClientCompanies o ON o.Id = c.CompanyID INNER JOIN EMarketApplications e ON e.CompanyID = c.CompanyID  INNER JOIN tblStatus t ON t.Id = e.Status WHERE c.Email = " + "'" + userClientId.Email + "'" + " ORDER BY e.Id DESC");
-               
+                var Query = db.Database.SqlQuery<ClientApplicationsViewModel>("SELECT c.ApplicationID, c.ClientID, c.CompanyID, o.CompanyName Client, c.NominationType, c.NominationStatus, CAST(c.DateCreated AS DATETIME) DateCreated FROM ApplicationNominations c INNER JOIN ClientCompanies o ON o.Id = c.CompanyID WHERE c.NomineeEmail = " + "'" + _userDetails.Email + "'" + " ORDER BY c.DateCreated DESC, c.NominationType ASC");
                 return Query.ToList();
             }
         }
@@ -143,7 +142,14 @@ namespace OnBoarding.Controllers
                         LogApproval.AcceptedTerms = model.terms;
                         LogApproval.DateApproved = DateTime.Now;
                         db.DesignatedUserApprovals.Add(LogApproval);
-                        db.SaveChanges();
+                        var savedItem = db.SaveChanges();
+                        if (savedItem > 0)
+                        {
+                            //Log signatory approval
+                            var nominationToUpdate = db.ApplicationNominations.SingleOrDefault(c => c.NomineeEmail == userClientId.Email && c.CompanyID == model.CompanyID && c.NominationType == 2);
+                            nominationToUpdate.NominationStatus = 1;
+                            db.SaveChanges();
+                        }
                     }
                     catch (Exception)
                     {
@@ -185,7 +191,6 @@ namespace OnBoarding.Controllers
                             ApplicationUpdate.UsersApproved = Approvals + 1;
                             ApplicationUpdate.UsersDateApproved = DateTime.Now;
                             db.SaveChanges();
-                            
                         }
                         catch (Exception)
                         {
@@ -202,10 +207,10 @@ namespace OnBoarding.Controllers
                     var ApplicationToCheck = db.EMarketApplications.SingleOrDefault(c => c.Id == model.ApplicationID && c.CompanyID == model.CompanyID);
                     if (ApplicationToCheck.UsersApproved == ApplicationUpdate.DesignatedUsers)
                     {
-                        //Send Email to Digital Desk
+                        //Send Email to Digital Desk and Ops for Approval process
                         var DDUserRole = (from p in db.AspNetUserRoles
                                           join e in db.AspNetUsers on p.UserId equals e.Id
-                                          where p.RoleId == "03d5e1e3-a8a9-441e-9122-30c3aafccccc"
+                                          where p.RoleId == "03d5e1e3-a8a9-441e-9122-30c3aafccccc" && p.RoleId == "05bdc847-b94d-4d2f-957e-8de1d563106a"
                                           select new
                                           {
                                               EmailID = e.Email
@@ -261,17 +266,17 @@ namespace OnBoarding.Controllers
                     EmailBody2 = EmailBody2.Replace("{Othernames}", model.CompanySurname);
                     EmailBody2 = EmailBody2.Replace("{ApproversName}", userClientId.Surname + " " + userClientId.Othernames);
 
-                    var SendClientConfirmationEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, userClientId.Email, "Authorised Representative Approval", EmailBody2);
+                    var SendClientConfirmationEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, model.CompanyEmail, "Authorised Representative Approval", EmailBody2);
 
                     if (SendClientConfirmationEmail == true)
                     {
                         //Log email sent notification
-                        LogNotification.AddSucsessNotification(MailHelper.EmailFrom, EmailBody2, userClientId.Email, _action);
+                        LogNotification.AddSucsessNotification(MailHelper.EmailFrom, EmailBody2, model.CompanyEmail, _action);
                     }
                     else
                     {
                         //Log Email failed notification
-                        LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBody2, userClientId.Email, _action);
+                        LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBody2, model.CompanyEmail, _action);
                     }
                 }
 

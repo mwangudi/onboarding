@@ -824,7 +824,7 @@ namespace OnBoarding.Controllers
                 var DesignatedUsersCount = db.DesignatedUsers.Count(c => c.ClientID == userInfo.Id && c.Status != 2 && c.CompanyID == model.CompanyID);
 
                 //Create A new Application
-                //1). Scenario (Sole signatory application)
+                //1). Scenario 1 (Sole signatory application)
                 //If signatory and representative are the same and one
                 //Application process is complete ops can approve the application
                 if (SignatoryCount == 1 && DesignatedUsersCount == 1)
@@ -900,7 +900,7 @@ namespace OnBoarding.Controllers
                                     newDesignatedUserApproval.ApplicationID = applicationSaved;
                                     newDesignatedUserApproval.Status = 1;
                                     db.SaveChanges();
-
+                                    
                                     //Mark HasApplication True for Client Company
                                     var updateClientCompany = db.ClientCompanies.SingleOrDefault(c => c.Id == model.CompanyID);
                                     updateClientCompany.HasApplication = true;
@@ -942,20 +942,20 @@ namespace OnBoarding.Controllers
                             LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBody, CompanyEmail, _action);
                         }
 
-                        //Send Email to Digital Desk Users
+                        //Send Email to Digital Desk Users and OPS for approval
                         var DDUserRole = (from p in db.AspNetUserRoles
                                         join e in db.AspNetUsers on p.UserId equals e.Id
-                                        where p.RoleId == "03d5e1e3-a8a9-441e-9122-30c3aafccccc"
+                                        where p.RoleId == "03d5e1e3-a8a9-441e-9122-30c3aafccccc" && p.RoleId == "05bdc847-b94d-4d2f-957e-8de1d563106a"
                                         select new
                                         {
                                             EmailID = e.Email
                                         });
                         foreach (var email in DDUserRole.ToList())
                         {
-                            var DDMessageBody = "Dear Team <br/><br/> Kindly note that the following client has successfully submitted an application. <br/>" +
+                            var DDMessageBody = "Dear Team <br/><br/> Kindly note that the following client has successfully completed an application at Global Markets Onboarding portal. <br/>" +
                                             "Company Name: " + model.CompanyName + ", Company Email: " + CompanyEmail + ", Application Date: " + DateTime.Now + " " +
                                             "<br/><br/> Kind Regards,<br/><img src=\"https://e-documents.stanbicbank.co.ke/Content/images/EmailSignature.png\"/>";
-                            var SendDDNotificationEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, email.EmailID, "Registration Complete", DDMessageBody);
+                            var SendDDNotificationEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, email.EmailID, "Application Complete", DDMessageBody);
                             if (SendDDNotificationEmail == true)
                             {
                                 //Log email sent notification
@@ -1042,7 +1042,7 @@ namespace OnBoarding.Controllers
                     return Json("success", JsonRequestBehavior.AllowGet);
                 }
                 
-                //2). Scenario (Sole signatory and representatives)
+                //2). Scenario 2 (Sole signatory and representatives)
                 //If signatory is one (sole) and representatives are more than one
                 //Signatory is marked as approved and an email is sent to the representatives except the sole is also nominated under representatives
                 else if (SignatoryCount == 1 && DesignatedUsersCount > 1)
@@ -1065,6 +1065,7 @@ namespace OnBoarding.Controllers
                             updateSignatory1.Status = 1;
                             db.SaveChanges();
 
+                            //Add new Application
                             newApplication.AcceptedTAC = true;//model.terms;
                             newApplication.ClientID = RegisteredClientId;
                             newApplication.CompanyID = model.CompanyID;
@@ -1090,6 +1091,33 @@ namespace OnBoarding.Controllers
                             else
                             {
                                 return Json("Error! Unable to add new application", JsonRequestBehavior.AllowGet);
+                            }
+
+                            //Log Nomination Details For all saved representatives
+                            var _registeredClient = db.RegisteredClients.SingleOrDefault(c => c.Id == RegisteredClientId);
+                            var AllClientRepresentatives = (from p in db.DesignatedUsers
+                                                            where p.ClientID == model.ClientID && p.CompanyID == model.CompanyID && p.Email != _registeredClient.EmailAddress
+                                                            select new
+                                                            {
+                                                                p.Email,
+                                                                p.CompanyID,
+                                                                p.ClientID
+                                                            });
+                            if (AllClientRepresentatives != null)
+                            {
+                                foreach (var _repDetails in AllClientRepresentatives.ToList())
+                                {
+                                    var newNomination = db.ApplicationNominations.Create();
+                                    newNomination.ApplicationID = newApplication.Id;
+                                    newNomination.ClientID = _repDetails.ClientID;
+                                    newNomination.CompanyID = _repDetails.CompanyID;
+                                    newNomination.NomineeEmail = _repDetails.Email;
+                                    newNomination.NominationType = 2;
+                                    newNomination.NominationStatus = 0;
+                                    newNomination.DateCreated = DateTime.Now;
+                                    db.ApplicationNominations.Add(newNomination);
+                                    db.SaveChanges();
+                                }
                             }
                         }
                         else
@@ -1122,6 +1150,32 @@ namespace OnBoarding.Controllers
                             else
                             {
                                 return Json("Error! Unable to add new application", JsonRequestBehavior.AllowGet);
+                            }
+
+                            //Log Nomination Details For all saved representatives
+                            var AllClientRepresentatives = (from p in db.DesignatedUsers
+                                                            where p.ClientID == model.ClientID && p.CompanyID == model.CompanyID
+                                                            select new
+                                                            {
+                                                                p.Email,
+                                                                p.CompanyID,
+                                                                p.ClientID
+                                                            });
+                            if (AllClientRepresentatives != null)
+                            {
+                                foreach (var _repDetails in AllClientRepresentatives.ToList())
+                                {
+                                    var newNomination = db.ApplicationNominations.Create();
+                                    newNomination.ApplicationID = newApplication.Id;
+                                    newNomination.ClientID = _repDetails.ClientID;
+                                    newNomination.CompanyID = _repDetails.CompanyID;
+                                    newNomination.NomineeEmail = _repDetails.Email;
+                                    newNomination.NominationType = 2;
+                                    newNomination.NominationStatus = 0;
+                                    newNomination.DateCreated = DateTime.Now;
+                                    db.ApplicationNominations.Add(newNomination);
+                                    db.SaveChanges();
+                                }
                             }
                         }
                     }
@@ -1214,7 +1268,7 @@ namespace OnBoarding.Controllers
                     return Json("success", JsonRequestBehavior.AllowGet);
                 }
                 
-                //3) Scenario (Multiple signatories and representatives -- including first signatory)
+                //3) Scenario 3 (Multiple signatories and representatives -- including first signatory)
                 //If signatory are more than 1 including sole and representatives are also more than one
                 //Signatory will approve after  which the representatives will be invited to complete registration and also approve
                 else if (SignatoryCount > 1 && DesignatedUsersCount >= 1)
@@ -1258,6 +1312,59 @@ namespace OnBoarding.Controllers
                             {
                                 return Json("Error! Unable to create application details", JsonRequestBehavior.AllowGet);
                             }
+
+                            //Log Nomination Details For all saved signatories
+                            var _registeredClient = db.RegisteredClients.SingleOrDefault(c => c.Id == RegisteredClientId);
+                            var AllClientSignatories = (from p in db.ClientSignatories
+                                                            where p.ClientID == model.ClientID && p.CompanyID == model.CompanyID && p.EmailAddress != _registeredClient.EmailAddress
+                                                            select new
+                                                            {
+                                                                p.EmailAddress,
+                                                                p.CompanyID,
+                                                                p.ClientID
+                                                            });
+                            if (AllClientSignatories != null)
+                            {
+                                foreach (var _repDetails in AllClientSignatories.ToList())
+                                {
+                                    var newNomination = db.ApplicationNominations.Create();
+                                    newNomination.ApplicationID = newApplication.Id;
+                                    newNomination.ClientID = _repDetails.ClientID;
+                                    newNomination.CompanyID = _repDetails.CompanyID;
+                                    newNomination.NomineeEmail = _repDetails.EmailAddress;
+                                    newNomination.NominationType = 1;
+                                    newNomination.NominationStatus = 0;
+                                    newNomination.DateCreated = DateTime.Now;
+                                    db.ApplicationNominations.Add(newNomination);
+                                    db.SaveChanges();
+                                }
+                            }
+
+                            //Log Nomination Details For all saved representatives
+                            var AllClientRepresentatives = (from p in db.DesignatedUsers
+                                                            where p.ClientID == model.ClientID && p.CompanyID == model.CompanyID && p.Email != _registeredClient.EmailAddress
+                                                            select new
+                                                            {
+                                                                p.Email,
+                                                                p.CompanyID,
+                                                                p.ClientID
+                                                            });
+                            if (AllClientRepresentatives != null)
+                            {
+                                foreach (var _repDetails in AllClientRepresentatives.ToList())
+                                {
+                                    var newNomination = db.ApplicationNominations.Create();
+                                    newNomination.ApplicationID = newApplication.Id;
+                                    newNomination.ClientID = _repDetails.ClientID;
+                                    newNomination.CompanyID = _repDetails.CompanyID;
+                                    newNomination.NomineeEmail = _repDetails.Email;
+                                    newNomination.NominationType = 2;
+                                    newNomination.NominationStatus = 0;
+                                    newNomination.DateCreated = DateTime.Now;
+                                    db.ApplicationNominations.Add(newNomination);
+                                    db.SaveChanges();
+                                }
+                            }
                         }
                         catch (Exception ex)
                         {
@@ -1295,6 +1402,59 @@ namespace OnBoarding.Controllers
                         else
                         {
                             return Json("Error! Unable to create application details", JsonRequestBehavior.AllowGet);
+                        }
+
+                        //Log Nomination Details For all saved signatories
+                        var _registeredClient = db.RegisteredClients.SingleOrDefault(c => c.Id == RegisteredClientId);
+                        var AllClientSignatories = (from p in db.ClientSignatories
+                                                    where p.ClientID == model.ClientID && p.CompanyID == model.CompanyID && p.EmailAddress != _registeredClient.EmailAddress
+                                                    select new
+                                                    {
+                                                        p.EmailAddress,
+                                                        p.CompanyID,
+                                                        p.ClientID
+                                                    });
+                        if (AllClientSignatories != null)
+                        {
+                            foreach (var _repDetails in AllClientSignatories.ToList())
+                            {
+                                var newNomination = db.ApplicationNominations.Create();
+                                newNomination.ApplicationID = newApplication.Id;
+                                newNomination.ClientID = _repDetails.ClientID;
+                                newNomination.CompanyID = _repDetails.CompanyID;
+                                newNomination.NomineeEmail = _repDetails.EmailAddress;
+                                newNomination.NominationType = 1;
+                                newNomination.NominationStatus = 0;
+                                newNomination.DateCreated = DateTime.Now;
+                                db.ApplicationNominations.Add(newNomination);
+                                db.SaveChanges();
+                            }
+                        }
+
+                        //Log Nomination Details For all saved representatives
+                        var AllClientRepresentatives = (from p in db.DesignatedUsers
+                                                        where p.ClientID == model.ClientID && p.CompanyID == model.CompanyID && p.Email != _registeredClient.EmailAddress
+                                                        select new
+                                                        {
+                                                            p.Email,
+                                                            p.CompanyID,
+                                                            p.ClientID
+                                                        });
+                        if (AllClientRepresentatives != null)
+                        {
+                            foreach (var _repDetails in AllClientRepresentatives.ToList())
+                            {
+                                var newNomination = db.ApplicationNominations.Create();
+                                newNomination.ApplicationID = newApplication.Id;
+                                newNomination.ClientID = _repDetails.ClientID;
+                                newNomination.CompanyID = _repDetails.CompanyID;
+                                newNomination.NomineeEmail = _repDetails.Email;
+                                newNomination.NominationType = 2;
+                                newNomination.NominationStatus = 0;
+                                newNomination.DateCreated = DateTime.Now;
+                                db.ApplicationNominations.Add(newNomination);
+                                db.SaveChanges();
+                            }
                         }
                     }
 

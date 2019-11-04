@@ -35,7 +35,7 @@ namespace OnBoarding.Models
 
         public int ClientID { get; set; }
 
-        public int? CompanyID { get; set; }
+        public int CompanyID { get; set; }
 
         public string POBox { get; set; }
 

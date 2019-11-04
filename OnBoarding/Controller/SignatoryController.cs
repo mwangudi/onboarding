@@ -51,7 +51,7 @@ namespace OnBoarding.Controllers
                 var currentUserId = User.Identity.GetUserId();
                 var _userDetails = db.AspNetUsers.SingleOrDefault(e => e.Id == currentUserId);
 
-                var Query = db.Database.SqlQuery<ClientApplicationsViewModel>("SELECT e.Id ApplicationID, c.ClientID, c.CompanyID, o.CompanyName Client, t.StatusName Status, c.AcceptedTerms AcceptedTAC, CAST(c.DateCreated AS DATETIME) DateCreated FROM ClientSignatories c INNER JOIN ClientCompanies o ON o.Id = c.CompanyID INNER JOIN EMarketApplications e ON e.CompanyID = c.CompanyID  INNER JOIN tblStatus t ON t.Id = e.Status WHERE c.EmailAddress = " + "'" + _userDetails.Email + "'" + " ORDER BY e.Id DESC");
+                var Query = db.Database.SqlQuery<ClientApplicationsViewModel>("SELECT c.ApplicationID, c.ClientID, c.CompanyID, o.CompanyName Client, c.NominationType, c.NominationStatus, CAST(c.DateCreated AS DATETIME) DateCreated FROM ApplicationNominations c INNER JOIN ClientCompanies o ON o.Id = c.CompanyID WHERE c.NomineeEmail = " + "'" + _userDetails.Email + "'" + " ORDER BY c.Id DESC");
                 return Query.ToList();
             }
         }
@@ -159,7 +159,14 @@ namespace OnBoarding.Controllers
                             LogApproval.AcceptedTerms = model.terms;
                             LogApproval.DateApproved = DateTime.Now;
                             db.SignatoryApprovals.Add(LogApproval);
-                            db.SaveChanges();
+                            var savedItem = db.SaveChanges();
+                            if(savedItem > 0)
+                            { 
+                                //Log signatory approval
+                                var nominationToUpdate = db.ApplicationNominations.SingleOrDefault(c => c.NomineeEmail == signatoryClientId.EmailAddress && c.CompanyID == model.CompanyID && c.NominationType == 1);
+                                nominationToUpdate.NominationStatus = 1;
+                                db.SaveChanges();
+                            }
                         }
                         catch (Exception)
                         {
@@ -176,7 +183,14 @@ namespace OnBoarding.Controllers
                             LogDesignatedUserApproval.AcceptedTerms = model.terms;
                             LogDesignatedUserApproval.DateApproved = DateTime.Now;
                             db.DesignatedUserApprovals.Add(LogDesignatedUserApproval);
-                            db.SaveChanges();
+                            var savedItem = db.SaveChanges();
+                            if (savedItem > 0)
+                            {
+                                //Log signatory approval
+                                var repNominationToUpdate = db.ApplicationNominations.SingleOrDefault(c => c.NomineeEmail == userClientId.Email && c.CompanyID == model.CompanyID && c.NominationType == 2);
+                                repNominationToUpdate.NominationStatus = 1;
+                                db.SaveChanges();
+                            }
                         }
                         catch (Exception)
                         {
@@ -319,7 +333,13 @@ namespace OnBoarding.Controllers
                             LogApproval.AcceptedTerms = model.terms;
                             LogApproval.DateApproved = DateTime.Now;
                             db.SignatoryApprovals.Add(LogApproval);
-                            db.SaveChanges();
+                            var savedItem = db.SaveChanges();
+                            if (savedItem > 0)
+                            {
+                                var nominationToUpdate = db.ApplicationNominations.SingleOrDefault(c => c.NomineeEmail == signatoryClientId.EmailAddress && c.CompanyID == model.CompanyID && c.NominationType == 1);
+                                nominationToUpdate.NominationStatus = 1;
+                                db.SaveChanges();
+                            }
                         }
                         catch (Exception)
                         {

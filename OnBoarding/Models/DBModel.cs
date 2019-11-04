@@ -5,12 +5,13 @@ namespace OnBoarding.Models
     public partial class DBModel : DbContext
     {
         public DBModel() : base("name=DBModel") {}
-
+        public virtual DbSet<ApplicationNomination> ApplicationNominations { get; set; }
         public virtual DbSet<AspNetRole> AspNetRoles { get; set; }
         public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
         public virtual DbSet<AspNetUserRole> AspNetUserRoles { get; set; }
         public virtual DbSet<ClientSettlementAccount> ClientSettlementAccounts { get; set; }
         public virtual DbSet<ClientSignatory> ClientSignatories { get; set; }
+        public virtual DbSet<ClientCompany> ClientCompanies { get; set; }
         public virtual DbSet<Currency> Currencies { get; set; }
         public virtual DbSet<DesignatedUser> DesignatedUsers { get; set; }
         public virtual DbSet<EMarketApplication> EMarketApplications { get; set; }
@@ -22,7 +23,6 @@ namespace OnBoarding.Models
         public virtual DbSet<SystemMenu> SystemMenus { get; set; }
         public virtual DbSet<SystemMenuAccess> SystemMenuAccess { get; set; }
         public virtual DbSet<AuditTrail> AuditTrails { get; set; }
-        public virtual DbSet<ClientCompany> ClientCompanies { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -92,7 +92,7 @@ namespace OnBoarding.Models
 
             modelBuilder.Entity<RegisteredClient>()
                 .HasMany(e => e.ClientSignatories)
-                .WithOptional(e => e.RegisteredClient)
+                .WithRequired(e => e.RegisteredClient)
                 .HasForeignKey(e => e.ClientID)
                 .WillCascadeOnDelete(true);
 
@@ -114,17 +114,17 @@ namespace OnBoarding.Models
                 .HasForeignKey(e => e.CompanyID)
                 .WillCascadeOnDelete(false);
 
-            modelBuilder.Entity<ClientCompany>()
+           modelBuilder.Entity<ClientCompany>()
               .HasMany(e => e.ClientSignatories)
               .WithRequired(e => e.ClientCompany)
               .HasForeignKey(e => e.CompanyID)
               .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<ClientCompany>()
-               .HasMany(e => e.DesignatedUsers)
-               .WithRequired(e => e.ClientCompany)
-               .HasForeignKey(e => e.CompanyID)
-               .WillCascadeOnDelete(false);
+           
+          modelBuilder.Entity<ClientCompany>()
+                  .HasMany(e => e.DesignatedUsers)
+                  .WithRequired(e => e.ClientCompany)
+                  .HasForeignKey(e => e.CompanyID)
+                  .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<ClientCompany>()
               .HasMany(e => e.ClientSettlementAccounts)

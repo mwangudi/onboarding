@@ -30,6 +30,8 @@ namespace OnBoarding.ViewModels
         public int ApplicationID { get; set; }
         public int CompanyID { get; set; }
         public string Client { get; set; }
+        public int NominationType { get; set; }
+        public int NominationStatus { get; set; }
         public string Status { get; set; }
         public string OPSComments { get; set; }
         public bool AcceptedTAC { get; set; }
