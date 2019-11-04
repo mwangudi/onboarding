@@ -34,41 +34,66 @@
                     <div id="ViewAllArea" class="table-responsive">
                         <table id="ApplicationsList" class="table table-bordered" style="width:100%">
                             <thead>
-                                <tr>
-                                    <th>Company Name</th>
-                                    <th>Status</th>
-                                    <th>Accepted Terms</th>
-                                    <th>Date Nominated</th>
-                                    <th>Action</th>
-                                </tr>
+								<tr>
+									<th>Company Name</th>
+									<th>Nomination Type</th>
+									<th>Date Nominated</th>
+									<th>Nomination Status</th>
+									<th>View</th>
+								</tr>
                             </thead>
-                            <tbody>
-                                @foreach (var item in Model)
-                                {
-                                <tr>
-                                    <td> @item.Client</td>
-                                    <td> @item.Status</td>
-                                    <td> @item.AcceptedTAC</td>
-                                    <td> @item.DateCreated</td>
-                                    <td>
-                                        @if (item.Status == "Active")
-                                        {
-                                            <center>
-                                                <button data-id='@item.ApplicationID' data-cid='@item.CompanyID' type="submit" name="submit" class="btn btn-outline-primary btn-md btn-agent-id w_full">
-                                                    <i class="fa fa fa-check-circle"></i> View Details
-                                                </button>
-                                            </center>
-                                        }
-                                        else
-                                        {
-                                            <center>
-                                                <i class="fa fa-shield-alt fa-2x" style="color:red;"></i>
-                                            </center>
-                                        }
-                                    </td>
-                                </tr>
-                                }
-                            </tbody>
+							<tbody>
+								@foreach (var item in Model)
+								{
+									<tr>
+										<td> @item.Client</td>
+										<td>
+											@if (item.NominationType == 1)
+											{
+												<p>Signatory</p>
+											}
+											else if (item.NominationType == 2)
+											{
+												<p>Representative</p>
+											}
+											else
+											{
+											}
+										</td>
+										<td> @item.DateCreated</td>
+										<td>
+											@if (item.NominationStatus == 0)
+											{
+												<p>Pending Approval</p>
+											}
+											else if (item.NominationStatus == 1)
+											{
+												<p class="text-success"><i class="fa fa-check-circle"></i> Approved </p>
+											}
+											else
+											{
+												<center><i class="fa fa-shield-alt fa-2x" style="color:red;"></i></center>
+											}
+										</td>
+										<td>
+											@if (item.NominationStatus == 0)
+											{
+												<center>
+													<button data-id='@item.ApplicationID' data-cid='@item.CompanyID' data-nid='@item.NominationType' type="submit" name="submit" class="btn btn-outline-primary btn-md btn-agent-id w_full">
+														<i class="fa fa fa-check-circle"></i> View & Approve
+													</button>
+												</center>
+											}
+											else
+											{
+												<center>
+													<i class="fa fa-shield-alt fa-2x" style="color:red;"></i>
+												</center>
+											}
+										</td>
+									</tr>
+								}
+							</tbody>
                             <tfoot></tfoot>
                         </table>
                     </div>
@@ -98,22 +123,63 @@
             e.preventDefault();
             var ApplicationID = $(this).attr('data-id');
             var CompanyID = $(this).attr('data-cid');
+			var NominationID = $(this).attr('data-nid');
+			//Show hide Divs
             $('#ViewAllArea').hide('fast');
             $('#RMDLoading_ID').show();
-            $('.item-data-retriving').show('fast');
-
-            $.ajax({
-                type: "POST",
-                url: "/DesignatedUser/ViewNominationDetails",
-                data: '{applicationId: "' + ApplicationID + '", companyId: "' + CompanyID + '" }',
-                contentType: "application/json; charset=utf-8",
-                dataType: "html",
-                success: function (data) {
-                    $('#RMDLoading_ID').hide();
-                    $('.item-data-retrived').show();
-                    $('.item-data-retrived').html(data);
-                }
-            });
+			$('.item-data-retriving').show('fast');
+			//If nimonation is Signatory
+			if (NominationID == 1) {
+				$.ajax({
+					type: "POST",
+					url: "/Signatory/ViewNominationDetails",
+					data: '{applicationId: "' + ApplicationID + '", companyId: "' + CompanyID + '" }',
+					contentType: "application/json; charset=utf-8",
+					dataType: "html",
+					success: function (data) {
+						$('#RMDLoading_ID').hide();
+						$('.item-data-retrived').show();
+						$('.item-data-retrived').html(data);
+					},
+					error: function (xhr, textStatus, errorThrown) {
+						if (textStatus === 'error') {
+							$("#RMDLoading_ID").hide('fast');
+							$('#ViewAllArea').show('fast');
+							$('.item-data-retrived').hide();
+							toastr.error('Submission error! Code: ' + xhr.status + ' Details: ' + errorThrown);
+						}
+					},
+				});
+			}
+			//If nimonation is for reprsentative
+			else if (NominationID == 2) {
+					$.ajax({
+						type: "POST",
+						url: "/DesignatedUser/ViewNominationDetails",
+						data: '{applicationId: "' + ApplicationID + '", companyId: "' + CompanyID + '" }',
+						contentType: "application/json; charset=utf-8",
+						dataType: "html",
+						success: function (data) {
+							$('#RMDLoading_ID').hide();
+							$('.item-data-retrived').show();
+							$('.item-data-retrived').html(data);
+						},
+						error: function (xhr, textStatus, errorThrown) {
+							if (textStatus === 'error') {
+								$("#RMDLoading_ID").hide('fast');
+								$('#ViewAllArea').show('fast');
+								$('.item-data-retrived').hide();
+								toastr.error('Submission error! Code: ' + xhr.status + ' Details: ' + errorThrown);
+							}
+						},
+					});
+			}
+			else {
+				$('#ViewAllArea').show('fast');
+				$('#RMDLoading_ID').hide();
+				$('.item-data-retriving').hide('fast');
+				toastr.error('Error! Invalid Nomination details');
+			}
         });
     });
 

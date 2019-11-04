@@ -10,6 +10,8 @@
         public ClientCompany()
         {
             EMarketApplications = new HashSet<EMarketApplication>();
+            ClientSignatories = new HashSet<ClientSignatory>();
+            DesignatedUsers = new HashSet<DesignatedUser>();
         }
 
         public int Id { get; set; }
@@ -42,12 +44,17 @@
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<EMarketApplication> EMarketApplications { get; set; }
 
-        public virtual ICollection<DesignatedUser> DesignatedUsers { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ClientSignatory> ClientSignatories { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DesignatedUser> DesignatedUsers { get; set; }
+
         public virtual ICollection<ClientSettlementAccount> ClientSettlementAccounts { get; set; }
 
         public virtual tblStatus tblStatus { get; set; }
 
         public virtual RegisteredClient RegisteredClient { get; set; }
+         
     }
 }

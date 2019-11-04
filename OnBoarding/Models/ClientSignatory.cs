@@ -31,9 +31,9 @@ namespace OnBoarding.Models
 
         public string PhoneNumber { get; set; }
 
-        public int? ClientID { get; set; }
+        public int ClientID { get; set; }
 
-        public int? CompanyID { get; set; }
+        public int CompanyID { get; set; }
 
         public bool? AcceptedTerms { get; set; }
 
@@ -56,12 +56,11 @@ namespace OnBoarding.Models
 
         public virtual RegisteredClient RegisteredClient { get; set; }
 
+        public virtual ClientCompany ClientCompany { get; set; }
+
         public virtual tblStatus tblStatus { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SignatoryApproval> SignatoryApprovals { get; set; }
-
-        public virtual ClientCompany ClientCompany { get; set; }
-
     }
 }
