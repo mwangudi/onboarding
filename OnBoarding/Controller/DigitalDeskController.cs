@@ -2172,6 +2172,7 @@ namespace OnBoarding.Controllers
                 var OpsDeclined = db.AspNetUsers.FirstOrDefault(a => a.Id == getApplicationInfo.OPSWhoDeclined);
                 var POAApproved = db.AspNetUsers.FirstOrDefault(a => a.Id == getApplicationInfo.POAWhoApproved);
                 var POADeclined = db.AspNetUsers.FirstOrDefault(a => a.Id == getApplicationInfo.POAWhoDeclined);
+                
                 //Ops Approved
                 ViewData["OPSNames"] = OpsApproved.CompanyName;
                 ViewData["OPSEmail"] = OpsApproved.Email;
