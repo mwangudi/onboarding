@@ -690,7 +690,7 @@ namespace OnBoarding.Controllers
             // Instance of DatabaseContext
             using (DBModel db = new DBModel())
             {
-                IEnumerable<ExistingClientsUploadViewModel> query = db.Database.SqlQuery<ExistingClientsUploadViewModel>("SELECT a.[FileName], u.CompanyName UploadedBy, a.Status, a.DateCreated FROM ExistingClientsUploads a INNER JOIN AspNetUsers u ON u.Id = a.UploadedBy WHERE a.UploadedBy <> '" + User.Identity.GetUserId() + "' GROUP BY u.CompanyName, a.[FileName], a.Status, a.DateCreated ORDER BY " + jtSorting + " OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY;");
+                IEnumerable<ExistingClientsUploadViewModel> query = db.Database.SqlQuery<ExistingClientsUploadViewModel>("SELECT a.[FileName], u.CompanyName UploadedBy, a.DateCreated FROM ExistingClientsUploads a INNER JOIN AspNetUsers u ON u.Id = a.UploadedBy WHERE a.UploadedBy <> '" + User.Identity.GetUserId() + "' GROUP BY u.CompanyName, a.[FileName], a.DateCreated ORDER BY " + jtSorting + " OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY;");
 
                 //No Search parameters
 
@@ -757,6 +757,8 @@ namespace OnBoarding.Controllers
         [AllowAnonymous]
         public PartialViewResult ViewUploadedClient(string fileName)
         {
+            ViewData["FileName"] = fileName;
+            /*
             using (DBModel db = new DBModel())
             {
                 var getUploadedClientInfo = db.ExistingClientsUploads.FirstOrDefault(c => c.FileName == fileName && c.Status == 0);
@@ -780,9 +782,47 @@ namespace OnBoarding.Controllers
                 {
                     ViewData["Approved"] = 0;
                 }
-            }
+            }*/
 
             return PartialView();
+        }
+
+        //
+        //POST //Gets the list and returns a Json object
+        [HttpPost]
+        public JsonResult GetUploadApprovals(int jtStartIndex = 0, int jtPageSize = 0, int count = 0, string jtSorting = null, string fileName = null)
+        {
+            using (var db = new DBModel())
+            {
+                int recordCount = db.ExistingClientsUploads.Where(a => a.FileName == fileName).Count();
+                var Query = db.Database.SqlQuery<ExistingClientsUpload>("SELECT n.* FROM ExistingClientsUploads n WHERE n.[FileName] = " + "'" + fileName + "'" + " AND n.Status = 0 ORDER BY " + jtSorting + " OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY;");
+                var approvals = Query.ToList();
+                return Json(new { Result = "OK", Records = approvals, TotalRecordCount = recordCount });
+            }
+        }
+
+        //
+        //Approve records
+        [HttpPost]
+        public JsonResult DeclineSelected(int Id)
+        {
+            using (var db = new DBModel())
+            {
+                try
+                {
+                    var RecordToUpdate = db.ExistingClientsUploads.SingleOrDefault(c => c.Id == Id);
+                    RecordToUpdate.Status = 2;
+                    RecordToUpdate.ApprovedBy = User.Identity.GetUserId();
+                    RecordToUpdate.DateApproved = DateTime.Now;
+                    db.SaveChanges();
+
+                    return Json("success", JsonRequestBehavior.AllowGet);
+                }
+                catch (Exception)
+                {
+                    return Json("Error! Unable to decline selected records", JsonRequestBehavior.AllowGet);
+                }
+            }
         }
     }
 }

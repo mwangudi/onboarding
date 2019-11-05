@@ -20,7 +20,7 @@
 						<div class="item-data-retriving d_none">
 							<div class="form-group form-row" style="margin-left: 0px !important;">
 								<div class="col-12 col-sm-9 col-lg-9">
-									<h6><i class="fa fa-adjust"></i> View Upload Details </h6>
+									<h6><small><i class="fa fa-adjust"></i> View Upload Details </small></h6>
 								</div>
 								<div class="col-12 col-sm-3 col-lg-3">
 									<button id="selectanother" class="btn btn-danger w_full" type="button"><i class="fa fa-check-circle"></i> Select Another File </button>
@@ -60,22 +60,6 @@
 											title: 'Uploaded By',
 											width: '20%'
 										},
-										Status: {
-											title: 'Approval Status',
-											width: '15%',
-											display: function (data) {
-												var approved = data.record.Status;
-												if (approved == 0) {
-													return '<center><p class="text-warning"><i class="fa fa-check-circle"></i> Pending Approval </p></center>';
-												}
-												else if (approved == 1) {
-													return '<center><p class="text-success"><i class="fa fa-check-circle"></i> Approved </p></center>';
-												}
-												else {
-													return '<center><p class="text-danger"><i class="fa fa-times-circle"></i> Declined </p></center>';
-												}
-											}
-										},
 										DateCreated: {
 											title: 'Date Uploaded',
 											width: '10%',
@@ -86,8 +70,15 @@
 											title: 'Action',
 											width: '10%',
 											display: function (data) {
-												 return '<center><button class="btn btn-outline-primary w_full btn-small" onclick="LoadUpModal(\'' + data.record.FileName + '\')">' +
-													'<span class="fa fa-check-circle"></span> View & Approve </button></center>';
+												var approved = data.record.Status;
+												if (approved == 0) {
+													return '<center><button class="btn btn-outline-primary w_full btn-small" onclick="LoadUpModal(\'' + data.record.FileName + '\')">' +
+														'<span class="fa fa-check-circle"></span> View & Approve </button></center>';
+												}
+												else
+												{
+													return '<center><i class="fa fa-shield-alt fa-2x" style="color:red;"></i></center>';
+												}
 											}
 										},
 									}
@@ -109,7 +100,7 @@
 	<div class="modal-dialog modal-side modal-top-right" role="document" style="width:500px;">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h4 class="modal-title w-100" id="myModalLabel"><i class="fa fa-trash"></i> Delete Client </h4>
+				<h4 class="modal-title w-100" id="myModalLabel"><i class="fa fa-trash"></i> Approve Selected Records </h4>
 				<button type="button" id="closemodalup" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
@@ -125,16 +116,6 @@
 </div>
 <!--End Confirm Delete Modal -->
 <script type="text/javascript">
-
-	//select-another-item
-	$('#selectanother').click(function (e) {
-		e.preventDefault();
-		$('.item-data-retrived').hide('fast');
-		$('.item-data-retriving').hide('fast');
-		$('#RMDLoading_ID').hide('fast');
-		$('#searchform').show();
-		$('#ViewAll').show('fast');
-	});
 
 	//Function Load modal
 	function LoadUpModal(FileName) {
@@ -170,5 +151,14 @@
 			},
 		});
 	}
+
+	//select-another-item
+	$('#selectanother').click(function (e) {
+		e.preventDefault();
+		$('.item-data-retrived').hide('fast');
+		$('.item-data-retriving').hide('fast');
+		$('#RMDLoading_ID').hide('fast');
+		$('#ViewAll').show('fast');
+	});
 
 </script>

@@ -1,124 +1,128 @@
 ﻿@model OnBoarding.ViewModels.UploadedClientViewModel
-<script src="@Url.Content("~/Assets/fwizard/form-wizard.js")"></script>
-<div class="form-row form-wizard">
-	<!-- Form Wizard -->
-	<form class="mt-0" role="form" id="ApplicationForm" action="" method="POST" accept-charset="utf-8">
-		<!-- Form Step 1 -->
-		<fieldset>
-			<h6> Company Details</h6><hr />
-			<div class="form-group">
-				<div class="table-responsive">
-					<table class="table table-bordered">
-						<tr class="success">
-							<th>Business Account :</th>
-							<td style="text-align: right;"><i class="fa fa-archive"></i></td>
-						</tr>
-						<tr>
-							<th>Company Account Number:</th>
-							<td id="AccountNumber" name="AccountNumber">@ViewBag.ClientInfo.AccountNumber</td>
-						</tr>
-						<tr class="success">
-							<th>Company Details:</th>
-							<td style="text-align: right;"><i class="fa fa fa-building fa-x"></i></td>
-						</tr>
-						<tr>
-							<th>Company Name:</th>
-							<td id="CompanyName" name="CompanyName">@ViewBag.ClientInfo.CompanyName</td>
-						</tr>
-						<tr>
-							<th>Accepted Terms and Conditions:</th>
-							<td id="CompanyName" name="CompanyName">@ViewBag.ClientInfo.AcceptedTerms</td>
-						</tr>
-						<tr>
-							<th>eMarket Signup:</th>
-							<td id="CompanyName" name="CompanyName">@ViewBag.ClientInfo.EMTSignUp</td>
-						</tr>
-						<tr class="success">
-							<th>Settlement Accounts:</th>
-							<td style="text-align: right;"><i class="fa fa fa-money fa-x"></i></td>
-						</tr>
-						<tr>
-							<th>Settlement Accounts:</th>
-							<td id="SettlementAccounts" name="SettlementAccounts">
-								@if (ViewBag.SettlementAccounts.Count != 0)
-								{
-									<table class="custom-table">
-										<th> Currency </th>
-										<th> Account Number </th>
-										@foreach (var item in ViewBag.SettlementAccounts)
-										{
-											<tbody>
-												<td>@item.Currency</td>
-												<td>@item.AccountNumber</td>
-											</tbody>
-										}
-									</table>
-								}
-								else
-								{
-									<table class="custom-table">No Settlement Accounts</table>
-								}
-							</td>
-						</tr>
-						<tr class="success">
-							<th>Authorized Representatives:</th>
-							<td style="text-align: right;"><i class="fa fa fa-users fa-x"></i></td>
-						</tr>
-						<tr>
-							<th>Authorized Representatives:</th>
-							<td id="Representatives" name="Representatives">
-								@if (ViewBag.DesignatedUsers.Count != 0)
-								{
-									<table class="custom-table">
-										<th> Full Names</th>
-										<th> Email </th>
-										<th> Phone </th>
-										<th> GM Representative </th>
-										<th> eMarket SignUp </th>
-										<th> Trading Limit </th>
-										@foreach (var item in ViewBag.DesignatedUsers)
-										{
-											<tbody>
-												<td>@item.RepresentativeName</td>
-												<td>@item.RepresentativeEmail</td>
-												<td>@item.RepresentativePhonenumber</td>
-												<td>@item.IsGM</td>
-												<td>@item.IsEMTUser</td>
-												<td>@item.RepresentativeLimit</td>
-											</tbody>
-										}
-									</table>
-								}
-								else
-								{
-									<table class="custom-table">No Authorized Representatives</table>
-								}
-							</td>
-						</tr>
-					</table>
-				</div>
-				<div class="row d_none">
-					<div class="col-12 col-md-12">
-						<h5>Provide notes upon decline (if any) </h5>
-						<div class="form-group">
-							<textarea cols="12" rows="4" placeholder="Approval Notes ..." id="Comments" name="Comments" class="form-control"></textarea>
-							<input type="hidden" id="Approved" name="Approved" value="@ViewData["Approved"]" class="form-control">
-						</div>
-					</div>
-				</div>
-				<div id="HideShowApproveButtons" class="row d_none">
-					<div class="col-md-12">
-						<div class="form-wizard-buttons">
-							<button type="submit" class="btn btn-danger btnDecline"><i class="fa fa-trash"></i> Decline </button>
-							<button type="submit" class="btn btn-submit btnApprove"><i class="fa fa-check-circle"></i> Approve </button>
-						</div>
-					</div>
-				</div>
-			</div><br />
-		</fieldset>
-		<!-- End Form Step 2 -->
-	</form>
-	<!-- End Form Wizard -->
+<div class="row">
+	<div class="col-12">
+		<div class="row" id="ViewAllUploads">
+			<div class="col-lg-12 col-md-12 col-12">
+				<div id="UploadsTableContainer"></div>
+			</div>
+			<script>
+				$(document).ready(function () {
+					var fileName = '@ViewData["FileName"]';
+					$('#UploadsTableContainer').jtable({
+						title: '<i class="fa fa-list"></i> Uploaded Clients <div class="float-right" style="margin: -2px 5px 0px 0px;"><button id="DeclineSelected" class="btn btn-danger w_full" type="button" style="font-size:11px;line-height: 15px;padding: 5px 10px;letter-spacing:.4px;border-radius:0px;"><i class="fa fa-trash"></i> Decline Selected </button></div>',
+						paging: true,
+						pageSize: 10,
+						sorting: true,
+						defaultSorting: 'Id DESC',
+						selecting: true, //Enable selecting
+						multiselect: true, //Allow multiple selecting
+						selectingCheckboxes: true, //Show checkboxes on first column
+						selectOnRowClick: true, //Enable this to only select using checkboxes
+						actions:
+						{
+							listAction: '/Gmo/GetUploadApprovals?FileName=' + fileName,
+						},
+						fields: {
+							Id: {
+								key: true,
+								create: false,
+								edit: false,
+								list: false
+							},
+							CompanyName: {
+								title: 'Company-Name',
+								width: '30%'
+							},
+							AcceptedTerms: {
+								title: 'Terms',
+								width: '10%'
+							},
+							EMTSignUp: {
+								title: 'EMT',
+								width: '10%'
+							},
+							SSI: {
+								title: 'SSI',
+								width: '10%'
+							},
+							AccountNumber: {
+								title: 'Account-Number',
+								width: '20%'
+							},
+							Currency: {
+								title: 'Currency',
+								width: '10%'
+							},
+							RepresentativeName: {
+								title: 'RepresentativeName',
+								width: '20%'
+							},
+							RepresentativePhonenumber: {
+								title: 'Phone',
+								width: '20%'
+							},
+							RepresentativeLimit: {
+								title: 'Limit($)',
+								width: '10%'
+							},
+							IsGM: {
+								title: 'ISGM',
+								width: '10%'
+							},
+							IsEMTUser: {
+								title: 'EMTUSer',
+								width: '10%'
+							},
+							DateOfContract: {
+								title: 'DateOfContract',
+								width: '10%'
+							},
+						},
+
+						//Register to selectionChanged event to hanlde events
+						selectionChanged: function () {
+                            var $selectedRows = $('#UploadsTableContainer').jtable('selectedRows');
+                            if ($selectedRows.length > 0) {
+                                $selectedRows.each(function () {
+                                    var record = $(this).data('record');
+                                    var UploadID = record.Id;
+                                    //alert(" Journal ID :" + JournalID + " ");
+                                });
+                            }
+                        }
+					});
+
+					//Load list from server
+					$('#UploadsTableContainer').jtable('load');
+
+					//Approve selected items
+					$('button#DeclineSelected').button().click(function (e) {
+						e.preventDefault();
+						var $selectedRows = $('#UploadsTableContainer').jtable('selectedRows');
+						if ($selectedRows.length > 0) {
+							$selectedRows.each(function () {
+								var record = $(this).data('record');
+								var Id = record.Id;
+								$.ajax({
+									url: "/Gmo/DeclineSelected?Id=" + Id,
+									type: 'POST',
+									data: Id,
+									success: function () {
+										$('#UploadsTableContainer').jtable('load');
+										//toastr.success('Success! File details has been declined');
+									}
+								});
+							});
+						}
+						else {
+							//No rows selected
+							toastr.error('Error! No rows selected! Please select rows to approve');
+						}
+					});
+				});
+			</script>
+		</div>
+	</div>
 	<!--Processing Submission -->
 	<div class="col-lg-12 d_none" id="Loading_Div">
 		<center class="r_corners m_top_20">
@@ -129,55 +133,5 @@
 	<!--End Submission Processing -->
 </div>
 <script type="text/javascript">
-    jQuery().ready(function () {
-        var v = jQuery("#ApplicationForm").validate({
-            rules: {
-                Comments: {
-                    minlength: 4,
-                    maxlength: 200
-                }
-            },
-            errorElement: "span",
-            errorClass: "help-inline-error",
-        });
-    });
-
-    $(document).ready(function () {
-		//Hide/Show Approve Buttons
-		if ($('#Approved').val() == 1) {
-			$('#HideShowApproveButtons').addClass('d_none');
-		}
-		else {
-			$('#HideShowApproveButtons').removeClass('d_none');
-		}
-
-        //Submit Form (Decline Action)
-        $('.btnDecline').on('click', function (e) {
-            e.preventDefault();
-            if ($('#ApplicationForm').valid()) {
-                $("#Loading_Div").show('fast');
-                $('#ApplicationForm').hide("fast");
-                var formData = new FormData($("#ApplicationForm")[0]);
-                $.ajax({
-                    url: "/DigitalDesk/DeclineApplication",
-                    type: 'POST',
-                    data: formData,
-                    async: true,
-                    success: function () {
-                        window.setTimeout(close, 500);
-                        function close() {
-                            $('#ApplicationForm')[0].reset();
-                            $("#Loading_Div").hide('fast');
-                            $('#Success_Div').show("fast");
-                            window.location.reload();
-                        }
-                    },
-                    cache: false,
-                    contentType: false,
-                    processData: false
-                });
-            }
-        });
-    });
+	
 </script>
-
