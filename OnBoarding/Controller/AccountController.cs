@@ -226,7 +226,7 @@ namespace OnBoarding.Controllers
                                     foreach (var email in DDUserRole)
                                     {
                                         var DDMessageBody = "Dear Team <br/><br/> Kindly note that the following client has successfully completed registration. <br/>" +
-                                                      "FullNames: " + DBOTPToconfirm.Surname +""+ DBOTPToconfirm.OtherNames + ", <br/> EmailAddress: " + DBOTPToconfirm.EmailAddress + " " +
+                                                      "FullNames: " + DBOTPToconfirm.Surname +" "+ DBOTPToconfirm.OtherNames + ", <br/> EmailAddress: " + DBOTPToconfirm.EmailAddress + " " +
                                                       "<br/><br/> Kind Regards,<br/><img src=\"https://e-documents.stanbicbank.co.ke/Content/images/EmailSignature.png\"/>";
                                         var SendDDNotificationEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, email.EmailID, "Client Registration Complete", DDMessageBody);
                                         if (SendDDNotificationEmail == true)
@@ -367,7 +367,7 @@ namespace OnBoarding.Controllers
                                 foreach (var email in DDUserRole)
                                 {
                                     var DDMessageBody = "Dear Team <br/><br/> Kindly note that the following client has successfully completed registration. <br/>" +
-                                                  "FullNames: " + DBOTPToconfirm.Surname + "" + DBOTPToconfirm.OtherNames + ", <br/> EmailAddress: " + DBOTPToconfirm.EmailAddress + " " +
+                                                  "FullNames: " + DBOTPToconfirm.Surname + " " + DBOTPToconfirm.OtherNames + ", <br/> EmailAddress: " + DBOTPToconfirm.EmailAddress + " " +
                                                   "<br/><br/> Kind Regards,<br/><img src=\"https://e-documents.stanbicbank.co.ke/Content/images/EmailSignature.png\"/>";
                                     var SendDDNotificationEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, email.EmailID, "Client Registration Complete", DDMessageBody);
                                     if (SendDDNotificationEmail == true)
@@ -496,26 +496,6 @@ namespace OnBoarding.Controllers
                             LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBody, model.EmailAddress, _action);
                             return Json("Error! Unable to resend your email.", JsonRequestBehavior.AllowGet);
                         }
-
-                       /* //Send Email with new OTP
-                        var callbackUrl = Url.Action("UploadedClientCompleteRegistration", "Account", null, Request.Url.Scheme);
-                        var ResendOTPMessageBody = "Dear " + model.CompanyName + ", <br/><br/> You have requested to reset your one time pin. " +
-                            "Your new One Time Pin (OTP) code is: " + activationCode + " <br/>" +
-                            "<a href=" + callbackUrl + "> Click here to complete your registration. </a><br/><br/>" +
-                            "<br/><br/> Kind Regards,<br/><img src=\"https://e-documents.stanbicbank.co.ke/Content/images/EmailSignature.png\"/>";
-                        var CompleteRegistrationEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, model.EmailAddress, "Confirm Registration", ResendOTPMessageBody);
-                        if (CompleteRegistrationEmail == true)
-                        {
-                            //Log email sent notification
-                            LogNotification.AddSucsessNotification(MailHelper.EmailFrom, ResendOTPMessageBody, model.EmailAddress.ToLower(), _action);
-                            return Json("success", JsonRequestBehavior.AllowGet);
-                        }
-                        else
-                        {
-                            //Log Email failed notification
-                            LogNotification.AddFailureNotification(MailHelper.EmailFrom, ResendOTPMessageBody, model.EmailAddress.ToLower(), _action);
-                            return Json("Error! Unable to resend your email.", JsonRequestBehavior.AllowGet);
-                        }*/
                     }
                     else
                     {
@@ -916,26 +896,6 @@ namespace OnBoarding.Controllers
                             LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBody, model.EmailAddress, _action);
                             return Json("Error! Unable to resend your email.", JsonRequestBehavior.AllowGet);
                         }
-
-                        /*//Send Email with New OTP
-                        var callbackUrl = Url.Action("DesignatedUserConfirmation", "Account", null, Request.Url.Scheme);
-                        var ResendOTPMessageBody = "Dear " + model.CompanyName + ", <br/><br/> You have requested to reset your one time pin. " +
-                            "Your new One Time Pin (OTP) code is: " + activationCode + " <br/>" +
-                            "<a href=" + callbackUrl + "> Click here to complete your registration. </a><br/><br/>" +
-                            "<br/><br/> Kind Regards,<br/><img src=\"https://e-documents.stanbicbank.co.ke/Content/images/EmailSignature.png\"/>";
-                        var CompleteRegistrationEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, model.EmailAddress, "Confirm Registration", ResendOTPMessageBody);
-                        if (CompleteRegistrationEmail == true)
-                        {
-                            //Log email sent notification
-                            LogNotification.AddSucsessNotification(MailHelper.EmailFrom, ResendOTPMessageBody, model.EmailAddress.ToLower(), _action);
-                            return Json("success", JsonRequestBehavior.AllowGet);
-                        }
-                        else
-                        {
-                            //Log Email failed notification
-                            LogNotification.AddFailureNotification(MailHelper.EmailFrom, ResendOTPMessageBody, model.EmailAddress.ToLower(), _action);
-                            return Json("Error! Unable to resend your email", JsonRequestBehavior.AllowGet);
-                        }*/
                     }
                     else
                     {
