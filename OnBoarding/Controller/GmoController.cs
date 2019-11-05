@@ -166,9 +166,9 @@ namespace OnBoarding.Controllers
                 //Get the POA who approved
                 var POAApproved = db.AspNetUsers.FirstOrDefault(a => a.Id == getApplicationInfo.POAWhoApproved);
                 var POADeclined = db.AspNetUsers.FirstOrDefault(a => a.Id == getApplicationInfo.POAWhoDeclined);
-                ViewData["POANames"] = OpsApproved.CompanyName;
-                ViewData["POAEmail"] = OpsApproved.Email;
-                ViewData["POAPhone"] = OpsApproved.PhoneNumber;
+                ViewData["POANames"] = POAApproved.CompanyName;
+                ViewData["POAEmail"] = POAApproved.Email;
+                ViewData["POAPhone"] = POAApproved.PhoneNumber;
                 DateTime dtByUser2 = DateTime.Parse(getApplicationInfo.POADateApproved.ToString());
                 ViewData["POADateApproved"] = dtByUser2.ToString("dd/MM/yyyy hh:mm:ss tt");
 

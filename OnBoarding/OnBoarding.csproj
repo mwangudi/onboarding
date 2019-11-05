@@ -175,7 +175,6 @@
     <Compile Include="Controller\OpsController.cs" />
     <Compile Include="Controller\PoaController.cs" />
     <Compile Include="Controller\SignatoryController.cs" />
-    <Compile Include="Controller\_repDetails.cs" />
     <Compile Include="Domain\Data.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

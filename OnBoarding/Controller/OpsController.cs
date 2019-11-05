@@ -240,7 +240,7 @@ namespace OnBoarding.Controllers
                     {
                         try
                         {
-                            //Update application status
+                            //1. Update application status
                             ApplicationUpdate.OPSDeclined = true;
                             ApplicationUpdate.OPSDateApproved = DateTime.Now;
                             ApplicationUpdate.OPSWhoDeclined = currentUserId;
@@ -249,21 +249,26 @@ namespace OnBoarding.Controllers
                             ApplicationUpdate.OPSComments = model.Comments;
                             var deleteApplication = db.SaveChanges();
 
-                            //1. Delete Signatories
+                            //2. Mark HasApplication False for Client Company
+                            var updateClientCompany = db.ClientCompanies.SingleOrDefault(c => c.Id == ApplicationUpdate.CompanyID);
+                            updateClientCompany.HasApplication = false;
+                            db.SaveChanges();
+
+                            //3. Delete Signatories
                             db.ClientSignatories.RemoveRange(db.ClientSignatories.Where(c => c.ClientID == ClientDetails.Id && c.CompanyID == ApplicationUpdate.CompanyID));
                             var deleteSignatories = db.SaveChanges();
 
-                            //2. Delete Representatives
+                            //4. Delete Representatives
                             db.DesignatedUsers.RemoveRange(db.DesignatedUsers.Where(c => c.ClientID == ClientDetails.Id && c.CompanyID == ApplicationUpdate.CompanyID));
                             var deleteUsers = db.SaveChanges();
 
-                            //3. Delete Settlement Accounts
+                            //5. Delete Settlement Accounts
                             db.ClientSettlementAccounts.RemoveRange(db.ClientSettlementAccounts.Where(c => c.ClientID == ClientDetails.Id && c.CompanyID == ApplicationUpdate.CompanyID));
                             db.SaveChanges();
 
                             if (deleteApplication > 0 && deleteUsers > 0 && deleteSignatories > 0)
                             {
-                                //4. Send email notification to Client Company
+                                //6. Send email notification to Client Company
                                 string EmailBody = string.Empty;
                                 using (System.IO.StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/ApplicationDeclined.html")))
                                 {
@@ -284,7 +289,7 @@ namespace OnBoarding.Controllers
                                     LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBody, ClientDetails.EmailAddress, _action);
                                 }
 
-                                //5. Send email notification to Digital Desk
+                                //7. Send email notification to Digital Desk
                                 var DDUserRole = (from p in db.AspNetUserRoles
                                                   join e in db.AspNetUsers on p.UserId equals e.Id
                                                   where p.RoleId == "03d5e1e3-a8a9-441e-9122-30c3aafccccc"
