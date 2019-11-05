@@ -328,7 +328,14 @@ namespace OnBoarding.Controllers
                     LogApproval.Comments = model.Comments;
                     LogApproval.Status = 4;
                     db.DesignatedUserApprovals.Add(LogApproval);
-                    db.SaveChanges();
+                    var savedItem = db.SaveChanges();
+                    if (savedItem > 0)
+                    {
+                        //Log signatory approval
+                        var nominationToUpdate = db.ApplicationNominations.SingleOrDefault(c => c.NomineeEmail == userClientId.Email && c.CompanyID == model.CompanyID && c.NominationType == 2);
+                        nominationToUpdate.NominationStatus = 2;
+                        db.SaveChanges();
+                    }
 
                     //Update application Id
                     var ApplicationUpdate = db.EMarketApplications.SingleOrDefault(c => c.Id == model.ApplicationID);
