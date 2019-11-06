@@ -9,6 +9,8 @@ namespace OnBoarding.Models
         public virtual DbSet<AspNetRole> AspNetRoles { get; set; }
         public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
         public virtual DbSet<AspNetUserRole> AspNetUserRoles { get; set; }
+        public virtual DbSet<AuditTrail> AuditTrails { get; set; }
+
         public virtual DbSet<ClientSettlementAccount> ClientSettlementAccounts { get; set; }
         public virtual DbSet<ClientSignatory> ClientSignatories { get; set; }
         public virtual DbSet<ClientCompany> ClientCompanies { get; set; }
@@ -22,10 +24,7 @@ namespace OnBoarding.Models
         public virtual DbSet<tblStatus> tblStatus { get; set; }
         public virtual DbSet<SystemMenu> SystemMenus { get; set; }
         public virtual DbSet<SystemMenuAccess> SystemMenuAccess { get; set; }
-        public virtual DbSet<AuditTrail> AuditTrails { get; set; }
-        public virtual DbSet<ClientCompany> ClientCompanies { get; set; }
         public virtual DbSet<ExistingClientsUpload> ExistingClientsUploads { get; set; }
-
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<AspNetUser>()
