@@ -1,0 +1,182 @@
+﻿@{
+	Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<section class="section">
+	<div class="col-12 col-sm-12 col-lg-12">
+		<div class="card">
+			<div class="card-header">
+				<h4> Uploaded Files </h4>
+			</div>
+			<div class="card-body">
+				<ul class="nav nav-tabs" id="myTab" role="tablist">
+					<li class="nav-item">
+						<a class="nav-link active show" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">
+							<i class="fa fa-list"></i> Recently Uploaded Files
+						</a>
+					</li>
+				</ul>
+				<div class="tab-content" id="myTabContent">
+					<div class="tab-pane fade active show" id="home" role="tabpanel" aria-labelledby="home-tab">
+						<div class="item-data-retriving d_none">
+							<div class="form-group form-row" style="margin-left: 0px !important;">
+								<div class="col-12 col-sm-8 col-lg-8">
+									<h6><small><i class="fa fa-adjust"></i> View Upload Details </small></h6>
+								</div>
+								<div class="col-12 col-sm-4 col-lg-4">
+									<button id="selectanother" class="btn btn-danger w_full" type="button"><i class="fa fa-check-circle"></i> Select Another File </button>
+								</div>
+							</div>
+						</div>
+						<!--Load Up Data -->
+						<center id="RMDLoading_ID" class="d_none r_corners">
+							<h6 class="m_top_20 m_bottom_20"> Please wait... Fetching Upload Details </h6>
+							<img src="~/Content/images/loading-bar.gif" class="img-thumbnail" alt="Loading" style="max-width:160px;">
+						</center>
+						<!--End Loading Up Data -->
+					</div>
+					<div class="item-data-retrived"></div>
+					<div class="row" id="ViewAll">
+						<div class="col-lg-12 col-md-12 col-12">
+							<div id="UploadedClientsTableContainer"></div>
+						</div>
+						<script>
+							$(document).ready(function () {
+								$('#UploadedClientsTableContainer').jtable({
+									title: '<i class="fa fa-list"></i> Recently Uploaded Files',
+									paging: true,
+									pageSize: 10,
+									sorting: true,
+									defaultSorting: 'DateCreated DESC',
+									actions:
+									{
+										listAction: '/Gmo/GetUploadedClients'
+									},
+									fields: {
+										FileName: {
+											title: 'File Name',
+											width: '30%'
+										},
+										UploadedBy: {
+											title: 'Uploaded By',
+											width: '20%'
+										},
+										DateCreated: {
+											title: 'Date Uploaded',
+											width: '10%',
+											type: 'date',
+											displayFormat: 'yy-mm-dd'
+										},
+										Status: {
+											title: 'Status',
+											width: '10%',
+											display: function (data) {
+												var approved = data.record.Status;
+												if (approved == 1) {
+													return '<center><p class="text-success"><i class="fa fa-check-circle"></i> Approved </p></center>';
+												}
+												else if (approved == 2) {
+													return '<center><p class="text-danger"><i class="fa fa-times-circle"></i> Declined </p></center>';
+												}
+												else
+												{
+													return '<center><p class="text-warning"><i class="fa fa-check-circle"></i> Pending </p></center>';
+												}
+											}
+										},
+										MyButton: {
+											title: 'Action',
+											width: '10%',
+											display: function (data) {
+												var approved = data.record.Status;
+												if (approved == 0) {
+													return '<center><button class="btn btn-outline-primary w_full btn-small" onclick="LoadUpModal(\'' + data.record.FileName + '\')">' +
+														'<span class="fa fa-check-circle"></span> View & Approve </button></center>';
+												}
+												else
+												{
+													return '<center><i class="fa fa-shield-alt fa-x" style="color:red;"></i></center>';
+												}
+											}
+										},
+									}
+								});
+								
+								//Load list from server
+								$('#UploadedClientsTableContainer').jtable('load');
+							});
+						</script>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<!--Start Confirm Approve Modal -->
+<div class="modal fade right" id="LoadUpDeleteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<!-- Add class .modal-side and then add class .modal-top-right (or other classes from list above) to set a position to the modal -->
+	<div class="modal-dialog modal-side modal-top-right" role="document" style="width:500px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title w-100" id="myModalLabel"><i class="fa fa-trash"></i> Approve Selected Records </h4>
+				<button type="button" id="closemodalup" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body students-data mb-0"></div>
+			<div class="modal-footer mb-0">
+				<div class="col-lg-12">
+					<center> <b> Global Markets Onboarding System  &copy; Stanbic Bank Kenya </b> </center>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--End Confirm Delete Modal -->
+<script type="text/javascript">
+
+	//Function Load modal
+	function LoadUpModal(FileName) {
+		// Hide Default DIV's
+		$('#ViewAll').hide();
+		$('#RMDLoading_ID').show('fast');
+		$('.item-data-retriving').show();
+		// LoadUp User Data
+		$.ajax({
+			type: "POST",
+			url: "/Gmo/ViewUploadedClient",
+			data: '{fileName: "' + FileName + '" }',
+			async: true,
+			contentType: "application/json; charset=utf-8",
+			dataType: "html",
+			success: function (data) {
+				$('#RMDLoading_ID').hide();
+				$('.item-data-retrived').show();
+				$('.item-data-retrived').html(data);
+
+				//btnRemoveRepresentative
+				$("#btnDeleteClient").click(function (e) {
+					e.preventDefault();
+				});
+			},
+			error: function (xhr, textStatus, errorThrown) {
+				if (textStatus === 'error') {
+					$('#ViewAll').show();
+					$('#RMDLoading_ID').hide();
+					$('.item-data-retriving').hide();
+					toastr.error('Submission error! Code: ' + xhr.status + ' Details: ' + errorThrown);
+				}
+			},
+		});
+	}
+
+	//select-another-item
+	$('#selectanother').click(function (e) {
+		e.preventDefault();
+		$('.item-data-retrived').hide('fast');
+		$('.item-data-retriving').hide('fast');
+		$('#RMDLoading_ID').hide('fast');
+		$('#ViewAll').show('fast');
+		$('#UploadedClientsTableContainer').jtable('load');
+	});
+
+</script>

@@ -8,7 +8,7 @@
 		Dashboard
 	</h3>
 	<div class="row">
-		<div class="col-lg-3 col-md-6 col-12">
+		<div class="col-lg-4 col-md-4 col-12">
 			<div class="card card-sm-4">
 				<div class="card-icon bg-primary">
 					<i class="ion ion-person"></i>
@@ -24,7 +24,7 @@
 				<div class="card-cta"> <a href="/Gmo/RegisteredClients"> View All <i class="ion ion-ios-arrow-right"></i> </a></div> 
 			</div>
 		</div>
-		<div class="col-lg-3 col-md-6 col-12">
+		<div class="col-lg-4 col-md-4 col-12">
 			<div class="card card-sm-4">
 				<div class="card-icon bg-success">
 					<i class="fa fa-check-circle"></i>
@@ -37,10 +37,10 @@
 					  @ViewData["CompletedApplications"]
 					</div>
 				</div>
-				<div class="card-cta"> <a href="/Gmo/ViewAll"> View All <i class="ion ion-ios-arrow-right"></i> </a></div> 
+				<div class="card-cta al"> <a href="/Gmo/ViewAll"> View All <i class="ion ion-ios-arrow-right"></i> </a></div> 
 			</div>
 		</div>
-		<div class="col-lg-3 col-md-6 col-12">
+		<div class="col-lg-4 col-md-4 col-12">
 			<div class="card card-sm-4">
 				<div class="card-icon bg-warning">
 					<i class="ion ion-paper-airplane"></i>
@@ -56,7 +56,7 @@
 				<div class="card-cta"> <a href="/Gmo/InCompleteApplications"> View All <i class="ion ion-ios-arrow-right"></i> </a></div> 
 			</div>
 		</div>
-		<div class="col-lg-3 col-md-6 col-12">
+		<div class="col-lg-3 col-md-6 col-12 d-none">
 			<div class="card card-sm-4">
 				<div class="card-icon bg-danger">
 					<i class="ion ion-ios-paper-outline"></i>
@@ -73,7 +73,7 @@
 			</div>
 		</div>
 	</div><hr/>
-	<div class="row">
+	<div class="row d-none">
 		<div class="col-lg-3 col-md-6 col-12">
 			<div class="card card-sm-4">
 				<div class="card-icon bg-danger">
@@ -90,10 +90,10 @@
 				<div class="card-cta"> <a href="/Gmo/PendingPoaApproval"> View All <i class="ion ion-ios-arrow-right"></i> </a></div> 
 			</div>
 		</div> 
-	</div><hr/>
+	</div>
 	<!-- /.row -->
 <div class="row">
-	<div class="col-lg-8 col-md-8 col-12">
+	<div class="col-lg-6 col-md-6 col-12">
 		<div class="card">
 			<div class="card-header">
 				<h4>Menu Quicklinks</h4>
@@ -111,8 +111,8 @@
 						<tbody>
 							<tr>
 								<th scope="row"><span class="step">1</span></th>
-								<td>Registered Clients</td>
-								<td><a href="/Gmo/RegisteredClients"> RegisteredClients </a></td>
+								<td>View Registered Clients</td>
+								<td><a href="/Gmo/RegisteredClients"> Registered Clients </a></td>
 							</tr>
 							<tr>
 								<th scope="row"><span class="step">2</span></th>
@@ -121,18 +121,8 @@
 							</tr> 
 							<tr>
 								<th scope="row"><span class="step">4</span></th>
-								<td>InComplete Applications</td>
-								<td><a href="/Gmo/InCompleteApplications"> In-Complete Applications </a></td>
-							</tr>
-							<tr>
-								<th scope="row"><span class="step">3</span></th>
-								<td>Pending Ops Approval</td>
-								<td><a href="/Gmo/PendingOpsApproval"> Pending Ops Approval </a></td>
-							</tr>
-							<tr>
-								<th scope="row"><span class="step">5</span></th>
-								<td>Pending POA Approval </td>
-								<td><a href="/Gmo/PendingPOAApproval"> Pending POA Approval </a></td>
+								<td> View Uploaded Clients</td>
+								<td><a href="/Gmo/ApproveUploads"> Uploaded Clients </a></td>
 							</tr>
 						</tbody>
 					</table>

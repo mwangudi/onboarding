@@ -196,6 +196,7 @@
     <Compile Include="Models\DBModel.cs" />
     <Compile Include="Models\DesignatedUser.cs" />
     <Compile Include="Models\EMarketApplication.cs" />
+    <Compile Include="Models\ExistingClientsUpload.cs" />
     <Compile Include="Models\Notification.cs" />
     <Compile Include="Models\RegisteredClient.cs" />
     <Compile Include="Models\SignatoryApproval.cs" />
@@ -3111,6 +3112,8 @@
     <Content Include="Views\DigitalDesk\LoadDeleteSignatory.cshtml" />
     <Content Include="Views\DigitalDesk\PendingApprovals.cshtml" />
     <Content Include="Views\Shared\_AdminOldLayout.cshtml" />
+    <Content Include="Views\Gmo\ApproveUploads.cshtml" />
+    <Content Include="Views\Gmo\ViewUploadedClient.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -3150,6 +3153,7 @@
           <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
         </WebProjectProperties>
       </FlavorProperties>
+      <UserProperties assets_4bootstrap_4css_4bootstrap-reboot_1css_1map__JsonSchema="" />
     </VisualStudio>
   </ProjectExtensions>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

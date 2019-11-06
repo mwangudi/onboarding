@@ -1,0 +1,166 @@
+﻿@model OnBoarding.ViewModels.UploadedClientViewModel
+<div class="row">
+	<div class="col-12">
+		<div class="row" id="ViewAllUploads">
+			<div class="col-lg-12 col-md-12 col-12">
+				<div id="UploadsTableContainer"></div>
+			</div>
+			<script>
+				$(document).ready(function () {
+					var fileName = '@ViewData["FileName"]';
+					$('#UploadsTableContainer').jtable({
+						title: '<i class="fa fa-list"></i> Uploaded Clients <div class="jTableTitleDiv float-right"><button id="DeclineSelected" class="btn btn-outline-danger w_full" type="button" style="font-size:11px;line-height: 15px;padding: 5px 10px;letter-spacing:.4px;border-radius:0px; margin: -4px 10px 0px 0px;"><i class="fa fa-trash"></i> Decline Selected </button><button id="ApproveSelected" class="btn btn-outline-success w_full" type="button" style="font-size:11px;line-height: 15px;padding: 5px 10px;letter-spacing:.4px;border-radius:0px;margin: -4px 0px 0px 0px;"><i class="fa fa-check-circle"></i> Approve Selected </button></div>',
+						paging: true,
+						pageSize: 10,
+						sorting: true,
+						defaultSorting: 'Id DESC',
+						selecting: true, //Enable selecting
+						multiselect: true, //Allow multiple selecting
+						selectingCheckboxes: true, //Show checkboxes on first column
+						selectOnRowClick: true, //Enable this to only select using checkboxes
+						actions:
+						{
+							listAction: '/Gmo/GetUploadApprovals?FileName=' + fileName,
+						},
+						fields: {
+							Id: {
+								key: true,
+								create: false,
+								edit: false,
+								list: false
+							},
+							CompanyName: {
+								title: 'Company-Name',
+								width: '30%'
+							},
+							AcceptedTerms: {
+								title: 'Terms',
+								width: '10%'
+							},
+							EMTSignUp: {
+								title: 'EMT',
+								width: '10%'
+							},
+							SSI: {
+								title: 'SSI',
+								width: '10%'
+							},
+							AccountNumber: {
+								title: 'Account-Number',
+								width: '20%'
+							},
+							Currency: {
+								title: 'Currency',
+								width: '10%'
+							},
+							RepresentativeName: {
+								title: 'RepresentativeName',
+								width: '20%'
+							},
+							RepresentativePhonenumber: {
+								title: 'Phone',
+								width: '20%'
+							},
+							RepresentativeLimit: {
+								title: 'Limit($)',
+								width: '10%'
+							},
+							IsGM: {
+								title: 'ISGM',
+								width: '10%'
+							},
+							IsEMTUser: {
+								title: 'EMTUSer',
+								width: '10%'
+							},
+							DateOfContract: {
+								title: 'DateOfContract',
+								width: '10%'
+							},
+						},
+
+						//Register to selectionChanged event to hanlde events
+						selectionChanged: function () {
+                            var $selectedRows = $('#UploadsTableContainer').jtable('selectedRows');
+                            if ($selectedRows.length > 0) {
+                                $selectedRows.each(function () {
+                                    var record = $(this).data('record');
+                                    var UploadID = record.Id;
+                                    //alert(" Journal ID :" + JournalID + " ");
+                                });
+                            }
+                        }
+					});
+
+					//Load list from server
+					$('#UploadsTableContainer').jtable('load');
+
+					//Decline selected items
+					$('button#DeclineSelected').button().click(function (e) {
+						e.preventDefault();
+						var $selectedRows = $('#UploadsTableContainer').jtable('selectedRows');
+						if ($selectedRows.length > 0) {
+							$selectedRows.each(function () {
+								var record = $(this).data('record');
+								var Id = record.Id;
+								$.ajax({
+									url: "/Gmo/DeclineSelected?Id=" + Id,
+									type: 'POST',
+									data: Id,
+									success: function () {
+										//toastr.success('Success! File details has been declined');
+										$('#UploadsTableContainer').jtable('load');
+									}
+								});
+							});
+						}
+						else {
+							//No rows selected
+							toastr.error('Error! No rows selected! Please select rows to approve');
+						}
+					});
+
+					//Approve selected items
+					$('button#ApproveSelected').button().click(function (e) {
+						e.preventDefault();
+						var $selectedRows = $('#UploadsTableContainer').jtable('selectedRows');
+						if ($selectedRows.length > 0) {
+							$selectedRows.each(function () {
+								var record = $(this).data('record');
+								var Id = record.Id;
+								$.ajax({
+									url: "/Gmo/ApproveSelected?Id=" + Id,
+									type: 'POST',
+									data: Id,
+									success: function (XmlHttpRequest) {
+										if (XmlHttpRequest != 'success') {
+											toastr.error(XmlHttpRequest);
+											$('#UploadsTableContainer').jtable('load');
+										}
+										else {
+											toastr.success('Success! Records have been aproved');
+											$('#UploadsTableContainer').jtable('load');
+										}
+									}
+								});
+							});
+						}
+						else {
+							//No rows selected
+							toastr.error('Error! No rows selected! Please select rows to approve');
+						}
+					});
+
+				});
+			</script>
+		</div>
+	</div>
+	<!--Processing Submission -->
+	<div class="col-lg-12 d_none" id="Loading_Div">
+		<center class="r_corners m_top_20">
+			<h4 class="m_top_20 m_bottom_20">Please wait... Processing Your Submission</h4>
+			<img src="~/Content/images/loading-bar.gif" class="img-thumbnail m_bottom_20" alt="Loading" style="max-width:160px;">
+		</center>
+	</div>
+	<!--End Submission Processing -->
+</div>

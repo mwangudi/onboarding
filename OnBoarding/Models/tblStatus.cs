@@ -16,6 +16,7 @@ namespace OnBoarding.Models
             EMarketApplications = new HashSet<EMarketApplication>();
             RegisteredClients = new HashSet<RegisteredClient>();
             AspNetUsers = new HashSet<AspNetUser>();
+            ExistingClientsUploads = new HashSet<ExistingClientsUpload>();
         }
 
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
@@ -53,5 +54,8 @@ namespace OnBoarding.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ClientCompany> ClientCompanies { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ExistingClientsUpload> ExistingClientsUploads { get; set; }
     }
 }

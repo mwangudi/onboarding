@@ -412,31 +412,30 @@ namespace OnBoarding.Controllers
         // POST: //ViewClient
         [HttpPost]
         [AllowAnonymous]
-        public PartialViewResult ViewClient(int clientId)
+        public PartialViewResult ViewClient(int clientID)
         {
             using (DBModel db = new DBModel())
             {
-                var clientDetails = db.RegisteredClients.SingleOrDefault(s => s.Id == clientId);
-                ViewBag.ApplicationInfo = clientDetails;
+                var clientDetails = db.RegisteredClients.SingleOrDefault(s => s.Id == clientID);
+                ViewBag.RegisteredClientInfo = clientDetails;
+
+                var companyDetails = db.ClientCompanies.SingleOrDefault(s => s.ClientId == clientID);
+                ViewBag.CompanyInfo = companyDetails;
 
                 //Signatories List
-                List<ClientSignatory> SignatoryList = db.ClientSignatories.Where(a => a.ClientID == clientId).ToList();
+                List<ClientSignatory> SignatoryList = db.ClientSignatories.Where(a => a.ClientID == clientID && a.CompanyID == companyDetails.Id).ToList();
                 ViewBag.ClientSignatory = SignatoryList;
 
                 //Designated Users List
-                List<DesignatedUser> DesignatedUsersList = db.DesignatedUsers.Where(a => a.ClientID == clientId).ToList();
+                List<DesignatedUser> DesignatedUsersList = db.DesignatedUsers.Where(a => a.ClientID == clientID && a.CompanyID == companyDetails.Id).ToList();
                 ViewBag.DesignatedUser = DesignatedUsersList;
 
                 //Get the list of all client's settlement accounts
-                var Query = db.Database.SqlQuery<SettlementAccountsViewModel>("SELECT c.CurrencyName, s.AccountNumber FROM ClientSettlementAccounts s INNER JOIN Currencies c ON c.Id = s.CurrencyID WHERE s.ClientID =  " + "'" + clientId + "'" + " AND s.Status = 1");
+                var Query = db.Database.SqlQuery<SettlementAccountsViewModel>("SELECT c.CurrencyName, s.AccountNumber FROM ClientSettlementAccounts s INNER JOIN Currencies c ON c.Id = s.CurrencyID WHERE s.ClientID =  " + "'" + clientID + "'" + " AND s.CompanyID =  " + "'" + companyDetails.Id + "'" + " AND s.Status = 1");
                 ViewBag.SettlementAccounts = Query.ToList();
 
-                var clientHasApplication = db.EMarketApplications.Any(s => s.ClientID == clientId);
+                var clientHasApplication = db.EMarketApplications.Any(s => s.ClientID == clientID);
                 ViewBag.clientHasApplication = clientHasApplication;
-
-                //Data For Controller Post
-                ViewData["CompanyEmail"] = clientDetails.EmailAddress;
-                //ViewData["CompanyName"] = clientDetails.CompanyName;
             }
 
             return PartialView();
@@ -1352,42 +1351,49 @@ namespace OnBoarding.Controllers
 
                 //Create a DataTable.
                 DataTable dt = new DataTable();
-                dt.Columns.AddRange(new DataColumn[10] {
-                            new DataColumn("ClientName", typeof(string)),
-                            new DataColumn("ClientNo", typeof(string)),
-                            new DataColumn("ClientCompanyName", typeof(string)),
-                            new DataColumn("ClientCompanyReg", typeof(string)),
-                            new DataColumn("ClientBusinessEmailAddress".ToLower(), typeof(string)),
-                            new DataColumn("ClientEmailAddress".ToLower(), typeof(string)),
-                            new DataColumn("ClientPostalAddress", typeof(string)),
-                            new DataColumn("ClientPostalCode", typeof(string)),
-                            new DataColumn("ClientTownCity", typeof(string)),
-                            new DataColumn("ClientPhoneNumber", typeof(string))
+                dt.Columns.AddRange(new DataColumn[14] {
+                            new DataColumn("ColCompanyName", typeof(string)),
+                            new DataColumn("ColCompanyEmail".ToUpper(), typeof(string)),
+                            new DataColumn("ColAcceptedTerms".ToUpper(), typeof(string)),
+                            new DataColumn("ColEMTSignUp".ToUpper(), typeof(string)),
+                            new DataColumn("ColSSI".ToUpper(), typeof(string)),
+                            new DataColumn("ColAccountNumber", typeof(string)),
+                            new DataColumn("ColCurrency", typeof(string)),
+                            new DataColumn("ColRepresentativeName", typeof(string)),
+                            new DataColumn("ColRepresentativeEmail".ToUpper(), typeof(string)),
+                            new DataColumn("ColRepresentativePhonenumber", typeof(string)),
+                            new DataColumn("ColIsGM".ToUpper(), typeof(string)),
+                            new DataColumn("ColIsEMTUser".ToUpper(), typeof(string)),
+                            new DataColumn("ColIsUserLimit", typeof(string)),
+                            new DataColumn("ColDateOfContract", typeof(string))
                 });
-                dt.Columns.Add("Status").DefaultValue = 0;
-                dt.Columns.Add("AcceptedTerms").DefaultValue = "True";
-                dt.Columns.Add("AcceptedUserTerms").DefaultValue = "False";
-                dt.Columns.Add("DateCreated").DefaultValue = DateTime.Now;
-                dt.Columns.Add("UploadedBy").DefaultValue = User.Identity.GetUserId();
+                dt.Columns.Add("ColStatus").DefaultValue = 0;
+                dt.Columns.Add("ColDateCreated").DefaultValue = DateTime.Now;
+                dt.Columns.Add("ColFileName").DefaultValue = DateTime.Now.ToString("yyyyMMddHH") + System.IO.Path.GetFileName(FileUpload.FileName);
+                dt.Columns.Add("ColUploadedBy").DefaultValue = User.Identity.GetUserId();
 
                 //Read the contents of CSV file.
                 string csvData = System.IO.File.ReadAllText(filePath);
-
+                //Add to help skip the first column
+                Boolean headerRowHasBeenSkipped = false;
                 //Execute a loop over the rows.
                 foreach (string row in csvData.Split('\n'))
                 {
-                    if (!string.IsNullOrEmpty(row))
+                    if (headerRowHasBeenSkipped)
                     {
-                        dt.Rows.Add();
-                        int i = 0;
-
-                        //Execute a loop over the columns.
-                        foreach (string cell in row.Split(','))
+                        if (!string.IsNullOrEmpty(row))
                         {
-                            dt.Rows[dt.Rows.Count - 1][i] = cell;
-                            i++;
+                            dt.Rows.Add();
+                            int i = 0;
+                            //Execute a loop over the columns.
+                            foreach (string cell in row.Split(','))
+                            {
+                                dt.Rows[dt.Rows.Count - 1][i] = cell;
+                                i++;
+                            }
                         }
-                    }
+                    } // outer if
+                    headerRowHasBeenSkipped = true;
                 }
 
                 string consString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
@@ -1397,24 +1403,27 @@ namespace OnBoarding.Controllers
                     {
 
                         //Set the database table name.
-                        sqlBulkCopy.DestinationTableName = "dbo.RegisteredClients";
+                        sqlBulkCopy.DestinationTableName = "dbo.ExistingClientsUploads";
 
                         //[OPTIONAL]: Map the DataTable columns with that of the database table
-                        sqlBulkCopy.ColumnMappings.Add("ClientName", "AccountName");
-                        sqlBulkCopy.ColumnMappings.Add("ClientNo", "IncorporationNumber");
-                        sqlBulkCopy.ColumnMappings.Add("ClientCompanyName", "CompanyName");
-                        sqlBulkCopy.ColumnMappings.Add("ClientCompanyReg", "IDRegNumber");
-                        sqlBulkCopy.ColumnMappings.Add("ClientBusinessEmailAddress", "BusinessEmailAddress");
-                        sqlBulkCopy.ColumnMappings.Add("ClientEmailAddress", "EmailAddress");
-                        sqlBulkCopy.ColumnMappings.Add("ClientPostalAddress", "PostalAddress");
-                        sqlBulkCopy.ColumnMappings.Add("ClientPostalCode", "PostalCode");
-                        sqlBulkCopy.ColumnMappings.Add("ClientTownCity", "CompanyTownCity");
-                        sqlBulkCopy.ColumnMappings.Add("ClientPhoneNumber", "PhoneNumber");
-                        sqlBulkCopy.ColumnMappings.Add("Status", "Status");
-                        sqlBulkCopy.ColumnMappings.Add("AcceptedTerms", "AcceptedTerms");
-                        sqlBulkCopy.ColumnMappings.Add("AcceptedUserTerms", "AcceptedUserTerms");
-                        sqlBulkCopy.ColumnMappings.Add("DateCreated", "DateCreated");
-                        sqlBulkCopy.ColumnMappings.Add("UploadedBy", "UploadedBy");
+                        sqlBulkCopy.ColumnMappings.Add("ColCompanyName", "CompanyName");
+                        sqlBulkCopy.ColumnMappings.Add("ColCompanyEmail", "CompanyEmail");
+                        sqlBulkCopy.ColumnMappings.Add("ColAcceptedTerms", "AcceptedTerms");
+                        sqlBulkCopy.ColumnMappings.Add("ColEMTSignUp", "EMTSignUp");
+                        sqlBulkCopy.ColumnMappings.Add("ColSSI", "SSI");
+                        sqlBulkCopy.ColumnMappings.Add("ColAccountNumber", "AccountNumber");
+                        sqlBulkCopy.ColumnMappings.Add("ColCurrency", "Currency");
+                        sqlBulkCopy.ColumnMappings.Add("ColRepresentativeName", "RepresentativeName");
+                        sqlBulkCopy.ColumnMappings.Add("ColRepresentativeEmail", "RepresentativeEmail");
+                        sqlBulkCopy.ColumnMappings.Add("ColRepresentativePhonenumber", "RepresentativePhonenumber");
+                        sqlBulkCopy.ColumnMappings.Add("ColIsGM", "IsGM");
+                        sqlBulkCopy.ColumnMappings.Add("ColIsEMTUser", "IsEMTUser");
+                        sqlBulkCopy.ColumnMappings.Add("ColIsUserLimit", "RepresentativeLimit");
+                        sqlBulkCopy.ColumnMappings.Add("ColStatus", "Status");
+                        sqlBulkCopy.ColumnMappings.Add("ColDateCreated", "DateCreated");
+                        sqlBulkCopy.ColumnMappings.Add("ColUploadedBy", "UploadedBy");
+                        sqlBulkCopy.ColumnMappings.Add("ColFileName", "FileName");
+                        sqlBulkCopy.ColumnMappings.Add("ColDateOfContract", "DateOfContract");
 
                         try
                         {
@@ -1422,17 +1431,16 @@ namespace OnBoarding.Controllers
                             sqlBulkCopy.WriteToServer(dt);
 
                             //Add audit trail
-                            var LogAuditTrail = Functions.LogAuditTrail(1, "Upload Clients", "RegisteredClients", null, User.Identity.GetUserId(), filePath, null, null);
+                            var LogAuditTrail = Functions.LogAuditTrail(1, "Upload Existing Clients", "ExistingClientsUploads", null, User.Identity.GetUserId(), filePath, null, null);
                         }
-                        catch (Exception)
+                        catch (Exception e)
                         {
-                            return Json("Error! Uploading your CSV file. Please try again.", JsonRequestBehavior.AllowGet);
+                            return Json("Error!: " + e.Message, JsonRequestBehavior.AllowGet);
                         }
                         finally
                         {
                             con.Close();
                         }
-
                     }
                     //Return Result
                     return Json("success", JsonRequestBehavior.AllowGet);
@@ -1443,41 +1451,6 @@ namespace OnBoarding.Controllers
                 return Json("Error! Please choose a valid CSV file for upload", JsonRequestBehavior.AllowGet);
             }
         }
-
-        //
-        // GET: Admin Get/Edit Uploaded Clients
-        public ActionResult EditUploadedClients()
-        {
-            return PartialView(GetUploadedClients());
-        }
-
-        //Get Registered Clients List
-        public IEnumerable<UploadedClientsViewModel> GetUploadedClients()
-        {
-            using (DBModel db = new DBModel())
-            {
-                //Query List
-                var userid = User.Identity.GetUserId();
-                //Get Clients with completed profiles
-                var CompletedClients = db.EMarketApplications.Select(t => t.ClientID).ToList();
-                var Query = from a in db.RegisteredClients.Where(r => r.UploadedBy == userid && !CompletedClients.Contains(r.Id))
-                            join b in db.tblStatus on a.Status equals b.Id
-                            select new UploadedClientsViewModel
-                            {
-                                ClientID = a.Id,
-                                //CompanyName = a.CompanyName,
-                                CompanyRegistration = a.IDRegNumber,
-                                PhoneNumber = a.PhoneNumber,
-                                Status = b.StatusName,
-                                AcceptedTAC = a.AcceptedTerms,
-                                EmailAddress = a.EmailAddress.ToLower(),
-                                DateCreated = a.DateCreated
-                            };
-                return Query.OrderByDescending(x => x.ClientID).ToList();
-            }
-        }
-
-        //Rmoved Edit Client for Digital Desk do not edit clients
 
         //
         //Get //list

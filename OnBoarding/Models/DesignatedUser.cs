@@ -26,6 +26,8 @@ namespace OnBoarding.Models
 
         public bool? EMarketSignUp { get; set; }
 
+        public bool? GMRepresentative { get; set; }
+
         public bool? AcceptedTerms { get; set; }
 
         [StringLength(50)]

@@ -23,6 +23,8 @@ namespace OnBoarding.Models
         public virtual DbSet<SystemMenu> SystemMenus { get; set; }
         public virtual DbSet<SystemMenuAccess> SystemMenuAccess { get; set; }
         public virtual DbSet<AuditTrail> AuditTrails { get; set; }
+        public virtual DbSet<ClientCompany> ClientCompanies { get; set; }
+        public virtual DbSet<ExistingClientsUpload> ExistingClientsUploads { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -55,6 +57,16 @@ namespace OnBoarding.Models
                 .HasMany(e => e.RegisteredClients)
                 .WithOptional(e => e.AspNetUser)
                 .HasForeignKey(e => e.UserAccountID);
+
+            modelBuilder.Entity<AspNetUser>()
+               .HasMany(e => e.ExistingClientsUploads)
+               .WithOptional(e => e.AspNetUser)
+               .HasForeignKey(e => e.UploadedBy);
+
+            modelBuilder.Entity<AspNetUser>()
+               .HasMany(e => e.ExistingClientsUploads)
+               .WithOptional(e => e.AspNetUser)
+               .HasForeignKey(e => e.ApprovedBy);
 
             modelBuilder.Entity<ClientSignatory>()
                 .Property(e => e.Signature)
@@ -193,6 +205,12 @@ namespace OnBoarding.Models
 
             modelBuilder.Entity<tblStatus>()
                .HasMany(e => e.ClientCompanies)
+               .WithRequired(e => e.tblStatus)
+               .HasForeignKey(e => e.Status)
+               .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tblStatus>()
+               .HasMany(e => e.ExistingClientsUploads)
                .WithRequired(e => e.tblStatus)
                .HasForeignKey(e => e.Status)
                .WillCascadeOnDelete(false);

@@ -1,6 +1,4 @@
-﻿
-@{
-	ViewBag.Title = "UploadExistingClients";
+﻿@{
 	Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 <section class="section">
@@ -23,45 +21,54 @@
 						<form enctype="multipart/form-data" role="form" id="UploadForm" action="" method="POST" accept-charset="utf-8">
 								<div class="form-group form-row" style="margin-left: 0px !important;">
 									<div class="col-md-12 col-sm-12 col-lg-12">
-										<label style="font-size: 12px;">Choose CSV file to Upload <i style="color:red;"> Your list should be in the following format </i>:</label>
+										<label style="font-size: 12px;">Choose CSV file to Upload <i style="color:red;"> Your list should be in the following format</i>:</label>
 									</div>
 									<div class="col-12 col-sm-12 col-lg-12">
 										<table class="table-bordered" style="width:100%; border: 1px solid black; border-collapse: collapse;">
 											<tr style="border: 1px solid black;">
-												<th>Clients Name</th>
-												<th>Client Number</th>
 												<th>Company Name</th>
-												<th>Company Registration</th>
-												<th>Business Email </th>
-												<th>Email</th>
-												<th>Postal Address</th>
-												<th>Postal Code</th>
-												<th>Town/City</th>
-												<th>PhoneNumber</th>
+												<th>Company Email</th>
+												<th>GTC (Accepted T&C)</th>
+												<th>EMT Signup</th>
+												<th>SSI</th>
+												<th>AccountNumber</th>
+												<th>Currency</th>
+												<th>Representative Name</th>
+												<th>Representative Email</th>
+												<th>Representative Phone</th>
+												<th>GM Rep</th>
+												<th>EMT User</th>
+												<th>Representative Limit</th>
 											</tr>
 											<tr style="border: 1px solid black;">
-												<td>John Doe</td>
-												<td>C001</td>
 												<td>Company LTD</td>
-												<td>R001</td>
-												<td>business@email.com</td>
-												<td>email@email.com</td>
-												<td>0001</td>
-												<td>00100</td>
-												<td>Nairobi</td>
+												<td>company@email.com</td>
+												<td>Yes</td>
+												<td>Yes</td>
+												<td>Yes</td>
+												<td>0101000000000</td>
+												<td>KES</td>
+												<td>John Doe</td>
+												<td>johndoe@email.com</td>
 												<td>254 70000000</td>
+												<td>Yes</td>
+												<td>Yes</td>
+												<td>1000</td>
 											</tr>
-											<tr>
-												<td>John Doe</td>
-												<td>C002</td>
+											<tr style="border: 1px solid black;">
 												<td>Company LTD</td>
-												<td>R002</td>
-												<td>business@email.com</td>
-												<td>email@email.com</td>
-												<td>0002</td>
-												<td>00200</td>
-												<td>Nairobi</td>
+												<td>company@email.com</td>
+												<td>No</td>
+												<td>No</td>
+												<td>No</td>
+												<td>0101000000000</td>
+												<td>USD</td>
+												<td>Jane Doe</td>
+												<td>janedoe@email.com</td>
 												<td>254 70000000</td>
+												<td>No</td>
+												<td>No</td>
+												<td>NO LIMIT</td>
 											</tr>
 										</table>
 									</div>
@@ -216,18 +223,8 @@
 							if (XmlHttpRequest == 'success') {
 								$('#UploadForm')[0].reset();
 								$("#Loading_Div").hide('fast');
-								//Load Uploaded Clients html
-								$.ajax({
-									type: "POST",
-									url: "/DigitalDesk/ViewUploadedClients",
-									contentType: "application/json; charset=utf-8",
-									dataType: "html",
-									success: function (data) {
-										$('.item-data-retriving').show();
-										$(".select-another-item").show('fast');
-										$('.item-data-retrived').html(data);
-									}
-								});
+								$('#UploadForm').show("fast");
+								toastr.success('Your data has been uploaded successfully');
 							}
 							else {
 								LoadUpModal();
@@ -237,6 +234,14 @@
 								$('#UploadForm')[0].reset();
 								$('#UploadForm').show("fast");
 							}
+						}
+					},
+					error: function (xhr, textStatus, errorThrown) {
+						if (textStatus === 'error') {
+							$('.item-data-retriving').hide('fast');
+							$("#Loading_Div").hide('fast');
+							$('#UploadForm').show("fast");
+							toastr.error('Submission error! Code: ' + xhr.status + ' Details: ' + errorThrown);
 						}
 					},
 					cache: false,
