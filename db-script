@@ -1,0 +1,28 @@
+CREATE TABLE [dbo].[ExistingClientsUploads] (
+    [Id]                        INT            IDENTITY (1, 1) NOT NULL,
+    [CompanyName]               NVARCHAR (50)  NULL,
+    [CompanyEmail]              NVARCHAR (50)  NULL,
+    [AcceptedTerms]             NVARCHAR (50)  NOT NULL,
+    [EMTSignUp]                 NVARCHAR (50)  NOT NULL,
+    [SSI]                       NVARCHAR (50)  NOT NULL,
+    [AccountNumber]             NVARCHAR (MAX) NULL,
+    [Currency]                  NVARCHAR (MAX) NULL,
+    [RepresentativeName]        NVARCHAR (50)  NULL,
+    [RepresentativeEmail]       NVARCHAR (50)  NULL,
+    [RepresentativePhonenumber] NVARCHAR (50)  NULL,
+    [RepresentativeLimit]       NVARCHAR (50)  NULL,
+    [IsGM]                      NVARCHAR (50)  NOT NULL,
+    [IsEMTUser]                 NVARCHAR (50)  NOT NULL,
+    [DateOfContract]            NVARCHAR (50)  NULL,
+    [Status]                    INT            CONSTRAINT [DF_ExistingClientsUploads_Status] DEFAULT ((0)) NOT NULL,
+    [FileName]                  NVARCHAR (128) NULL,
+    [UploadedBy]                NVARCHAR (128) NULL,
+    [DateCreated]               DATETIME2 (7)  NOT NULL,
+    [ApprovedBy]                NVARCHAR (128) NULL,
+    [DateApproved]              DATETIME2 (7)  NULL,
+    CONSTRAINT [PK__Existing__3214EC0720F35B59] PRIMARY KEY CLUSTERED ([Id] ASC),
+    CONSTRAINT [fk_ExistingClientsUploads_ApprovedBy] FOREIGN KEY ([ApprovedBy]) REFERENCES [dbo].[AspNetUsers] ([Id]),
+    CONSTRAINT [fk_ExistingClientsUploads_Status] FOREIGN KEY ([Status]) REFERENCES [dbo].[tblStatus] ([Id]),
+    CONSTRAINT [fk_ExistingClientsUploads_UploadedBy] FOREIGN KEY ([UploadedBy]) REFERENCES [dbo].[AspNetUsers] ([Id])
+);
+
