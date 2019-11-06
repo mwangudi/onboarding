@@ -9,7 +9,7 @@
 				$(document).ready(function () {
 					var fileName = '@ViewData["FileName"]';
 					$('#UploadsTableContainer').jtable({
-						title: '<i class="fa fa-list"></i> Uploaded Clients <div class="float-right" style="margin: -2px 5px 0px 0px;"><button id="DeclineSelected" class="btn btn-danger w_full" type="button" style="font-size:11px;line-height: 15px;padding: 5px 10px;letter-spacing:.4px;border-radius:0px;"><i class="fa fa-trash"></i> Decline Selected </button></div>',
+						title: '<i class="fa fa-list"></i> Uploaded Clients <div class="jTableTitleDiv float-right"><button id="DeclineSelected" class="btn btn-outline-danger w_full" type="button" style="font-size:11px;line-height: 15px;padding: 5px 10px;letter-spacing:.4px;border-radius:0px; margin: -4px 10px 0px 0px;"><i class="fa fa-trash"></i> Decline Selected </button><button id="ApproveSelected" class="btn btn-outline-success w_full" type="button" style="font-size:11px;line-height: 15px;padding: 5px 10px;letter-spacing:.4px;border-radius:0px;margin: -4px 0px 0px 0px;"><i class="fa fa-check-circle"></i> Approve Selected </button></div>',
 						paging: true,
 						pageSize: 10,
 						sorting: true,
@@ -95,7 +95,7 @@
 					//Load list from server
 					$('#UploadsTableContainer').jtable('load');
 
-					//Approve selected items
+					//Decline selected items
 					$('button#DeclineSelected').button().click(function (e) {
 						e.preventDefault();
 						var $selectedRows = $('#UploadsTableContainer').jtable('selectedRows');
@@ -108,8 +108,8 @@
 									type: 'POST',
 									data: Id,
 									success: function () {
-										$('#UploadsTableContainer').jtable('load');
 										//toastr.success('Success! File details has been declined');
+										$('#UploadsTableContainer').jtable('load');
 									}
 								});
 							});
@@ -119,6 +119,38 @@
 							toastr.error('Error! No rows selected! Please select rows to approve');
 						}
 					});
+
+					//Approve selected items
+					$('button#ApproveSelected').button().click(function (e) {
+						e.preventDefault();
+						var $selectedRows = $('#UploadsTableContainer').jtable('selectedRows');
+						if ($selectedRows.length > 0) {
+							$selectedRows.each(function () {
+								var record = $(this).data('record');
+								var Id = record.Id;
+								$.ajax({
+									url: "/Gmo/ApproveSelected?Id=" + Id,
+									type: 'POST',
+									data: Id,
+									success: function (XmlHttpRequest) {
+										if (XmlHttpRequest != 'success') {
+											toastr.error(XmlHttpRequest);
+											$('#UploadsTableContainer').jtable('load');
+										}
+										else {
+											toastr.success('Success! Records have been aproved');
+											$('#UploadsTableContainer').jtable('load');
+										}
+									}
+								});
+							});
+						}
+						else {
+							//No rows selected
+							toastr.error('Error! No rows selected! Please select rows to approve');
+						}
+					});
+
 				});
 			</script>
 		</div>
@@ -132,6 +164,3 @@
 	</div>
 	<!--End Submission Processing -->
 </div>
-<script type="text/javascript">
-	
-</script>

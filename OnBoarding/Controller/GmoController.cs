@@ -362,28 +362,30 @@ namespace OnBoarding.Controllers
         // POST: /ViewClient
         [HttpPost]
         [AllowAnonymous]
-        public PartialViewResult ViewClient(int clientId)
+        public PartialViewResult ViewClient(int clientID)
         {
             using (DBModel db = new DBModel())
             {
-                var clientDetails = db.RegisteredClients.SingleOrDefault(s => s.Id == clientId);
-                ViewBag.ApplicationInfo = clientDetails;
+                var clientDetails = db.RegisteredClients.SingleOrDefault(s => s.Id == clientID);
+                ViewBag.RegisteredClientInfo = clientDetails;
+
+                var companyDetails = db.ClientCompanies.SingleOrDefault(s => s.ClientId == clientID);
+                ViewBag.CompanyInfo = companyDetails;
 
                 //Signatories List
-                List<ClientSignatory> SignatoryList = db.ClientSignatories.Where(a => a.ClientID == clientId).ToList();
+                List<ClientSignatory> SignatoryList = db.ClientSignatories.Where(a => a.ClientID == clientID && a.CompanyID == companyDetails.Id).ToList();
                 ViewBag.ClientSignatory = SignatoryList;
 
                 //Designated Users List
-                List<DesignatedUser> DesignatedUsersList = db.DesignatedUsers.Where(a => a.ClientID == clientId).ToList();
+                List<DesignatedUser> DesignatedUsersList = db.DesignatedUsers.Where(a => a.ClientID == clientID && a.CompanyID == companyDetails.Id).ToList();
                 ViewBag.DesignatedUser = DesignatedUsersList;
 
                 //Get the list of all client's settlement accounts
-                var Query = db.Database.SqlQuery<SettlementAccountsViewModel>("SELECT c.CurrencyName, s.AccountNumber FROM ClientSettlementAccounts s INNER JOIN Currencies c ON c.Id = s.CurrencyID WHERE s.ClientID =  " + "'" + clientId + "'" + " AND s.Status = 1");
+                var Query = db.Database.SqlQuery<SettlementAccountsViewModel>("SELECT c.CurrencyName, s.AccountNumber FROM ClientSettlementAccounts s INNER JOIN Currencies c ON c.Id = s.CurrencyID WHERE s.ClientID =  " + "'" + clientID + "'" + " AND s.CompanyID =  " + "'" + companyDetails.Id + "'" + " AND s.Status = 1");
                 ViewBag.SettlementAccounts = Query.ToList();
 
-                //Data For Controller Post
-                ViewData["CompanyEmail"] = clientDetails.EmailAddress;
-                //ViewData["CompanyName"] = clientDetails.CompanyName;
+                var clientHasApplication = db.EMarketApplications.Any(s => s.ClientID == clientID);
+                ViewBag.clientHasApplication = clientHasApplication;
             }
 
             return PartialView();
@@ -413,36 +415,36 @@ namespace OnBoarding.Controllers
             // Instance of DatabaseContext  
             using (DBModel db = new DBModel())
             {
-                IEnumerable<ClientSettlementsViewModel> query = db.Database.SqlQuery<ClientSettlementsViewModel>("SELECT c.Id, c.CurrencyID, c.AccountNumber, c.Status, r.CompanyName, r.EmailAddress, r.BusinessEmailAddress, CASE WHEN e.SSI = 1 THEN 'Yes' ELSE 'No' END AS SSI, CASE WHEN e.Emt = 1 THEN 'Yes' ELSE 'No' END AS EmarketSignUp, c.DateCreated FROM ClientSettlementAccounts c INNER JOIN RegisteredClients r ON r.Id = c.ClientID INNER JOIN EMarketApplications e ON e.ClientID = c.ClientID WHERE c.Status = 1 ORDER BY c.Id DESC OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY;");
+                IEnumerable<ClientSettlementsViewModel> query = db.Database.SqlQuery<ClientSettlementsViewModel>("SELECT c.Id, c.CurrencyID, c.AccountNumber, c.Status, r.CompanyName, a.EmailAddress, r.BusinessEmailAddress, CASE WHEN e.SSI = 1 THEN 'Yes' ELSE 'No' END AS SSI, CASE WHEN e.Emt = 1 THEN 'Yes' ELSE 'No' END AS EmarketSignUp, c.DateCreated FROM ClientSettlementAccounts c INNER JOIN RegisteredClients a ON a.Id = c.ClientID INNER JOIN ClientCompanies r ON r.Id = c.CompanyID INNER JOIN EMarketApplications e ON e.ClientID = c.ClientID WHERE c.Status = 1 ORDER BY c.Id DESC OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY;");
 
                 //Search  
                 if (!string.IsNullOrEmpty(searchMessage) && !string.IsNullOrEmpty(searchFromDate) && !string.IsNullOrEmpty(searchToDate))
                 {
-                    query = db.Database.SqlQuery<ClientSettlementsViewModel>("SELECT c.Id, c.CurrencyID, c.AccountNumber, c.Status, r.CompanyName, r.EmailAddress, r.BusinessEmailAddress, CASE WHEN e.SSI = 1 THEN 'Yes' ELSE 'No' END AS SSI, CASE WHEN e.Emt = 1 THEN 'Yes' ELSE 'No' END AS EmarketSignUp, c.DateCreated FROM ClientSettlementAccounts c INNER JOIN RegisteredClients r ON r.Id = c.ClientID INNER JOIN EMarketApplications e ON e.ClientID = c.ClientID WHERE (r.CompanyName LIKE '%" + searchMessage + "%' OR r.EmailAddress LIKE '%" + searchMessage + "%') AND c.Status = 1 AND (c.DateCreated >= CAST('" + searchFromDate + "' AS DATE) AND c.DateCreated <= CAST('" + searchToDate + "' AS DATE)) ORDER BY c.Id DESC OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY;");
+                    query = db.Database.SqlQuery<ClientSettlementsViewModel>("SELECT c.Id, c.CurrencyID, c.AccountNumber, c.Status, r.CompanyName, a.EmailAddress, r.BusinessEmailAddress, CASE WHEN e.SSI = 1 THEN 'Yes' ELSE 'No' END AS SSI, CASE WHEN e.Emt = 1 THEN 'Yes' ELSE 'No' END AS EmarketSignUp, c.DateCreated FROM ClientSettlementAccounts c INNER JOIN RegisteredClients a ON a.Id = c.ClientID INNER JOIN ClientCompanies r ON r.Id = c.CompanyID INNER JOIN EMarketApplications e ON e.ClientID = c.ClientID WHERE (r.CompanyName LIKE '%" + searchMessage + "%' OR a.EmailAddress LIKE '%" + searchMessage + "%') AND c.Status = 1 AND (c.DateCreated >= CAST('" + searchFromDate + "' AS DATE) AND c.DateCreated <= CAST('" + searchToDate + "' AS DATE)) ORDER BY c.Id DESC OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY;");
                 }
                 else if (!string.IsNullOrEmpty(searchMessage) && string.IsNullOrEmpty(searchFromDate) && string.IsNullOrEmpty(searchToDate))
                 {
-                    query = db.Database.SqlQuery<ClientSettlementsViewModel>("SELECT c.Id, c.CurrencyID, c.AccountNumber, c.Status, r.CompanyName, r.EmailAddress, r.BusinessEmailAddress, CASE WHEN e.SSI = 1 THEN 'Yes' ELSE 'No' END AS SSI, CASE WHEN e.Emt = 1 THEN 'Yes' ELSE 'No' END AS EmarketSignUp, c.DateCreated FROM ClientSettlementAccounts c INNER JOIN RegisteredClients r ON r.Id = c.ClientID INNER JOIN EMarketApplications e ON e.ClientID = c.ClientID WHERE (r.CompanyName LIKE '%" + searchMessage + "%' OR r.EmailAddress LIKE '%" + searchMessage + "%') AND c.Status = 1 ORDER BY c.Id DESC OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY;");
+                    query = db.Database.SqlQuery<ClientSettlementsViewModel>("SELECT c.Id, c.CurrencyID, c.AccountNumber, c.Status, r.CompanyName, a.EmailAddress, r.BusinessEmailAddress, CASE WHEN e.SSI = 1 THEN 'Yes' ELSE 'No' END AS SSI, CASE WHEN e.Emt = 1 THEN 'Yes' ELSE 'No' END AS EmarketSignUp, c.DateCreated FROM ClientSettlementAccounts c INNER JOIN RegisteredClients a ON a.Id = c.ClientID INNER JOIN ClientCompanies r ON r.Id = c.CompanyID INNER JOIN EMarketApplications e ON e.ClientID = c.ClientID (r.CompanyName LIKE '%" + searchMessage + "%' OR a.EmailAddress LIKE '%" + searchMessage + "%') AND c.Status = 1 ORDER BY c.Id DESC OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY;");
                 }
                 else if (!string.IsNullOrEmpty(searchMessage) && !string.IsNullOrEmpty(searchFromDate) && string.IsNullOrEmpty(searchToDate))
                 {
-                    query = db.Database.SqlQuery<ClientSettlementsViewModel>("SELECT c.Id, c.CurrencyID, c.AccountNumber, c.Status, r.CompanyName, r.EmailAddress, r.BusinessEmailAddress, CASE WHEN e.SSI = 1 THEN 'Yes' ELSE 'No' END AS SSI, CASE WHEN e.Emt = 1 THEN 'Yes' ELSE 'No' END AS EmarketSignUp, c.DateCreated FROM ClientSettlementAccounts c INNER JOIN RegisteredClients r ON r.Id = c.ClientID INNER JOIN EMarketApplications e ON e.ClientID = c.ClientID WHERE (r.CompanyName LIKE '%" + searchMessage + "%' OR r.EmailAddress LIKE '%" + searchMessage + "%') AND c.Status = 1 AND c.DateCreated >= CAST('" + searchFromDate + "' AS DATE) ORDER BY c.Id DESC OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY;");
+                    query = db.Database.SqlQuery<ClientSettlementsViewModel>("SELECT c.Id, c.CurrencyID, c.AccountNumber, c.Status, r.CompanyName, a.EmailAddress, r.BusinessEmailAddress, CASE WHEN e.SSI = 1 THEN 'Yes' ELSE 'No' END AS SSI, CASE WHEN e.Emt = 1 THEN 'Yes' ELSE 'No' END AS EmarketSignUp, c.DateCreated FROM ClientSettlementAccounts c INNER JOIN RegisteredClients a ON a.Id = c.ClientID INNER JOIN ClientCompanies r ON r.Id = c.CompanyID INNER JOIN EMarketApplications e ON e.ClientID = c.ClientID WHERE (r.CompanyName LIKE '%" + searchMessage + "%' OR a.EmailAddress LIKE '%" + searchMessage + "%') AND c.Status = 1 AND c.DateCreated >= CAST('" + searchFromDate + "' AS DATE) ORDER BY c.Id DESC OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY;");
                 }
                 else if (!string.IsNullOrEmpty(searchMessage) && string.IsNullOrEmpty(searchFromDate) && !string.IsNullOrEmpty(searchToDate))
                 {
-                    query = db.Database.SqlQuery<ClientSettlementsViewModel>("SELECT c.Id, c.CurrencyID, c.AccountNumber, c.Status, r.CompanyName, r.EmailAddress, r.BusinessEmailAddress, CASE WHEN e.SSI = 1 THEN 'Yes' ELSE 'No' END AS SSI, CASE WHEN e.Emt = 1 THEN 'Yes' ELSE 'No' END AS EmarketSignUp, c.DateCreated FROM ClientSettlementAccounts c INNER JOIN RegisteredClients r ON r.Id = c.ClientID INNER JOIN EMarketApplications e ON e.ClientID = c.ClientID WHERE (r.CompanyName LIKE '%" + searchMessage + "%' OR r.EmailAddress LIKE '%" + searchMessage + "%') AND c.Status = 1 AND c.DateCreated <= CAST('" + searchFromDate + "' AS DATE) ORDER BY c.Id DESC OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY;");
+                    query = db.Database.SqlQuery<ClientSettlementsViewModel>("SELECT c.Id, c.CurrencyID, c.AccountNumber, c.Status, r.CompanyName, a.EmailAddress, r.BusinessEmailAddress, CASE WHEN e.SSI = 1 THEN 'Yes' ELSE 'No' END AS SSI, CASE WHEN e.Emt = 1 THEN 'Yes' ELSE 'No' END AS EmarketSignUp, c.DateCreated FROM ClientSettlementAccounts c INNER JOIN RegisteredClients a ON a.Id = c.ClientID INNER JOIN ClientCompanies r ON r.Id = c.CompanyID INNER JOIN EMarketApplications e ON e.ClientID = c.ClientID (r.CompanyName LIKE '%" + searchMessage + "%' OR a.EmailAddress LIKE '%" + searchMessage + "%') AND c.Status = 1 AND c.DateCreated <= CAST('" + searchFromDate + "' AS DATE) ORDER BY c.Id DESC OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY;");
                 }
                 else if (string.IsNullOrEmpty(searchMessage) && string.IsNullOrEmpty(searchFromDate) && !string.IsNullOrEmpty(searchToDate))
                 {
-                    query = db.Database.SqlQuery<ClientSettlementsViewModel>("SELECT c.Id, c.CurrencyID, c.AccountNumber, c.Status, r.CompanyName, r.EmailAddress, r.BusinessEmailAddress, CASE WHEN e.SSI = 1 THEN 'Yes' ELSE 'No' END AS SSI, CASE WHEN e.Emt = 1 THEN 'Yes' ELSE 'No' END AS EmarketSignUp, c.DateCreated FROM ClientSettlementAccounts c INNER JOIN RegisteredClients r ON r.Id = c.ClientID INNER JOIN EMarketApplications e ON e.ClientID = c.ClientID WHERE c.Status = 1 AND c.DateCreated <= CAST('" + searchFromDate + "' AS DATE) ORDER BY c.Id DESC OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY;");
+                    query = db.Database.SqlQuery<ClientSettlementsViewModel>("SELECT c.Id, c.CurrencyID, c.AccountNumber, c.Status, r.CompanyName, a.EmailAddress, r.BusinessEmailAddress, CASE WHEN e.SSI = 1 THEN 'Yes' ELSE 'No' END AS SSI, CASE WHEN e.Emt = 1 THEN 'Yes' ELSE 'No' END AS EmarketSignUp, c.DateCreated FROM ClientSettlementAccounts c INNER JOIN RegisteredClients a ON a.Id = c.ClientID INNER JOIN ClientCompanies r ON r.Id = c.CompanyID INNER JOIN EMarketApplications e ON e.ClientID = c.ClientID WHERE c.Status = 1 AND c.DateCreated <= CAST('" + searchFromDate + "' AS DATE) ORDER BY c.Id DESC OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY;");
                 }
                 else if (string.IsNullOrEmpty(searchMessage) && !string.IsNullOrEmpty(searchFromDate) && string.IsNullOrEmpty(searchToDate))
                 {
-                    query = db.Database.SqlQuery<ClientSettlementsViewModel>("SELECT c.Id, c.CurrencyID, c.AccountNumber, c.Status, r.CompanyName, r.EmailAddress, r.BusinessEmailAddress, CASE WHEN e.SSI = 1 THEN 'Yes' ELSE 'No' END AS SSI, CASE WHEN e.Emt = 1 THEN 'Yes' ELSE 'No' END AS EmarketSignUp, c.DateCreated FROM ClientSettlementAccounts c INNER JOIN RegisteredClients r ON r.Id = c.ClientID INNER JOIN EMarketApplications e ON e.ClientID = c.ClientID WHERE c.Status = 1 AND c.DateCreated >= CAST('" + searchFromDate + "' AS DATE) ORDER BY c.Id DESC OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY;");
+                    query = db.Database.SqlQuery<ClientSettlementsViewModel>("SELECT c.Id, c.CurrencyID, c.AccountNumber, c.Status, r.CompanyName, a.EmailAddress, r.BusinessEmailAddress, CASE WHEN e.SSI = 1 THEN 'Yes' ELSE 'No' END AS SSI, CASE WHEN e.Emt = 1 THEN 'Yes' ELSE 'No' END AS EmarketSignUp, c.DateCreated FROM ClientSettlementAccounts c INNER JOIN RegisteredClients a ON a.Id = c.ClientID INNER JOIN ClientCompanies r ON r.Id = c.CompanyID INNER JOIN EMarketApplications e ON e.ClientID = c.ClientID WHERE c.Status = 1 AND c.DateCreated >= CAST('" + searchFromDate + "' AS DATE) ORDER BY c.Id DESC OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY;");
                 }
                 else if (string.IsNullOrEmpty(searchMessage) && !string.IsNullOrEmpty(searchFromDate) && !string.IsNullOrEmpty(searchToDate))
                 {
-                    query = db.Database.SqlQuery<ClientSettlementsViewModel>("SELECT c.Id, c.CurrencyID, c.AccountNumber, c.Status, r.CompanyName, r.EmailAddress, r.BusinessEmailAddress, CASE WHEN e.SSI = 1 THEN 'Yes' ELSE 'No' END AS SSI, CASE WHEN e.Emt = 1 THEN 'Yes' ELSE 'No' END AS EmarketSignUp, c.DateCreated FROM ClientSettlementAccounts c INNER JOIN RegisteredClients r ON r.Id = c.ClientID INNER JOIN EMarketApplications e ON e.ClientID = c.ClientID WHERE c.Status = 1 AND (c.DateCreated >= CAST('" + searchFromDate + "' AS DATE) AND c.DateCreated <= CAST('" + searchToDate + "' AS DATE)) ORDER BY c.Id DESC OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY;");
+                    query = db.Database.SqlQuery<ClientSettlementsViewModel>("SELECT c.Id, c.CurrencyID, c.AccountNumber, c.Status, r.CompanyName, a.EmailAddress, r.BusinessEmailAddress, CASE WHEN e.SSI = 1 THEN 'Yes' ELSE 'No' END AS SSI, CASE WHEN e.Emt = 1 THEN 'Yes' ELSE 'No' END AS EmarketSignUp, c.DateCreated FROM ClientSettlementAccounts c INNER JOIN RegisteredClients a ON a.Id = c.ClientID INNER JOIN ClientCompanies r ON r.Id = c.CompanyID INNER JOIN EMarketApplications e ON e.ClientID = c.ClientID WHERE c.Status = 1 AND (c.DateCreated >= CAST('" + searchFromDate + "' AS DATE) AND c.DateCreated <= CAST('" + searchToDate + "' AS DATE)) ORDER BY c.Id DESC OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY;");
                 }
                 else
                 {
@@ -573,47 +575,47 @@ namespace OnBoarding.Controllers
                 var query = "";
                 if (!string.IsNullOrEmpty(searchString) && !string.IsNullOrEmpty(searchFromDate) && !string.IsNullOrEmpty(searchToDate))
                 {
-                    var customquery = "SELECT c.AccountNumber, s.StatusName, r.CompanyName, r.EmailAddress, r.BusinessEmailAddress, CASE WHEN e.SSI = 1 THEN 'Yes' ELSE 'No' END AS SSI, CASE WHEN e.Emt = 1 THEN 'Yes' ELSE 'No' END AS EmarketSignUp, c.DateCreated FROM ClientSettlementAccounts c INNER JOIN RegisteredClients r ON r.Id = c.ClientID INNER JOIN EMarketApplications e ON e.ClientID = c.ClientID INNER JOIN tblStatus s ON s.Id = c.Status WHERE (r.CompanyName LIKE '%" + searchString + "%' OR r.EmailAddress LIKE '%" + searchString + "%') AND (c.DateCreated >= CAST('" + searchFromDate + "' AS DATE) AND c.DateCreated <= CAST('" + searchToDate + "' AS DATE)) AND c.Status = 1";
+                    var customquery = "SELECT c.AccountNumber, s.StatusName, a.CompanyName, r.EmailAddress, a.BusinessEmailAddress, CASE WHEN e.SSI = 1 THEN 'Yes' ELSE 'No' END AS SSI, CASE WHEN e.Emt = 1 THEN 'Yes' ELSE 'No' END AS EmarketSignUp, c.DateCreated FROM ClientSettlementAccounts c INNER JOIN RegisteredClients r ON r.Id = c.ClientID INNER JOIN ClientCompanies a ON a.Id = c.CompanyID INNER JOIN EMarketApplications e ON e.ClientID = c.ClientID and e.CompanyID = c.CompanyID INNER JOIN tblStatus s ON s.Id = c.Status WHERE (a.CompanyName LIKE '%" + searchString + "%' OR r.EmailAddress LIKE '%" + searchString + "%') AND (c.DateCreated >= CAST('" + searchFromDate + "' AS DATE) AND c.DateCreated <= CAST('" + searchToDate + "' AS DATE)) AND c.Status = 1";
                     query = customquery;
                 }
                 else if (!string.IsNullOrEmpty(searchString) && string.IsNullOrEmpty(searchFromDate) && string.IsNullOrEmpty(searchToDate))
                 {
-                    var customquery = "SELECT c.AccountNumber, s.StatusName, r.CompanyName, r.EmailAddress, r.BusinessEmailAddress, CASE WHEN e.SSI = 1 THEN 'Yes' ELSE 'No' END AS SSI, CASE WHEN e.Emt = 1 THEN 'Yes' ELSE 'No' END AS EmarketSignUp, c.DateCreated FROM ClientSettlementAccounts c INNER JOIN RegisteredClients r ON r.Id = c.ClientID INNER JOIN EMarketApplications e ON e.ClientID = c.ClientID INNER JOIN tblStatus s ON s.Id = c.Status WHERE (r.CompanyName LIKE '%" + searchString + "%' OR r.EmailAddress LIKE '%" + searchString + "%') AND c.Status = 1";
+                    var customquery = "SELECT c.AccountNumber, s.StatusName, a.CompanyName, r.EmailAddress, a.BusinessEmailAddress, CASE WHEN e.SSI = 1 THEN 'Yes' ELSE 'No' END AS SSI, CASE WHEN e.Emt = 1 THEN 'Yes' ELSE 'No' END AS EmarketSignUp, c.DateCreated FROM ClientSettlementAccounts c INNER JOIN RegisteredClients r ON r.Id = c.ClientID INNER JOIN ClientCompanies a ON a.Id = c.CompanyID INNER JOIN EMarketApplications e ON e.ClientID = c.ClientID and e.CompanyID = c.CompanyID INNER JOIN tblStatus s ON s.Id = c.Status WHERE (a.CompanyName LIKE '%" + searchString + "%' OR r.EmailAddress LIKE '%" + searchString + "%') AND c.Status = 1";
                     query = customquery;
                 }
                 else if (!string.IsNullOrEmpty(searchString) && !string.IsNullOrEmpty(searchFromDate) && string.IsNullOrEmpty(searchToDate))
                 {
-                    var customquery = "SELECT c.AccountNumber, s.StatusName, r.CompanyName, r.EmailAddress, r.BusinessEmailAddress, CASE WHEN e.SSI = 1 THEN 'Yes' ELSE 'No' END AS SSI, CASE WHEN e.Emt = 1 THEN 'Yes' ELSE 'No' END AS EmarketSignUp, c.DateCreated FROM ClientSettlementAccounts c INNER JOIN RegisteredClients r ON r.Id = c.ClientID INNER JOIN EMarketApplications e ON e.ClientID = c.ClientID INNER JOIN tblStatus s ON s.Id = c.Status WHERE (r.CompanyName LIKE '%" + searchString + "%' OR r.EmailAddress LIKE '%" + searchString + "%') AND c.DateCreated >= CAST('" + searchFromDate + "' AS DATE) AND c.Status = 1";
+                    var customquery = "SELECT c.AccountNumber, s.StatusName, a.CompanyName, r.EmailAddress, a.BusinessEmailAddress, CASE WHEN e.SSI = 1 THEN 'Yes' ELSE 'No' END AS SSI, CASE WHEN e.Emt = 1 THEN 'Yes' ELSE 'No' END AS EmarketSignUp, c.DateCreated FROM ClientSettlementAccounts c INNER JOIN RegisteredClients r ON r.Id = c.ClientID INNER JOIN ClientCompanies a ON a.Id = c.CompanyID INNER JOIN EMarketApplications e ON e.ClientID = c.ClientID and e.CompanyID = c.CompanyID INNER JOIN tblStatus s ON s.Id = c.Status WHERE (a.CompanyName LIKE '%" + searchString + "%' OR r.EmailAddress LIKE '%" + searchString + "%') AND c.DateCreated >= CAST('" + searchFromDate + "' AS DATE) AND c.Status = 1";
                     query = customquery;
                 }
                 else if (!string.IsNullOrEmpty(searchString) && string.IsNullOrEmpty(searchFromDate) && !string.IsNullOrEmpty(searchToDate))
                 {
-                    var customquery = "SELECT c.AccountNumber, s.StatusName, r.CompanyName, r.EmailAddress, r.BusinessEmailAddress, CASE WHEN e.SSI = 1 THEN 'Yes' ELSE 'No' END AS SSI, CASE WHEN e.Emt = 1 THEN 'Yes' ELSE 'No' END AS EmarketSignUp, c.DateCreated FROM ClientSettlementAccounts c INNER JOIN RegisteredClients r ON r.Id = c.ClientID INNER JOIN EMarketApplications e ON e.ClientID = c.ClientID INNER JOIN tblStatus s ON s.Id = c.Status WHERE (r.CompanyName LIKE '%" + searchString + "%' OR r.EmailAddress LIKE '%" + searchString + "%') AND c.DateCreated <= CAST('" + searchToDate + "' AS DATE) AND c.Status = 1";
+                    var customquery = "SELECT c.AccountNumber, s.StatusName, a.CompanyName, r.EmailAddress, a.BusinessEmailAddress, CASE WHEN e.SSI = 1 THEN 'Yes' ELSE 'No' END AS SSI, CASE WHEN e.Emt = 1 THEN 'Yes' ELSE 'No' END AS EmarketSignUp, c.DateCreated FROM ClientSettlementAccounts c INNER JOIN RegisteredClients r ON r.Id = c.ClientID INNER JOIN ClientCompanies a ON a.Id = c.CompanyID INNER JOIN EMarketApplications e ON e.ClientID = c.ClientID and e.CompanyID = c.CompanyID INNER JOIN tblStatus s ON s.Id = c.Status WHERE (a.CompanyName LIKE '%" + searchString + "%' OR r.EmailAddress LIKE '%" + searchString + "%') AND c.DateCreated <= CAST('" + searchToDate + "' AS DATE) AND c.Status = 1";
                     query = customquery;
                 }
                 else if (string.IsNullOrEmpty(searchString) && !string.IsNullOrEmpty(searchFromDate) && !string.IsNullOrEmpty(searchToDate))
                 {
-                    var customquery = "SELECT c.AccountNumber, s.StatusName, r.CompanyName, r.EmailAddress, r.BusinessEmailAddress, CASE WHEN e.SSI = 1 THEN 'Yes' ELSE 'No' END AS SSI, CASE WHEN e.Emt = 1 THEN 'Yes' ELSE 'No' END AS EmarketSignUp, c.DateCreated FROM ClientSettlementAccounts c INNER JOIN RegisteredClients r ON r.Id = c.ClientID INNER JOIN EMarketApplications e ON e.ClientID = c.ClientID INNER JOIN tblStatus s ON s.Id = c.Status WHERE (c.DateCreated >= CAST('" + searchFromDate + "' AS DATE) AND c.DateCreated <= CAST('" + searchToDate + "' AS DATE)) AND c.Status = 1";
+                    var customquery = "SELECT c.AccountNumber, s.StatusName, a.CompanyName, r.EmailAddress, a.BusinessEmailAddress, CASE WHEN e.SSI = 1 THEN 'Yes' ELSE 'No' END AS SSI, CASE WHEN e.Emt = 1 THEN 'Yes' ELSE 'No' END AS EmarketSignUp, c.DateCreated FROM ClientSettlementAccounts c INNER JOIN RegisteredClients r ON r.Id = c.ClientID INNER JOIN ClientCompanies a ON a.Id = c.CompanyID INNER JOIN EMarketApplications e ON e.ClientID = c.ClientID and e.CompanyID = c.CompanyID INNER JOIN tblStatus s ON s.Id = c.Status WHERE (c.DateCreated >= CAST('" + searchFromDate + "' AS DATE) AND c.DateCreated <= CAST('" + searchToDate + "' AS DATE)) AND c.Status = 1";
                     query = customquery;
                 }
                 else if (string.IsNullOrEmpty(searchString) && string.IsNullOrEmpty(searchFromDate) && !string.IsNullOrEmpty(searchToDate))
                 {
-                    var customquery = "SELECT c.AccountNumber, s.StatusName, r.CompanyName, r.EmailAddress, r.BusinessEmailAddress, CASE WHEN e.SSI = 1 THEN 'Yes' ELSE 'No' END AS SSI, CASE WHEN e.Emt = 1 THEN 'Yes' ELSE 'No' END AS EmarketSignUp, c.DateCreated FROM ClientSettlementAccounts c INNER JOIN RegisteredClients r ON r.Id = c.ClientID INNER JOIN EMarketApplications e ON e.ClientID = c.ClientID INNER JOIN tblStatus s ON s.Id = c.Status WHERE c.DateCreated <= CAST('" + searchToDate + "' AS DATE) AND c.Status = 1";
+                    var customquery = "SELECT c.AccountNumber, s.StatusName, a.CompanyName, r.EmailAddress, a.BusinessEmailAddress, CASE WHEN e.SSI = 1 THEN 'Yes' ELSE 'No' END AS SSI, CASE WHEN e.Emt = 1 THEN 'Yes' ELSE 'No' END AS EmarketSignUp, c.DateCreated FROM ClientSettlementAccounts c INNER JOIN RegisteredClients r ON r.Id = c.ClientID INNER JOIN ClientCompanies a ON a.Id = c.CompanyID INNER JOIN EMarketApplications e ON e.ClientID = c.ClientID and e.CompanyID = c.CompanyID INNER JOIN tblStatus s ON s.Id = c.Status WHERE c.DateCreated <= CAST('" + searchToDate + "' AS DATE) AND c.Status = 1";
                     query = customquery;
                 }
                 else if (string.IsNullOrEmpty(searchString) && !string.IsNullOrEmpty(searchFromDate) && string.IsNullOrEmpty(searchToDate))
                 {
-                    var customquery = "SELECT c.AccountNumber, s.StatusName, r.CompanyName, r.EmailAddress, r.BusinessEmailAddress, CASE WHEN e.SSI = 1 THEN 'Yes' ELSE 'No' END AS SSI, CASE WHEN e.Emt = 1 THEN 'Yes' ELSE 'No' END AS EmarketSignUp, c.DateCreated FROM ClientSettlementAccounts c INNER JOIN RegisteredClients r ON r.Id = c.ClientID INNER JOIN EMarketApplications e ON e.ClientID = c.ClientID INNER JOIN tblStatus s ON s.Id = c.Status WHERE c.DateCreated >= CAST('" + searchFromDate + "' AS DATE) AND c.Status = 1";
+                    var customquery = "SELECT c.AccountNumber, s.StatusName, a.CompanyName, r.EmailAddress, a.BusinessEmailAddress, CASE WHEN e.SSI = 1 THEN 'Yes' ELSE 'No' END AS SSI, CASE WHEN e.Emt = 1 THEN 'Yes' ELSE 'No' END AS EmarketSignUp, c.DateCreated FROM ClientSettlementAccounts c INNER JOIN RegisteredClients r ON r.Id = c.ClientID INNER JOIN ClientCompanies a ON a.Id = c.CompanyID INNER JOIN EMarketApplications e ON e.ClientID = c.ClientID and e.CompanyID = c.CompanyID INNER JOIN tblStatus s ON s.Id = c.Status WHERE c.DateCreated >= CAST('" + searchFromDate + "' AS DATE) AND c.Status = 1";
                     query = customquery;
                 }
                 else if (string.IsNullOrEmpty(searchString) && string.IsNullOrEmpty(searchFromDate) && string.IsNullOrEmpty(searchToDate))
                 {
-                    var customquery = "SELECT c.AccountNumber, s.StatusName, r.CompanyName, r.EmailAddress, r.BusinessEmailAddress, CASE WHEN e.SSI = 1 THEN 'Yes' ELSE 'No' END AS SSI, CASE WHEN e.Emt = 1 THEN 'Yes' ELSE 'No' END AS EmarketSignUp, c.DateCreated FROM ClientSettlementAccounts c INNER JOIN RegisteredClients r ON r.Id = c.ClientID INNER JOIN EMarketApplications e ON e.ClientID = c.ClientID INNER JOIN tblStatus s ON s.Id = c.Status WHERE c.Status = 1";
+                    var customquery = "SELECT c.AccountNumber, s.StatusName, a.CompanyName, r.EmailAddress, a.BusinessEmailAddress, CASE WHEN e.SSI = 1 THEN 'Yes' ELSE 'No' END AS SSI, CASE WHEN e.Emt = 1 THEN 'Yes' ELSE 'No' END AS EmarketSignUp, c.DateCreated FROM ClientSettlementAccounts c INNER JOIN RegisteredClients r ON r.Id = c.ClientID INNER JOIN ClientCompanies a ON a.Id = c.CompanyID INNER JOIN EMarketApplications e ON e.ClientID = c.ClientID and e.CompanyID = c.CompanyID INNER JOIN tblStatus s ON s.Id = c.Status WHERE c.Status = 1";
                     query = customquery;
                 }
                 else
                 {
-                    var customquery = "SELECT c.AccountNumber, s.StatusName, r.CompanyName, r.EmailAddress, r.BusinessEmailAddress, CASE WHEN e.SSI = 1 THEN 'Yes' ELSE 'No' END AS SSI, CASE WHEN e.Emt = 1 THEN 'Yes' ELSE 'No' END AS EmarketSignUp, c.DateCreated FROM ClientSettlementAccounts c INNER JOIN RegisteredClients r ON r.Id = c.ClientID INNER JOIN EMarketApplications e ON e.ClientID = c.ClientID INNER JOIN tblStatus s ON s.Id = c.Status WHERE c.Status = 1";
+                    var customquery = "SELECT c.AccountNumber, s.StatusName, a.CompanyName, r.EmailAddress, a.BusinessEmailAddress, CASE WHEN e.SSI = 1 THEN 'Yes' ELSE 'No' END AS SSI, CASE WHEN e.Emt = 1 THEN 'Yes' ELSE 'No' END AS EmarketSignUp, c.DateCreated FROM ClientSettlementAccounts c INNER JOIN RegisteredClients r ON r.Id = c.ClientID INNER JOIN ClientCompanies a ON a.Id = c.CompanyID INNER JOIN EMarketApplications e ON e.ClientID = c.ClientID and e.CompanyID = c.CompanyID INNER JOIN tblStatus s ON s.Id = c.Status WHERE c.Status = 1";
                     query = customquery;
                 }
 
@@ -690,7 +692,7 @@ namespace OnBoarding.Controllers
             // Instance of DatabaseContext
             using (DBModel db = new DBModel())
             {
-                IEnumerable<ExistingClientsUploadViewModel> query = db.Database.SqlQuery<ExistingClientsUploadViewModel>("SELECT a.[FileName], u.CompanyName UploadedBy, a.DateCreated FROM ExistingClientsUploads a INNER JOIN AspNetUsers u ON u.Id = a.UploadedBy WHERE a.UploadedBy <> '" + User.Identity.GetUserId() + "' GROUP BY u.CompanyName, a.[FileName], a.DateCreated ORDER BY " + jtSorting + " OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY;");
+                IEnumerable<ExistingClientsUploadViewModel> query = db.Database.SqlQuery<ExistingClientsUploadViewModel>("SELECT a.[FileName], u.CompanyName UploadedBy, a.Status, a.DateCreated FROM ExistingClientsUploads a INNER JOIN AspNetUsers u ON u.Id = a.UploadedBy WHERE a.UploadedBy <> '" + User.Identity.GetUserId() + "' GROUP BY u.CompanyName, a.[FileName], a.Status, a.DateCreated ORDER BY " + jtSorting + " OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY;");
 
                 //No Search parameters
 
@@ -758,32 +760,6 @@ namespace OnBoarding.Controllers
         public PartialViewResult ViewUploadedClient(string fileName)
         {
             ViewData["FileName"] = fileName;
-            /*
-            using (DBModel db = new DBModel())
-            {
-                var getUploadedClientInfo = db.ExistingClientsUploads.FirstOrDefault(c => c.FileName == fileName && c.Status == 0);
-                ViewBag.ClientInfo = getUploadedClientInfo;
-
-                //SSI List
-                var Query = db.Database.SqlQuery<UploadedClientSSIViewModel>("SELECT a.AccountNumber, a.Currency FROM ExistingClientsUploads a WHERE a.FileName = '"+ fileName + "';").ToList();
-                ViewBag.SettlementAccounts = Query;
-
-                //Representative List
-                var Query1 = db.Database.SqlQuery<UploadedClientRepresentativeViewModel>("SELECT a.RepresentativeName, a.RepresentativeEmail, a.RepresentativePhonenumber, a.RepresentativeLimit, a.IsGM, a.IsEMTUser FROM ExistingClientsUploads a WHERE a.FileName = '" + fileName + "';").ToList();
-                ViewBag.DesignatedUsers = Query1;
-
-                //Check if upload has been approved
-                var ApprovedUpload = db.ExistingClientsUploads.Any(c => c.FileName == fileName && (c.Status == 1 || c.Status == 2));
-                if (ApprovedUpload)
-                {
-                    ViewData["Approved"] = 1;
-                }
-                else
-                {
-                    ViewData["Approved"] = 0;
-                }
-            }*/
-
             return PartialView();
         }
 
@@ -798,6 +774,184 @@ namespace OnBoarding.Controllers
                 var Query = db.Database.SqlQuery<ExistingClientsUpload>("SELECT n.* FROM ExistingClientsUploads n WHERE n.[FileName] = " + "'" + fileName + "'" + " AND n.Status = 0 ORDER BY " + jtSorting + " OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY;");
                 var approvals = Query.ToList();
                 return Json(new { Result = "OK", Records = approvals, TotalRecordCount = recordCount });
+            }
+        }
+
+        //
+        //Approve records
+        [HttpPost]
+        public JsonResult ApproveSelected(int Id)
+        {
+            using (var db = new DBModel())
+            {
+                try
+                {
+                    //Update record as approved
+                    var RecordToUpdate = db.ExistingClientsUploads.SingleOrDefault(c => c.Id == Id);
+                    var clientId = 0;
+                    var companyId = 0;
+
+                    //1. Check if accountnumber exist
+                    var clientExists = db.RegisteredClients.SingleOrDefault(c => c.EmailAddress == RecordToUpdate.CompanyEmail && c.Status == 1);
+                    if (clientExists == null)
+                    {
+                        //1. Create new entry
+                        try
+                        {
+                            var AcceptedTerms = (RecordToUpdate.AcceptedTerms == "YES" || RecordToUpdate.AcceptedTerms == "Yes" || RecordToUpdate.AcceptedTerms == "yes") ? true : false;
+                            var newRegisteredClient = db.RegisteredClients.Create();
+                            newRegisteredClient.Surname = RecordToUpdate.CompanyName;
+                            newRegisteredClient.OtherNames = RecordToUpdate.CompanyEmail;
+                            newRegisteredClient.EmailAddress = RecordToUpdate.CompanyEmail;
+                            newRegisteredClient.AccountNumber = RecordToUpdate.AccountNumber;
+                            newRegisteredClient.Status = 1;
+                            newRegisteredClient.AcceptedTerms = AcceptedTerms;
+                            newRegisteredClient.CreatedBy = User.Identity.GetUserId();
+                            newRegisteredClient.UploadedBy = User.Identity.GetUserId();
+                            db.RegisteredClients.Add(newRegisteredClient);
+                            var clientSaved = db.SaveChanges();
+                            clientId = newRegisteredClient.Id;
+                        }
+                        catch(Exception)
+                        {
+                            return Json("Error! Unable to create registered client", JsonRequestBehavior.AllowGet);
+                        }
+
+                        try
+                        {
+                            //2. Create Company
+                            var newCompany = db.ClientCompanies.Create();
+                            newCompany.ClientId = clientId;
+                            newCompany.CompanyName = RecordToUpdate.CompanyName;
+                            newCompany.Status = 1;
+                            newCompany.HasApplication = false;
+                            newCompany.DateCreated = DateTime.Now;
+                            newCompany.CreatedBy = User.Identity.GetUserId();
+                            db.ClientCompanies.Add(newCompany);
+                            var companySaved = db.SaveChanges();
+                            companyId = newCompany.Id;
+                        }
+                        catch (Exception)
+                        {
+                            return Json("Error! Unable to create company details", JsonRequestBehavior.AllowGet);
+                        }
+
+                        try
+                        {
+                            //3. Create SSI
+                            var newSSI = db.ClientSettlementAccounts.Create();
+                            newSSI.ClientID = clientId;
+                            newSSI.CompanyID = companyId;
+                            newSSI.CurrencyID = 6; //6 is for other specified currency
+                            newSSI.OtherCurrency = RecordToUpdate.Currency;
+                            newSSI.AccountNumber = RecordToUpdate.AccountNumber;
+                            newSSI.Status = 1;
+                            newSSI.DateCreated = DateTime.Now;
+                            db.ClientSettlementAccounts.Add(newSSI);
+                            var ssiSaved = db.SaveChanges();
+                        }
+                        catch (Exception)
+                        {
+                            return Json("Error! Unable to create SSI details", JsonRequestBehavior.AllowGet);
+                        }
+
+                        try
+                        {
+                            //4. Create Representative
+                            var EMTSignUp = (RecordToUpdate.IsEMTUser == "YES" || RecordToUpdate.IsEMTUser == "Yes" || RecordToUpdate.IsEMTUser == "yes") ? true : false;
+                            var GMRep = (RecordToUpdate.IsGM == "YES" || RecordToUpdate.IsGM == "Yes" || RecordToUpdate.IsGM == "yes") ? true : false;
+                            var newRepresentative = db.DesignatedUsers.Create();
+                            newRepresentative.Surname = RecordToUpdate.RepresentativeName;
+                            newRepresentative.TradingLimit = RecordToUpdate.RepresentativeLimit;
+                            newRepresentative.Mobile = RecordToUpdate.RepresentativePhonenumber;
+                            newRepresentative.Email = RecordToUpdate.RepresentativeEmail;
+                            newRepresentative.ClientID = clientId;
+                            newRepresentative.CompanyID = companyId;
+                            newRepresentative.Status = 1;
+                            newRepresentative.EMarketSignUp = EMTSignUp;
+                            newRepresentative.GMRepresentative = GMRep;
+                            newRepresentative.AcceptedTerms = true;
+                            newRepresentative.DateCreated = DateTime.Now;
+                            db.DesignatedUsers.Add(newRepresentative);
+                            var repSaved = db.SaveChanges();
+                        }
+                        catch (Exception)
+                        {
+                            return Json("Error! Unable to create representative details", JsonRequestBehavior.AllowGet);
+                        }
+                        
+                        try
+                        {
+                            //Update record as approved
+                            RecordToUpdate.Status = 1;
+                            RecordToUpdate.ApprovedBy = User.Identity.GetUserId();
+                            RecordToUpdate.DateApproved = DateTime.Now;
+                            var recordSaved = db.SaveChanges();
+                            return Json("success", JsonRequestBehavior.AllowGet);
+                        }
+                        catch (Exception)
+                        {
+                            return Json("Error! Unable to approve selected records", JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                    else
+                    {
+                        //Check if SSI exists and create if not
+                        var SSIExists = db.ClientSettlementAccounts.SingleOrDefault(c => c.AccountNumber == RecordToUpdate.AccountNumber && c.Status == 1);
+                        if(SSIExists == null)
+                        {
+                            //Create SSI
+                            var clientDetails = db.RegisteredClients.SingleOrDefault(c => c.AccountNumber == RecordToUpdate.AccountNumber && c.Status == 1);
+                            var companyDetails = db.ClientCompanies.SingleOrDefault(c => c.ClientId == clientDetails.Id && c.Status == 1);
+                            var newSSI = db.ClientSettlementAccounts.Create();
+                            newSSI.ClientID = clientDetails.Id;
+                            newSSI.CompanyID = companyDetails.Id;
+                            newSSI.CurrencyID = 6; //6 is for other specified currency
+                            newSSI.OtherCurrency = RecordToUpdate.Currency;
+                            newSSI.AccountNumber = RecordToUpdate.AccountNumber;
+                            newSSI.Status = 1;
+                            newSSI.DateCreated = DateTime.Now;
+                            db.ClientSettlementAccounts.Add(newSSI);
+                            var ssiSaved = db.SaveChanges();
+                        }
+
+                        //Check if representative exists and create if not
+                        var RepExists = db.DesignatedUsers.SingleOrDefault(c => c.Email == RecordToUpdate.RepresentativeEmail && c.Status == 1);
+                        if (RepExists == null)
+                        {
+                            //Create SSI
+                            var clientDetails = db.RegisteredClients.SingleOrDefault(c => c.AccountNumber == RecordToUpdate.AccountNumber && c.Status == 1);
+                            var companyDetails = db.ClientCompanies.SingleOrDefault(c => c.ClientId == clientDetails.Id && c.Status == 1);
+                            var EMTSignUp = (RecordToUpdate.IsEMTUser == "YES" || RecordToUpdate.IsEMTUser == "Yes" || RecordToUpdate.IsEMTUser == "yes") ? true : false;
+                            var GMRep = (RecordToUpdate.IsGM == "YES" || RecordToUpdate.IsGM == "Yes" || RecordToUpdate.IsGM == "yes") ? true : false;
+                            var newRepresentative = db.DesignatedUsers.Create();
+                            newRepresentative.Surname = RecordToUpdate.RepresentativeName;
+                            newRepresentative.TradingLimit = RecordToUpdate.RepresentativeLimit;
+                            newRepresentative.Mobile = RecordToUpdate.RepresentativePhonenumber;
+                            newRepresentative.Email = RecordToUpdate.RepresentativeEmail;
+                            newRepresentative.ClientID = clientDetails.Id;
+                            newRepresentative.CompanyID = companyDetails.Id;
+                            newRepresentative.Status = 1;
+                            newRepresentative.EMarketSignUp = EMTSignUp;
+                            newRepresentative.GMRepresentative = GMRep;
+                            newRepresentative.AcceptedTerms = true;
+                            newRepresentative.DateCreated = DateTime.Now;
+                            db.DesignatedUsers.Add(newRepresentative);
+                            var repSaved = db.SaveChanges();
+                        }
+
+                        //Update record as approved
+                        RecordToUpdate.Status = 1;
+                        RecordToUpdate.ApprovedBy = User.Identity.GetUserId();
+                        RecordToUpdate.DateApproved = DateTime.Now;
+                        var recordSaved = db.SaveChanges();
+                        return Json("success", JsonRequestBehavior.AllowGet);
+                    }
+                }
+                catch (Exception)
+                {
+                    return Json("Error! Unable to approve selected records", JsonRequestBehavior.AllowGet);
+                }
             }
         }
 

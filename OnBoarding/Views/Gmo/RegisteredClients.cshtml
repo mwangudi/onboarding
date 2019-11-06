@@ -46,14 +46,13 @@
 						<div class="item-data-retriving d_none">
 							<div class="form-group form-row" style="margin-left: 0px !important;">
 								<div class="col-12 col-sm-9 col-lg-9">
-									<h6><i class="fa fa-adjust"></i> View Client Details </h6>
+									<h6><small><i class="fa fa-adjust"></i> View Client Details </small></h6>
 								</div>
 								<div class="col-12 col-sm-3 col-lg-3">
 									<button id="selectanother" class="btn btn-outline-primary w_full" type="button"><i class="fa fa-check-circle"></i> Select Another Client </button>
 								</div>
-
 							</div>
-						</div><hr />
+						</div>
 						<!--Load Up Data -->
 						<center id="RMDLoading_ID" class="d_none r_corners">
 							<h6 class="m_top_20 m_bottom_20"> Please wait... Fetching Client Details </h6>
@@ -101,6 +100,11 @@
 											width: '10%',
 											options: { '1': 'Active', '0': 'InActive', '4': 'Deleted' }
 										},
+										UploadedBy: {
+											title: 'UploadedBy',
+											width: '10%',
+											list: false
+										},
 										AcceptedTerms: {
 											title: 'Terms',
 											width: '10%',
@@ -123,7 +127,14 @@
 										Companies: {
 											title: 'View',
 											display: function (data) {
-												var $img = $('<center><button class="btn btn-outline-primary w_full btn-small"> <i class="fa fa-list"></i> Companies </button></center>');
+												var uploaded = data.record.UploadedBy;
+												if (uploaded) {
+													return '<center><button class="btn btn-outline-primary w_full btn-small" onclick="LoadUpModal(' + data.record.Id + ')">' +
+                                                    '<span class="fa fa-check-circle"></span> View Details </button></center>';
+												}
+												else {
+													var $img = $('<center><button class="btn btn-outline-primary w_full btn-small"> <i class="fa fa-list"></i> Companies </button></center>');
+												}
 												$img.click(function () {
 													$('#RegisteredClientsTableContainer').jtable('openChildTable',
 														$img.closest('tr'),
@@ -273,7 +284,7 @@
 		// LoadUp User Data
 		$.ajax({
 			type: "POST",
-			url: "/DigitalDesk/ViewClient",
+			url: "/Gmo/ViewClient",
 			data: '{clientId: "' + clientId + '" }',
 			async: true,
 			contentType: "application/json; charset=utf-8",

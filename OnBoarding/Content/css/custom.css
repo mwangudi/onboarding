@@ -151,3 +151,17 @@ span.step {
 	overflow: scroll;
 	overflow-x: hidden;
 }
+
+#DeclineSelected {
+	width: 141px;
+	height: 30px;
+}
+
+#ApproveSelected {
+	width: 141px;
+	height: 30px;
+}
+
+.jTableTitleDiv {
+	text-align: center;
+}

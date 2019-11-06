@@ -305,6 +305,7 @@ div.jtable-main-container > div.jtable-title {
   padding-left: 10px;
   background-color: #ECF0F5;
   color: #000000 !important;
+  padding: 5px 5px 5px 10px;
 }
 div.jtable-main-container > div.jtable-title div.jtable-title-text {
   font-family: 'Segoe UI Semilight', 'Open Sans', Verdana, Arial, Helvetica, sans-serif;

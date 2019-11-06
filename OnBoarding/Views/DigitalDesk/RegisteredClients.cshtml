@@ -101,6 +101,11 @@
 											width: '10%',
 											options: { '1': 'Active', '0': 'InActive', '4': 'Deleted' }
 										},
+										UploadedBy: {
+											title: 'UploadedBy',
+											width: '10%',
+											list: false
+										},
 										AcceptedTerms: {
 											title: 'Terms',
 											width: '10%',
@@ -123,7 +128,14 @@
 										Companies: {
 											title: 'View',
 											display: function (data) {
-												var $img = $('<center><button class="btn btn-outline-primary w_full btn-small"> <i class="fa fa-list"></i> Companies </button></center>');
+												var uploaded = data.record.UploadedBy;
+												if (uploaded) {
+													return '<center><button class="btn btn-outline-primary w_full btn-small" onclick="LoadUpModal(' + data.record.Id + ')">' +
+                                                    '<span class="fa fa-check-circle"></span> View Details </button></center>';
+												}
+												else {
+													var $img = $('<center><button class="btn btn-outline-primary w_full btn-small"> <i class="fa fa-list"></i> Companies </button></center>');
+												}
 												$img.click(function() {
 												$('#RegisteredClientsTableContainer').jtable('openChildTable',
 													$img.closest('tr'),

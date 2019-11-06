@@ -8,6 +8,7 @@
     {
         public int Id { get; set; }
         public string CompanyName { get; set; }
+        public string CompanyEmail { get; set; }
         public string AcceptedTerms { get; set; }
         public string EMTSignUp { get; set; }
         public string SSI { get; set; }

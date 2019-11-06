@@ -412,31 +412,30 @@ namespace OnBoarding.Controllers
         // POST: //ViewClient
         [HttpPost]
         [AllowAnonymous]
-        public PartialViewResult ViewClient(int clientId)
+        public PartialViewResult ViewClient(int clientID)
         {
             using (DBModel db = new DBModel())
             {
-                var clientDetails = db.RegisteredClients.SingleOrDefault(s => s.Id == clientId);
-                ViewBag.ApplicationInfo = clientDetails;
+                var clientDetails = db.RegisteredClients.SingleOrDefault(s => s.Id == clientID);
+                ViewBag.RegisteredClientInfo = clientDetails;
+
+                var companyDetails = db.ClientCompanies.SingleOrDefault(s => s.ClientId == clientID);
+                ViewBag.CompanyInfo = companyDetails;
 
                 //Signatories List
-                List<ClientSignatory> SignatoryList = db.ClientSignatories.Where(a => a.ClientID == clientId).ToList();
+                List<ClientSignatory> SignatoryList = db.ClientSignatories.Where(a => a.ClientID == clientID && a.CompanyID == companyDetails.Id).ToList();
                 ViewBag.ClientSignatory = SignatoryList;
 
                 //Designated Users List
-                List<DesignatedUser> DesignatedUsersList = db.DesignatedUsers.Where(a => a.ClientID == clientId).ToList();
+                List<DesignatedUser> DesignatedUsersList = db.DesignatedUsers.Where(a => a.ClientID == clientID && a.CompanyID == companyDetails.Id).ToList();
                 ViewBag.DesignatedUser = DesignatedUsersList;
 
                 //Get the list of all client's settlement accounts
-                var Query = db.Database.SqlQuery<SettlementAccountsViewModel>("SELECT c.CurrencyName, s.AccountNumber FROM ClientSettlementAccounts s INNER JOIN Currencies c ON c.Id = s.CurrencyID WHERE s.ClientID =  " + "'" + clientId + "'" + " AND s.Status = 1");
+                var Query = db.Database.SqlQuery<SettlementAccountsViewModel>("SELECT c.CurrencyName, s.AccountNumber FROM ClientSettlementAccounts s INNER JOIN Currencies c ON c.Id = s.CurrencyID WHERE s.ClientID =  " + "'" + clientID + "'" + " AND s.CompanyID =  " + "'" + companyDetails.Id + "'" + " AND s.Status = 1");
                 ViewBag.SettlementAccounts = Query.ToList();
 
-                var clientHasApplication = db.EMarketApplications.Any(s => s.ClientID == clientId);
+                var clientHasApplication = db.EMarketApplications.Any(s => s.ClientID == clientID);
                 ViewBag.clientHasApplication = clientHasApplication;
-
-                //Data For Controller Post
-                ViewData["CompanyEmail"] = clientDetails.EmailAddress;
-                //ViewData["CompanyName"] = clientDetails.CompanyName;
             }
 
             return PartialView();
@@ -1354,8 +1353,9 @@ namespace OnBoarding.Controllers
 
                 //Create a DataTable.
                 DataTable dt = new DataTable();
-                dt.Columns.AddRange(new DataColumn[13] {
+                dt.Columns.AddRange(new DataColumn[14] {
                             new DataColumn("ColCompanyName", typeof(string)),
+                            new DataColumn("ColCompanyEmail".ToUpper(), typeof(string)),
                             new DataColumn("ColAcceptedTerms".ToUpper(), typeof(string)),
                             new DataColumn("ColEMTSignUp".ToUpper(), typeof(string)),
                             new DataColumn("ColSSI".ToUpper(), typeof(string)),
@@ -1409,6 +1409,7 @@ namespace OnBoarding.Controllers
 
                         //[OPTIONAL]: Map the DataTable columns with that of the database table
                         sqlBulkCopy.ColumnMappings.Add("ColCompanyName", "CompanyName");
+                        sqlBulkCopy.ColumnMappings.Add("ColCompanyEmail", "CompanyEmail");
                         sqlBulkCopy.ColumnMappings.Add("ColAcceptedTerms", "AcceptedTerms");
                         sqlBulkCopy.ColumnMappings.Add("ColEMTSignUp", "EMTSignUp");
                         sqlBulkCopy.ColumnMappings.Add("ColSSI", "SSI");
