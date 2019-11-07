@@ -202,7 +202,8 @@
     jQuery().ready(function () {
         var v = jQuery("#ApplicationForm").validate({
             rules: {
-                Comments: {
+				Comments: {
+					required: true,
                     minlength: 4,
                     maxlength: 200
                 }
@@ -214,7 +215,7 @@
 
     $(document).ready(function () {
 
-        //Submit Form (Decline Action)
+        /*//Submit Form (Decline Action)
         $('.btnDecline').on('click', function (e) {
             e.preventDefault();
             if ($('#ApplicationForm').valid()) {
@@ -240,6 +241,59 @@
                     processData: false
                 });
             }
+		});*/
+
+		//Decline Application
+		$('.btnDecline').on('click', function (e) {
+			e.preventDefault();
+			if ($('#ApplicationForm').valid()) {
+				swal({
+					title: "Are you sure?",
+					text: "Do you really want to decline? This is irreversable!",
+					type: "warning",
+					showCancelButton: true,
+					confirmButtonColor: "#fd302b",
+					confirmButtonText: "Yes, Decline",
+					cancelButtonText: "No, Cancel",
+					closeOnConfirm: false,
+					closeOnCancel: true,
+					customClass: 'custom-width'
+				}).then(function () {
+					var formData = new FormData($("#ApplicationForm")[0]);
+					$.ajax({
+						url: "/DigitalDesk/DeclineApplication",
+						type: 'POST',
+						data: formData,
+						async: true
+					}).done(function (data) {
+						swal({
+							title: "Success!",
+							text: "Application has been successfully declined",
+							type: "success",
+							animation: "slide-from-top",
+							showConfirmButton: true,
+							timer: 2500
+						});
+						//Reload Jtable
+						window.location.reload();
+					//Show delete error on fail
+					}).fail(function (data) {
+						swal({
+							title: "Error!",
+							text: "Sorry. There was a problem Submitting Your Entry. Please try again or contact Systems administrator if the problem persists.",
+							type: "error",
+							animation: "slide-from-top",
+							showConfirmButton: true
+						});
+					});
+				}); // Swal question
+			}
+			else {
+				swal({
+                    title: "Alert!",
+                    text: "Please correct form errors to proceed!",
+                });
+			}
         });
     });
 </script>

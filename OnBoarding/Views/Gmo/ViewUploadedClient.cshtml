@@ -94,63 +94,97 @@
 
 					//Load list from server
 					$('#UploadsTableContainer').jtable('load');
+					
+					//Approve records
+					$('button#ApproveSelected').on('click', function (e) {
+						e.preventDefault();
+						var $selectedRows = $('#UploadsTableContainer').jtable('selectedRows');
+						if ($selectedRows.length > 0) {
+							Swal.fire({
+								title: 'Are you sure?',
+								text: "You won't be able to revert this!",
+								icon: 'warning',
+								showCancelButton: true,
+								confirmButtonColor: '#28a745;',
+								cancelButtonColor: '#d33',
+								confirmButtonText: 'Yes, approve records',
+								cancelButtonText: 'No, cancel',
+							}).then((result) => {
+								$selectedRows.each(function () { 
+		                            Id = $(this).data('record').Id;
+					                $.ajax({
+										url: "/Gmo/ApproveSelected?Id=" + Id,
+		                                type: 'POST',
+										async: true,
+										success: function (XmlHttpRequest) {
+											if (XmlHttpRequest === 'success') {
+												Swal.fire(
+													'Success!',
+													'Your records has been successfully approved',
+													'success'
+												)
+											}
+											else {
+												Swal.fire({
+													icon: 'error',
+													text: XmlHttpRequest
+												})
+											}
+										}
+									})
+								});
+							})
+						}
+						else {
+							Swal.fire('Please select record(s) to approve!')
+						}
+					});
 
 					//Decline selected items
-					$('button#DeclineSelected').button().click(function (e) {
+					$('button#DeclineSelected').on('click', function (e) {
 						e.preventDefault();
 						var $selectedRows = $('#UploadsTableContainer').jtable('selectedRows');
 						if ($selectedRows.length > 0) {
-							$selectedRows.each(function () {
-								var record = $(this).data('record');
-								var Id = record.Id;
-								$.ajax({
-									url: "/Gmo/DeclineSelected?Id=" + Id,
-									type: 'POST',
-									data: Id,
-									success: function () {
-										//toastr.success('Success! File details has been declined');
-										$('#UploadsTableContainer').jtable('load');
-									}
+							Swal.fire({
+								title: 'Are you sure?',
+								text: "You won't be able to revert this!",
+								icon: 'warning',
+								showCancelButton: true,
+								confirmButtonColor: '#28a745;',
+								cancelButtonColor: '#d33',
+								confirmButtonText: 'Yes, decline records',
+								cancelButtonText: 'No, cancel',
+							}).then((result) => {
+								$selectedRows.each(function () { 
+		                            Id = $(this).data('record').Id;
+					                $.ajax({
+										url: "/Gmo/DeclineSelected?Id=" + Id,
+		                                type: 'POST',
+										async: true,
+										success: function (XmlHttpRequest) {
+											if (XmlHttpRequest === 'success') {
+												$('#UploadsTableContainer').jtable('load');
+												Swal.fire(
+													'Success!',
+													'Your records has been successfully declined',
+													'success'
+												)
+											}
+											else {
+												Swal.fire({
+													icon: 'error',
+													text: XmlHttpRequest
+												})
+											}
+										}
+									})
 								});
-							});
+							})
 						}
 						else {
-							//No rows selected
-							toastr.error('Error! No rows selected! Please select rows to approve');
+							Swal.fire('Please select record(s) to decline!')
 						}
 					});
-
-					//Approve selected items
-					$('button#ApproveSelected').button().click(function (e) {
-						e.preventDefault();
-						var $selectedRows = $('#UploadsTableContainer').jtable('selectedRows');
-						if ($selectedRows.length > 0) {
-							$selectedRows.each(function () {
-								var record = $(this).data('record');
-								var Id = record.Id;
-								$.ajax({
-									url: "/Gmo/ApproveSelected?Id=" + Id,
-									type: 'POST',
-									data: Id,
-									success: function (XmlHttpRequest) {
-										if (XmlHttpRequest != 'success') {
-											toastr.error(XmlHttpRequest);
-											$('#UploadsTableContainer').jtable('load');
-										}
-										else {
-											toastr.success('Success! Records have been aproved');
-											$('#UploadsTableContainer').jtable('load');
-										}
-									}
-								});
-							});
-						}
-						else {
-							//No rows selected
-							toastr.error('Error! No rows selected! Please select rows to approve');
-						}
-					});
-
 				});
 			</script>
 		</div>

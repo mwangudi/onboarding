@@ -2379,6 +2379,8 @@
     <Content Include="Assets\summernote\summernote.css" />
     <Content Include="Assets\summernote\summernote.js" />
     <Content Include="Assets\summernote\summernote.min.js" />
+    <Content Include="Assets\sweetalert\sweetalert2.css" />
+    <Content Include="Assets\sweetalert\sweetalert2.js" />
     <Content Include="Assets\toastr\build\toastr.css" />
     <Content Include="Assets\toastr\build\toastr.min.css" />
     <Content Include="Assets\toastr\build\toastr.min.js" />

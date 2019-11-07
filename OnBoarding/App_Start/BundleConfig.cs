@@ -28,6 +28,7 @@ namespace OnBoarding
                     "~/Content/css/style.css",
                     "~/Assets/select2/select2.css",
                     "~/Assets/datatables/DataTables-1.10.16/css/dataTables.bootstrap.min.css",
+                    "~/Assets/sweetalert/sweetalert2.css",
                     "~/Assets/datepicker/datepicker.css"));
 
             //3. Bundled bootstrap admin CSS
@@ -71,6 +72,7 @@ namespace OnBoarding
                          "~/Scripts/js/additional-methods.min.js",
                          "~/Assets/datatables/datatables.min.js",
                          "~/Assets/datatables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js",
+                         "~/Assets/sweetalert/sweetalert2.js",
                          "~/Assets/datepicker/bootstrap-datepicker.js"));
 
             foreach (var bundle in BundleTable.Bundles)

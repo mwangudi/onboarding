@@ -381,7 +381,7 @@ namespace OnBoarding.Controllers
                 ViewBag.DesignatedUser = DesignatedUsersList;
 
                 //Get the list of all client's settlement accounts
-                var Query = db.Database.SqlQuery<SettlementAccountsViewModel>("SELECT c.CurrencyName, s.AccountNumber FROM ClientSettlementAccounts s INNER JOIN Currencies c ON c.Id = s.CurrencyID WHERE s.ClientID =  " + "'" + clientID + "'" + " AND s.CompanyID =  " + "'" + companyDetails.Id + "'" + " AND s.Status = 1");
+                var Query = db.Database.SqlQuery<SettlementAccountsViewModel>("SELECT c.CurrencyName, s.AccountNumber, s.OtherCurrency FROM ClientSettlementAccounts s INNER JOIN Currencies c ON c.Id = s.CurrencyID WHERE s.ClientID =  " + "'" + clientID + "'" + " AND s.CompanyID =  " + "'" + companyDetails.Id + "'" + " AND s.Status = 1");
                 ViewBag.SettlementAccounts = Query.ToList();
 
                 var clientHasApplication = db.EMarketApplications.Any(s => s.ClientID == clientID);
@@ -787,11 +787,11 @@ namespace OnBoarding.Controllers
                 try
                 {
                     //Update record as approved
-                    var RecordToUpdate = db.ExistingClientsUploads.SingleOrDefault(c => c.Id == Id);
                     var clientId = 0;
                     var companyId = 0;
 
                     //1. Check if accountnumber exist
+                    var RecordToUpdate = db.ExistingClientsUploads.SingleOrDefault(c => c.Id == Id);
                     var clientExists = db.RegisteredClients.SingleOrDefault(c => c.EmailAddress == RecordToUpdate.CompanyEmail && c.Status == 1);
                     if (clientExists == null)
                     {
@@ -801,7 +801,7 @@ namespace OnBoarding.Controllers
                             var AcceptedTerms = (RecordToUpdate.AcceptedTerms == "YES" || RecordToUpdate.AcceptedTerms == "Yes" || RecordToUpdate.AcceptedTerms == "yes") ? true : false;
                             var newRegisteredClient = db.RegisteredClients.Create();
                             newRegisteredClient.Surname = RecordToUpdate.CompanyName;
-                            newRegisteredClient.OtherNames = RecordToUpdate.CompanyEmail;
+                            newRegisteredClient.OtherNames = RecordToUpdate.CompanyName;
                             newRegisteredClient.EmailAddress = RecordToUpdate.CompanyEmail;
                             newRegisteredClient.AccountNumber = RecordToUpdate.AccountNumber;
                             newRegisteredClient.Status = 1;
@@ -897,47 +897,65 @@ namespace OnBoarding.Controllers
                     else
                     {
                         //Check if SSI exists and create if not
-                        var SSIExists = db.ClientSettlementAccounts.SingleOrDefault(c => c.AccountNumber == RecordToUpdate.AccountNumber && c.Status == 1);
+                        var SSIExists = db.ClientSettlementAccounts.SingleOrDefault(c => c.AccountNumber == RecordToUpdate.AccountNumber && c.ClientID == clientExists.Id && c.Status == 1);
                         if(SSIExists == null)
                         {
-                            //Create SSI
-                            var clientDetails = db.RegisteredClients.SingleOrDefault(c => c.AccountNumber == RecordToUpdate.AccountNumber && c.Status == 1);
-                            var companyDetails = db.ClientCompanies.SingleOrDefault(c => c.ClientId == clientDetails.Id && c.Status == 1);
-                            var newSSI = db.ClientSettlementAccounts.Create();
-                            newSSI.ClientID = clientDetails.Id;
-                            newSSI.CompanyID = companyDetails.Id;
-                            newSSI.CurrencyID = 6; //6 is for other specified currency
-                            newSSI.OtherCurrency = RecordToUpdate.Currency;
-                            newSSI.AccountNumber = RecordToUpdate.AccountNumber;
-                            newSSI.Status = 1;
-                            newSSI.DateCreated = DateTime.Now;
-                            db.ClientSettlementAccounts.Add(newSSI);
-                            var ssiSaved = db.SaveChanges();
+                            try
+                            {
+                                //Create SSI
+                                var clientDetails = db.RegisteredClients.SingleOrDefault(c => c.AccountNumber == RecordToUpdate.AccountNumber && c.Status == 1);
+                                var companyDetails = db.ClientCompanies.SingleOrDefault(c => c.ClientId == clientDetails.Id && c.Status == 1);
+                                var newSSI = db.ClientSettlementAccounts.Create();
+                                newSSI.ClientID = clientDetails.Id;
+                                newSSI.CompanyID = companyDetails.Id;
+                                newSSI.CurrencyID = 6; //6 is for other specified currency
+                                newSSI.OtherCurrency = RecordToUpdate.Currency;
+                                newSSI.AccountNumber = RecordToUpdate.AccountNumber;
+                                newSSI.Status = 1;
+                                newSSI.DateCreated = DateTime.Now;
+                                db.ClientSettlementAccounts.Add(newSSI);
+                                var ssiSaved = db.SaveChanges();
+                            }
+                            catch (Exception)
+                            {
+                                return Json("Error! Unable to create SSI details", JsonRequestBehavior.AllowGet);
+                            }
                         }
 
                         //Check if representative exists and create if not
                         var RepExists = db.DesignatedUsers.SingleOrDefault(c => c.Email == RecordToUpdate.RepresentativeEmail && c.Status == 1);
                         if (RepExists == null)
                         {
-                            //Create SSI
-                            var clientDetails = db.RegisteredClients.SingleOrDefault(c => c.AccountNumber == RecordToUpdate.AccountNumber && c.Status == 1);
-                            var companyDetails = db.ClientCompanies.SingleOrDefault(c => c.ClientId == clientDetails.Id && c.Status == 1);
-                            var EMTSignUp = (RecordToUpdate.IsEMTUser == "YES" || RecordToUpdate.IsEMTUser == "Yes" || RecordToUpdate.IsEMTUser == "yes") ? true : false;
-                            var GMRep = (RecordToUpdate.IsGM == "YES" || RecordToUpdate.IsGM == "Yes" || RecordToUpdate.IsGM == "yes") ? true : false;
-                            var newRepresentative = db.DesignatedUsers.Create();
-                            newRepresentative.Surname = RecordToUpdate.RepresentativeName;
-                            newRepresentative.TradingLimit = RecordToUpdate.RepresentativeLimit;
-                            newRepresentative.Mobile = RecordToUpdate.RepresentativePhonenumber;
-                            newRepresentative.Email = RecordToUpdate.RepresentativeEmail;
-                            newRepresentative.ClientID = clientDetails.Id;
-                            newRepresentative.CompanyID = companyDetails.Id;
-                            newRepresentative.Status = 1;
-                            newRepresentative.EMarketSignUp = EMTSignUp;
-                            newRepresentative.GMRepresentative = GMRep;
-                            newRepresentative.AcceptedTerms = true;
-                            newRepresentative.DateCreated = DateTime.Now;
-                            db.DesignatedUsers.Add(newRepresentative);
-                            var repSaved = db.SaveChanges();
+                            try
+                            {
+                                //Create SSI
+                                var clientDetails = db.RegisteredClients.SingleOrDefault(c => c.EmailAddress == RecordToUpdate.CompanyEmail && c.Status == 1);
+                                var companyDetails = db.ClientCompanies.SingleOrDefault(c => c.ClientId == clientDetails.Id && c.Status == 1);
+                                var EMTSignUp = (RecordToUpdate.IsEMTUser == "YES" || RecordToUpdate.IsEMTUser == "Yes" || RecordToUpdate.IsEMTUser == "yes") ? true : false;
+                                var GMRep = (RecordToUpdate.IsGM == "YES" || RecordToUpdate.IsGM == "Yes" || RecordToUpdate.IsGM == "yes") ? true : false;
+                                var newRepresentative = db.DesignatedUsers.Create();
+                                newRepresentative.Surname = RecordToUpdate.RepresentativeName;
+                                newRepresentative.TradingLimit = RecordToUpdate.RepresentativeLimit;
+                                newRepresentative.Mobile = RecordToUpdate.RepresentativePhonenumber;
+                                newRepresentative.Email = RecordToUpdate.RepresentativeEmail;
+                                newRepresentative.ClientID = clientDetails.Id;
+                                newRepresentative.CompanyID = companyDetails.Id;
+                                newRepresentative.Status = 1;
+                                newRepresentative.EMarketSignUp = EMTSignUp;
+                                newRepresentative.GMRepresentative = GMRep;
+                                newRepresentative.AcceptedTerms = true;
+                                newRepresentative.DateCreated = DateTime.Now;
+                                db.DesignatedUsers.Add(newRepresentative);
+                                var repSaved = db.SaveChanges();
+                            }
+                            catch (Exception)
+                            {
+                                return Json("Error! Unable to create representative details", JsonRequestBehavior.AllowGet);
+                            }
+                        }
+                        else
+                        {
+                            return Json("Error! Duplicate entry for representative details", JsonRequestBehavior.AllowGet);
                         }
 
                         //Update record as approved
