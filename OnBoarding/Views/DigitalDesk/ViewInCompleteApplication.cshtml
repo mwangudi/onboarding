@@ -203,7 +203,6 @@
         var v = jQuery("#ApplicationForm").validate({
             rules: {
 				Comments: {
-					required: true,
                     minlength: 4,
                     maxlength: 200
                 }
@@ -214,86 +213,51 @@
     });
 
     $(document).ready(function () {
-
-        /*//Submit Form (Decline Action)
-        $('.btnDecline').on('click', function (e) {
-            e.preventDefault();
-            if ($('#ApplicationForm').valid()) {
-                $("#Loading_Div").show('fast');
-                $('#ApplicationForm').hide("fast");
-                var formData = new FormData($("#ApplicationForm")[0]);
-                $.ajax({
-                    url: "/DigitalDesk/DeclineApplication",
-                    type: 'POST',
-                    data: formData,
-                    async: true,
-                    success: function () {
-                        window.setTimeout(close, 500);
-                        function close() {
-                            $('#ApplicationForm')[0].reset();
-                            $("#Loading_Div").hide('fast');
-                            $('#Success_Div').show("fast");
-                            window.location.reload();
-                        }
-                    },
-                    cache: false,
-                    contentType: false,
-                    processData: false
-                });
-            }
-		});*/
-
 		//Decline Application
 		$('.btnDecline').on('click', function (e) {
 			e.preventDefault();
 			if ($('#ApplicationForm').valid()) {
-				swal({
-					title: "Are you sure?",
-					text: "Do you really want to decline? This is irreversable!",
-					type: "warning",
+				Swal.fire({
+					title: 'Are you sure?',
+					text: "You won't be able to revert this!",
+					icon: 'warning',
 					showCancelButton: true,
-					confirmButtonColor: "#fd302b",
-					confirmButtonText: "Yes, Decline",
-					cancelButtonText: "No, Cancel",
-					closeOnConfirm: false,
-					closeOnCancel: true,
-					customClass: 'custom-width'
-				}).then(function () {
+					confirmButtonColor: '#28a745;',
+					cancelButtonColor: '#d33',
+					confirmButtonText: 'Yes, approve records',
+					cancelButtonText: 'No, cancel',
+				}).then((result) => {
 					var formData = new FormData($("#ApplicationForm")[0]);
 					$.ajax({
-						url: "/DigitalDesk/DeclineApplication",
+							url: "/DigitalDesk/DeclineApplication",
 						type: 'POST',
 						data: formData,
-						async: true
-					}).done(function (data) {
-						swal({
-							title: "Success!",
-							text: "Application has been successfully declined",
-							type: "success",
-							animation: "slide-from-top",
-							showConfirmButton: true,
-							timer: 2500
-						});
-						//Reload Jtable
-						window.location.reload();
-					//Show delete error on fail
-					}).fail(function (data) {
-						swal({
-							title: "Error!",
-							text: "Sorry. There was a problem Submitting Your Entry. Please try again or contact Systems administrator if the problem persists.",
-							type: "error",
-							animation: "slide-from-top",
-							showConfirmButton: true
-						});
-					});
-				}); // Swal question
+						async: true,
+						success: function (XmlHttpRequest) {
+							if (XmlHttpRequest === 'success') {
+								Swal.fire(
+									'Success!',
+									'Application has been declined',
+									'success'
+								)
+								window.location.reload();
+							}
+							else {
+								Swal.fire({
+									icon: 'error',
+									text: XmlHttpRequest
+								})
+							}
+						},
+						cache: false,
+						contentType: false,
+						processData: false
+					})
+				})
 			}
 			else {
-				swal({
-                    title: "Alert!",
-                    text: "Please correct form errors to proceed!",
-                });
+				Swal.fire('Please correct form errors to proceed!')
 			}
-        });
+		});
     });
 </script>

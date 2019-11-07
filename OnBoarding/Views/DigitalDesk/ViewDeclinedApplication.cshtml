@@ -213,33 +213,51 @@
     });
 
     $(document).ready(function () {
-
-        //Submit Form (Decline Action)
-        $('.btnDecline').on('click', function (e) {
-            e.preventDefault();
-            if ($('#ApplicationForm').valid()) {
-                $("#Loading_Div").show('fast');
-                $('#ApplicationForm').hide("fast");
-                var formData = new FormData($("#ApplicationForm")[0]);
-                $.ajax({
-                    url: "/DigitalDesk/DeclineApplication",
-                    type: 'POST',
-                    data: formData,
-                    async: true,
-                    success: function () {
-                        window.setTimeout(close, 500);
-                        function close() {
-                            $('#ApplicationForm')[0].reset();
-                            $("#Loading_Div").hide('fast');
-                            $('#Success_Div').show("fast");
-                            window.location.reload();
-                        }
-                    },
-                    cache: false,
-                    contentType: false,
-                    processData: false
-                });
-            }
-        });
+		//Decline Application
+		$('.btnDecline').on('click', function (e) {
+			e.preventDefault();
+			if ($('#ApplicationForm').valid()) {
+				Swal.fire({
+					title: 'Are you sure?',
+					text: "You won't be able to revert this!",
+					icon: 'warning',
+					showCancelButton: true,
+					confirmButtonColor: '#28a745;',
+					cancelButtonColor: '#d33',
+					confirmButtonText: 'Yes, approve records',
+					cancelButtonText: 'No, cancel',
+				}).then((result) => {
+					var formData = new FormData($("#ApplicationForm")[0]);
+					$.ajax({
+							url: "/DigitalDesk/DeclineApplication",
+						type: 'POST',
+						data: formData,
+						async: true,
+						success: function (XmlHttpRequest) {
+							if (XmlHttpRequest === 'success') {
+								Swal.fire(
+									'Success!',
+									'Application has been declined',
+									'success'
+								)
+								window.location.reload();
+							}
+							else {
+								Swal.fire({
+									icon: 'error',
+									text: XmlHttpRequest
+								})
+							}
+						},
+						cache: false,
+						contentType: false,
+						processData: false
+					})
+				})
+			}
+			else {
+				Swal.fire('Please correct form errors to proceed!')
+			}
+		});
     });
 </script>
