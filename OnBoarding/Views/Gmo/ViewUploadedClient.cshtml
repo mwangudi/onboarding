@@ -110,29 +110,31 @@
 								confirmButtonText: 'Yes, approve records',
 								cancelButtonText: 'No, cancel',
 							}).then((result) => {
-								$selectedRows.each(function () { 
-		                            Id = $(this).data('record').Id;
-					                $.ajax({
-										url: "/Gmo/ApproveSelected?Id=" + Id,
-		                                type: 'POST',
-										async: true,
-										success: function (XmlHttpRequest) {
-											if (XmlHttpRequest === 'success') {
-												Swal.fire(
-													'Success!',
-													'Your records has been successfully approved',
-													'success'
-												)
+								if (result.value) {
+									$selectedRows.each(function () {
+										Id = $(this).data('record').Id;
+										$.ajax({
+											url: "/Gmo/ApproveSelected?Id=" + Id,
+											type: 'POST',
+											async: true,
+											success: function (XmlHttpRequest) {
+												if (XmlHttpRequest === 'success') {
+													Swal.fire(
+														'Success!',
+														'Your records has been successfully approved',
+														'success'
+													)
+												}
+												else {
+													Swal.fire({
+														icon: 'error',
+														text: XmlHttpRequest
+													})
+												}
 											}
-											else {
-												Swal.fire({
-													icon: 'error',
-													text: XmlHttpRequest
-												})
-											}
-										}
-									})
-								});
+										})
+									});
+								}
 							})
 						}
 						else {

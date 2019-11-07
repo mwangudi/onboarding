@@ -224,35 +224,37 @@
 					showCancelButton: true,
 					confirmButtonColor: '#28a745;',
 					cancelButtonColor: '#d33',
-					confirmButtonText: 'Yes, approve records',
+					confirmButtonText: 'Yes, decline application',
 					cancelButtonText: 'No, cancel',
 				}).then((result) => {
-					var formData = new FormData($("#ApplicationForm")[0]);
-					$.ajax({
+					if (result.value) {
+						var formData = new FormData($("#ApplicationForm")[0]);
+						$.ajax({
 							url: "/DigitalDesk/DeclineApplication",
-						type: 'POST',
-						data: formData,
-						async: true,
-						success: function (XmlHttpRequest) {
-							if (XmlHttpRequest === 'success') {
-								Swal.fire(
-									'Success!',
-									'Application has been declined',
-									'success'
-								)
-								window.location.reload();
-							}
-							else {
-								Swal.fire({
-									icon: 'error',
-									text: XmlHttpRequest
-								})
-							}
-						},
-						cache: false,
-						contentType: false,
-						processData: false
-					})
+							type: 'POST',
+							data: formData,
+							async: true,
+							success: function (XmlHttpRequest) {
+								if (XmlHttpRequest === 'success') {
+									Swal.fire(
+										'Success!',
+										'Application has been declined',
+										'success'
+									)
+									window.location.reload();
+								}
+								else {
+									Swal.fire({
+										icon: 'error',
+										text: XmlHttpRequest
+									})
+								}
+							},
+							cache: false,
+							contentType: false,
+							processData: false
+						})
+					}
 				})
 			}
 			else {
