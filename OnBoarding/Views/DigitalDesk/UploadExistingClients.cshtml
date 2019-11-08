@@ -11,110 +11,196 @@
 				<ul class="nav nav-tabs" id="myTab" role="tablist">
 					<li class="nav-item">
 						<a class="nav-link active show" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">
-							<i class="fa fa-list"></i> Upload Existing Clients
+							<i class="fa fa-upload"></i> Upload Existing Clients
+						</a>
+					</li>
+					<li class="nav-item ml-auto">
+						<a class="nav-link" id="list-tab" data-toggle="tab" href="#list" role="tab" aria-controls="add" aria-selected="true">
+							<i class="fa fa-list"></i> Previous Uploaded Details
 						</a>
 					</li>
 				</ul>
 				<div class="tab-content" id="myTabContent">
-				<!-- Listing Tab-->
+					<!-- Upload Tab-->
 					<div class="tab-pane fade active show" id="home" role="tabpanel" aria-labelledby="home-tab">
 						<form enctype="multipart/form-data" role="form" id="UploadForm" action="" method="POST" accept-charset="utf-8">
-								<div class="form-group form-row" style="margin-left: 0px !important;">
-									<div class="col-md-12 col-sm-12 col-lg-12">
-										<label style="font-size: 12px;">Choose CSV file to Upload <i style="color:red;"> Your list should be in the following format</i>:</label>
-									</div>
-									<div class="col-12 col-sm-12 col-lg-12">
-										<table class="table-bordered" style="width:100%; border: 1px solid black; border-collapse: collapse;">
-											<tr style="border: 1px solid black;">
-												<th>Company Name</th>
-												<th>Company Email</th>
-												<th>GTC (Accepted T&C)</th>
-												<th>EMT Signup</th>
-												<th>SSI</th>
-												<th>AccountNumber</th>
-												<th>Currency</th>
-												<th>Representative Name</th>
-												<th>Representative Email</th>
-												<th>Representative Phone</th>
-												<th>GM Rep</th>
-												<th>EMT User</th>
-												<th>Representative Limit</th>
-											</tr>
-											<tr style="border: 1px solid black;">
-												<td>Company LTD</td>
-												<td>company@email.com</td>
-												<td>Yes</td>
-												<td>Yes</td>
-												<td>Yes</td>
-												<td>0101000000000</td>
-												<td>KES</td>
-												<td>John Doe</td>
-												<td>johndoe@email.com</td>
-												<td>254 70000000</td>
-												<td>Yes</td>
-												<td>Yes</td>
-												<td>1000</td>
-											</tr>
-											<tr style="border: 1px solid black;">
-												<td>Company LTD</td>
-												<td>company@email.com</td>
-												<td>No</td>
-												<td>No</td>
-												<td>No</td>
-												<td>0101000000000</td>
-												<td>USD</td>
-												<td>Jane Doe</td>
-												<td>janedoe@email.com</td>
-												<td>254 70000000</td>
-												<td>No</td>
-												<td>No</td>
-												<td>NO LIMIT</td>
-											</tr>
-										</table>
-									</div>
-								</div><hr />
-								<div class="form-group form-row" style="margin-left: 0px !important;">
-									<div class="col-12 col-sm-8 col-lg-8">
-										<div class="input-group">
-											<label class="input-group-btn">
-												<span class="btn btn-primary mt-0">
-													Browse&hellip; <input type="file" name="FileUpload" id="FileUpload" class="uploadFile" style="width: 0px;height: 0px;overflow: hidden;">
-												</span>
-											</label>
-											<input type="text" class="form-control" name="frm_filename" id="frm_filename" readonly>
-										</div>
-									</div>
-									<div class="col-12 col-sm-4 col-lg-4">
-										<button type="submit" name="submit" id="btnSubmit" class="btn btn-info btn-md w_full">
-											<i class="fa fa-upload"></i> Upload Existing Clients
-										</button>
+							<div class="form-group form-row" style="margin-left: 0px !important;">
+								<div class="col-md-12 col-sm-12 col-lg-12">
+									<label style="font-size: 12px;">Choose CSV file to Upload <i style="color:red;"> Your list should be in the following format</i>:</label>
+								</div>
+								<div class="col-12 col-sm-12 col-lg-12">
+									<table class="table-bordered" style="width:100%; border: 1px solid black; border-collapse: collapse;">
+										<tr style="border: 1px solid black;">
+											<th>Company Name</th>
+											<th>Company Email</th>
+											<th>GTC (Accepted T&C)</th>
+											<th>EMT Signup</th>
+											<th>SSI</th>
+											<th>AccountNumber</th>
+											<th>Currency</th>
+											<th>Representative Name</th>
+											<th>Representative Email</th>
+											<th>Representative Phone</th>
+											<th>GM Rep</th>
+											<th>EMT User</th>
+											<th>Representative Limit</th>
+										</tr>
+										<tr style="border: 1px solid black;">
+											<td>Company LTD</td>
+											<td>company@email.com</td>
+											<td>Yes</td>
+											<td>Yes</td>
+											<td>Yes</td>
+											<td>0101000000000</td>
+											<td>KES</td>
+											<td>John Doe</td>
+											<td>johndoe@email.com</td>
+											<td>254 70000000</td>
+											<td>Yes</td>
+											<td>Yes</td>
+											<td>1000</td>
+										</tr>
+										<tr style="border: 1px solid black;">
+											<td>Company LTD</td>
+											<td>company@email.com</td>
+											<td>No</td>
+											<td>No</td>
+											<td>No</td>
+											<td>0101000000000</td>
+											<td>USD</td>
+											<td>Jane Doe</td>
+											<td>janedoe@email.com</td>
+											<td>254 70000000</td>
+											<td>No</td>
+											<td>No</td>
+											<td>NO LIMIT</td>
+										</tr>
+									</table>
+								</div>
+							</div><hr />
+							<div class="form-group form-row" style="margin-left: 0px !important;">
+								<div class="col-12 col-sm-8 col-lg-8">
+									<div class="input-group">
+										<label class="input-group-btn">
+											<span class="btn btn-primary mt-0">
+												Browse&hellip; <input type="file" name="FileUpload" id="FileUpload" class="uploadFile" style="width: 0px;height: 0px;overflow: hidden;">
+											</span>
+										</label>
+										<input type="text" class="form-control" name="frm_filename" id="frm_filename" readonly>
 									</div>
 								</div>
-							</form>
-							<div class="item-data-retriving d_none">
-								<div class="form-group form-row" style="margin-left: 0px !important;">
-									<div class="col-12 col-sm-9 col-lg-9">
-										<h6><i class="fa fa-adjust"></i> View Client Details </h6>
-									</div>
-									<h4 class="text-aqua"><i class="fa fa-adjust"></i> Uploaded Clients </h4>
-								</div>
-								<div class="col-xs-6">
-									<button class="btn btn-danger pull-right select-another-item">
-										<span class="glyphicon glyphicon-upload"></span> Upload Another List
+								<div class="col-12 col-sm-4 col-lg-4">
+									<button type="submit" name="submit" id="btnSubmit" class="btn btn-info btn-md w_full">
+										<i class="fa fa-upload"></i> Upload Existing Clients
 									</button>
 								</div>
 							</div>
-							<!--Load Up Data -->
-							<center id="Loading_Div" class="d_none">
-								<h4 class="m_top_20 m_bottom_20"> Please wait... Submiting your request </h4>
-								<img src="~/Content/images/loading-bar.gif" class="img-thumbnail" alt="Loading" style="max-width:160px;">
-							</center>
-							<!--End Loading Up Data -->
+						</form>
+						<div class="item-data-retriving d_none">
+							<div class="form-group form-row" style="margin-left: 0px !important;">
+								<div class="col-12 col-sm-9 col-lg-9">
+									<h6><i class="fa fa-adjust"></i> View Client Details </h6>
+								</div>
+								<h4 class="text-aqua"><i class="fa fa-adjust"></i> Uploaded Clients </h4>
+							</div>
+							<div class="col-xs-6">
+								<button class="btn btn-danger pull-right select-another-item">
+									<span class="glyphicon glyphicon-upload"></span> Upload Another List
+								</button>
+							</div>
+						</div>
+						<!--Load Up Data -->
+						<center id="Loading_Div" class="d_none">
+							<h4 class="m_top_20 m_bottom_20"> Please wait... Submiting your request </h4>
+							<img src="~/Content/images/loading-bar.gif" class="img-thumbnail" alt="Loading" style="max-width:160px;">
+						</center>
+						<!--End Loading Up Data -->
 					</div>
-						<!--End Submission Processing -->
-						<div class="item-data-retrived"></div>
 
+					<!-- Listing Tab-->
+					<div class="tab-pane fade show" id="list" role="tabpanel" aria-labelledby="list-tab">
+						<div class="item-data-retriving d_none">
+							<div class="form-group form-row" style="margin-left: 0px !important;">
+								<div class="col-12 col-sm-10 col-lg-10">
+									<h6><small><i class="fa fa-adjust"></i> View Upload Details </small></h6>
+								</div>
+								<div class="col-12 col-sm-2 col-lg-2">
+									<button id="selectanother" class="btn btn-danger w_full" type="button"><i class="fa fa-check-circle"></i> Select Another File </button>
+								</div>
+							</div>
+						</div>
+						<!--Load Up Data -->
+						<center id="RMDLoading_ID" class="d_none r_corners">
+							<h6 class="m_top_20 m_bottom_20"> Please wait... Fetching Upload Details </h6>
+							<img src="~/Content/images/loading-bar.gif" class="img-thumbnail" alt="Loading" style="max-width:160px;">
+						</center>
+						<!--End Loading Up Data -->
+						<div class="item-data-retrived"></div>
+						<div id="ViewAll" class="row mt-3">
+							<div class="col-lg-12 col-md-12 col-12">
+								<div id="UploadedClientsTableContainer"></div>
+							</div>
+							<script>
+								$(document).ready(function () {
+									$('#UploadedClientsTableContainer').jtable({
+										title: '<i class="fa fa-list"></i> Recently Uploaded Files',
+										paging: true,
+										pageSize: 10,
+										sorting: true,
+										defaultSorting: 'DateCreated DESC',
+										actions:
+										{
+											listAction: '/DigitalDesk/GetUploadedClients'
+										},
+										fields: {
+											FileName: {
+												title: 'File Name',
+												width: '30%'
+											},
+											UploadedBy: {
+												title: 'Uploaded By',
+												width: '20%'
+											},
+											DateCreated: {
+												title: 'Date Uploaded',
+												width: '10%',
+												type: 'date',
+												displayFormat: 'yy-mm-dd'
+											},
+											Status: {
+												title: 'Status',
+												width: '10%',
+												display: function (data) {
+													var approved = data.record.Status;
+													if (approved == 1) {
+														return '<center><p class="text-success"><i class="fa fa-check-circle"></i> Approved </p></center>';
+													}
+													else if (approved == 2) {
+														return '<center><p class="text-danger"><i class="fa fa-times-circle"></i> Declined </p></center>';
+													}
+													else {
+														return '<center><p class="text-warning"><i class="fa fa-check-circle"></i> Pending </p></center>';
+													}
+												}
+											},
+											MyButton: {
+												title: 'Action',
+												width: '10%',
+												display: function (data) {
+													return '<center><button class="btn btn-outline-primary w_full btn-small" onclick="LoadUpFileModal(\'' + data.record.FileName + '\')">' +
+														'<span class="fa fa-check-circle"></span> View </button></center>';
+												}
+											},
+										}
+									});
+
+									//Load list from server
+									$('#UploadedClientsTableContainer').jtable('load');
+								});
+							</script>
+						</div>
 					</div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -150,6 +236,57 @@
 </div>
 <!--End Confirm Approval Modal-->
 <script type="text/javascript">
+	//Load modal
+	function LoadUpModal() {
+		$('#LoadUpModal').modal({ backdrop: 'static', keyboard: false });
+	}
+
+	//Function Load modal
+	function LoadUpFileModal(FileName) {
+		// Hide Default DIV's
+		$('#ViewAll').hide();
+		$('#RMDLoading_ID').show('fast');
+		$('.item-data-retriving').show();
+		// LoadUp User Data
+		$.ajax({
+			type: "POST",
+			url: "/DigitalDesk/ViewUploadedClient",
+			data: '{fileName: "' + FileName + '" }',
+			async: true,
+			contentType: "application/json; charset=utf-8",
+			dataType: "html",
+			success: function (data) {
+				$('#RMDLoading_ID').hide();
+				$('.item-data-retrived').show();
+				$('.item-data-retrived').html(data);
+			},
+			error: function (xhr, textStatus, errorThrown) {
+				if (textStatus === 'error') {
+					$('#ViewAll').show();
+					$('#RMDLoading_ID').hide();
+					$('.item-data-retriving').hide();
+					toastr.error('Submission error! Code: ' + xhr.status + ' Details: ' + errorThrown);
+				}
+			},
+		});
+	}
+
+	//select-another-item
+	$('#selectanother').click(function (e) {
+		e.preventDefault();
+		$('.item-data-retrived').hide('fast');
+		$('.item-data-retriving').hide('fast');
+		$('#RMDLoading_ID').hide('fast');
+		$('#ViewAll').show('fast');
+		$('#UploadedClientsTableContainer').jtable('load');
+	});
+
+	//Close modal fnction
+	$('#closemodal').on('click', function (e) {
+		e.preventDefault();
+		$('#LoadUpModal').modal('hide');
+	})
+
 	jQuery().ready(function () {
 		var v = jQuery("#UploadForm").validate({
 			rules: {
@@ -168,23 +305,6 @@
 	});
 
 	$(document).ready(function () {
-		//Load modal
-		function LoadUpModal() {
-			$('#LoadUpModal').modal({ backdrop: 'static', keyboard: false });
-		}
-		//Close modal fnction
-		$('#closemodal').on('click', function (e) {
-			e.preventDefault();
-			$('#LoadUpModal').modal('hide');
-		})
-		//select-another-item
-		$('.select-another-item').click(function (e) {
-			e.preventDefault();
-			$('.item-data-retrived').hide('fast');
-			$('.item-data-retriving').hide('fast');
-			$('#UploadForm').show('fast');
-		});
-
 		//Upload scripts
 		$("#frm_filename").val("Select CSV file for upload with the format above");
 		$("#FileUpload").on("change", uploadFile);
@@ -249,6 +369,6 @@
 					processData: false
 				});
 			}
-		});
+		});	
 	});
 </script>

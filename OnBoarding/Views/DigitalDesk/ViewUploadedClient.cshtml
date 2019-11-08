@@ -9,7 +9,7 @@
 				$(document).ready(function () {
 					var fileName = '@ViewData["FileName"]';
 					$('#UploadsTableContainer').jtable({
-						title: '<i class="fa fa-list"></i> Uploaded Clients <div class="jTableTitleDiv float-right"><button id="DeclineSelected" class="btn btn-outline-danger w_full" type="button" style="font-size:11px;line-height: 15px;padding: 5px 10px;letter-spacing:.4px;border-radius:0px; margin: -4px 10px 0px 0px;"><i class="fa fa-trash"></i> Decline Selected </button><button id="ApproveSelected" class="btn btn-outline-success w_full" type="button" style="font-size:11px;line-height: 15px;padding: 5px 10px;letter-spacing:.4px;border-radius:0px;margin: -4px 0px 0px 0px;"><i class="fa fa-check-circle"></i> Approve Selected </button></div>',
+						title: '<i class="fa fa-list"></i> Uploaded Clients <div class="jTableTitleDiv float-right"><button id="DeclineSelected" class="btn btn-outline-danger w_full" type="button" style="font-size:11px;line-height: 15px;padding: 5px 10px;letter-spacing:.4px;border-radius:0px; margin: -4px 10px 0px 0px;"><i class="fa fa-trash"></i> Decline Selected </button></div>',
 						paging: true,
 						pageSize: 10,
 						sorting: true,
@@ -20,7 +20,7 @@
 						selectOnRowClick: true, //Enable this to only select using checkboxes
 						actions:
 						{
-							listAction: '/Gmo/GetUploadApprovals?FileName=' + fileName,
+							listAction: '/DigitalDesk/GetUploadApprovals?FileName=' + fileName,
 						},
 						fields: {
 							Id: {
@@ -30,8 +30,8 @@
 								list: false
 							},
 							CompanyName: {
-								title: 'Company-Name',
-								width: '30%'
+								title: 'CompanyName',
+								width: '25%'
 							},
 							AcceptedTerms: {
 								title: 'Terms',
@@ -77,6 +77,23 @@
 								title: 'DateOfContract',
 								width: '10%'
 							},
+							Status: {	
+								title: 'Status',
+								width: '15%',
+								display: function (data) {
+									var approved = data.record.Status;
+									if (approved == 1) {
+										return '<center><p class="text-success"><i class="fa fa-check-circle"></i> Approved </p></center>';
+									}
+									else if (approved == 2) {
+										return '<center><p class="text-danger"><i class="fa fa-times-circle"></i> Declined </p></center>';
+									}
+									else
+									{
+										return '<center><p class="text-warning"><i class="fa fa-check-circle"></i> Pending </p></center>';
+									}
+								}
+							}
 						},
 
 						//Register to selectionChanged event to hanlde events
@@ -85,8 +102,6 @@
                             if ($selectedRows.length > 0) {
                                 $selectedRows.each(function () {
                                     var record = $(this).data('record');
-                                    var UploadID = record.Id;
-                                    //alert(" Journal ID :" + JournalID + " ");
                                 });
                             }
                         }
@@ -94,58 +109,6 @@
 
 					//Load list from server
 					$('#UploadsTableContainer').jtable('load');
-					
-					//Approve records
-					$('button#ApproveSelected').on('click', function (e) {
-						e.preventDefault();
-						var $selectedRows = $('#UploadsTableContainer').jtable('selectedRows');
-						if ($selectedRows.length > 0) {
-							Swal.fire({
-								title: 'Are you sure?',
-								text: "You won't be able to revert this!",
-								icon: 'warning',
-								showCancelButton: true,
-								confirmButtonColor: '#28a745;',
-								cancelButtonColor: '#d33',
-								confirmButtonText: 'Yes, approve records',
-								cancelButtonText: 'No, cancel',
-							}).then((result) => {
-								if (result.value) {
-									var ids = [];
-									$selectedRows.each(function () {
-										ids.push($(this).data('record').Id);
-									});
-									$.ajax({
-										url: "/Gmo/ApproveSelected",
-										type: 'POST',
-										data: JSON.stringify(ids),
-										contentType: 'application/json; charset=utf-8',
-										dataType: "json",
-										async: true,
-										success: function (XmlHttpRequest) {
-											if (XmlHttpRequest === 'success') {
-												Swal.fire(
-													'Success!',
-													'Your records has been successfully approved',
-													'success'
-												)
-												$('#UploadsTableContainer').jtable('load');
-											}
-											else {
-												Swal.fire({
-													icon: 'error',
-													text: XmlHttpRequest
-												})
-											}
-										}
-									})
-								}
-							})
-						}
-						else {
-							Swal.fire('Please select record(s) to approve!')
-						}
-					});
 
 					//Decline selected items
 					$('button#DeclineSelected').on('click', function (e) {
@@ -162,13 +125,13 @@
 								confirmButtonText: 'Yes, decline records',
 								cancelButtonText: 'No, cancel',
 							}).then((result) => {
-								$selectedRows.each(function () { 
+								$selectedRows.each(function () {
 		                            var ids = [];
 									$selectedRows.each(function () {
 										ids.push($(this).data('record').Id);
 									});
 					                $.ajax({
-										url: "/Gmo/DeclineSelected",
+										url: "/DigitalDesk/DeclineSelected",
 										type: 'POST',
 										data: JSON.stringify(ids),
 										contentType: 'application/json; charset=utf-8',

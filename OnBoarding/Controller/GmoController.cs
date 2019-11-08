@@ -999,24 +999,27 @@ namespace OnBoarding.Controllers
         //
         //Approve records
         [HttpPost]
-        public JsonResult DeclineSelected(int Id)
+        public JsonResult DeclineSelected(List<int> postedIds)
         {
             using (var db = new DBModel())
             {
-                try
+                foreach (int item in postedIds)
                 {
-                    var RecordToUpdate = db.ExistingClientsUploads.SingleOrDefault(c => c.Id == Id);
-                    RecordToUpdate.Status = 2;
-                    RecordToUpdate.ApprovedBy = User.Identity.GetUserId();
-                    RecordToUpdate.DateApproved = DateTime.Now;
-                    db.SaveChanges();
+                    try
+                    {
+                        var RecordToUpdate = db.ExistingClientsUploads.SingleOrDefault(c => c.Id == item);
+                        RecordToUpdate.Status = 2;
+                        RecordToUpdate.ApprovedBy = User.Identity.GetUserId();
+                        RecordToUpdate.DateApproved = DateTime.Now;
+                        db.SaveChanges();
+                    }
+                    catch (Exception)
+                    {
+                        return Json("Error! Unable to decline selected records", JsonRequestBehavior.AllowGet);
+                    }
+                }
 
-                    return Json("success", JsonRequestBehavior.AllowGet);
-                }
-                catch (Exception)
-                {
-                    return Json("Error! Unable to decline selected records", JsonRequestBehavior.AllowGet);
-                }
+                return Json("success", JsonRequestBehavior.AllowGet);
             }
         }
     }

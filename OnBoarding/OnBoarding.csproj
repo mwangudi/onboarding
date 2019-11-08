@@ -3116,6 +3116,7 @@
     <Content Include="Views\Shared\_AdminOldLayout.cshtml" />
     <Content Include="Views\Gmo\ApproveUploads.cshtml" />
     <Content Include="Views\Gmo\ViewUploadedClient.cshtml" />
+    <Content Include="Views\DigitalDesk\ViewUploadedClient.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

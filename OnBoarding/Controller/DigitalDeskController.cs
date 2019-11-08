@@ -3894,5 +3894,135 @@ namespace OnBoarding.Controllers
 
             return PartialView();
         }
+
+        //
+        //Get //Count
+        public int GetUploadedClientsCount()
+        {
+            using (DBModel db = new DBModel())
+            {
+                var query = db.Database.SqlQuery<ExistingClientsUploadViewModel>("SELECT count(a.[FileName]) count FROM ExistingClientsUploads a INNER JOIN AspNetUsers u ON u.Id = a.UploadedBy WHERE a.UploadedBy = '" + User.Identity.GetUserId() + "' GROUP BY a.[FileName];").Count();
+                return query;
+            }
+        }
+
+        //
+        //GET /Get Currencies List
+        public List<ExistingClientsUploadViewModel> GetUploadedClientsList(int jtStartIndex, int jtPageSize, int count, string jtSorting)
+        {
+            // Instance of DatabaseContext
+            using (DBModel db = new DBModel())
+            {
+                IEnumerable<ExistingClientsUploadViewModel> query = db.Database.SqlQuery<ExistingClientsUploadViewModel>("SELECT a.[FileName], u.CompanyName UploadedBy, a.Status, a.DateCreated FROM ExistingClientsUploads a INNER JOIN AspNetUsers u ON u.Id = a.UploadedBy WHERE a.UploadedBy = '" + User.Identity.GetUserId() + "' GROUP BY u.CompanyName, a.[FileName], a.Status, a.DateCreated ORDER BY " + jtSorting + " OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY;");
+
+                //No Search parameters
+
+                //Sorting Ascending and Descending  
+                if (string.IsNullOrEmpty(jtSorting) || jtSorting.Equals("DateCreated ASC"))
+                {
+                    query = query.OrderBy(p => p.DateCreated);
+                }
+                else if (jtSorting.Equals("DateCreated DESC"))
+                {
+                    query = query.OrderByDescending(p => p.DateCreated);
+                }
+                else if (jtSorting.Equals("UploadedBy ASC"))
+                {
+                    query = query.OrderBy(p => p.UploadedBy);
+                }
+                else if (jtSorting.Equals("UploadedBy DESC"))
+                {
+                    query = query.OrderByDescending(p => p.UploadedBy);
+                }
+                else if (jtSorting.Equals("FileName ASC"))
+                {
+                    query = query.OrderBy(p => p.FileName);
+                }
+                else if (jtSorting.Equals("FileName DESC"))
+                {
+                    query = query.OrderByDescending(p => p.FileName);
+                }
+                else if (jtSorting.Equals("Status ASC"))
+                {
+                    query = query.OrderBy(p => p.Status);
+                }
+                else if (jtSorting.Equals("Status DESC"))
+                {
+                    query = query.OrderByDescending(p => p.Status);
+                }
+                else
+                {
+                    //Default!
+                    query = query.OrderByDescending(p => p.DateCreated);
+                }
+                return count > 0
+                           ? query.Skip(jtStartIndex).Take(count).ToList()  //Paging  
+                           : query.ToList(); //No paging 
+            }
+        }
+
+        //
+        //GET //Gets the list and returns Json object
+        [HttpPost]
+        public JsonResult GetUploadedClients(int jtStartIndex = 0, int jtPageSize = 0, int count = 0, string jtSorting = null)
+        {
+            using (var db = new DBModel())
+            {
+                var data = GetUploadedClientsList(jtStartIndex, jtPageSize, count, jtSorting);
+                var recordCount = GetUploadedClientsCount();
+                return Json(new { Result = "OK", Records = data, TotalRecordCount = recordCount });
+            }
+        }
+
+        //
+        //GET //ViewUploadedClient
+        [HttpPost]
+        [AllowAnonymous]
+        public PartialViewResult ViewUploadedClient(string fileName)
+        {
+            ViewData["FileName"] = fileName;
+            return PartialView();
+        }
+
+        //
+        //POST //Gets the list and returns a Json object
+        [HttpPost]
+        public JsonResult GetUploadApprovals(int jtStartIndex = 0, int jtPageSize = 0, int count = 0, string jtSorting = null, string fileName = null)
+        {
+            using (var db = new DBModel())
+            {
+                int recordCount = db.ExistingClientsUploads.Where(a => a.FileName == fileName).Count();
+                var Query = db.Database.SqlQuery<ExistingClientsUpload>("SELECT n.* FROM ExistingClientsUploads n WHERE n.[FileName] = " + "'" + fileName + "'" + " ORDER BY " + jtSorting + " OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY;");
+                var approvals = Query.ToList();
+                return Json(new { Result = "OK", Records = approvals, TotalRecordCount = recordCount });
+            }
+        }
+
+        //
+        //Approve records
+        [HttpPost]
+        public JsonResult DeclineSelected(List<int> postedIds)
+        {
+            using (var db = new DBModel())
+            {
+                foreach (int item in postedIds)
+                {
+                    try
+                    {
+                        var RecordToUpdate = db.ExistingClientsUploads.SingleOrDefault(c => c.Id == item);
+                        RecordToUpdate.Status = 2;
+                        RecordToUpdate.ApprovedBy = User.Identity.GetUserId();
+                        RecordToUpdate.DateApproved = DateTime.Now;
+                        db.SaveChanges();
+                    }
+                    catch (Exception)
+                    {
+                        return Json("Error! Unable to decline selected records", JsonRequestBehavior.AllowGet);
+                    }
+                }
+
+                return Json("success", JsonRequestBehavior.AllowGet);
+            }
+        }
     }
 }
