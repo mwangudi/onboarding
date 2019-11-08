@@ -111,29 +111,34 @@
 								cancelButtonText: 'No, cancel',
 							}).then((result) => {
 								if (result.value) {
+									var ids = [];
 									$selectedRows.each(function () {
-										Id = $(this).data('record').Id;
-										$.ajax({
-											url: "/Gmo/ApproveSelected?Id=" + Id,
-											type: 'POST',
-											async: true,
-											success: function (XmlHttpRequest) {
-												if (XmlHttpRequest === 'success') {
-													Swal.fire(
-														'Success!',
-														'Your records has been successfully approved',
-														'success'
-													)
-												}
-												else {
-													Swal.fire({
-														icon: 'error',
-														text: XmlHttpRequest
-													})
-												}
-											}
-										})
+										ids.push($(this).data('record').Id);
 									});
+									$.ajax({
+										url: "/Gmo/ApproveSelected",
+										type: 'POST',
+										data: JSON.stringify(ids),
+										contentType: 'application/json; charset=utf-8',
+										dataType: "json",
+										async: true,
+										success: function (XmlHttpRequest) {
+											if (XmlHttpRequest === 'success') {
+												Swal.fire(
+													'Success!',
+													'Your records has been successfully approved',
+													'success'
+												)
+												$('#UploadsTableContainer').jtable('load');
+											}
+											else {
+												Swal.fire({
+													icon: 'error',
+													text: XmlHttpRequest
+												})
+											}
+										}
+									})
 								}
 							})
 						}
@@ -171,6 +176,7 @@
 													'Your records has been successfully declined',
 													'success'
 												)
+												$('#UploadsTableContainer').jtable('load');
 											}
 											else {
 												Swal.fire({

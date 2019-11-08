@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNet.Identity;
+using Newtonsoft.Json.Linq;
 using OnBoarding.Models;
 using OnBoarding.ViewModels;
 using System;
@@ -780,22 +781,21 @@ namespace OnBoarding.Controllers
         //
         //Approve records
         [HttpPost]
-        public JsonResult ApproveSelected(int Id)
+        public JsonResult ApproveSelected(List<int> postedIds)
         {
             using (var db = new DBModel())
             {
-                try
+                foreach (int item in postedIds)
                 {
-                    //Update record as approved
-                    var clientId = 0;
-                    var companyId = 0;
+                    //Declare multiple initializations
+                    int clientId = 0, companyId = 0, clientSaved = 0, companySaved = 0, ssiSaved = 0, repSaved = 0;
 
-                    //1. Check if accountnumber exist
-                    var RecordToUpdate = db.ExistingClientsUploads.SingleOrDefault(c => c.Id == Id);
+                    //1. Check if Registered Client exist
+                    var RecordToUpdate = db.ExistingClientsUploads.SingleOrDefault(c => c.Id == item);
                     var clientExists = db.RegisteredClients.SingleOrDefault(c => c.EmailAddress == RecordToUpdate.CompanyEmail && c.Status == 1);
                     if (clientExists == null)
                     {
-                        //1. Create new entry
+                        //A. Create New Registered Client
                         try
                         {
                             var AcceptedTerms = (RecordToUpdate.AcceptedTerms == "YES" || RecordToUpdate.AcceptedTerms == "Yes" || RecordToUpdate.AcceptedTerms == "yes") ? true : false;
@@ -809,17 +809,17 @@ namespace OnBoarding.Controllers
                             newRegisteredClient.CreatedBy = User.Identity.GetUserId();
                             newRegisteredClient.UploadedBy = User.Identity.GetUserId();
                             db.RegisteredClients.Add(newRegisteredClient);
-                            var clientSaved = db.SaveChanges();
+                            clientSaved = db.SaveChanges();
                             clientId = newRegisteredClient.Id;
                         }
-                        catch(Exception)
+                        catch (Exception)
                         {
                             return Json("Error! Unable to create registered client", JsonRequestBehavior.AllowGet);
                         }
 
+                        //B. Create Company Details
                         try
                         {
-                            //2. Create Company
                             var newCompany = db.ClientCompanies.Create();
                             newCompany.ClientId = clientId;
                             newCompany.CompanyName = RecordToUpdate.CompanyName;
@@ -828,7 +828,7 @@ namespace OnBoarding.Controllers
                             newCompany.DateCreated = DateTime.Now;
                             newCompany.CreatedBy = User.Identity.GetUserId();
                             db.ClientCompanies.Add(newCompany);
-                            var companySaved = db.SaveChanges();
+                            companySaved = db.SaveChanges();
                             companyId = newCompany.Id;
                         }
                         catch (Exception)
@@ -836,74 +836,90 @@ namespace OnBoarding.Controllers
                             return Json("Error! Unable to create company details", JsonRequestBehavior.AllowGet);
                         }
 
-                        try
+                        //C. Check if SSI exist and create if not 
+                        var SSIExists = db.ClientSettlementAccounts.SingleOrDefault(c => c.AccountNumber == RecordToUpdate.AccountNumber && c.ClientID == clientId && c.CompanyID == companyId && c.Status == 1);
+                        if (SSIExists == null)
                         {
-                            //3. Create SSI
-                            var newSSI = db.ClientSettlementAccounts.Create();
-                            newSSI.ClientID = clientId;
-                            newSSI.CompanyID = companyId;
-                            newSSI.CurrencyID = 6; //6 is for other specified currency
-                            newSSI.OtherCurrency = RecordToUpdate.Currency;
-                            newSSI.AccountNumber = RecordToUpdate.AccountNumber;
-                            newSSI.Status = 1;
-                            newSSI.DateCreated = DateTime.Now;
-                            db.ClientSettlementAccounts.Add(newSSI);
-                            var ssiSaved = db.SaveChanges();
-                        }
-                        catch (Exception)
-                        {
-                            return Json("Error! Unable to create SSI details", JsonRequestBehavior.AllowGet);
+                            try
+                            {
+                                //Create SSI
+                                var newSSI = db.ClientSettlementAccounts.Create();
+                                newSSI.ClientID = clientId;
+                                newSSI.CompanyID = companyId;
+                                newSSI.CurrencyID = 6; //6 is for other specified currency
+                                newSSI.OtherCurrency = RecordToUpdate.Currency;
+                                newSSI.AccountNumber = RecordToUpdate.AccountNumber;
+                                newSSI.Status = 1;
+                                newSSI.DateCreated = DateTime.Now;
+                                db.ClientSettlementAccounts.Add(newSSI);
+                                ssiSaved = db.SaveChanges();
+                            }
+                            catch (Exception)
+                            {
+                                return Json("Error! Unable to create SSI details", JsonRequestBehavior.AllowGet);
+                            }
                         }
 
-                        try
+                        //D. Check if Representative exists and create if not
+                        var RepExists = db.DesignatedUsers.SingleOrDefault(c => c.Email == RecordToUpdate.RepresentativeEmail && c.ClientID == clientId && c.CompanyID == companyId && c.Status == 1);
+                        if (RepExists == null)
                         {
-                            //4. Create Representative
-                            var EMTSignUp = (RecordToUpdate.IsEMTUser == "YES" || RecordToUpdate.IsEMTUser == "Yes" || RecordToUpdate.IsEMTUser == "yes") ? true : false;
-                            var GMRep = (RecordToUpdate.IsGM == "YES" || RecordToUpdate.IsGM == "Yes" || RecordToUpdate.IsGM == "yes") ? true : false;
-                            var newRepresentative = db.DesignatedUsers.Create();
-                            newRepresentative.Surname = RecordToUpdate.RepresentativeName;
-                            newRepresentative.TradingLimit = RecordToUpdate.RepresentativeLimit;
-                            newRepresentative.Mobile = RecordToUpdate.RepresentativePhonenumber;
-                            newRepresentative.Email = RecordToUpdate.RepresentativeEmail;
-                            newRepresentative.ClientID = clientId;
-                            newRepresentative.CompanyID = companyId;
-                            newRepresentative.Status = 1;
-                            newRepresentative.EMarketSignUp = EMTSignUp;
-                            newRepresentative.GMRepresentative = GMRep;
-                            newRepresentative.AcceptedTerms = true;
-                            newRepresentative.DateCreated = DateTime.Now;
-                            db.DesignatedUsers.Add(newRepresentative);
-                            var repSaved = db.SaveChanges();
+                            try
+                            {
+                                var EMTSignUp = (RecordToUpdate.IsEMTUser == "YES" || RecordToUpdate.IsEMTUser == "Yes" || RecordToUpdate.IsEMTUser == "yes") ? true : false;
+                                var GMRep = (RecordToUpdate.IsGM == "YES" || RecordToUpdate.IsGM == "Yes" || RecordToUpdate.IsGM == "yes") ? true : false;
+                                var newRepresentative = db.DesignatedUsers.Create();
+                                newRepresentative.Surname = RecordToUpdate.RepresentativeName;
+                                newRepresentative.TradingLimit = RecordToUpdate.RepresentativeLimit;
+                                newRepresentative.Mobile = RecordToUpdate.RepresentativePhonenumber;
+                                newRepresentative.Email = RecordToUpdate.RepresentativeEmail;
+                                newRepresentative.ClientID = clientId;
+                                newRepresentative.CompanyID = companyId;
+                                newRepresentative.Status = 1;
+                                newRepresentative.EMarketSignUp = EMTSignUp;
+                                newRepresentative.GMRepresentative = GMRep;
+                                newRepresentative.AcceptedTerms = true;
+                                newRepresentative.DateCreated = DateTime.Now;
+                                db.DesignatedUsers.Add(newRepresentative);
+                                repSaved = db.SaveChanges();
+                            }
+                            catch (Exception)
+                            {
+                                return Json("Error! Unable to create representative details", JsonRequestBehavior.AllowGet);
+                            }
                         }
-                        catch (Exception)
+
+                        //2. Log approval details
+                        if ((clientSaved > 0) && (companySaved > 0) && (ssiSaved > 0) && (repSaved > 0))
                         {
-                            return Json("Error! Unable to create representative details", JsonRequestBehavior.AllowGet);
+                            try
+                            {
+                                //Update record as approved
+                                RecordToUpdate.Status = 1;
+                                RecordToUpdate.ApprovedBy = User.Identity.GetUserId();
+                                RecordToUpdate.DateApproved = DateTime.Now;
+                                var recordSaved = db.SaveChanges();
+                            }
+                            catch (Exception)
+                            {
+                                return Json("Error! Unable to approve selected records", JsonRequestBehavior.AllowGet);
+                            }
                         }
-                        
-                        try
-                        {
-                            //Update record as approved
-                            RecordToUpdate.Status = 1;
-                            RecordToUpdate.ApprovedBy = User.Identity.GetUserId();
-                            RecordToUpdate.DateApproved = DateTime.Now;
-                            var recordSaved = db.SaveChanges();
-                            return Json("success", JsonRequestBehavior.AllowGet);
-                        }
-                        catch (Exception)
+                        else
                         {
                             return Json("Error! Unable to approve selected records", JsonRequestBehavior.AllowGet);
                         }
                     }
                     else
                     {
-                        //Check if SSI exists and create if not
+                        //A. Check if SSI exists and create if not
                         var SSIExists = db.ClientSettlementAccounts.SingleOrDefault(c => c.AccountNumber == RecordToUpdate.AccountNumber && c.ClientID == clientExists.Id && c.Status == 1);
-                        if(SSIExists == null)
+                        if (SSIExists == null)
                         {
                             try
                             {
                                 //Create SSI
-                                var clientDetails = db.RegisteredClients.SingleOrDefault(c => c.AccountNumber == RecordToUpdate.AccountNumber && c.Status == 1);
+                                var clientDetails = db.RegisteredClients.SingleOrDefault(c => c.EmailAddress == RecordToUpdate.CompanyEmail && c.Status == 1);
                                 var companyDetails = db.ClientCompanies.SingleOrDefault(c => c.ClientId == clientDetails.Id && c.Status == 1);
                                 var newSSI = db.ClientSettlementAccounts.Create();
                                 newSSI.ClientID = clientDetails.Id;
@@ -914,7 +930,7 @@ namespace OnBoarding.Controllers
                                 newSSI.Status = 1;
                                 newSSI.DateCreated = DateTime.Now;
                                 db.ClientSettlementAccounts.Add(newSSI);
-                                var ssiSaved = db.SaveChanges();
+                                ssiSaved = db.SaveChanges();
                             }
                             catch (Exception)
                             {
@@ -922,13 +938,13 @@ namespace OnBoarding.Controllers
                             }
                         }
 
-                        //Check if representative exists and create if not
-                        var RepExists = db.DesignatedUsers.SingleOrDefault(c => c.Email == RecordToUpdate.RepresentativeEmail && c.Status == 1);
+                        //B. Check if representative exists and create if not
+                        var RepExists = db.DesignatedUsers.SingleOrDefault(c => c.Email == RecordToUpdate.RepresentativeEmail && c.ClientID == clientExists.Id && c.Status == 1);
                         if (RepExists == null)
                         {
                             try
                             {
-                                //Create SSI
+                                //Create Representative
                                 var clientDetails = db.RegisteredClients.SingleOrDefault(c => c.EmailAddress == RecordToUpdate.CompanyEmail && c.Status == 1);
                                 var companyDetails = db.ClientCompanies.SingleOrDefault(c => c.ClientId == clientDetails.Id && c.Status == 1);
                                 var EMTSignUp = (RecordToUpdate.IsEMTUser == "YES" || RecordToUpdate.IsEMTUser == "Yes" || RecordToUpdate.IsEMTUser == "yes") ? true : false;
@@ -946,30 +962,37 @@ namespace OnBoarding.Controllers
                                 newRepresentative.AcceptedTerms = true;
                                 newRepresentative.DateCreated = DateTime.Now;
                                 db.DesignatedUsers.Add(newRepresentative);
-                                var repSaved = db.SaveChanges();
+                                repSaved = db.SaveChanges();
                             }
                             catch (Exception)
                             {
                                 return Json("Error! Unable to create representative details", JsonRequestBehavior.AllowGet);
                             }
                         }
+
+                        //2. Log approval details
+                        if ((ssiSaved > 0) || (repSaved > 0))
+                        {
+                            try
+                            {
+                                //Update record as approved
+                                RecordToUpdate.Status = 1;
+                                RecordToUpdate.ApprovedBy = User.Identity.GetUserId();
+                                RecordToUpdate.DateApproved = DateTime.Now;
+                                var recordSaved = db.SaveChanges();
+                            }
+                            catch (Exception)
+                            {
+                                return Json("Error! Unable to approve selected records", JsonRequestBehavior.AllowGet);
+                            }
+                        }
                         else
                         {
-                            return Json("Error! Duplicate entry for representative details", JsonRequestBehavior.AllowGet);
+                            return Json("Error! Unable to approve selected records", JsonRequestBehavior.AllowGet);
                         }
-
-                        //Update record as approved
-                        RecordToUpdate.Status = 1;
-                        RecordToUpdate.ApprovedBy = User.Identity.GetUserId();
-                        RecordToUpdate.DateApproved = DateTime.Now;
-                        var recordSaved = db.SaveChanges();
-                        return Json("success", JsonRequestBehavior.AllowGet);
                     }
                 }
-                catch (Exception)
-                {
-                    return Json("Error! Unable to approve selected records", JsonRequestBehavior.AllowGet);
-                }
+                return Json("success", JsonRequestBehavior.AllowGet);
             }
         }
 
