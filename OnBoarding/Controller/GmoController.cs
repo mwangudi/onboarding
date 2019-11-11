@@ -8,6 +8,7 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web.Mvc;
 
 namespace OnBoarding.Controllers
@@ -793,28 +794,38 @@ namespace OnBoarding.Controllers
                     //1. Check if Registered Client exist
                     var RecordToUpdate = db.ExistingClientsUploads.SingleOrDefault(c => c.Id == item);
                     var clientExists = db.RegisteredClients.SingleOrDefault(c => c.EmailAddress == RecordToUpdate.CompanyEmail && c.Status == 1);
+                    var regex = @"^010[0-9]{10}$";
+                    var match = Regex.Match(RecordToUpdate.AccountNumber, regex, RegexOptions.IgnoreCase);
+                    
                     if (clientExists == null)
                     {
-                        //A. Create New Registered Client
-                        try
+                        if (!match.Success)
                         {
-                            var AcceptedTerms = (RecordToUpdate.AcceptedTerms == "YES" || RecordToUpdate.AcceptedTerms == "Yes" || RecordToUpdate.AcceptedTerms == "yes") ? true : false;
-                            var newRegisteredClient = db.RegisteredClients.Create();
-                            newRegisteredClient.Surname = RecordToUpdate.CompanyName;
-                            newRegisteredClient.OtherNames = RecordToUpdate.CompanyName;
-                            newRegisteredClient.EmailAddress = RecordToUpdate.CompanyEmail;
-                            newRegisteredClient.AccountNumber = RecordToUpdate.AccountNumber;
-                            newRegisteredClient.Status = 1;
-                            newRegisteredClient.AcceptedTerms = AcceptedTerms;
-                            newRegisteredClient.CreatedBy = User.Identity.GetUserId();
-                            newRegisteredClient.UploadedBy = User.Identity.GetUserId();
-                            db.RegisteredClients.Add(newRegisteredClient);
-                            clientSaved = db.SaveChanges();
-                            clientId = newRegisteredClient.Id;
+                            // does not match
+                            return Json("Error! Invalid Stanbic Bank Account Number", JsonRequestBehavior.AllowGet);
                         }
-                        catch (Exception)
+                        //A. Create New Registered Client
+                        else
                         {
-                            return Json("Error! Unable to create registered client", JsonRequestBehavior.AllowGet);
+                            try
+                            {
+                                var AcceptedTerms = (RecordToUpdate.AcceptedTerms == "YES" || RecordToUpdate.AcceptedTerms == "Yes" || RecordToUpdate.AcceptedTerms == "yes") ? true : false;
+                                var newRegisteredClient = db.RegisteredClients.Create();
+                                newRegisteredClient.Surname = RecordToUpdate.CompanyName;
+                                newRegisteredClient.EmailAddress = RecordToUpdate.CompanyEmail;
+                                newRegisteredClient.AccountNumber = RecordToUpdate.AccountNumber;
+                                newRegisteredClient.Status = 1;
+                                newRegisteredClient.AcceptedTerms = AcceptedTerms;
+                                newRegisteredClient.CreatedBy = User.Identity.GetUserId();
+                                newRegisteredClient.UploadedBy = User.Identity.GetUserId();
+                                db.RegisteredClients.Add(newRegisteredClient);
+                                clientSaved = db.SaveChanges();
+                                clientId = newRegisteredClient.Id;
+                            }
+                            catch (Exception)
+                            {
+                                return Json("Error! Unable to create registered client", JsonRequestBehavior.AllowGet);
+                            }
                         }
 
                         //B. Create Company Details
@@ -838,6 +849,7 @@ namespace OnBoarding.Controllers
 
                         //C. Check if SSI exist and create if not 
                         var SSIExists = db.ClientSettlementAccounts.SingleOrDefault(c => c.AccountNumber == RecordToUpdate.AccountNumber && c.ClientID == clientId && c.CompanyID == companyId && c.Status == 1);
+
                         if (SSIExists == null)
                         {
                             try
@@ -912,29 +924,37 @@ namespace OnBoarding.Controllers
                     }
                     else
                     {
-                        //A. Check if SSI exists and create if not
-                        var SSIExists = db.ClientSettlementAccounts.SingleOrDefault(c => c.AccountNumber == RecordToUpdate.AccountNumber && c.ClientID == clientExists.Id && c.Status == 1);
-                        if (SSIExists == null)
+                        if (!match.Success)
                         {
-                            try
+                            // does not match
+                            return Json("Error! Invalid Stanbic Bank Account Number", JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            //A. Check if SSI exists and create if not
+                            var SSIExists = db.ClientSettlementAccounts.SingleOrDefault(c => c.AccountNumber == RecordToUpdate.AccountNumber && c.ClientID == clientExists.Id && c.Status == 1);
+                            if (SSIExists == null)
                             {
-                                //Create SSI
-                                var clientDetails = db.RegisteredClients.SingleOrDefault(c => c.EmailAddress == RecordToUpdate.CompanyEmail && c.Status == 1);
-                                var companyDetails = db.ClientCompanies.SingleOrDefault(c => c.ClientId == clientDetails.Id && c.Status == 1);
-                                var newSSI = db.ClientSettlementAccounts.Create();
-                                newSSI.ClientID = clientDetails.Id;
-                                newSSI.CompanyID = companyDetails.Id;
-                                newSSI.CurrencyID = 6; //6 is for other specified currency
-                                newSSI.OtherCurrency = RecordToUpdate.Currency;
-                                newSSI.AccountNumber = RecordToUpdate.AccountNumber;
-                                newSSI.Status = 1;
-                                newSSI.DateCreated = DateTime.Now;
-                                db.ClientSettlementAccounts.Add(newSSI);
-                                ssiSaved = db.SaveChanges();
-                            }
-                            catch (Exception)
-                            {
-                                return Json("Error! Unable to create SSI details", JsonRequestBehavior.AllowGet);
+                                try
+                                {
+                                    //Create SSI
+                                    var clientDetails = db.RegisteredClients.SingleOrDefault(c => c.EmailAddress == RecordToUpdate.CompanyEmail && c.Status == 1);
+                                    var companyDetails = db.ClientCompanies.SingleOrDefault(c => c.ClientId == clientDetails.Id && c.Status == 1);
+                                    var newSSI = db.ClientSettlementAccounts.Create();
+                                    newSSI.ClientID = clientDetails.Id;
+                                    newSSI.CompanyID = companyDetails.Id;
+                                    newSSI.CurrencyID = 6; //6 is for other specified currency
+                                    newSSI.OtherCurrency = RecordToUpdate.Currency;
+                                    newSSI.AccountNumber = RecordToUpdate.AccountNumber;
+                                    newSSI.Status = 1;
+                                    newSSI.DateCreated = DateTime.Now;
+                                    db.ClientSettlementAccounts.Add(newSSI);
+                                    ssiSaved = db.SaveChanges();
+                                }
+                                catch (Exception)
+                                {
+                                    return Json("Error! Unable to create SSI details", JsonRequestBehavior.AllowGet);
+                                }
                             }
                         }
 
