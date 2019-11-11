@@ -9,15 +9,15 @@
 				$(document).ready(function () {
 					var fileName = '@ViewData["FileName"]';
 					$('#UploadsTableContainer').jtable({
-						title: '<i class="fa fa-list"></i> Uploaded Clients <div class="jTableTitleDiv float-right"><button id="DeclineSelected" class="btn btn-outline-danger w_full" type="button" style="font-size:11px;line-height: 15px;padding: 5px 10px;letter-spacing:.4px;border-radius:0px; margin: -4px 10px 0px 0px;"><i class="fa fa-trash"></i> Decline Selected </button></div>',
+						title: '<i class="fa fa-list"></i> Uploaded Clients <div class="jTableTitleDiv float-right"></div>',
 						paging: true,
 						pageSize: 10,
 						sorting: true,
 						defaultSorting: 'Id DESC',
-						selecting: true, //Enable selecting
+						/*selecting: true, //Enable selecting
 						multiselect: true, //Allow multiple selecting
 						selectingCheckboxes: true, //Show checkboxes on first column
-						selectOnRowClick: true, //Enable this to only select using checkboxes
+						selectOnRowClick: true, //Enable this to only select using checkboxes*/
 						actions:
 						{
 							listAction: '/DigitalDesk/GetUploadApprovals?FileName=' + fileName,
@@ -43,11 +43,11 @@
 							},
 							SSI: {
 								title: 'SSI',
-								width: '10%'
+								width: '7%'
 							},
 							AccountNumber: {
 								title: 'Account-Number',
-								width: '20%'
+								width: '15%'
 							},
 							Currency: {
 								title: 'Currency',
@@ -77,7 +77,7 @@
 								title: 'DateOfContract',
 								width: '10%'
 							},
-							Status: {	
+							Status: {
 								title: 'Status',
 								width: '15%',
 								display: function (data) {
@@ -93,77 +93,70 @@
 										return '<center><p class="text-warning"><i class="fa fa-check-circle"></i> Pending </p></center>';
 									}
 								}
+							},
+							MyButton: {
+								title: 'Action',
+								width: '10%',
+								display: function (data) {
+									var approved = data.record.Status;
+									if (approved == 0) {
+										return '<center><button class="btn btn-outline-danger w_full btn-small" onclick="LoadUpDeleteModal(\'' + data.record.Id + '\')">' +
+											'<span class="fa fa-check-circle"></span> Delete </button></center>';
+									}
+									else
+									{
+										return '<center><i class="fa fa-shield-alt fa-x" style="color:red;"></i></center>';
+									}
+								}
 							}
-						},
-
-						//Register to selectionChanged event to hanlde events
-						selectionChanged: function () {
-                            var $selectedRows = $('#UploadsTableContainer').jtable('selectedRows');
-                            if ($selectedRows.length > 0) {
-                                $selectedRows.each(function () {
-                                    var record = $(this).data('record');
-                                });
-                            }
-                        }
+						}
 					});
 
 					//Load list from server
 					$('#UploadsTableContainer').jtable('load');
-
-					//Decline selected items
-					$('button#DeclineSelected').on('click', function (e) {
-						e.preventDefault();
-						var $selectedRows = $('#UploadsTableContainer').jtable('selectedRows');
-						if ($selectedRows.length > 0) {
-							Swal.fire({
-								title: 'Are you sure?',
-								text: "You won't be able to revert this!",
-								icon: 'warning',
-								showCancelButton: true,
-								confirmButtonColor: '#28a745;',
-								cancelButtonColor: '#d33',
-								confirmButtonText: 'Yes, decline records',
-								cancelButtonText: 'No, cancel',
-							}).then((result) => {
-								$selectedRows.each(function () {
-		                            var ids = [];
-									$selectedRows.each(function () {
-										ids.push($(this).data('record').Id);
-									});
-					                $.ajax({
-										url: "/DigitalDesk/DeclineSelected",
-										type: 'POST',
-										data: JSON.stringify(ids),
-										contentType: 'application/json; charset=utf-8',
-										dataType: "json",
-										async: true,
-										success: function (XmlHttpRequest) {
-											if (XmlHttpRequest === 'success') {
-												$('#UploadsTableContainer').jtable('load');
-												Swal.fire(
-													'Success!',
-													'Your records has been successfully declined',
-													'success'
-												)
-												$('#UploadsTableContainer').jtable('load');
-											}
-											else {
-												Swal.fire({
-													icon: 'error',
-													text: XmlHttpRequest
-												})
-											}
-										}
-									})
-								});
-							})
-						}
-						else {
-							Swal.fire('Please select record(s) to decline!')
-						}
-					});
+										
 				});
 			</script>
 		</div>
 	</div>
 </div>
+<script type="text/javascript">
+	//Decline selected items
+	function LoadUpDeleteModal(getDelID) {
+		Swal.fire({
+			title: 'Are you sure?',
+			text: "You won't be able to revert this!",
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#28a745;',
+			cancelButtonColor: '#d33',
+			confirmButtonText: 'Yes, delete record',
+			cancelButtonText: 'No, cancel',
+		}).then((result) => {
+			if (result.value) {
+				$.ajax({
+					url: "/DigitalDesk/DeclineSelected",
+					type: 'POST',
+					data: 'Id=' + getDelID,
+					async: true,
+					success: function (XmlHttpRequest) {
+						if (XmlHttpRequest === 'success') {
+							Swal.fire(
+								'Success!',
+								'Your record has been successfully deleted',
+								'success'
+							)
+							$('#UploadsTableContainer').jtable('load');
+						}
+						else {
+							Swal.fire({
+								icon: 'error',
+								text: XmlHttpRequest
+							})
+						}
+					}
+				})
+			}
+		})
+	}
+</script>
