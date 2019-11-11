@@ -786,11 +786,11 @@ namespace OnBoarding.Controllers
         {
             using (var db = new DBModel())
             {
+                //Declare multiple initializations
+                int clientId = 0, companyId = 0, clientSaved = 0, companySaved = 0, ssiSaved = 0, repSaved = 0, errorFlag = 0;
+
                 foreach (int item in postedIds)
                 {
-                    //Declare multiple initializations
-                    int clientId = 0, companyId = 0, clientSaved = 0, companySaved = 0, ssiSaved = 0, repSaved = 0;
-
                     //1. Check if Registered Client exist
                     var RecordToUpdate = db.ExistingClientsUploads.SingleOrDefault(c => c.Id == item);
                     var clientExists = db.RegisteredClients.SingleOrDefault(c => c.EmailAddress == RecordToUpdate.CompanyEmail && c.Status == 1);
@@ -802,8 +802,16 @@ namespace OnBoarding.Controllers
                         if (!match.Success)
                         {
                             // does not match
-                            return Json("Error! Invalid Stanbic Bank Account Number", JsonRequestBehavior.AllowGet);
+                            var UpdateCommentColumn = db.ExistingClientsUploads.SingleOrDefault(c => c.Id == item);
+                            UpdateCommentColumn.Status = 3;
+                            UpdateCommentColumn.ErrorComments = "Invalid Stanbic Account Number";
+                            UpdateCommentColumn.ApprovedBy = User.Identity.GetUserId();
+                            UpdateCommentColumn.DateApproved = DateTime.Now;
+                            db.SaveChanges();
+                            errorFlag = errorFlag + 1;
+                            continue;
                         }
+
                         //A. Create New Registered Client
                         else
                         {
@@ -822,9 +830,16 @@ namespace OnBoarding.Controllers
                                 clientSaved = db.SaveChanges();
                                 clientId = newRegisteredClient.Id;
                             }
-                            catch (Exception)
+                            catch (Exception e)
                             {
-                                return Json("Error! Unable to create registered client", JsonRequestBehavior.AllowGet);
+                                var UpdateCommentColumn = db.ExistingClientsUploads.SingleOrDefault(c => c.Id == item);
+                                UpdateCommentColumn.Status = 3;
+                                UpdateCommentColumn.ErrorComments = e.Message;
+                                UpdateCommentColumn.ApprovedBy = User.Identity.GetUserId();
+                                UpdateCommentColumn.DateApproved = DateTime.Now;
+                                db.SaveChanges();
+                                errorFlag = errorFlag + 1;
+                                continue;
                             }
                         }
 
@@ -842,14 +857,20 @@ namespace OnBoarding.Controllers
                             companySaved = db.SaveChanges();
                             companyId = newCompany.Id;
                         }
-                        catch (Exception)
+                        catch (Exception e)
                         {
-                            return Json("Error! Unable to create company details", JsonRequestBehavior.AllowGet);
+                            var UpdateCommentColumn = db.ExistingClientsUploads.SingleOrDefault(c => c.Id == item);
+                            UpdateCommentColumn.Status = 3;
+                            UpdateCommentColumn.ErrorComments = e.Message;
+                            UpdateCommentColumn.ApprovedBy = User.Identity.GetUserId();
+                            UpdateCommentColumn.DateApproved = DateTime.Now;
+                            db.SaveChanges();
+                            errorFlag = errorFlag + 1;
+                            continue;
                         }
 
                         //C. Check if SSI exist and create if not 
                         var SSIExists = db.ClientSettlementAccounts.SingleOrDefault(c => c.AccountNumber == RecordToUpdate.AccountNumber && c.ClientID == clientId && c.CompanyID == companyId && c.Status == 1);
-
                         if (SSIExists == null)
                         {
                             try
@@ -866,9 +887,16 @@ namespace OnBoarding.Controllers
                                 db.ClientSettlementAccounts.Add(newSSI);
                                 ssiSaved = db.SaveChanges();
                             }
-                            catch (Exception)
+                            catch (Exception e)
                             {
-                                return Json("Error! Unable to create SSI details", JsonRequestBehavior.AllowGet);
+                                var UpdateCommentColumn = db.ExistingClientsUploads.SingleOrDefault(c => c.Id == item);
+                                UpdateCommentColumn.Status = 3;
+                                UpdateCommentColumn.ErrorComments = e.Message;
+                                UpdateCommentColumn.ApprovedBy = User.Identity.GetUserId();
+                                UpdateCommentColumn.DateApproved = DateTime.Now;
+                                db.SaveChanges();
+                                errorFlag = errorFlag + 1;
+                                continue;
                             }
                         }
 
@@ -895,9 +923,16 @@ namespace OnBoarding.Controllers
                                 db.DesignatedUsers.Add(newRepresentative);
                                 repSaved = db.SaveChanges();
                             }
-                            catch (Exception)
+                            catch (Exception e)
                             {
-                                return Json("Error! Unable to create representative details", JsonRequestBehavior.AllowGet);
+                                var UpdateCommentColumn = db.ExistingClientsUploads.SingleOrDefault(c => c.Id == item);
+                                UpdateCommentColumn.Status = 3;
+                                UpdateCommentColumn.ErrorComments = e.Message;
+                                UpdateCommentColumn.ApprovedBy = User.Identity.GetUserId();
+                                UpdateCommentColumn.DateApproved = DateTime.Now;
+                                db.SaveChanges();
+                                errorFlag = errorFlag + 1;
+                                continue;
                             }
                         }
 
@@ -912,14 +947,27 @@ namespace OnBoarding.Controllers
                                 RecordToUpdate.DateApproved = DateTime.Now;
                                 var recordSaved = db.SaveChanges();
                             }
-                            catch (Exception)
+                            catch (Exception e)
                             {
-                                return Json("Error! Unable to approve selected records", JsonRequestBehavior.AllowGet);
+                                var UpdateCommentColumn = db.ExistingClientsUploads.SingleOrDefault(c => c.Id == item);
+                                UpdateCommentColumn.Status = 3;
+                                UpdateCommentColumn.ErrorComments = e.Message;
+                                UpdateCommentColumn.ApprovedBy = User.Identity.GetUserId();
+                                UpdateCommentColumn.DateApproved = DateTime.Now;
+                                db.SaveChanges();
+                                errorFlag = errorFlag + 1;
+                                continue;
                             }
                         }
                         else
                         {
-                            return Json("Error! Unable to approve selected records", JsonRequestBehavior.AllowGet);
+                            var UpdateCommentColumn = db.ExistingClientsUploads.SingleOrDefault(c => c.Id == item);
+                            UpdateCommentColumn.Status = 3;
+                            UpdateCommentColumn.ApprovedBy = User.Identity.GetUserId();
+                            UpdateCommentColumn.DateApproved = DateTime.Now;
+                            db.SaveChanges();
+                            errorFlag = errorFlag + 1;
+                            continue;
                         }
                     }
                     else
@@ -927,7 +975,17 @@ namespace OnBoarding.Controllers
                         if (!match.Success)
                         {
                             // does not match
-                            return Json("Error! Invalid Stanbic Bank Account Number", JsonRequestBehavior.AllowGet);
+                            //return Json("Error! Invalid Stanbic Bank Account Number", JsonRequestBehavior.AllowGet);
+                            // does not match
+                            //return Json("Error! Invalid Stanbic Bank Account Number", JsonRequestBehavior.AllowGet);
+                            var UpdateCommentColumn = db.ExistingClientsUploads.SingleOrDefault(c => c.Id == item);
+                            UpdateCommentColumn.Status = 3;
+                            UpdateCommentColumn.ErrorComments = "Invalid Stanbic Account Number";
+                            UpdateCommentColumn.ApprovedBy = User.Identity.GetUserId();
+                            UpdateCommentColumn.DateApproved = DateTime.Now;
+                            db.SaveChanges();
+                            errorFlag = errorFlag + 1;
+                            continue;
                         }
                         else
                         {
@@ -951,9 +1009,16 @@ namespace OnBoarding.Controllers
                                     db.ClientSettlementAccounts.Add(newSSI);
                                     ssiSaved = db.SaveChanges();
                                 }
-                                catch (Exception)
+                                catch (Exception e)
                                 {
-                                    return Json("Error! Unable to create SSI details", JsonRequestBehavior.AllowGet);
+                                    var UpdateCommentColumn = db.ExistingClientsUploads.SingleOrDefault(c => c.Id == item);
+                                    UpdateCommentColumn.Status = 3;
+                                    UpdateCommentColumn.ErrorComments = e.Message;
+                                    UpdateCommentColumn.ApprovedBy = User.Identity.GetUserId();
+                                    UpdateCommentColumn.DateApproved = DateTime.Now;
+                                    db.SaveChanges();
+                                    errorFlag = errorFlag + 1; 
+                                    continue;
                                 }
                             }
                         }
@@ -984,9 +1049,16 @@ namespace OnBoarding.Controllers
                                 db.DesignatedUsers.Add(newRepresentative);
                                 repSaved = db.SaveChanges();
                             }
-                            catch (Exception)
+                            catch (Exception e)
                             {
-                                return Json("Error! Unable to create representative details", JsonRequestBehavior.AllowGet);
+                                var UpdateCommentColumn = db.ExistingClientsUploads.SingleOrDefault(c => c.Id == item);
+                                UpdateCommentColumn.Status = 3;
+                                UpdateCommentColumn.ErrorComments = e.Message;
+                                UpdateCommentColumn.ApprovedBy = User.Identity.GetUserId();
+                                UpdateCommentColumn.DateApproved = DateTime.Now;
+                                db.SaveChanges();
+                                errorFlag = errorFlag + 1;
+                                continue;
                             }
                         }
 
@@ -1001,18 +1073,37 @@ namespace OnBoarding.Controllers
                                 RecordToUpdate.DateApproved = DateTime.Now;
                                 var recordSaved = db.SaveChanges();
                             }
-                            catch (Exception)
+                            catch (Exception e)
                             {
-                                return Json("Error! Unable to approve selected records", JsonRequestBehavior.AllowGet);
+                                var UpdateCommentColumn = db.ExistingClientsUploads.SingleOrDefault(c => c.Id == item);
+                                UpdateCommentColumn.Status = 3;
+                                UpdateCommentColumn.ErrorComments = e.Message;
+                                UpdateCommentColumn.ApprovedBy = User.Identity.GetUserId();
+                                UpdateCommentColumn.DateApproved = DateTime.Now;
+                                db.SaveChanges();
+                                errorFlag = errorFlag + 1;
+                                continue;
                             }
                         }
                         else
                         {
-                            return Json("Error! Unable to approve selected records", JsonRequestBehavior.AllowGet);
+                            var UpdateCommentColumn = db.ExistingClientsUploads.SingleOrDefault(c => c.Id == item);
+                            UpdateCommentColumn.Status = 3;
+                            db.SaveChanges();
+                            errorFlag = errorFlag + 1;
+                            continue;
                         }
                     }
                 }
-                return Json("success", JsonRequestBehavior.AllowGet);
+
+                if (errorFlag >= 1)
+                {
+                    return Json("error", JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    return Json("success", JsonRequestBehavior.AllowGet);
+                }
             }
         }
 

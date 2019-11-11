@@ -27,6 +27,7 @@
 
         [StringLength(128)]
         public string UploadedBy { get; set; }
+        public string ErrorComments { get; set; }
 
         [Column(TypeName = "datetime2")]
         public DateTime DateCreated { get; set; } = DateTime.Now;

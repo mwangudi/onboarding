@@ -86,7 +86,6 @@
                                 $selectedRows.each(function () {
                                     var record = $(this).data('record');
                                     var UploadID = record.Id;
-                                    //alert(" Journal ID :" + JournalID + " ");
                                 });
                             }
                         }
@@ -134,8 +133,9 @@
 											else {
 												Swal.fire({
 													icon: 'error',
-													text: XmlHttpRequest
+													text: 'Your approved records has been partially approved, please check and rectify errors'
 												})
+												$('#UploadsTableContainer').jtable('load');
 											}
 										}
 									})

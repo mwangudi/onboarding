@@ -454,7 +454,7 @@ namespace OnBoarding.Controllers
                         //Create User
                         var PasswordResetCode = OTPGenerator.GetUniqueKey(6);
                         string mixedOriginal = Shuffle.StringMixer(PasswordResetCode);
-                        var user = new ApplicationUser { UserName = model.Email, Email = model.Email, CompanyName = model.CompanyName, PhoneNumber = model.PhoneNumber, StaffNumber = model.StaffNumber, PasswordResetCode = Functions.GenerateMD5Hash(mixedOriginal) };
+                        var user = new ApplicationUser { UserName = model.Email, Email = model.Email, CompanyName = model.CompanyName, PhoneNumber = model.PhoneNumber, StaffNumber = model.StaffNumber, PasswordResetCode = Functions.GenerateMD5Hash(mixedOriginal), LastPasswordChangedDate = DateTime.Now };
                         var result = await UserManager.CreateAsync(user, model.Password);
                         if (result.Succeeded)
                         {

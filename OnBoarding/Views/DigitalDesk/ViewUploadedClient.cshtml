@@ -77,9 +77,13 @@
 								title: 'DateOfContract',
 								width: '10%'
 							},
+							ErrorComments: {
+								title: 'Error',
+								width: '10%'
+							},
 							Status: {
 								title: 'Status',
-								width: '15%',
+								width: '10%',
 								display: function (data) {
 									var approved = data.record.Status;
 									if (approved == 1) {
@@ -88,8 +92,10 @@
 									else if (approved == 2) {
 										return '<center><p class="text-danger"><i class="fa fa-times-circle"></i> Declined </p></center>';
 									}
-									else
-									{
+									else if (approved == 3) {
+										return '<center><p class="text-danger"><i class="fa fa-times-circle"></i> Error </p></center>';
+									}
+									else {
 										return '<center><p class="text-warning"><i class="fa fa-check-circle"></i> Pending </p></center>';
 									}
 								}

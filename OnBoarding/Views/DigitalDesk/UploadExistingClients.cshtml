@@ -167,6 +167,7 @@
 												type: 'date',
 												displayFormat: 'yy-mm-dd'
 											},
+											
 											Status: {
 												title: 'Status',
 												width: '10%',
@@ -177,6 +178,9 @@
 													}
 													else if (approved == 2) {
 														return '<center><p class="text-danger"><i class="fa fa-times-circle"></i> Declined </p></center>';
+													}
+													else if (approved == 3) {
+														return '<center><p class="text-danger"><i class="fa fa-times-circle"></i> Approval Error </p></center>';
 													}
 													else {
 														return '<center><p class="text-warning"><i class="fa fa-check-circle"></i> Pending </p></center>';
@@ -345,6 +349,7 @@
 								$("#Loading_Div").hide('fast');
 								$('#UploadForm').show("fast");
 								toastr.success('Your data has been uploaded successfully');
+								$('#UploadedClientsTableContainer').jtable('load');
 							}
 							else {
 								LoadUpModal();
