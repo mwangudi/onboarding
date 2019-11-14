@@ -431,7 +431,7 @@ namespace OnBoarding.Controllers
                 ViewBag.DesignatedUser = DesignatedUsersList;
 
                 //Get the list of all client's settlement accounts
-                var Query = db.Database.SqlQuery<SettlementAccountsViewModel>("SELECT c.CurrencyName, s.AccountNumber FROM ClientSettlementAccounts s INNER JOIN Currencies c ON c.Id = s.CurrencyID WHERE s.ClientID =  " + "'" + clientID + "'" + " AND s.CompanyID =  " + "'" + companyDetails.Id + "'" + " AND s.Status = 1");
+                var Query = db.Database.SqlQuery<SettlementAccountsViewModel>("SELECT c.CurrencyName, s.AccountNumber, s.OtherCurrency FROM ClientSettlementAccounts s INNER JOIN Currencies c ON c.Id = s.CurrencyID WHERE s.ClientID =  " + "'" + clientID + "'" + " AND s.CompanyID =  " + "'" + companyDetails.Id + "'" + " AND s.Status = 1");
                 ViewBag.SettlementAccounts = Query.ToList();
 
                 var clientHasApplication = db.EMarketApplications.Any(s => s.ClientID == clientID);

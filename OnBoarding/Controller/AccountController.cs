@@ -226,7 +226,7 @@ namespace OnBoarding.Controllers
                                     foreach (var email in DDUserRole)
                                     {
                                         var DDMessageBody = "Dear Team <br/><br/> Kindly note that the following client has successfully completed registration. <br/>" +
-                                                      "FullNames: " + DBOTPToconfirm.Surname +" "+ DBOTPToconfirm.OtherNames + ", <br/> EmailAddress: " + DBOTPToconfirm.EmailAddress + " " +
+                                                      "Full Names: " + DBOTPToconfirm.Surname +" "+ DBOTPToconfirm.OtherNames + ", <br/> Email Address: " + DBOTPToconfirm.EmailAddress + " " +
                                                       "<br/><br/> Kind Regards,<br/><img src=\"https://e-documents.stanbicbank.co.ke/Content/images/EmailSignature.png\"/>";
                                         var SendDDNotificationEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, email.EmailID, "Client Registration Complete", DDMessageBody);
                                         if (SendDDNotificationEmail == true)

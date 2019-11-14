@@ -66,13 +66,13 @@
 								@if (ViewBag.SettlementAccounts.Count != 0)
 								{
 									<table class="custom-table">
-										<th> Currency</th>
 										<th> Account Number</th>
+										<th> Currency</th>
 										@foreach (var item in ViewBag.SettlementAccounts)
 										{
 											<tbody>
-											<td>@item.CurrencyName</td>
-											<td>@item.AccountNumber</td>
+												<td>@item.AccountNumber</td>
+												<td>@item.OtherCurrency</td>
 											</tbody>
 										}
 									</table>
