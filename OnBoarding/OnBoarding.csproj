@@ -2427,6 +2427,7 @@
     <Content Include="Content\emails\SignatoryNomination.html" />
     <Content Include="Content\emails\SignatoryRepresentativeApproval.html" />
     <Content Include="Content\emails\SoleSignatoryApplication.html" />
+    <Content Include="Content\emails\UnlockAccount.html" />
     <Content Include="Content\images\bg_lock.jpg" />
     <Content Include="Content\images\bg_lock_over.jpg" />
     <Content Include="Content\images\btn_interest.jpg" />

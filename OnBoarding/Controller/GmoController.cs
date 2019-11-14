@@ -73,7 +73,7 @@ namespace OnBoarding.Controllers
                 //Search  
                 if (!string.IsNullOrEmpty(searchMessage))
                 {
-                    query = db.Database.SqlQuery<ClientApplicationsViewModel>("SELECT s.Id ApplicationID, b.CompanyName Client, c.StatusName Status, s.Emt, s.SSI, CAST(s.DateCreated AS DATE) DateCreated, s.Signatories, s.DesignatedUsers, s.SignatoriesApproved, s.UsersApproved RepresentativesApproved, s.OPSApproved, s.POAApproved, s.AcceptedTAC FROM EMarketApplications s INNER JOIN ClientCompanies b on b.Id = s.CompanyID INNER JOIN tblStatus c on c.Id = s.Status WHERE s.Status = 1 AND s.OPSApproved = 1 AND s.POAApproved = 1 AND (b.CompanyName LIKE '%" + searchMessage + "%' OR b.EmailAddress LIKE '%" + searchMessage + "%') ORDER BY s.Id DESC OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY;");
+                    query = db.Database.SqlQuery<ClientApplicationsViewModel>("SELECT s.Id ApplicationID, b.CompanyName Client, c.StatusName Status, s.Emt, s.SSI, CAST(s.DateCreated AS DATE) DateCreated, s.Signatories, s.DesignatedUsers, s.SignatoriesApproved, s.UsersApproved RepresentativesApproved, s.OPSApproved, s.POAApproved, s.AcceptedTAC FROM EMarketApplications s INNER JOIN ClientCompanies b on b.Id = s.CompanyID INNER JOIN RegisteredClients r ON r.Id = s.ClientID INNER JOIN tblStatus c on c.Id = s.Status WHERE s.Status = 1 AND s.OPSApproved = 1 AND s.POAApproved = 1 AND (b.CompanyName LIKE '%" + searchMessage + "%' OR r.EmailAddress LIKE '%" + searchMessage + "%') ORDER BY s.Id DESC OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY;");
 
                 }
 
@@ -113,7 +113,7 @@ namespace OnBoarding.Controllers
                 //Search  
                 if (!string.IsNullOrEmpty(searchMessage) && string.IsNullOrEmpty(searchDate))
                 {
-                    var recordCount = db.Database.SqlQuery<int>("SELECT count(s.Id) count FROM EMarketApplications s INNER JOIN RegisteredClients b on b.Id = s.ClientID INNER JOIN tblStatus c on c.Id = s.Status WHERE s.Status = 1 AND s.OPSApproved = 1 AND s.POAApproved = 1 AND (b.CompanyName LIKE '%" + searchMessage + "%' OR b.EmailAddress LIKE '%" + searchMessage + "%')").First();
+                    var recordCount = db.Database.SqlQuery<int>("SELECT count(s.Id) count FROM EMarketApplications s INNER JOIN ClientCompanies b on b.Id = s.CompanyID INNER JOIN RegisteredClients r ON r.Id = s.ClientID INNER JOIN tblStatus c on c.Id = s.Status WHERE s.Status = 1 AND s.OPSApproved = 1 AND s.POAApproved = 1 AND (b.CompanyName LIKE '%" + searchMessage + "%' OR r.EmailAddress LIKE '%" + searchMessage + "%')").First();
                     return Json(new { Result = "OK", Records = data, TotalRecordCount = recordCount });
                 }
                 else
@@ -267,47 +267,47 @@ namespace OnBoarding.Controllers
                 var query = "";
                 if (!string.IsNullOrEmpty(searchString) && !string.IsNullOrEmpty(searchFromDate) && !string.IsNullOrEmpty(searchToDate))
                 {
-                    var customquery = "SELECT n.CompanyName, n.AccountNumber,  n.IDRegNumber CompanyRegistration, n.EmailAddress, n.BusinessEmailAddress, n.PostalAddress, n.PostalCode, n.DateCreated FROM RegisteredClients n WHERE (n.CompanyName LIKE '%" + searchString + "%' OR n.EmailAddress LIKE '%" + searchString + "%') AND (n.DateCreated >= CAST('" + searchFromDate + "' AS DATE) AND n.DateCreated <= CAST('" + searchToDate + "' AS DATE)) AND n.Status = 1";
+                    var customquery = "SELECT n.Surname, n.OtherNames, n.AccountNumber,  n.IDRegNumber CompanyRegistration, n.EmailAddress, n.EmailAddress, n.PostalAddress, n.PostalCode, n.DateCreated FROM RegisteredClients n WHERE (n.Surname LIKE '%" + searchString + "%' OR n.OtherNames LIKE '%" + searchString + "%' OR n.EmailAddress LIKE '%" + searchString + "%') AND (n.DateCreated >= CAST('" + searchFromDate + "' AS DATE) AND n.DateCreated <= CAST('" + searchToDate + "' AS DATE)) AND n.Status = 1";
                     query = customquery;
                 }
                 else if (!string.IsNullOrEmpty(searchString) && string.IsNullOrEmpty(searchFromDate) && string.IsNullOrEmpty(searchToDate))
                 {
-                    var customquery = "SELECT n.CompanyName, n.AccountNumber,  n.IDRegNumber CompanyRegistration, n.EmailAddress, n.BusinessEmailAddress, n.PostalAddress, n.PostalCode, n.DateCreated FROM RegisteredClients n WHERE (n.CompanyName LIKE '%" + searchString + "%' OR n.EmailAddress LIKE '%" + searchString + "%') AND n.Status = 1";
+                    var customquery = "SELECT n.Surname, n.OtherNames, n.AccountNumber,  n.IDRegNumber CompanyRegistration, n.EmailAddress, n.EmailAddress, n.PostalAddress, n.PostalCode, n.DateCreated FROM RegisteredClients n WHERE (n.Surname LIKE '%" + searchString + "%' OR n.OtherNames LIKE '%" + searchString + "%' OR n.EmailAddress LIKE '%" + searchString + "%') AND n.Status = 1";
                     query = customquery;
                 }
                 else if (!string.IsNullOrEmpty(searchString) && !string.IsNullOrEmpty(searchFromDate) && string.IsNullOrEmpty(searchToDate))
                 {
-                    var customquery = "SELECT n.CompanyName, n.AccountNumber,  n.IDRegNumber CompanyRegistration, n.EmailAddress, n.BusinessEmailAddress, n.PostalAddress, n.PostalCode, n.DateCreated FROM RegisteredClients n WHERE (n.CompanyName LIKE '%" + searchString + "%' OR n.EmailAddress LIKE '%" + searchString + "%') AND n.DateCreated >= CAST('" + searchFromDate + "' AS DATE) AND n.Status = 1";
+                    var customquery = "SELECT n.Surname, n.OtherNames, n.AccountNumber,  n.IDRegNumber CompanyRegistration, n.EmailAddress, n.EmailAddress, n.PostalAddress, n.PostalCode, n.DateCreated FROM RegisteredClients n WHERE (n.Surname LIKE '%" + searchString + "%' OR n.OtherNames LIKE '%" + searchString + "%' OR n.EmailAddress LIKE '%" + searchString + "%') AND n.DateCreated >= CAST('" + searchFromDate + "' AS DATE) AND n.Status = 1";
                     query = customquery;
                 }
                 else if (!string.IsNullOrEmpty(searchString) && string.IsNullOrEmpty(searchFromDate) && !string.IsNullOrEmpty(searchToDate))
                 {
-                    var customquery = "SELECT n.CompanyName, n.AccountNumber,  n.IDRegNumber CompanyRegistration, n.EmailAddress, n.BusinessEmailAddress, n.PostalAddress, n.PostalCode, n.DateCreated FROM RegisteredClients n WHERE (n.CompanyName LIKE '%" + searchString + "%' OR n.EmailAddress LIKE '%" + searchString + "%') AND n.DateCreated <= CAST('" + searchToDate + "' AS DATE) AND n.Status = 1";
+                    var customquery = "SELECT n.Surname, n.OtherNames, n.AccountNumber,  n.IDRegNumber CompanyRegistration, n.EmailAddress, n.EmailAddress, n.PostalAddress, n.PostalCode, n.DateCreated FROM RegisteredClients n WHERE (n.Surname LIKE '%" + searchString + "%' OR n.OtherNames LIKE '%" + searchString + "%' OR n.EmailAddress LIKE '%" + searchString + "%') AND n.DateCreated <= CAST('" + searchToDate + "' AS DATE) AND n.Status = 1";
                     query = customquery;
                 }
                 else if (string.IsNullOrEmpty(searchString) && !string.IsNullOrEmpty(searchFromDate) && !string.IsNullOrEmpty(searchToDate))
                 {
-                    var customquery = "SELECT n.CompanyName, n.AccountNumber,  n.IDRegNumber CompanyRegistration, n.EmailAddress, n.BusinessEmailAddress, n.PostalAddress, n.PostalCode, n.DateCreated FROM RegisteredClients n WHERE (n.DateCreated >= CAST('" + searchFromDate + "' AS DATE) AND n.DateCreated <= CAST('" + searchToDate + "' AS DATE)) AND n.Status = 1";
+                    var customquery = "SELECT n.Surname, n.OtherNames, n.AccountNumber,  n.IDRegNumber CompanyRegistration, n.EmailAddress, n.EmailAddress, n.PostalAddress, n.PostalCode, n.DateCreated FROM RegisteredClients n WHERE (n.DateCreated >= CAST('" + searchFromDate + "' AS DATE) AND n.DateCreated <= CAST('" + searchToDate + "' AS DATE)) AND n.Status = 1";
                     query = customquery;
                 }
                 else if (string.IsNullOrEmpty(searchString) && string.IsNullOrEmpty(searchFromDate) && !string.IsNullOrEmpty(searchToDate))
                 {
-                    var customquery = "SELECT n.CompanyName, n.AccountNumber,  n.IDRegNumber CompanyRegistration, n.EmailAddress, n.BusinessEmailAddress, n.PostalAddress, n.PostalCode, n.DateCreated FROM RegisteredClients n WHERE n.DateCreated <= CAST('" + searchToDate + "' AS DATE) AND n.Status = 1";
+                    var customquery = "SELECT n.Surname, n.OtherNames, n.AccountNumber,  n.IDRegNumber CompanyRegistration, n.EmailAddress, n.EmailAddress, n.PostalAddress, n.PostalCode, n.DateCreated FROM RegisteredClients n WHERE n.DateCreated <= CAST('" + searchToDate + "' AS DATE) AND n.Status = 1";
                     query = customquery;
                 }
                 else if (string.IsNullOrEmpty(searchString) && !string.IsNullOrEmpty(searchFromDate) && string.IsNullOrEmpty(searchToDate))
                 {
-                    var customquery = "SELECT n.CompanyName, n.AccountNumber,  n.IDRegNumber CompanyRegistration, n.EmailAddress, n.BusinessEmailAddress, n.PostalAddress, n.PostalCode, n.DateCreated FROM RegisteredClients n WHERE n.DateCreated >= CAST('" + searchFromDate + "' AS DATE) AND n.Status = 1";
+                    var customquery = "SELECT n.Surname, n.OtherNames, n.AccountNumber,  n.IDRegNumber CompanyRegistration, n.EmailAddress, n.EmailAddress, n.PostalAddress, n.PostalCode, n.DateCreated FROM RegisteredClients n WHERE n.DateCreated >= CAST('" + searchFromDate + "' AS DATE) AND n.Status = 1";
                     query = customquery;
                 }
                 else if (string.IsNullOrEmpty(searchString) && string.IsNullOrEmpty(searchFromDate) && string.IsNullOrEmpty(searchToDate))
                 {
-                    var customquery = "SELECT n.CompanyName, n.AccountNumber,  n.IDRegNumber CompanyRegistration, n.EmailAddress, n.BusinessEmailAddress, n.PostalAddress, n.PostalCode, n.DateCreated FROM RegisteredClients n WHERE n.Status = 1";
+                    var customquery = "SELECT n.Surname, n.OtherNames, n.AccountNumber,  n.IDRegNumber CompanyRegistration, n.EmailAddress, n.EmailAddress, n.PostalAddress, n.PostalCode, n.DateCreated FROM RegisteredClients n WHERE n.Status = 1";
                     query = customquery;
                 }
                 else
                 {
-                    var customquery = "SELECT n.CompanyName, n.AccountNumber,  n.IDRegNumber CompanyRegistration, n.EmailAddress, n.BusinessEmailAddress, n.PostalAddress, n.PostalCode, n.DateCreated FROM RegisteredClients n WHERE n.Status = 1";
+                    var customquery = "SELECT n.Surname, n.OtherNames, n.AccountNumber,  n.IDRegNumber CompanyRegistration, n.EmailAddress, n.EmailAddress, n.PostalAddress, n.PostalCode, n.DateCreated FROM RegisteredClients n WHERE n.Status = 1";
                     query = customquery;
                 }
 
