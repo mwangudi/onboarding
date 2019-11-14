@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNet.Identity;
 using Newtonsoft.Json.Linq;
 using OnBoarding.Models;
+using OnBoarding.Services;
 using OnBoarding.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -782,7 +783,7 @@ namespace OnBoarding.Controllers
         //
         //Approve records
         [HttpPost]
-        public JsonResult ApproveSelected(List<int> postedIds)
+        public JsonResult ApproveSelected(List<int> postedIds, string uploadedFile)
         {
             using (var db = new DBModel())
             {
@@ -1096,12 +1097,50 @@ namespace OnBoarding.Controllers
                     }
                 }
 
+                var userId = User.Identity.GetUserId();
+                var getFileUploadDetails = db.ExistingClientsUploads.First(c => c.FileName == uploadedFile);
+                var getUploaderDetails = db.AspNetUsers.SingleOrDefault(c => c.Id == getFileUploadDetails.UploadedBy);
+                var getApproverDetails = db.AspNetUsers.SingleOrDefault(c => c.Id == userId);
+                var _action = "UploadApproval";
+
                 if (errorFlag >= 1)
                 {
+                    //Send Success with errors Email
+                    var DDMessageBody = "Dear " + getUploaderDetails.CompanyName + " <br/><br/> Kindly note that your uploaded CSV file " + uploadedFile + " on " + getFileUploadDetails.DateCreated + ", has been approved by " + getApproverDetails.CompanyName + " on " + DateTime.Now + " with errors on some entries. You can view comments on the entries, rectify and then re-upload for another approval." +
+                        "<br/><br/> Kind Regards,<br/><img src=\"https://e-documents.stanbicbank.co.ke/Content/images/EmailSignature.png\"/>";
+                    var SendDDNotificationEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, getUploaderDetails.Email, "Uploaded File Approval", DDMessageBody);
+                    if (SendDDNotificationEmail == true)
+                    {
+                        //Log email sent notification
+                        LogNotification.AddSucsessNotification(MailHelper.EmailFrom, DDMessageBody, getUploaderDetails.Email, _action);
+                    }
+                    else
+                    {
+                        //Log Email failed notification
+                        LogNotification.AddFailureNotification(MailHelper.EmailFrom, DDMessageBody, getUploaderDetails.Email, _action);
+                    }
+
+                    //Return error
                     return Json("error", JsonRequestBehavior.AllowGet);
                 }
                 else
                 {
+                    //Send Success Email
+                    var DDMessageBody = "Dear " + getUploaderDetails.CompanyName + " <br/><br/> Kindly note that your uploaded CSV file " + uploadedFile + " on " + getFileUploadDetails.DateCreated + ", has been successfully  approved by " + getApproverDetails.CompanyName + " on " + DateTime.Now + "." +
+                        "<br/><br/> Kind Regards,<br/><img src=\"https://e-documents.stanbicbank.co.ke/Content/images/EmailSignature.png\"/>";
+                    var SendDDNotificationEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, getUploaderDetails.Email, "Uploaded File Approval", DDMessageBody);
+                    if (SendDDNotificationEmail == true)
+                    {
+                        //Log email sent notification
+                        LogNotification.AddSucsessNotification(MailHelper.EmailFrom, DDMessageBody, getUploaderDetails.Email, _action);
+                    }
+                    else
+                    {
+                        //Log Email failed notification
+                        LogNotification.AddFailureNotification(MailHelper.EmailFrom, DDMessageBody, getUploaderDetails.Email, _action);
+                    }
+
+                    //Return success
                     return Json("success", JsonRequestBehavior.AllowGet);
                 }
             }

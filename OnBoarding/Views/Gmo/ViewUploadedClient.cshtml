@@ -117,7 +117,8 @@
 									$.ajax({
 										url: "/Gmo/ApproveSelected",
 										type: 'POST',
-										data: JSON.stringify(ids),
+										//data: JSON.stringify(ids),
+										data: JSON.stringify({ postedIds: ids, uploadedFile: fileName }),
 										contentType: 'application/json; charset=utf-8',
 										dataType: "json",
 										async: true,

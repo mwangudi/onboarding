@@ -5,13 +5,13 @@
 	<div class="col-12 col-sm-12 col-lg-12">
 		<div class="card">
 			<div class="card-header">
-				<h4> Uploaded Files </h4>
+				<h4> Uploaded/Approved Files </h4>
 			</div>
 			<div class="card-body">
 				<ul class="nav nav-tabs" id="myTab" role="tablist">
 					<li class="nav-item">
 						<a class="nav-link active show" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">
-							<i class="fa fa-list"></i> Recently Uploaded Files
+							<i class="fa fa-list"></i> Recently Uploaded/Approved Files
 						</a>
 					</li>
 				</ul>
@@ -42,7 +42,7 @@
 						<script>
 							$(document).ready(function () {
 								$('#UploadedClientsTableContainer').jtable({
-									title: '<i class="fa fa-list"></i> Recently Uploaded Files',
+									title: '<i class="fa fa-list"></i> Recently Uploaded/Approved Files',
 									paging: true,
 									pageSize: 10,
 									sorting: true,
@@ -77,8 +77,13 @@
 												else if (approved == 2) {
 													return '<center><p class="text-danger"><i class="fa fa-times-circle"></i> Declined </p></center>';
 												}
-												else
-												{
+												else if (approved == 3) {
+													return '<center><p class="text-danger"><i class="fa fa-times-circle"></i> Approval Error </p></center>';
+												}
+												else if (approved == 4) {
+													return '<center><p class="text-danger"><i class="fa fa-times-circle"></i> Deleted </p></center>';
+												}
+												else {
 													return '<center><p class="text-warning"><i class="fa fa-check-circle"></i> Pending </p></center>';
 												}
 											}
@@ -94,7 +99,8 @@
 												}
 												else
 												{
-													return '<center><i class="fa fa-shield-alt fa-x" style="color:red;"></i></center>';
+													return '<center><button class="btn btn-outline-primary w_full btn-small" onclick="LoadUpFileModal(\'' + data.record.FileName + '\')">' +
+														'<span class="fa fa-check-circle"></span> View </button></center>';
 												}
 											}
 										},
@@ -135,6 +141,36 @@
 				$("#btnDeleteClient").click(function (e) {
 					e.preventDefault();
 				});
+			},
+			error: function (xhr, textStatus, errorThrown) {
+				if (textStatus === 'error') {
+					$('#ViewAll').show();
+					$('#RMDLoading_ID').hide();
+					$('.item-data-retriving').hide();
+					toastr.error('Submission error! Code: ' + xhr.status + ' Details: ' + errorThrown);
+				}
+			},
+		});
+	}
+
+	//View Details Function Load modal
+	function LoadUpFileModal(FileName) {
+		// Hide Default DIV's
+		$('#ViewAll').hide();
+		$('#RMDLoading_ID').show('fast');
+		$('.item-data-retriving').show();
+		// LoadUp User Data
+		$.ajax({
+			type: "POST",
+			url: "/DigitalDesk/ViewUploadedClient",
+			data: '{fileName: "' + FileName + '" }',
+			async: true,
+			contentType: "application/json; charset=utf-8",
+			dataType: "html",
+			success: function (data) {
+				$('#RMDLoading_ID').hide();
+				$('.item-data-retrived').show();
+				$('.item-data-retrived').html(data);
 			},
 			error: function (xhr, textStatus, errorThrown) {
 				if (textStatus === 'error') {

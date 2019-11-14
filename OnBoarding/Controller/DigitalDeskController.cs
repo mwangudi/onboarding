@@ -1435,16 +1435,49 @@ namespace OnBoarding.Controllers
                         }
                         catch (Exception e)
                         {
-                            return Json("Error!: " + e.Message, JsonRequestBehavior.AllowGet);
+                            return Json("Error uploading your csv file, please check the individual field formats and reupload", JsonRequestBehavior.AllowGet);
                         }
                         finally
                         {
                             con.Close();
                         }
                     }
-                    //Return Result
-                    return Json("success", JsonRequestBehavior.AllowGet);
                 }
+
+                //Send email to GMO approvers
+                using (DBModel db = new DBModel())
+                {
+                    var userId = User.Identity.GetUserId();
+                    var getUserDetails = db.AspNetUsers.SingleOrDefault(c => c.Id == userId);
+                    var _action = "UploadExistingUser";
+                    var DDUserRole = (from p in db.AspNetUserRoles
+                                      join e in db.AspNetUsers on p.UserId equals e.Id
+                                      where p.RoleId == "1ee65809-e6c4-4c6e-9cb4-99c71e7e7516"
+                                      select new
+                                      {
+                                          EmailID = e.Email
+                                      }).ToList();
+                    foreach (var email in DDUserRole)
+                    {
+                        var DDMessageBody = "Dear Team <br/><br/> Kindly note that the following user has successfully uploaded existing clients for your approval. <br/>" +
+                                      "FullNames: " + getUserDetails.CompanyName + ", <br/> Email Address: " + getUserDetails.Email + ", <br/> Filename: " + DateTime.Now.ToString("yyyyMMddHH") + System.IO.Path.GetFileName(FileUpload.FileName) + " " +
+                                      "<br/><br/> Kind Regards,<br/><img src=\"https://e-documents.stanbicbank.co.ke/Content/images/EmailSignature.png\"/>";
+                        var SendDDNotificationEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, email.EmailID, "Existing Clients Upload", DDMessageBody);
+                        if (SendDDNotificationEmail == true)
+                        {
+                            //Log email sent notification
+                            LogNotification.AddSucsessNotification(MailHelper.EmailFrom, DDMessageBody, email.EmailID, _action);
+                        }
+                        else
+                        {
+                            //Log Email failed notification
+                            LogNotification.AddFailureNotification(MailHelper.EmailFrom, DDMessageBody, email.EmailID, _action);
+                        }
+                    }
+                }
+
+                //Return Success Result
+                return Json("success", JsonRequestBehavior.AllowGet);
             }
             else
             {
