@@ -9,15 +9,11 @@
 				$(document).ready(function () {
 					var fileName = '@ViewData["FileName"]';
 					$('#UploadsTableContainer').jtable({
-						title: '<i class="fa fa-list"></i> Uploaded Clients <div class="jTableTitleDiv float-right"></div>',
+						title: '<i class="fa fa-list"></i> Approved Entires <div class="jTableTitleDiv float-right"></div>',
 						paging: true,
 						pageSize: 10,
 						sorting: true,
 						defaultSorting: 'Id DESC',
-						/*selecting: true, //Enable selecting
-						multiselect: true, //Allow multiple selecting
-						selectingCheckboxes: true, //Show checkboxes on first column
-						selectOnRowClick: true, //Enable this to only select using checkboxes*/
 						actions:
 						{
 							listAction: '/DigitalDesk/GetUploadApprovals?FileName=' + fileName,
@@ -93,28 +89,10 @@
 										return '<center><p class="text-danger"><i class="fa fa-times-circle"></i> Declined </p></center>';
 									}
 									else if (approved == 3) {
-										return '<center><p class="text-danger"><i class="fa fa-times-circle"></i> Error </p></center>';
-									}
-									else if (approved == 4) {
-										return '<center><p class="text-danger"><i class="fa fa-times-circle"></i> Error </p></center>';
+										return '<center><p class="text-danger"><i class="fa fa-times-circle"></i> Approved with Error </p></center>';
 									}
 									else {
-										return '<center><p class="text-danger"><i class="fa fa-trash"></i> Deleted </p></center>';
-									}
-								}
-							},
-							MyButton: {
-								title: 'Action',
-								width: '10%',
-								display: function (data) {
-									var approved = data.record.Status;
-									if (approved == 0) {
-										return '<center><button class="btn btn-outline-danger w_full btn-small" onclick="LoadUpDeleteModal(\'' + data.record.Id + '\')">' +
-											'<span class="fa fa-check-circle"></span> Delete </button></center>';
-									}
-									else
-									{
-										return '<center><i class="fa fa-shield-alt fa-x" style="color:red;"></i></center>';
+										return '<center><p class="text-warning"><i class="fa fa-check-circle"></i> Pending Approval </p></center>';
 									}
 								}
 							}
@@ -123,49 +101,9 @@
 
 					//Load list from server
 					$('#UploadsTableContainer').jtable('load');
-										
+
 				});
 			</script>
 		</div>
 	</div>
 </div>
-<script type="text/javascript">
-	//Decline selected items
-	function LoadUpDeleteModal(getDelID) {
-		Swal.fire({
-			title: 'Are you sure?',
-			text: "You won't be able to revert this!",
-			icon: 'warning',
-			showCancelButton: true,
-			confirmButtonColor: '#28a745;',
-			cancelButtonColor: '#d33',
-			confirmButtonText: 'Yes, delete record',
-			cancelButtonText: 'No, cancel',
-		}).then((result) => {
-			if (result.value) {
-				$.ajax({
-					url: "/DigitalDesk/DeleteSelected",
-					type: 'POST',
-					data: 'Id=' + getDelID,
-					async: true,
-					success: function (XmlHttpRequest) {
-						if (XmlHttpRequest === 'success') {
-							Swal.fire(
-								'Success!',
-								'Your record has been successfully deleted',
-								'success'
-							)
-							$('#UploadsTableContainer').jtable('load');
-						}
-						else {
-							Swal.fire({
-								icon: 'error',
-								text: XmlHttpRequest
-							})
-						}
-					}
-				})
-			}
-		})
-	}
-</script>

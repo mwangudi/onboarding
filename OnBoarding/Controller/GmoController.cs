@@ -1172,5 +1172,15 @@ namespace OnBoarding.Controllers
                 return Json("success", JsonRequestBehavior.AllowGet);
             }
         }
+
+        //
+        //GET //ViewUploadedClient
+        [HttpPost]
+        [AllowAnonymous]
+        public PartialViewResult ViewApprovedEntiries(string fileName)
+        {
+            ViewData["FileName"] = fileName;
+            return PartialView();
+        }
     }
 }

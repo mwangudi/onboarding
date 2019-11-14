@@ -4039,14 +4039,14 @@ namespace OnBoarding.Controllers
         //
         //Approve records
         [HttpPost]
-        public JsonResult DeclineSelected(int Id)
+        public JsonResult DeleteSelected(int Id)
         {
             using (var db = new DBModel())
             {
                 try
                 {
                     var RecordToUpdate = db.ExistingClientsUploads.SingleOrDefault(c => c.Id == Id);
-                    RecordToUpdate.Status = 2;
+                    RecordToUpdate.Status = 4;
                     RecordToUpdate.ApprovedBy = User.Identity.GetUserId();
                     RecordToUpdate.DateApproved = DateTime.Now;
                     db.SaveChanges();
@@ -4055,7 +4055,7 @@ namespace OnBoarding.Controllers
                 }
                 catch (Exception)
                 {
-                    return Json("Error! Unable to decline selected records", JsonRequestBehavior.AllowGet);
+                    return Json("Error! Unable to delete selected records", JsonRequestBehavior.AllowGet);
                 }
 
             }
