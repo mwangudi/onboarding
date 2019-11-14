@@ -3742,30 +3742,35 @@ namespace OnBoarding.Controllers
                 getUserToUnlock.AccessFailedCount = 0;
                 getUserToUnlock.LockoutEndDateUtc = null;
                 getUserToUnlock.Status = 1;
-                var ActionPage = "UnlockUser";
+                var _action = "UnlockUser";
                 var recordSaved = db.SaveChanges();
 
                 if (recordSaved > 0)
                 {
                     //Send email notification to user
                     var callbackUrl = Url.Action("ResetAccount", "Account", null, Request.Url.Scheme);
-                    var ApplicationApprovedEmailMessage = "Dear " + getUserToUnlock.CompanyName + ", <br/><br/> Your account has been unlocked. <br/>" +
-                    "<a href=" + callbackUrl + "> Click here to reset your password. </a> <br/><br/>" +
-                    "Kind Regards, <br /> Global Markets Digital Team <br/><img src=\"/Content/images/EmailSignature.png\"/>";
-                    var ApplicationCompleteEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, getUserToUnlock.Email, "Account Unlocked", ApplicationApprovedEmailMessage);
+                    string EmailBody = string.Empty;
+                    using (StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/UnlockAccount.html")))
+                    {
+                        EmailBody = reader.ReadToEnd();
+                    }
+                    EmailBody = EmailBody.Replace("{CompanyName}", getUserToUnlock.CompanyName);
+                    EmailBody = EmailBody.Replace("{Url}", callbackUrl);
 
-                    if (ApplicationCompleteEmail == true)
+                    var unlockEmailSent = MailHelper.SendMailMessage(MailHelper.EmailFrom, getUserToUnlock.CompanyName, "Account Unlocked", EmailBody);
+                    if (unlockEmailSent == true)
                     {
                         //Log email sent notification
-                        LogNotification.AddSucsessNotification(MailHelper.EmailFrom, ApplicationApprovedEmailMessage, getUserToUnlock.Email, ActionPage);
+                        LogNotification.AddSucsessNotification(MailHelper.EmailFrom, EmailBody, getUserToUnlock.CompanyName, _action);
                     }
                     else
                     {
                         //Log Email failed notification
-                        LogNotification.AddFailureNotification(MailHelper.EmailFrom, ApplicationApprovedEmailMessage, getUserToUnlock.Email, ActionPage);
+                        LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBody, getUserToUnlock.CompanyName, _action);
                     }
                 }
             }
+
             return RedirectToAction("UnlockClients");
         }
 
