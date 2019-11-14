@@ -1149,7 +1149,7 @@ namespace OnBoarding.Controllers
         //
         //Approve records
         [HttpPost]
-        public JsonResult DeclineSelected(List<int> postedIds)
+        public JsonResult DeclineSelected(List<int> postedIds, string uploadedFile, List<string> postedComments)
         {
             using (var db = new DBModel())
             {
@@ -1161,12 +1161,34 @@ namespace OnBoarding.Controllers
                         RecordToUpdate.Status = 2;
                         RecordToUpdate.ApprovedBy = User.Identity.GetUserId();
                         RecordToUpdate.DateApproved = DateTime.Now;
+                        RecordToUpdate.ErrorComments = postedComments.FirstOrDefault();
                         db.SaveChanges();
                     }
                     catch (Exception)
                     {
                         return Json("Error! Unable to decline selected records", JsonRequestBehavior.AllowGet);
                     }
+                }
+
+                var userId = User.Identity.GetUserId();
+                var getFileUploadDetails = db.ExistingClientsUploads.First(c => c.FileName == uploadedFile);
+                var getUploaderDetails = db.AspNetUsers.SingleOrDefault(c => c.Id == getFileUploadDetails.UploadedBy);
+                var getApproverDetails = db.AspNetUsers.SingleOrDefault(c => c.Id == userId);
+                var _action = "UploadDecline";
+
+                //Send Success with errors Email
+                var DDMessageBody = "Dear " + getUploaderDetails.CompanyName + " <br/><br/> Kindly note that your uploaded CSV file " + uploadedFile + " on " + getFileUploadDetails.DateCreated + ", has been declined by " + getApproverDetails.CompanyName + " on " + DateTime.Now + ". You can re-upload another file for approval." +
+                    "<br/><br/> Kind Regards,<br/><img src=\"https://e-documents.stanbicbank.co.ke/Content/images/EmailSignature.png\"/>";
+                var SendDDNotificationEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, getUploaderDetails.Email, "Uploaded File Approval", DDMessageBody);
+                if (SendDDNotificationEmail == true)
+                {
+                    //Log email sent notification
+                    LogNotification.AddSucsessNotification(MailHelper.EmailFrom, DDMessageBody, getUploaderDetails.Email, _action);
+                }
+                else
+                {
+                    //Log Email failed notification
+                    LogNotification.AddFailureNotification(MailHelper.EmailFrom, DDMessageBody, getUploaderDetails.Email, _action);
                 }
 
                 return Json("success", JsonRequestBehavior.AllowGet);

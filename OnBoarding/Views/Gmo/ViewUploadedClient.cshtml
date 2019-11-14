@@ -144,7 +144,10 @@
 							})
 						}
 						else {
-							Swal.fire('Please select record(s) to approve!')
+							Swal.fire({
+								icon: 'warning',
+								text: 'Please select record(s) to decline!'
+							})
 						}
 					});
 
@@ -153,25 +156,30 @@
 						e.preventDefault();
 						var $selectedRows = $('#UploadsTableContainer').jtable('selectedRows');
 						if ($selectedRows.length > 0) {
-							Swal.fire({
-								title: 'Are you sure?',
-								text: "You won't be able to revert this!",
-								icon: 'warning',
+							Swal.mixin({
+								input: 'text',
+								confirmButtonText: 'Yes, decline records',
 								showCancelButton: true,
 								confirmButtonColor: '#28a745;',
 								cancelButtonColor: '#d33',
-								confirmButtonText: 'Yes, decline records',
 								cancelButtonText: 'No, cancel',
-							}).then((result) => {
-								$selectedRows.each(function () { 
-		                            var ids = [];
+								progressSteps: ['1']
+							}).queue([
+								{
+									title: 'Are you sure?',
+									text: 'Kindly provide comments before decline'
+								}
+							]).then((result) => {
+								if (result.value) {
+									const comments = result.value;
+									var ids = [];
 									$selectedRows.each(function () {
 										ids.push($(this).data('record').Id);
 									});
-					                $.ajax({
+									$.ajax({
 										url: "/Gmo/DeclineSelected",
 										type: 'POST',
-										data: JSON.stringify(ids),
+										data: JSON.stringify({ postedIds: ids, uploadedFile: fileName, postedComments: comments }),
 										contentType: 'application/json; charset=utf-8',
 										dataType: "json",
 										async: true,
@@ -180,7 +188,7 @@
 												$('#UploadsTableContainer').jtable('load');
 												Swal.fire(
 													'Success!',
-													'Your records has been successfully declined',
+													'Your record(s) has been successfully declined',
 													'success'
 												)
 												$('#UploadsTableContainer').jtable('load');
@@ -193,11 +201,15 @@
 											}
 										}
 									})
-								});
+								}
 							})
 						}
-						else {
-							Swal.fire('Please select record(s) to decline!')
+						else
+						{
+							Swal.fire({
+								icon: 'warning',
+								text: 'Please select record(s) to decline!'
+							})
 						}
 					});
 				});
