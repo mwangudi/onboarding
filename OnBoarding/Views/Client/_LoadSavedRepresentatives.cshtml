@@ -1,0 +1,91 @@
+﻿@if (ViewBag.DesignatedUsers.Count > 0)
+{
+	<table id="RepresentativesTable" class="table table-bordered">
+		<thead>
+			<tr>
+				<th> Full Names</th>
+				<th> Email </th>
+				<th> Phone Number </th>
+				<th> Trading Limit </th>
+				<th> EMarket SignUp </th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var item in ViewBag.DesignatedUsers)
+			{
+				<tr>
+					<td>@(item.Names)</td>
+					<td>@item.Email</td>
+					<td>@item.Mobile</td>
+					<td>@item.TradingLimit</td>
+					<td>@(item.EMarketSignUp ? "Yes" : "No")</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+	<div class="my-3 form-group form-row">
+		<div class="col-12 col-sm-3 col-lg-3">
+			<button id="btn-edit-representatives" class="btn btn-outline-info" type="button">
+				<i class="fa fa-edit"></i> Edit Representative(s)
+			</button>
+			<input type="hidden" id="CompanyID" name="CompanyID" value="@ViewData["CompanyID"]" />
+			<input type="hidden" id="RepresentativesCount" value="@ViewBag.DesignatedUsers.Count" />
+		</div>
+	</div>
+	<hr />
+}
+else
+{
+	<input type="hidden" id="RepresentativesCount" value="@ViewBag.DesignatedUsers.Count" />
+}
+<script type="text/javascript">
+
+	//Load up signatory modal function
+	function LoadUpRepresentativeModal() {
+		$('#LoadUpRepresentativeModal').modal({ backdrop: 'static', keyboard: false });
+	}
+	//btnCloseRepModal btnEditRepresentatives LoadUpRepresentativeModal
+	$('#btnCloseRepModal').on('click', function (e) {
+		e.preventDefault();
+		$('#LoadUpRepresentativeModal').modal('hide');
+	});
+
+	//btn-edit-representatives
+    $('#btn-edit-representatives').on('click', function (e) {
+        e.preventDefault();
+        LoadUpRepresentativeModal();
+    });
+
+	$('#btnEditRepresentatives').on('click', function (e) {
+		e.preventDefault();
+		$('#DesignatedUserCount').val("0");
+		var companyId = $('#CompanyID').val();
+		$.ajax({
+			url: '/Client/ClearRepresentatives',
+			type: 'POST',
+			data: JSON.stringify({ companyId: companyId }),
+			contentType: 'application/json; charset=utf-8',
+			dataType: "json",
+			async: true,
+			success: function (XmlHttpRequest) {
+				window.setTimeout(saved, 500);
+				function saved() {
+					if (XmlHttpRequest === 'success') {
+						$('#RepresentativesDiv').addClass('d_none');
+						$('#RepresentativesDiv').addClass('d-none');
+						$('#UserDiv1').removeClass('d_none');
+						$('#btn-save-representatives').removeClass('d_none');
+						$('#btn-edit-representatives').addClass('d_none');
+						$('#btn-save-representatives').removeClass('d_none');
+						$('#LoadUpRepresentativeModal').modal('hide');
+					}
+				}
+			},
+			error: function (xhr, textStatus, errorThrown) {
+				if (textStatus === 'error') {
+					toastr.error('Submission error!. Code: ' + xhr.status + ', Details: ' + errorThrown);
+				}
+			}
+		});
+	});
+</script>

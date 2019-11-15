@@ -33,30 +33,10 @@ $(document).ready(function () {
         $('#LoadUpModal').modal({ backdrop: 'static', keyboard: false });
     }
 	
-	//Load Up Settlement Modal
-	function LoadUpSettlementModal() {
-        $('#LoadUpSettlementModal').modal({ backdrop: 'static', keyboard: false });
-    }
-	
-    //Load up signatory modal function
-    function LoadUpSignatoryModal() {
-        $('#LoadUpSignatoryModal').modal({ backdrop: 'static', keyboard: false });
-    }
-
-    //Load up representative modal function
-    function LoadUpRepresentativeModal() {
-        $('#LoadUpRepresentativeModal').modal({ backdrop: 'static', keyboard: false });
-    }
     //Close modal
 	$('#closemodal').on('click', function (e) {
 		e.preventDefault();
 		$('#LoadUpModal').modal('hide');
-	});
-
-    //btnCloseModal
-	$('#btnCloseModal').on('click', function (e) {
-		e.preventDefault();
-		$('#LoadUpSignatoryModal').modal('hide');
 	});
 
 	$('#closemodalup').on('click', function (e) {
@@ -64,17 +44,6 @@ $(document).ready(function () {
 		$('#LoadUpModal').modal('hide');
 	});
 
-    //btnCloseRepModal btnEditRepresentatives LoadUpRepresentativeModal
-	$('#btnCloseRepModal').on('click', function (e) {
-		e.preventDefault();
-		$('#LoadUpRepresentativeModal').modal('hide');
-	});
-	
-	//btnCloseSetModal
-	$('#btnCloseSetModal').on('click', function (e) {
-		e.preventDefault();
-		$('#LoadUpSettlementModal').modal('hide');
-	});
     //Initialize Select2
     $('.select2').select2();
 
@@ -103,13 +72,42 @@ $(document).ready(function () {
 		/* Get the selected value of dropdownlist */
 		var selectedID = $(this).val();
 
-		/* Request the partial view with .get request. */
+		/* Request the partial view for Company Details. */
 		$.get('/Client/_LoadCompanyDetails/' + selectedID, function (data) {
 			/* data is the pure html returned from action method, load it to your page */
 			$('#CompanyDetailsPartialView').html(data);
 			$('#CompanyInfo').removeClass('d-none');
 			/* little fade in effect */
 			$('#CompanyDetailsPartialView').fadeIn('fast');
+		});
+
+		/* Request the partial view for any saved Settlement Details. */
+		$.get('/Client/_LoadSavedSettlements/' + selectedID, function (data) {
+			/* data is the pure html returned from action method, load it to your page */
+			$('#HaveSettlementsDiv').html(data);
+			/* little fade in effect */
+			$('#HaveSettlementsDiv').fadeIn('fast');
+			$('#btn-save-settlement').addClass('d_none');
+		});
+
+		/* Request the partial view for any saved Settlement Details. */
+		$.get('/Client/_LoadSavedSignatories/' + selectedID, function (data) {
+			/* data is the pure html returned from action method, load it to your page */
+			$('#SignatoriesDiv').html(data);
+			/* little fade in effect */
+			$('#SignatoriesDiv').fadeIn('fast');
+			$('#SignatoryDiv1').addClass('d_none');
+			$('#btn-save-signatories').addClass('d_none');
+		});
+
+		/* Request the partial view for any saved Settlement Details. */
+		$.get('/Client/_LoadSavedRepresentatives/' + selectedID, function (data) {
+			/* data is the pure html returned from action method, load it to your page */
+			$('#RepresentativesDiv').html(data);
+			/* little fade in effect */
+			$('#RepresentativesDiv').fadeIn('fast');
+			$('#UserDiv1').addClass('d_none');
+			$('#btn-save-representatives').addClass('d_none');
 		});
 
 		//applicant_terms_content
@@ -310,34 +308,6 @@ $(document).ready(function () {
 		$("#terms").prop('checked', false);
 	}
 
-    //Show Account on settlement accounts
-    $("#HaveSettlementAccount").change(function () {
-        if (this.value === "Yes") {
-            $('#AccountDiv1').removeClass('d_none');
-            $('#SettlementAccount1').addClass('required');
-            $('#SettlementAccount2').addClass('required');
-            $('#SelectCurrency1').addClass('required');
-            $('#SelectCurrency2').addClass('required');
-            $('#AccountDiv2').removeClass('d_none');
-            $('#disclaimer').removeClass('d_none');
-            $('#btnAddAccount3').removeClass('d_none');
-            $('#btn-save-settlement').removeClass('d_none');
-        }
-        else {
-            $('#AccountDiv1').addClass('d_none');
-            $('#AccountDiv2').addClass('d_none');
-            $('#AccountDiv3').addClass('d_none');
-            $('#AccountDiv4').addClass('d_none');
-            $('#AccountDiv5').addClass('d_none');
-            $('#disclaimer').addClass('d_none');
-            $('#SettlementAccount1').removeClass('required');
-            $('#SettlementAccount2').removeClass('required');
-            $('#SelectCurrency1').removeClass('required');
-            $('#SelectCurrency2').removeClass('required');
-            $('#btn-save-settlement').addClass('d_none');
-        }
-    });
-
     // Show div 3 on add account
     $('#btnAddAccount3').on('click', function () {
         $('#AccountDiv3').removeClass('d_none');
@@ -358,7 +328,7 @@ $(document).ready(function () {
 				type: 'POST',
 				data: '{account: "' + account + '", companyId: "' + companyid + '" }',
 				contentType: "application/json; charset=utf-8",
-				dataType: "html",
+				dataType: "json",
 				success: function () {
 					$('#AccountDiv3').addClass('d_none');
 					$('#btnAddAccount3').removeClass('d_none');
@@ -1089,100 +1059,7 @@ $(document).ready(function () {
             toastr.error('Please correct the errors on form inputs to save');
         }
     });
-
-    var settlements = $('#SettlementAccountsCount').val();
-    if (settlements > 0) {
-        $('#btn-save-settlement').addClass('d_none');
-        $('#btn-edit-settlement').removeClass('d_none');
-        $('#HaveSettlementsDiv').removeClass('d_none');
-        $('#SettlementAccountDiv').addClass('d_none');
-        $('#SavedSettlements').removeClass('d_none');
-        $('#HaveSettlementAccount').attr("disabled", true);
-		$("#HaveSettlementAccount").val("Yes");
-		//Clear Settlement Instructions textboxes
-		$("#SettlementAccount1").val("");
-		$("#SettlementAccount2").val("");
-		$("#SettlementAccount3").val("");
-		$("#SettlementAccount4").val("");
-		$("#SettlementAccount5").val("");
-		//Clear currency types
-		$("#InputCurrencyType1").val("");
-		$("#InputCurrencyType2").val("");
-		$("#InputCurrencyType3").val("");
-		$("#InputCurrencyType4").val("");
-		$("#InputCurrencyType5").val("");
-    }
-    else
-    {
-        $('#btn-edit-settlement').addClass('d_none');
-		$('#btn-save-settlement').addClass('d_none');
-		$('#HaveSettlementsDiv').addClass('d_none');
-		$('#SavedSettlements').addClass('d_none');
-		//Clear Settlement Instructions textboxes
-		$("#SettlementAccount1").val("");
-		$("#SettlementAccount2").val("");
-		$("#SettlementAccount3").val("");
-		$("#SettlementAccount4").val("");
-		$("#SettlementAccount5").val("");
-		//Clear currency types
-		$("#InputCurrencyType1").val("");
-		$("#InputCurrencyType2").val("");
-		$("#InputCurrencyType3").val("");
-		$("#InputCurrencyType4").val("");
-		$("#InputCurrencyType5").val("");
-    }
-	
-	//btn-edit-settlements load modal
-    $('#btn-edit-settlement').on('click', function (e) {
-        e.preventDefault();
-        LoadUpSettlementModal();
-    });
-	
-    //Select Edit settlements
-    $('#btnEditSettlements').on('click', function (e) {
-        e.preventDefault();
-        $('#HaveSettlementsDiv').addClass('d_none');
-        $('#HaveSettlementAccount').val('');
-		$('#SettlementAccountDiv').removeClass('d_none');
-        $('#HaveSettlementAccount').attr("disabled", false);
-		$('#SettlementAccountsCount').val("0");
-		var formData = new FormData($("#form")[0]);
-        $.ajax({
-            url: '/Client/ClearSettlementAccounts',
-			type: 'POST',
-			data: formData,
-            async: true,
-            success: function (XmlHttpRequest) {
-                window.setTimeout(saved, 500);
-                function saved() {
-					if (XmlHttpRequest === 'success') {
-						$('#AccountDiv1').removeClass('d_none');
-						$('#AccountDiv2').removeClass('d_none');
-						$('#btn-save-settlement').removeClass('d_none');
-						$('#btn-edit-settlement').addClass('d_none');
-						$('#LoadUpSettlementModal').modal('hide');
-					}
-					else {
-						//toastr.error(XmlHttpRequest, { positionClass: 'toast-top-center' });
-						$('#AccountDiv1').removeClass('d_none');
-						$('#AccountDiv2').removeClass('d_none');
-						$('#btn-save-settlement').removeClass('d_none');
-						$('#btn-edit-settlement').addClass('d_none');
-						$('#LoadUpSettlementModal').modal('hide');
-					}
-                }
-			},
-			error: function (xhr, textStatus, errorThrown) {
-				if (textStatus === 'error') {
-					toastr.error('Submission error!. Code: ' + xhr.status + ', Details: ' + errorThrown);
-				}
-			},
-            cache: false,
-            contentType: false,
-            processData: false
-        });
-    });
-
+	    
     //Save settlement details
     $('#btn-save-settlement').on('click', function (e) {
         e.preventDefault();
@@ -1233,20 +1110,6 @@ $(document).ready(function () {
         }
     });
 
-    // Have Signatories
-    var signatories = $('#ClientSignatoryCount').val();
-    if (signatories > 0) {
-        $('#SignatoriesDiv').removeClass('d_none');
-        $('#SignatoryDiv1').addClass('d_none');
-        $('#btn-save-signatories').addClass('d_none');
-		$('#btn-edit-signatories').removeClass('d_none'); 
-    }
-    else {
-        $('#SignatoryDiv1').removeClass('d_none');
-        $('#btn-save-signatories').removeClass('d_none');
-        $('#btn-edit-signatories').addClass('d_none');
-    }
-
     //btn-save-signatories
     $('#btn-save-signatories').on('click', function (e) {
         e.preventDefault();
@@ -1290,43 +1153,6 @@ $(document).ready(function () {
         }
     });
 
-    //btn-edit-signatories
-    $('#btn-edit-signatories').on('click', function (e) {
-        e.preventDefault();
-        LoadUpSignatoryModal();
-    });
-
-    $('#btnEditSignatories').on('click', function (e) {
-		e.preventDefault();
-		$('#ClientSignatoryCount').val("0");
-		var formData = new FormData($("#form")[0]);
-        $.ajax({
-            url: '/Client/ClearSignatories',
-			type: 'POST',
-			data: formData,
-            async: true,
-            success: function () {
-                window.setTimeout(saved, 500);
-                function saved() {
-                    $('#SignatoryDiv1').removeClass('d_none');
-                    $('#btn-save-signatories').removeClass('d_none');
-                    $('#btn-edit-signatories').addClass('d_none');
-                    $('#SignatoriesDiv').addClass('d_none');
-                    $('#btn-save-signatories').removeClass('d_none');
-                    $('#LoadUpSignatoryModal').modal('hide');
-                }
-			},
-			error: function (xhr, textStatus, errorThrown) {
-				if (textStatus === 'error') {
-					toastr.error('Submission error!. Code: ' + xhr.status + ', Details: ' + errorThrown);
-				}
-			},
-            cache: false,
-            contentType: false,
-            processData: false
-        });
-    });
-
     // Have Representatives
 	var representatives = $('#DesignatedUserCount').val();
     if (representatives > 0) {
@@ -1341,43 +1167,6 @@ $(document).ready(function () {
         $('#btn-edit-representatives').addClass('d_none');
     }
     
-    //btn-edit-representatives
-    $('#btn-edit-representatives').on('click', function (e) {
-        e.preventDefault();
-        LoadUpRepresentativeModal();
-    });
-
-    $('#btnEditRepresentatives').on('click', function (e) {
-		e.preventDefault();
-		$('#DesignatedUserCount').val("0");
-		var formData = new FormData($("#form")[0]);
-        $.ajax({
-            url: '/Client/ClearRepresentatives',
-			type: 'POST',
-			data: formData,
-            async: true,
-            success: function () {
-                window.setTimeout(saved, 500);
-                function saved() {
-                    $('#UserDiv1').removeClass('d_none');
-                    $('#btn-save-representatives').removeClass('d_none');
-                    $('#btn-edit-representatives').addClass('d_none');
-                    $('#RepresentativesDiv').addClass('d_none');
-                    $('#btn-save-representatives').removeClass('d_none');
-                    $('#LoadUpRepresentativeModal').modal('hide');
-                }
-			},
-			error: function (xhr, textStatus, errorThrown) {
-				if (textStatus === 'error') {
-					toastr.error('Submission error!. Code: ' + xhr.status + ', Details: ' + errorThrown);
-				}
-			},
-            cache: false,
-            contentType: false,
-            processData: false
-        });
-    });
-
     //btn-save-signatories
     $('#btn-save-representatives').on('click', function (e) {
         e.preventDefault();

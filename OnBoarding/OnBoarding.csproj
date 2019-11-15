@@ -3119,6 +3119,9 @@
     <Content Include="Views\Gmo\ViewUploadedClient.cshtml" />
     <Content Include="Views\DigitalDesk\ViewUploadedClient.cshtml" />
     <Content Include="Views\Gmo\ViewApprovedEntiries.cshtml" />
+    <Content Include="Views\Client\_LoadSavedSettlements.cshtml" />
+    <Content Include="Views\Client\_LoadSavedSignatories.cshtml" />
+    <Content Include="Views\Client\_LoadSavedRepresentatives.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

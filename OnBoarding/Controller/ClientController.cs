@@ -80,16 +80,15 @@ namespace OnBoarding.Controllers
         //POST //Clear all Representatives
         [HttpPost]
         [AllowAnonymous]
-        public ActionResult ClearRepresentatives(ApplicationViewModel model)
+        public ActionResult ClearRepresentatives(int companyId)
         {
             using (DBModel db = new DBModel())
             {
                 var currentUserId = User.Identity.GetUserId();
-                var userInfo = db.RegisteredClients.SingleOrDefault(c => c.UserAccountID == currentUserId);
-                var ClientRepresentativesExist = db.DesignatedUsers.Any(c => c.ClientID == userInfo.Id && c.Status == 0 && c.CompanyID == model.CompanyID);
+                var ClientRepresentativesExist = db.DesignatedUsers.Any(c => c.CompanyID == companyId);
                 if (ClientRepresentativesExist)
                 {
-                    db.DesignatedUsers.RemoveRange(db.DesignatedUsers.Where(r => r.ClientID == userInfo.Id && r.CompanyID == model.CompanyID));
+                    db.DesignatedUsers.RemoveRange(db.DesignatedUsers.Where(r => r.CompanyID == companyId));
                     var recordSaved = db.SaveChanges();
                     if (recordSaved > 0)
                     {
@@ -105,7 +104,6 @@ namespace OnBoarding.Controllers
                     return Json("No representatives to delete", JsonRequestBehavior.AllowGet);
                 }
             }
-            
         }
 
         //
@@ -168,22 +166,12 @@ namespace OnBoarding.Controllers
                     {
                         ViewBag.RepresentativesDetails = Representative1Details;
                     }
-
-                    //Get the list of all client's settlement accounts
-                    var Query = db.Database.SqlQuery<SettlementAccountsViewModel>("SELECT c.CurrencyName, s.AccountNumber, s.CurrencyId FROM ClientSettlementAccounts s INNER JOIN Currencies c ON c.Id = s.CurrencyID WHERE s.Status = 1 AND s.ClientID =  " + "'" + userInfo.Id + "'" + " AND s.Status = 1");
-                    ViewBag.SettlementAccounts = Query.ToList();
-
-                    //Get the list of all saved signatories
-                    List<ClientSignatory> SignatoryList = db.ClientSignatories.Where(a => a.ClientID == userInfo.Id && a.Status != 2).ToList();
-                    ViewBag.ClientSignatory = SignatoryList;
-
-                    //Get the list of saved authorized representatives
-                    List<DesignatedUser> DesignatedUsersList = db.DesignatedUsers.Where(a => a.ClientID == userInfo.Id && a.Status != 2).ToList();
-                    ViewBag.DesignatedUser = DesignatedUsersList;
                 }
                 return View();
             }
         }
+
+
 
         //
         // POST: Applications
@@ -1567,18 +1555,50 @@ namespace OnBoarding.Controllers
             {
                 var CompanyDetails = db.ClientCompanies.SingleOrDefault(a => a.Id == id);
                 ViewBag.CompanyDetails = CompanyDetails;
+            }
 
-                //Signatories List
-                List<ClientSignatory> SignatoryList = db.ClientSignatories.Where(a => a.ClientID == CompanyDetails.ClientId && a.CompanyID == id && a.Status != 4).ToList();
-                ViewBag.ClientSignatory = SignatoryList;
+            return PartialView();
+        }
 
-                //Designated Users List
-                List<DesignatedUser> DesignatedUsersList = db.DesignatedUsers.Where(a => a.ClientID == CompanyDetails.ClientId && a.CompanyID == id && a.Status != 4).ToList();
-                ViewBag.DesignatedUser = DesignatedUsersList;
-
+        //
+        // GET // Company Partial View
+        public PartialViewResult _LoadSavedSettlements(int id)
+        {
+            using (DBModel db = new DBModel())
+            {
                 //Get the list of all client's settlement accounts
-                var Query = db.Database.SqlQuery<SettlementAccountsViewModel>("SELECT c.CurrencyName, s.AccountNumber FROM ClientSettlementAccounts s INNER JOIN Currencies c ON c.Id = s.CurrencyID WHERE s.ClientID =  " + "'" + CompanyDetails.ClientId + "'" + " AND s.CompanyID =  " + "'" + id + "'" + " AND s.Status = 1");
+                var Query = db.Database.SqlQuery<SettlementAccountsViewModel>("SELECT c.CurrencyName, s.AccountNumber FROM ClientSettlementAccounts s INNER JOIN Currencies c ON c.Id = s.CurrencyID WHERE s.CompanyID =  " + "'" + id + "'" + " AND s.Status = 1");
                 ViewBag.SettlementAccounts = Query.ToList();
+                ViewData["CompanyID"] = id;
+            }
+
+            return PartialView();
+        }
+
+        //
+        // GET // Company Partial View
+        public PartialViewResult _LoadSavedSignatories(int id)
+        {
+            using (DBModel db = new DBModel())
+            {
+                //Signatories List
+                var Query = db.Database.SqlQuery<ClientSignatoriesViewModel>("SELECT CONCAT(s.Surname, ' ', s.OtherNames) Names, s.Designation, s.PhoneNumber, s.EmailAddress Email, s.Signature FROM ClientSignatories s WHERE s.CompanyID = '" + id + "';");
+                ViewBag.ClientSignatories = Query.ToList();
+                ViewData["CompanyID"] = id;
+            }
+
+            return PartialView();
+        }
+
+        //
+        // GET // Company Partial View
+        public PartialViewResult _LoadSavedRepresentatives(int id)
+        {
+            using (DBModel db = new DBModel())
+            {
+                var Query = db.Database.SqlQuery<DesignaterUserViewModel>("SELECT CONCAT(s.Surname, ' ', s.OtherNames) Names, s.TradingLimit, s.Mobile, s.Email, s.Signature, s.EMarketSignUp FROM DesignatedUsers s WHERE s.CompanyID = '" + id + "';");
+                ViewBag.DesignatedUsers = Query.ToList();
+                ViewData["CompanyID"] = id;
             }
 
             return PartialView();
@@ -1623,6 +1643,7 @@ namespace OnBoarding.Controllers
                             var addSignatory1 = db.ClientSignatories.Create();
                             var newFileName = DateTime.Now.ToString("yyyyMMdd") + RegisteredClientId + System.IO.Path.GetFileName(inputFile.FileName);
                             addSignatory1.ClientID = RegisteredClientId;
+                            addSignatory1.CompanyID = model.CompanyID;
                             addSignatory1.Designation = model.SignatoryDesignation1;
                             addSignatory1.Surname = model.SignatorySurname1;
                             addSignatory1.OtherNames = model.SignatoryOtherNames1;
@@ -1659,6 +1680,7 @@ namespace OnBoarding.Controllers
                             var Signatory1ToUpdate = db.ClientSignatories.SingleOrDefault(c => c.EmailAddress == model.SignatoryEmail1);
                             var newFileName = DateTime.Now.ToString("yyyyMMdd") + RegisteredClientId + System.IO.Path.GetFileName(inputFile.FileName);
                             Signatory1ToUpdate.Status = 1;
+                            Signatory1ToUpdate.CompanyID = model.CompanyID;
                             Signatory1ToUpdate.Designation = model.SignatoryDesignation1;
                             Signatory1ToUpdate.Surname = model.SignatorySurname1;
                             Signatory1ToUpdate.OtherNames = model.SignatoryOtherNames1;
@@ -1687,6 +1709,7 @@ namespace OnBoarding.Controllers
                             //Add New Details
                             var addSignatory2 = db.ClientSignatories.Create();
                             addSignatory2.ClientID = RegisteredClientId;
+                            addSignatory2.CompanyID = model.CompanyID;
                             addSignatory2.Designation = model.SignatoryDesignation2;
                             addSignatory2.Surname = model.SignatorySurname2;
                             addSignatory2.OtherNames = model.SignatoryOtherNames2;
@@ -1709,6 +1732,7 @@ namespace OnBoarding.Controllers
                         {
                             var Signatory2ToUpdate = db.ClientSignatories.SingleOrDefault(s => s.EmailAddress == model.SignatoryEmail2 && s.ClientID == model.ClientID && s.CompanyID == model.CompanyID);
                             Signatory2ToUpdate.Status = 0;
+                            Signatory2ToUpdate.CompanyID = model.CompanyID;
                             Signatory2ToUpdate.Designation = model.SignatoryDesignation2;
                             Signatory2ToUpdate.Surname = model.SignatorySurname2;
                             Signatory2ToUpdate.OtherNames = model.SignatoryOtherNames2;
@@ -1737,6 +1761,7 @@ namespace OnBoarding.Controllers
                             //Add New Details
                             var addSignatory3 = db.ClientSignatories.Create();
                             addSignatory3.ClientID = RegisteredClientId;
+                            addSignatory3.CompanyID = model.CompanyID;
                             addSignatory3.Designation = model.SignatoryDesignation3;
                             addSignatory3.Surname = model.SignatorySurname3;
                             addSignatory3.OtherNames = model.SignatoryOtherNames3;
@@ -1761,6 +1786,7 @@ namespace OnBoarding.Controllers
                             Signatory3ToUpdate.Status = 0;
                             Signatory3ToUpdate.Designation = model.SignatoryDesignation3;
                             Signatory3ToUpdate.Surname = model.SignatorySurname3;
+                            Signatory3ToUpdate.CompanyID = model.CompanyID;
                             Signatory3ToUpdate.OtherNames = model.SignatoryOtherNames3;
                             Signatory3ToUpdate.EmailAddress = model.SignatoryEmail3.ToLower();
                             Signatory3ToUpdate.PhoneNumber = model.SignatoryPhoneNumber3;
@@ -1785,6 +1811,7 @@ namespace OnBoarding.Controllers
                             //Add New Details
                             var addSignatory4 = db.ClientSignatories.Create();
                             addSignatory4.ClientID = RegisteredClientId;
+                            addSignatory4.CompanyID = model.CompanyID;
                             addSignatory4.Designation = model.SignatoryDesignation4;
                             addSignatory4.Surname = model.SignatorySurname4;
                             addSignatory4.OtherNames = model.SignatoryOtherNames4;
@@ -1809,6 +1836,7 @@ namespace OnBoarding.Controllers
                             Signatory4ToUpdate.Status = 0;
                             Signatory4ToUpdate.Designation = model.SignatoryDesignation4;
                             Signatory4ToUpdate.Surname = model.SignatorySurname4;
+                            Signatory4ToUpdate.CompanyID = model.CompanyID;
                             Signatory4ToUpdate.OtherNames = model.SignatoryOtherNames4;
                             Signatory4ToUpdate.EmailAddress = model.SignatoryEmail4.ToLower();
                             Signatory4ToUpdate.PhoneNumber = model.SignatoryPhoneNumber4;
@@ -1834,6 +1862,7 @@ namespace OnBoarding.Controllers
                             //Add New Details
                             var addSignatory5 = db.ClientSignatories.Create();
                             addSignatory5.ClientID = RegisteredClientId;
+                            addSignatory5.CompanyID = model.CompanyID;
                             addSignatory5.Designation = model.SignatoryDesignation5;
                             addSignatory5.Surname = model.SignatorySurname5;
                             addSignatory5.OtherNames = model.SignatoryOtherNames5;
@@ -1857,6 +1886,7 @@ namespace OnBoarding.Controllers
                         {
                             var Signatory5ToUpdate = db.ClientSignatories.SingleOrDefault(c => c.EmailAddress == model.SignatoryEmail5 && c.ClientID == model.ClientID && c.CompanyID == model.CompanyID);
                             Signatory5ToUpdate.Status = 0;
+                            Signatory5ToUpdate.CompanyID = model.CompanyID;
                             Signatory5ToUpdate.Designation = model.SignatoryDesignation5;
                             Signatory5ToUpdate.Surname = model.SignatorySurname5;
                             Signatory5ToUpdate.OtherNames = model.SignatoryOtherNames5;
@@ -1903,6 +1933,7 @@ namespace OnBoarding.Controllers
                             var addDesignatedUser1 = db.DesignatedUsers.Create();
                             addDesignatedUser1.Status = 0;
                             addDesignatedUser1.ClientID = RegisteredClientId;
+                            addDesignatedUser1.CompanyID = model.CompanyID;
                             addDesignatedUser1.DateCreated = DateTime.Now;
                             addDesignatedUser1.DOB = model.DOB1;
                             addDesignatedUser1.Email = model.UserEmail1.ToLower();
@@ -1928,6 +1959,7 @@ namespace OnBoarding.Controllers
                         //Update representative exists
                         var Representative1ToUpdate = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.UserEmail1 && c.ClientID == model.ClientID && c.CompanyID == model.CompanyID);
                         Representative1ToUpdate.Status = 0;
+                        Representative1ToUpdate.CompanyID = model.CompanyID;
                         Representative1ToUpdate.DateCreated = DateTime.Now;
                         Representative1ToUpdate.DOB = model.DOB1;
                         Representative1ToUpdate.Email = model.UserEmail1.ToLower();
@@ -1953,6 +1985,7 @@ namespace OnBoarding.Controllers
                         var addDesignatedUser2 = db.DesignatedUsers.Create();
                         addDesignatedUser2.Status = 0;
                         addDesignatedUser2.ClientID = RegisteredClientId;
+                        addDesignatedUser2.CompanyID = model.CompanyID;
                         addDesignatedUser2.DateCreated = DateTime.Now;
                         addDesignatedUser2.DOB = model.DOB2;
                         addDesignatedUser2.Email = model.UserEmail2.ToLower();
@@ -1973,6 +2006,7 @@ namespace OnBoarding.Controllers
                         //Update representative exists
                         var Representative2ToUpdate = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.UserEmail2 && c.ClientID == model.ClientID && c.CompanyID == model.CompanyID);
                         Representative2ToUpdate.Status = 0;
+                        Representative2ToUpdate.CompanyID = model.CompanyID;
                         Representative2ToUpdate.DateCreated = DateTime.Now;
                         Representative2ToUpdate.DOB = model.DOB2;
                         Representative2ToUpdate.Email = model.UserEmail2.ToLower();
@@ -1998,6 +2032,7 @@ namespace OnBoarding.Controllers
                         var addDesignatedUser3 = db.DesignatedUsers.Create();
                         addDesignatedUser3.Status = 0;
                         addDesignatedUser3.ClientID = RegisteredClientId;
+                        addDesignatedUser3.CompanyID = model.CompanyID;
                         addDesignatedUser3.DateCreated = DateTime.Now;
                         addDesignatedUser3.DOB = model.DOB3;
                         addDesignatedUser3.Email = model.UserEmail3.ToLower();
@@ -2018,6 +2053,7 @@ namespace OnBoarding.Controllers
                         //Update representative exists
                         var Representative3ToUpdate = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.UserEmail3 && c.ClientID == model.ClientID && c.CompanyID == model.CompanyID);
                         Representative3ToUpdate.Status = 0;
+                        Representative3ToUpdate.CompanyID = model.CompanyID;
                         Representative3ToUpdate.DateCreated = DateTime.Now;
                         Representative3ToUpdate.DOB = model.DOB3;
                         Representative3ToUpdate.Email = model.UserEmail3.ToLower();
@@ -2043,6 +2079,7 @@ namespace OnBoarding.Controllers
                         var addDesignatedUser4 = db.DesignatedUsers.Create();
                         addDesignatedUser4.Status = 0;
                         addDesignatedUser4.ClientID = RegisteredClientId;
+                        addDesignatedUser4.CompanyID = model.CompanyID;
                         addDesignatedUser4.DateCreated = DateTime.Now;
                         addDesignatedUser4.DOB = model.DOB4;
                         addDesignatedUser4.Email = model.UserEmail4.ToLower();
@@ -2063,6 +2100,7 @@ namespace OnBoarding.Controllers
                         //Update Status if representative exists
                         var Representative4ToUpdate = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.UserEmail4 && c.ClientID == model.ClientID && c.CompanyID == model.CompanyID);
                         Representative4ToUpdate.Status = 0;
+                        Representative4ToUpdate.CompanyID = model.CompanyID;
                         Representative4ToUpdate.DateCreated = DateTime.Now;
                         Representative4ToUpdate.DOB = model.DOB4;
                         Representative4ToUpdate.Email = model.UserEmail4.ToLower();
@@ -2088,6 +2126,7 @@ namespace OnBoarding.Controllers
                         var addDesignatedUser5 = db.DesignatedUsers.Create();
                         addDesignatedUser5.Status = 0;
                         addDesignatedUser5.ClientID = RegisteredClientId;
+                        addDesignatedUser5.CompanyID = model.CompanyID;
                         addDesignatedUser5.DateCreated = DateTime.Now;
                         addDesignatedUser5.DOB = model.DOB5;
                         addDesignatedUser5.Email = model.UserEmail5.ToLower();
@@ -2108,6 +2147,7 @@ namespace OnBoarding.Controllers
                         //Update representative exists
                         var Representative5ToUpdate = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.UserEmail5 && c.ClientID == model.ClientID && c.CompanyID == model.CompanyID);
                         Representative5ToUpdate.Status = 0;
+                        Representative5ToUpdate.CompanyID = model.CompanyID;
                         Representative5ToUpdate.DateCreated = DateTime.Now;
                         Representative5ToUpdate.DOB = model.DOB5;
                         Representative5ToUpdate.Email = model.UserEmail5.ToLower();
@@ -2365,16 +2405,15 @@ namespace OnBoarding.Controllers
         //Clear Settlement accounts for users to add new
         [HttpPost]
         [AllowAnonymous]
-        public ActionResult ClearSettlementAccounts(ApplicationViewModel model)
+        public JsonResult ClearSettlementAccounts(int companyId)
         {
             using (DBModel db = new DBModel())
             {
                 var currentUserId = User.Identity.GetUserId();
-                var userInfo = db.RegisteredClients.SingleOrDefault(c => c.UserAccountID == currentUserId);
-                var SettlementAccountsExist = db.ClientSettlementAccounts.Any(c => c.ClientID == userInfo.Id && c.CompanyID == model.CompanyID);
+                var SettlementAccountsExist = db.ClientSettlementAccounts.Any(c => c.CompanyID == companyId);
                 if (SettlementAccountsExist)
                 {
-                    db.ClientSettlementAccounts.RemoveRange(db.ClientSettlementAccounts.Where(r => r.ClientID == userInfo.Id && r.CompanyID == model.CompanyID));
+                    db.ClientSettlementAccounts.RemoveRange(db.ClientSettlementAccounts.Where(r => r.CompanyID == companyId));
                     var recordSaved = db.SaveChanges();
                     if (recordSaved > 0)
                     {
@@ -2392,11 +2431,11 @@ namespace OnBoarding.Controllers
             }
         }
 
-        //Post
-        //Clear Settlement accounts for users to add new
+        //
+        //Post //Clear Settlement accounts for users to add new
         [HttpPost]
         [AllowAnonymous]
-        public ActionResult RemoveSettlementAccount(string account, int companyId)
+        public JsonResult RemoveSettlementAccount(string account, int companyId)
         {
             using (DBModel db = new DBModel())
             {
@@ -2422,18 +2461,17 @@ namespace OnBoarding.Controllers
         }
 
         //
+        //POST //ClearSignatories
         [HttpPost]
         [AllowAnonymous]
-        public ActionResult ClearSignatories(ApplicationViewModel model)
+        public JsonResult ClearSignatories(int companyId)
         {
             using (DBModel db = new DBModel())
             {
-                var currentUserId = User.Identity.GetUserId();
-                var userInfo = db.RegisteredClients.SingleOrDefault(c => c.UserAccountID == currentUserId);
-                var ClientSignatoriesExist = db.ClientSignatories.Any(c => c.ClientID == userInfo.Id && c.CompanyID == model.CompanyID);
+                var ClientSignatoriesExist = db.ClientSignatories.Any(c => c.CompanyID == companyId);
                 if (ClientSignatoriesExist)
                 {
-                    db.ClientSignatories.RemoveRange(db.ClientSignatories.Where(r => r.ClientID == userInfo.Id && r.CompanyID == model.CompanyID));
+                    db.ClientSignatories.RemoveRange(db.ClientSignatories.Where(r => r.CompanyID == companyId));
                     var recordSaved = db.SaveChanges();
                     if (recordSaved > 0)
                     {

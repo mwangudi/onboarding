@@ -15,6 +15,8 @@ namespace OnBoarding.ViewModels
 
     public class ClientSignatoriesViewModel
     {
+        public int Id { get; set; }
+
         public int SignatoryId { get; set; }
         public string Names { get; set; }
         public string ClientName { get; set; }
@@ -23,8 +25,10 @@ namespace OnBoarding.ViewModels
         public bool? AcceptedTAC { get; set; }
         public string DateCreated { get; set; }
         public string PhoneNumber { get; set; }
+        public string Signature { get; set; }
+        public string Designation { get; set; }
     }
-
+    
     public class ClientApplicationsViewModel
     {
         public int ApplicationID { get; set; }

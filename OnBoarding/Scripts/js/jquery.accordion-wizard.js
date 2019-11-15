@@ -84,6 +84,18 @@
 				$('[data-acc-btn-next]').on('click', function () {
 					if ($('#form').valid()) {
 
+						// Check if we have saved Signatories
+						var signatories = $('#SignatoryCount').val();
+						if (signatories <= 0) {
+							$('#SignatoryDiv1').removeClass('d_none');
+							$('#btn-save-signatories').removeClass('d_none');
+						}
+						var representatives = $('#RepresentativesCount').val();
+						if (representatives <= 0) {
+							$('#UserDiv1').removeClass('d_none');
+							$('#btn-save-representatives').removeClass('d_none');
+						}
+						
 						//Populate Form Summary
 						$('#ConfirmCompany').html($('#CompanyName').val());
 						$('#ConfirmRegistration').html($('#CompanyRegistration').val());
@@ -93,6 +105,7 @@
 						//Settlement Details
 						var chosenvalue = $("#HaveSettlementAccount").val();
 						var settlements = $('#SettlementAccountsCount').val();
+						//alert(settlements);
 						if (chosenvalue === "Yes" && settlements > 0) {
 							//if (settlements > 0) {
 							if (settlements === "2") {
@@ -200,7 +213,6 @@
 						}
 
 						//Signatory Details
-						var signatories = $('#ClientSignatoryCount').val();
 						//alert(signatories);
 						if (signatories === "0") {
 							var Signatory1 = $('#SignatorySurname1').val() + " " + $('#SignatoryOtherNames1').val() + " - " + $('#SignatoryDesignation1').val() + " - " + $('#SignatoryEmail1').val() + " - " + $('#SignatoryPhoneNumber1').val();
@@ -247,7 +259,7 @@
 						else if (signatories > 0) {
 							if (signatories === "1") {
 								$('#Signatory1tr').removeClass('d_none');
-								$('#ConfirmSignatory1').html("<b>NAMES:</b> " + $('#SignatoriesTable tr').find("td").eq(0).html() + " - <b>DESIGNATION:</b> " + $('#SignatoriesTable tr').find("td").eq(1).html() + " - <b>PHONE:</b> " + $('#SignatoriesTable tr').find("td").eq(3).html() + " - <b>SIGNATURE:</b> " + $('#SignatoriesTable tr').find("td").eq(4).html());
+								$('#ConfirmSignatory1').html("<b>NAMES:</b> " + $('#SignatoriesTable tr').find("td").eq(0).html() + " - <b>DESIGNATION:</b> " + $('#SignatoriesTable tr').find("td").eq(1).html() + " - <b>PHONE:</b> " + $('#SignatoriesTable tr').find("td").eq(3).html());
 								$('#Signatory2tr').addClass('d_none');
 								$('#Signatory3tr').addClass('d_none');
 								$('#Signatory4tr').addClass('d_none');
@@ -303,7 +315,6 @@
 						}
 
 						//Representatives Details
-						var representatives = $('#DesignatedUserCount').val();
 						if (representatives === "0") {
 							//User Details
 							var User1 = $('#UserSurname1').val() + " " + $('#UserOthernames1').val() + " - " + $('#UserMobileNumber1').val() + " - " + $('#UserEmail1').val() + " - Emarket SignUp: " + $('#EMarketSignUp1').find('option:selected').text() + " -  Transaction Limit " + $('#TransactionLimit1').val();

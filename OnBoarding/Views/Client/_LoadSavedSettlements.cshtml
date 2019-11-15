@@ -1,0 +1,146 @@
+﻿@if (ViewBag.SettlementAccounts.Count > 0)
+{
+	<h6><b><small>Previously saved setttlement instructions.<i> You can edit if you wish</i></small></b></h6>
+	<table id="SettlementTable" class="table table-bordered">
+		<thead>
+			<tr>
+				<th>Currency</th>
+				<th>Account Number</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var item in ViewBag.SettlementAccounts)
+			{
+				<tr>
+					<td>@item.CurrencyName</td>
+					<td>@item.AccountNumber</td>
+					<td class="d_none">@item.CurrencyId</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+	<div class="my-3 form-group form-row">
+		<div class="col-12 col-sm-3 col-lg-3">
+			<button id="btn-edit-settlement" class="btn btn-outline-info" type="button">
+				<i class="fa fa-edit"></i> Edit Settlements
+			</button>
+			<input type="hidden" id="CompanyId" value="@ViewData["CompanyID"]" />
+			<input type="hidden" id="SettlementAccountsCount" value="@ViewBag.SettlementAccounts.Count" />
+			<input type="hidden" id="HaveSettlementAccount" value="Yes" />
+		</div>
+	</div>
+	<hr />
+}
+else
+{
+	<div class="col-12 col-sm-12 col-lg-12">
+		<h6><b><small>Do you have a settlement account? <i> Indicate by choosing YES or NO below. </i></small></b></h6>
+	</div>
+	<div id="SettlementAccountDiv" class="col-12 col-sm-4 col-lg-4">
+		<select id="HaveSettlementAccount" name="HaveSettlementAccount" class="form-control select2 required" style="width: 100%;">
+			<option value="" selected> Do you have a settlement Account? </option>
+			<option value="Yes"> Yes </option>
+			<option value="No"> No </option>
+		</select>
+	</div>
+	<input type="hidden" id="SettlementAccountsCount" value="@ViewBag.SettlementAccounts.Count" />
+}
+
+<script type="text/javascript">
+
+	$(function () {
+		$('#HaveSettlementAccount').select2({
+		});
+	});
+
+	//Show Account on settlement accounts
+	$("#HaveSettlementAccount").change(function () {
+		if (this.value === "Yes") {
+			$('#AccountDiv1').removeClass('d_none');
+			$('#SettlementAccount1').addClass('required');
+			$('#SettlementAccount1').val('');
+			$('#SettlementAccount2').val('');
+			$('#SettlementAccount2').addClass('required');
+			$('#SelectCurrency1').addClass('required');
+			$('#SelectCurrency2').addClass('required');
+			$('#AccountDiv2').removeClass('d_none');
+			$('#disclaimer').removeClass('d_none');
+			$('#btnAddAccount3').removeClass('d_none');
+			$('#btn-save-settlement').removeClass('d_none');
+		}
+		else {
+			$('#AccountDiv1').addClass('d_none');
+			$('#AccountDiv2').addClass('d_none');
+			$('#AccountDiv3').addClass('d_none');
+			$('#AccountDiv4').addClass('d_none');
+			$('#AccountDiv5').addClass('d_none');
+			$('#disclaimer').addClass('d_none');
+			$('#SettlementAccount1').removeClass('required');
+			$('#SettlementAccount2').removeClass('required');
+			$('#SelectCurrency1').removeClass('required');
+			$('#SelectCurrency2').removeClass('required');
+			$('#btn-save-settlement').addClass('d_none');
+		}
+	});
+
+	//Load Up Settlement Modal
+	function LoadUpSettlementModal() {
+		$('#LoadUpSettlementModal').modal({ backdrop: 'static', keyboard: false });
+	}
+	//btnCloseSetModal
+	$('#btnCloseSetModal').on('click', function (e) {
+		e.preventDefault();
+		$('#LoadUpSettlementModal').modal('hide');
+	});
+	//btn-edit-settlements load modal
+	$('#btn-edit-settlement').on('click', function (e) {
+		e.preventDefault();
+		LoadUpSettlementModal();
+	});
+
+	//Select Edit settlements
+	$('#btnEditSettlements').on('click', function (e) {
+		e.preventDefault();
+		$('#HaveSettlementsDiv').addClass('d_none');
+		$('#HaveSettlementAccount').val('');
+		$('#SettlementAccountDiv').removeClass('d_none');
+		$('#HaveSettlementAccount').attr("disabled", false);
+		$('#SettlementAccountsCount').val("0");
+		var companyId = $('#CompanyID').val();
+		$.ajax({
+			url: '/Client/ClearSettlementAccounts',
+			type: 'POST',
+			data: JSON.stringify({ companyId: companyId }),
+			contentType: 'application/json; charset=utf-8',
+			dataType: "json",
+			async: true,
+			success: function (XmlHttpRequest) {
+				window.setTimeout(saved, 500);
+				function saved() {
+					if (XmlHttpRequest === 'success') {
+						$('#AccountDiv1').removeClass('d_none');
+						$('#AccountDiv2').removeClass('d_none');
+						$('#btn-save-settlement').removeClass('d_none');
+						$('#ChoseSettlementDiv').removeClass('d_none');
+						$('#btn-edit-settlement').addClass('d_none');
+						$('#LoadUpSettlementModal').modal('hide');
+						$('#SettlementAccount1').val('');
+						$('#SettlementAccount2').val('');
+					}
+					else {
+						$('#AccountDiv1').removeClass('d_none');
+						$('#AccountDiv2').removeClass('d_none');
+						$('#btn-save-settlement').removeClass('d_none');
+						$('#btn-edit-settlement').addClass('d_none');
+						$('#LoadUpSettlementModal').modal('hide');
+					}
+				}
+			},
+			error: function (xhr, textStatus, errorThrown) {
+				if (textStatus === 'error') {
+					toastr.error('Submission error!. Code: ' + xhr.status + ', Details: ' + errorThrown);
+				}
+			}
+		});
+	});
+</script>
