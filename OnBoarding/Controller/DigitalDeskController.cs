@@ -3142,13 +3142,13 @@ namespace OnBoarding.Controllers
             // Instance of DatabaseContext  
             using (var db = new DBModel())
             {
-                IEnumerable<ExpiredOtpsViewModel> query = db.Database.SqlQuery<ExpiredOtpsViewModel>("SELECT a.Id as ClientID,  a.CompanyName, s.StatusName Status, a.DateCreated, a.EmailAddress, DATEDIFF(Hour,a.DateCreated, GETDATE()) TimeExpired FROM RegisteredClients a INNER JOIN tblStatus s ON s.Id = a.Status " +
+                IEnumerable<ExpiredOtpsViewModel> query = db.Database.SqlQuery<ExpiredOtpsViewModel>("SELECT a.Id as ClientID, CONCAT(a.Surname,' ', a.OtherNames) CompanyName, s.StatusName Status, a.DateCreated, a.EmailAddress, DATEDIFF(Hour,a.DateCreated, GETDATE()) TimeExpired FROM RegisteredClients a INNER JOIN tblStatus s ON s.Id = a.Status " +
                   "WHERE DATEDIFF(Hour,a.DateCreated, GETDATE()) > '" + Properties.Settings.Default.ClientOTPExpiry + "' AND a.Status = 0;");
 
                 //Search 
                 if (!string.IsNullOrEmpty(searchMessage))
                 {
-                    query = db.Database.SqlQuery<ExpiredOtpsViewModel>("SELECT a.Id as ClientID,  a.CompanyName, s.StatusName Status, a.DateCreated, a.EmailAddress, DATEDIFF(Hour,a.DateCreated, GETDATE()) TimeExpired FROM RegisteredClients a INNER JOIN tblStatus s ON s.Id = a.Status WHERE (a.CompanyName LIKE '%" + searchMessage + "%' OR a.EmailAddress LIKE '%" + searchMessage + "%') AND DATEDIFF(Hour,a.DateCreated, GETDATE()) > '" + Properties.Settings.Default.ClientOTPExpiry + "' AND a.Status = 0;");
+                    query = db.Database.SqlQuery<ExpiredOtpsViewModel>("SELECT a.Id as ClientID, CONCAT(a.Surname,' ', a.OtherNames) CompanyName, s.StatusName Status, a.DateCreated, a.EmailAddress, DATEDIFF(Hour,a.DateCreated, GETDATE()) TimeExpired FROM RegisteredClients a INNER JOIN tblStatus s ON s.Id = a.Status WHERE (a.CompanyName LIKE '%" + searchMessage + "%' OR a.EmailAddress LIKE '%" + searchMessage + "%') AND DATEDIFF(Hour,a.DateCreated, GETDATE()) > '" + Properties.Settings.Default.ClientOTPExpiry + "' AND a.Status = 0;");
                 }
                 else
                 {
