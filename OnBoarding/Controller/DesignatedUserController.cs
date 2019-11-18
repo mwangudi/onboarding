@@ -164,7 +164,7 @@ namespace OnBoarding.Controllers
                     {
                         var representativeClientId = db.ClientSignatories.First(c => c.UserAccountID == currentUserId);
                         
-                        //1. Update signatory's signature
+                        //1. Update representative's signature
                         var RepresentativeToUpdate = db.ClientSignatories.First(c => c.EmailAddress == representativeClientId.EmailAddress && c.CompanyID == model.CompanyID);
                         RepresentativeToUpdate.Signature = representativeClientId.Signature;
                         RepresentativeToUpdate.PhoneNumber = model.VerifyPhone; //Update phone number
@@ -175,7 +175,7 @@ namespace OnBoarding.Controllers
                         {
                             var LogApproval = db.DesignatedUserApprovals.Create();
                             LogApproval.ApplicationID = model.ApplicationID;
-                            LogApproval.UserID = userClientId.Id;
+                            LogApproval.UserID = representativeClientId.Id;
                             LogApproval.AcceptedTerms = model.terms;
                             LogApproval.DateApproved = DateTime.Now;
                             db.DesignatedUserApprovals.Add(LogApproval);
@@ -287,7 +287,7 @@ namespace OnBoarding.Controllers
 
                         //7. Check if all Representatives have approved and send complete email to digital desk
                         var ApplicationToCheck = db.EMarketApplications.SingleOrDefault(c => c.Id == model.ApplicationID && c.CompanyID == model.CompanyID);
-                        if (ApplicationToCheck.UsersApproved == ApplicationUpdate.DesignatedUsers)
+                        if (ApplicationToCheck.UsersApproved == ApplicationToCheck.DesignatedUsers)
                         {
                             //Send Email to Digital Desk and Ops for Approval process
                             var DDUserRole = (from p in db.AspNetUserRoles
@@ -412,7 +412,7 @@ namespace OnBoarding.Controllers
 
                         //7. Check if all Representatives have approved and send complete email to digital desk and ops
                         var ApplicationToCheck = db.EMarketApplications.SingleOrDefault(c => c.Id == model.ApplicationID && c.CompanyID == model.CompanyID);
-                        if (ApplicationToCheck.UsersApproved == ApplicationUpdate.DesignatedUsers)
+                        if (ApplicationToCheck.UsersApproved == ApplicationToCheck.DesignatedUsers)
                         {
                             //Send Email to Digital Desk and Ops for Approval process
                             var DDUserRole = (from p in db.AspNetUserRoles
