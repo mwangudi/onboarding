@@ -243,7 +243,6 @@ namespace OnBoarding.Controllers
                 {
                     ViewData["POACanApprove"] = 1;
                 }
-
             }
             return PartialView();
         }

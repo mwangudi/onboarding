@@ -121,7 +121,7 @@
 											}
 											else
 											{
-												<button onclick="LoadUpDeleteModal('@item.Id')" type="submit" id="btnRemoveSignatory" class="btn btn-danger"><i class="fa fa-check-circle"></i> Remove </button>
+												<button onclick="LoadUpDeleteModal('@item.Id')" type="submit" id="btnRemoveSignatory" class="btn btn-danger remove-signatory"><i class="fa fa-check-circle"></i> Remove </button>
 											}
 										</td>
 										</tbody>
@@ -169,7 +169,7 @@
 											}
 											else
 											{
-												<button onclick="LoadUpDeleteRepresentativeModal('@item.Id')" type="submit" id="btnRemoveRepresentative" class="btn btn-danger"><i class="fa fa-check-circle"></i> Remove </button>
+												<button onclick="LoadUpDeleteRepresentativeModal('@item.Id')" type="submit" id="btnRemoveRepresentative" class="btn btn-danger remove-representative"><i class="fa fa-check-circle"></i> Remove </button>
 											}
 										</td>
 										</tbody>
@@ -185,7 +185,7 @@
 							<input type="hidden" id="ApplicationId" name="ApplicationId" value="@ViewData["ApplicationId"]" class="form-control">
 							<input type="hidden" id="CompanyEmail" name="CompanyEmail" value="@ViewData["CompanyEmail"]" class="form-control">
 							<input type="hidden" id="CompanyName" name="CompanyName" value="@ViewData["CompanyName"]" class="form-control">
-							<input type="hidden" id="OPSCanApprove" name="OPSCanApprove" value="@ViewData["OPSCanApprove"]" class="form-control">
+							<input type="hidden" id="Approved" name="Approved" value="@ViewData["CanEdit"]" class="form-control">
 						</div>
 					</div>
 				</div>
@@ -242,6 +242,15 @@
 				}
 			}
 		});
+	}
+
+	if ($('#Approved').val() == 0) {
+        $('.remove-signatory').addClass('d_none');
+        $('.remove-representative').addClass('d_none');
+    }
+    else {
+        $('.remove-signatory').removeClass('d_none');
+        $('.remove-representative').removeClass('d_none');
 	}
 
 </script>

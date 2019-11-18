@@ -27,7 +27,7 @@ namespace OnBoarding
                     "~/Assets/fwizard/form-wizard.css",
                     "~/Content/css/style.css",
                     "~/Assets/select2/select2.css",
-                    "~/Assets/datatables/DataTables-1.10.16/css/dataTables.bootstrap.min.css",
+                    "~/Assets/datatables/DataTables-1.10.16/css/dataTables.bootstrap4.min.css",
                     "~/Assets/sweetalert/sweetalert2.css",
                     "~/Assets/datepicker/datepicker.css"));
 

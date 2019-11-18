@@ -2026,7 +2026,7 @@ namespace OnBoarding.Controllers
             // Instance of DatabaseContext  
             using (var db = new DBModel())
             {
-                IEnumerable<ClientApplicationsViewModel> query = db.Database.SqlQuery<ClientApplicationsViewModel>("SELECT s.Id ApplicationID, b.CompanyName Client, c.StatusName Status, s.Emt, s.SSI, CAST(s.DateCreated AS DATE) DateCreated, s.Signatories, s.DesignatedUsers, s.SignatoriesApproved, s.UsersApproved RepresentativesApproved, s.OPSApproved, s.POAApproved, s.AcceptedTAC FROM EMarketApplications s INNER JOIN RegisteredClients b on b.Id = s.ClientID INNER JOIN tblStatus c on c.Id = s.Status WHERE s.Status = 1 AND s.OPSApproved = 1 AND s.POAApproved = 1 ORDER BY s.Id DESC OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY;");
+                IEnumerable<ClientApplicationsViewModel> query = db.Database.SqlQuery<ClientApplicationsViewModel>("SELECT s.Id ApplicationID, b.CompanyName Client, c.StatusName Status, s.Emt, s.SSI, CAST(s.DateCreated AS DATE) DateCreated, s.Signatories, s.DesignatedUsers, s.SignatoriesApproved, s.UsersApproved RepresentativesApproved, s.OPSApproved, s.POAApproved, s.AcceptedTAC FROM EMarketApplications s INNER JOIN ClientCompanies b on b.Id = s.CompanyID INNER JOIN RegisteredClients r ON r.Id = s.ClientID INNER JOIN tblStatus c on c.Id = s.Status WHERE s.Status = 1 AND s.OPSApproved = 1 AND s.POAApproved = 1 ORDER BY s.Id DESC OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY;");
 
                 //Search  
                 if (!string.IsNullOrEmpty(searchMessage) && !string.IsNullOrEmpty(searchFromDate) && !string.IsNullOrEmpty(searchToDate))
@@ -2044,7 +2044,7 @@ namespace OnBoarding.Controllers
                 }
                 else if (!string.IsNullOrEmpty(searchMessage) && string.IsNullOrEmpty(searchFromDate) && string.IsNullOrEmpty(searchToDate))
                 {
-                    query = db.Database.SqlQuery<ClientApplicationsViewModel>("SELECT s.Id ApplicationID, b.CompanyName Client, c.StatusName Status, s.Emt, s.SSI, CAST(s.DateCreated AS DATE) DateCreated, s.Signatories, s.DesignatedUsers, s.SignatoriesApproved, s.UsersApproved RepresentativesApproved, s.OPSApproved, s.POAApproved, s.AcceptedTAC FROM EMarketApplications s INNER JOIN ClientCompanies b on b.Id = s.CompanyID INNER JOIN RegisteredClients r ON r.Id = s.ClientID INNER JOIN tblStatus c on c.Id = s.Status FROM EMarketApplications s INNER JOIN RegisteredClients b on b.Id = s.ClientID INNER JOIN tblStatus c on c.Id = s.Status WHERE s.Status = 1 AND s.OPSApproved = 1 AND s.POAApproved = 1 AND (b.CompanyName LIKE '%" + searchMessage + "%' OR r.EmailAddress LIKE '%" + searchMessage + "%') ORDER BY s.Id DESC OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY;");
+                    query = db.Database.SqlQuery<ClientApplicationsViewModel>("SELECT s.Id ApplicationID, b.CompanyName Client, c.StatusName Status, s.Emt, s.SSI, CAST(s.DateCreated AS DATE) DateCreated, s.Signatories, s.DesignatedUsers, s.SignatoriesApproved, s.UsersApproved RepresentativesApproved, s.OPSApproved, s.POAApproved, s.AcceptedTAC FROM EMarketApplications s INNER JOIN ClientCompanies b on b.Id = s.CompanyID INNER JOIN RegisteredClients r ON r.Id = s.ClientID INNER JOIN tblStatus c on c.Id = s.Status WHERE s.Status = 1 AND s.OPSApproved = 1 AND s.POAApproved = 1 AND (b.CompanyName LIKE '%" + searchMessage + "%' OR r.EmailAddress LIKE '%" + searchMessage + "%') ORDER BY s.Id DESC OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY;");
                 }
                 else if (string.IsNullOrEmpty(searchMessage) && !string.IsNullOrEmpty(searchFromDate) && string.IsNullOrEmpty(searchToDate))
                 {
@@ -3062,46 +3062,57 @@ namespace OnBoarding.Controllers
                 var getApplicationInfo = db.EMarketApplications.SingleOrDefault(c => c.Id == applicationId);
                 var clientID = getApplicationInfo.ClientID;
                 var clientDetails = db.RegisteredClients.SingleOrDefault(s => s.Id == clientID);
+                var companyDetails = db.ClientCompanies.SingleOrDefault(s => s.Id == getApplicationInfo.CompanyID);
                 ViewBag.ApplicationInfo = clientDetails;
+                ViewBag.CompanyInfo = companyDetails;
 
                 //Signatories List
-                List<ClientSignatory> SignatoryList = db.ClientSignatories.Where(a => a.ClientID == clientID).ToList();
+                List<ClientSignatory> SignatoryList = db.ClientSignatories.Where(a => a.ClientID == clientID && a.CompanyID == getApplicationInfo.CompanyID).ToList();
                 ViewBag.ClientSignatory = SignatoryList;
 
                 //Designated Users List
-                List<DesignatedUser> DesignatedUsersList = db.DesignatedUsers.Where(a => a.ClientID == clientID).ToList();
+                List<DesignatedUser> DesignatedUsersList = db.DesignatedUsers.Where(a => a.ClientID == clientID && a.CompanyID == getApplicationInfo.CompanyID).ToList();
                 ViewBag.DesignatedUser = DesignatedUsersList;
 
                 //Get the list of all client's settlement accounts
-                var Query = db.Database.SqlQuery<SettlementAccountsViewModel>("SELECT c.CurrencyName, s.AccountNumber FROM ClientSettlementAccounts s INNER JOIN Currencies c ON c.Id = s.CurrencyID WHERE s.ClientID =  " + "'" + clientID + "'" + " AND s.Status = 1");
+                var Query = db.Database.SqlQuery<SettlementAccountsViewModel>("SELECT c.CurrencyName, s.AccountNumber FROM ClientSettlementAccounts s INNER JOIN Currencies c ON c.Id = s.CurrencyID WHERE s.Status = 1 AND s.ClientID =  " + "'" + clientID + "'" + " AND s.CompanyID =  " + "'" + getApplicationInfo.CompanyID + "'" + " AND s.Status = 1");
                 ViewBag.SettlementAccounts = Query.ToList();
 
                 //Data For Controller Post
                 ViewData["ApplicationId"] = getApplicationInfo.Id;
+                ViewData["OpsComments"] = getApplicationInfo.OPSComments;
                 ViewData["CompanyEmail"] = clientDetails.EmailAddress;
                 //ViewData["CompanyName"] = clientDetails.CompanyName;
-                ViewData["OpsComments"] = getApplicationInfo.OPSComments;
-                ViewData["PoaComments"] = getApplicationInfo.POAComments;
 
-                //Get the person who approved
+                //Get the OPS who approved
                 var OpsApproved = db.AspNetUsers.FirstOrDefault(a => a.Id == getApplicationInfo.OPSWhoApproved);
                 var OpsDeclined = db.AspNetUsers.FirstOrDefault(a => a.Id == getApplicationInfo.OPSWhoDeclined);
-                var POAApproved = db.AspNetUsers.FirstOrDefault(a => a.Id == getApplicationInfo.POAWhoApproved);
-                var POADeclined = db.AspNetUsers.FirstOrDefault(a => a.Id == getApplicationInfo.POAWhoDeclined);
-
-                //Ops Approved
                 ViewData["OPSNames"] = OpsApproved.CompanyName;
                 ViewData["OPSEmail"] = OpsApproved.Email;
                 ViewData["OPSPhone"] = OpsApproved.PhoneNumber;
                 DateTime dtByUser = DateTime.Parse(getApplicationInfo.OPSDateApproved.ToString());
                 ViewData["OPSDateApproved"] = dtByUser.ToString("dd/MM/yyyy hh:mm:ss tt");
 
-                //Poa Approved
+                //Get the POA who approved
+                var POAApproved = db.AspNetUsers.FirstOrDefault(a => a.Id == getApplicationInfo.POAWhoApproved);
+                var POADeclined = db.AspNetUsers.FirstOrDefault(a => a.Id == getApplicationInfo.POAWhoDeclined);
                 ViewData["POANames"] = POAApproved.CompanyName;
                 ViewData["POAEmail"] = POAApproved.Email;
                 ViewData["POAPhone"] = POAApproved.PhoneNumber;
-                DateTime dtByUserPoa = DateTime.Parse(getApplicationInfo.POADateApproved.ToString());
-                ViewData["POADateApproved"] = dtByUserPoa.ToString("dd/MM/yyyy hh:mm:ss tt");
+                DateTime dtByUser2 = DateTime.Parse(getApplicationInfo.POADateApproved.ToString());
+                ViewData["POADateApproved"] = dtByUser2.ToString("dd/MM/yyyy hh:mm:ss tt");
+
+                //Can approve application
+                var POAHasApproved = getApplicationInfo.POAApproved;
+                var POAHasDeclined = getApplicationInfo.POADeclined;
+                if (POAHasApproved == true || POAHasDeclined == true)
+                {
+                    ViewData["POACanApprove"] = 0;
+                }
+                else
+                {
+                    ViewData["POACanApprove"] = 1;
+                }
             }
             return PartialView();
         }

@@ -203,21 +203,6 @@ namespace OnBoarding.Controllers
             }
         }
 
-        //LoadDecline Partial View
-        [HttpPost]
-        [AllowAnonymous]
-        public PartialViewResult LoadDeclineApplication(int getApplicationId)
-        {
-            using (DBModel db = new DBModel())
-            {
-                var ApplicationToDelete = db.EMarketApplications.SingleOrDefault(c => c.Id == getApplicationId);
-                //Data For View Display
-                ViewBag.ApplicationToDelete = ApplicationToDelete;
-            }
-
-            return PartialView();
-        }
-
         //
         // DeclineApplication
         [HttpPost]

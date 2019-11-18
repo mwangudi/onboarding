@@ -193,61 +193,6 @@ namespace OnBoarding.Controllers
         }
 
         //
-        //Get InCompleteApplications
-        public ActionResult IncompleteApplications()
-        {
-            return View();
-        }
-
-        //
-        //Partial view InCompleteApplications
-        [HttpPost]
-        [AllowAnonymous]
-        public PartialViewResult ViewIncompleteApplication(int applicationId)
-        {
-            using (DBModel db = new DBModel())
-            {
-                var getApplicationInfo = db.EMarketApplications.SingleOrDefault(c => c.Id == applicationId);
-                var clientID = getApplicationInfo.ClientID;
-                var clientDetails = db.RegisteredClients.SingleOrDefault(s => s.Id == clientID);
-                ViewBag.ApplicationInfo = clientDetails;
-
-                //Signatories List
-                List<ClientSignatory> SignatoryList = db.ClientSignatories.Where(a => a.ClientID == clientID).ToList();
-                ViewBag.ClientSignatory = SignatoryList;
-
-                //Designated Users List
-                List<DesignatedUser> DesignatedUsersList = db.DesignatedUsers.Where(a => a.ClientID == clientID).ToList();
-                ViewBag.DesignatedUser = DesignatedUsersList;
-
-                //Get the list of all client's settlement accounts
-                var Query = db.Database.SqlQuery<SettlementAccountsViewModel>("SELECT c.CurrencyName, s.AccountNumber FROM ClientSettlementAccounts s INNER JOIN Currencies c ON c.Id = s.CurrencyID WHERE s.ClientID =  " + "'" + clientID + "'" + " AND s.Status = 1");
-                ViewBag.SettlementAccounts = Query.ToList();
-
-                //Data For Controller Post
-                ViewData["ApplicationId"] = getApplicationInfo.Id;
-                ViewData["CompanyEmail"] = clientDetails.EmailAddress;
-                //ViewData["CompanyName"] = clientDetails.CompanyName;
-
-            }
-            return PartialView();
-        }
-
-        //
-        //Get InCompleteApplications
-        public ActionResult PendingOpsApproval()
-        {
-            return View();
-        }
-
-        //
-        //PendingPoaApproval
-        public ActionResult PendingPoaApproval()
-        {
-            return View();
-        }
-
-        //
         //RegisteredClients
         public ActionResult RegisteredClients()
         {

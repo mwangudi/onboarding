@@ -2623,8 +2623,9 @@ namespace OnBoarding.Controllers
                 return Json(new { items = list }, JsonRequestBehavior.AllowGet);
             }
         }
+        
         //
-        //EditApplication 
+        //POST //LoadDeleteSignatory 
         public ActionResult LoadDeleteSignatory(int getSignatoryId)
         {
             using (DBModel db = new DBModel())
@@ -2640,7 +2641,7 @@ namespace OnBoarding.Controllers
         }
 
         //
-        //EditApplication //LoadDeleteRepresentative
+        //POST //LoadDeleteRepresentative
         public ActionResult LoadDeleteRepresentative(int getRepresentativeId)
         {
             using (DBModel db = new DBModel())
@@ -2657,7 +2658,7 @@ namespace OnBoarding.Controllers
         }
 
         //
-        //EditApplication //ExcludeSignatoryFromApplication
+        //POST //ExcludeSignatoryFromApplication
         public ActionResult ExcludeSignatoryFromApplication(DeleteSignatoryViewModel model)
         {
             using (DBModel db = new DBModel())
@@ -2728,7 +2729,7 @@ namespace OnBoarding.Controllers
         }
 
         //
-        //EditApplication //ExcludeSignatoryFromApplication
+        //POST //ExcludeSignatoryFromApplication
         public ActionResult ExcludeRepresentativeFromApplication(DeleteSignatoryViewModel model)
         {
             using (DBModel db = new DBModel())
@@ -2839,6 +2840,16 @@ namespace OnBoarding.Controllers
                 ViewBag.ApplicationInfo = clientDetails;
                 ViewBag.CompanyInfo = clientCompanyDetails;
                 
+                //Get if application is approved
+                if(getApplicationInfo.OPSApproved == true)
+                {
+                    ViewData["CanEdit"] = 0;
+                }
+                else
+                {
+                    ViewData["CanEdit"] = 1;
+                }
+
                 //Data For Controller Post
                 ViewData["ApplicationId"] = getApplicationInfo.Id;
                 ViewData["CompanyEmail"] = clientDetails.EmailAddress;
@@ -2913,6 +2924,38 @@ namespace OnBoarding.Controllers
                 {
                     return Json("Unable to create company. Please contact systems administrator", JsonRequestBehavior.AllowGet);
                 }
+            }
+        }
+
+        //
+        // List: Client Companies
+        [Authorize]
+        public ActionResult CompanyList()
+        {
+            return View(GetAllClientCompanies());
+        }
+
+        //
+        //Get All Client Company List from table
+        public IEnumerable<ClientCompaniesViewModel> GetAllClientCompanies()
+        {
+            using (DBModel db = new DBModel())
+            {
+                var currentUserId = User.Identity.GetUserId();
+                var userInfo = db.RegisteredClients.SingleOrDefault(c => c.UserAccountID == currentUserId);
+                var Query = from a in db.ClientCompanies.Where(a => a.ClientId == userInfo.Id)
+                            orderby a.DateCreated descending
+                            select new ClientCompaniesViewModel
+                            {
+                                Id = a.Id,
+                                CompanyName = a.CompanyName,
+                                CompanyRegNumber = a.CompanyRegNumber,
+                                CompanyEmail = a.BusinessEmailAddress,
+                                Status = a.Status,
+                                DateCreated = a.DateCreated,
+                                HasApplication = a.HasApplication
+                            };
+                return Query.ToList();
             }
         }
     }

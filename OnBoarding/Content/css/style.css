@@ -337,7 +337,7 @@ select.form-control:not([size]):not([multiple]),
 .custom-select,
 .form-control[type="color"],
 select.form-control:not([size]):not([multiple]) {
-	height: calc(2.25rem + 10px);
+	height: calc(2.25rem + 0px);
 }
 .nopadding {
     padding: 0px;

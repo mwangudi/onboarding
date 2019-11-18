@@ -3034,17 +3034,14 @@
     <Content Include="Views\Poa\Index.cshtml" />
     <Content Include="Views\Poa\ViewAll.cshtml" />
     <Content Include="Views\Poa\ViewApproval.cshtml" />
-    <Content Include="Views\Poa\ViewApproved.cshtml" />
     <Content Include="Views\Gmo\Index.cshtml" />
     <Content Include="Views\Gmo\ViewAll.cshtml" />
     <Content Include="Views\Gmo\ViewApproval.cshtml" />
     <Content Include="Views\Client\EditApplication.cshtml" />
     <Content Include="Views\Account\LoadResendOTP.cshtml" />
     <Content Include="Views\Ops\Index.cshtml" />
-    <Content Include="Views\Ops\LoadDeclineApplication.cshtml" />
     <Content Include="Views\Ops\ViewAll.cshtml" />
     <Content Include="Views\Ops\ViewApproval.cshtml" />
-    <Content Include="Views\Ops\ViewApproved.cshtml" />
     <Content Include="Views\Shared\_LayoutWithoutVideo.cshtml" />
     <Content Include="Views\Client\NewApplications.cshtml" />
     <Content Include="Views\Account\LoadResendSignatoryOTP.cshtml" />
@@ -3089,9 +3086,6 @@
     <Content Include="Views\Ops\OpsApprovals.cshtml" />
     <Content Include="Views\Poa\PoaApprovals.cshtml" />
     <Content Include="Views\Account\ResetAccount.cshtml" />
-    <Content Include="Views\Gmo\IncompleteApplications.cshtml" />
-    <Content Include="Views\Gmo\PendingOpsApproval.cshtml" />
-    <Content Include="Views\Gmo\PendingPoaApproval.cshtml" />
     <Content Include="Views\Gmo\RegisteredClients.cshtml" />
     <Content Include="Views\Admin\Index.cshtml" />
     <Content Include="Views\Admin\LoadDeleteUser.cshtml" />
@@ -3104,7 +3098,6 @@
     <Content Include="Views\DigitalDesk\LoadDeleteClient.cshtml" />
     <Content Include="Views\Gmo\ClientSettlements.cshtml" />
     <Content Include="Views\Gmo\ViewClient.cshtml" />
-    <Content Include="Views\Gmo\ViewInCompleteApplication.cshtml" />
     <Content Include="Views\DigitalDesk\ApprovedApplications.cshtml" />
     <Content Include="Views\Account\ChangePassword.cshtml" />
     <Content Include="Views\Account\PasswordChanged.cshtml" />
@@ -3122,6 +3115,8 @@
     <Content Include="Views\Client\_LoadSavedSettlements.cshtml" />
     <Content Include="Views\Client\_LoadSavedSignatories.cshtml" />
     <Content Include="Views\Client\_LoadSavedRepresentatives.cshtml" />
+    <Content Include="Views\Client\CompanyList.cshtml" />
+    <Content Include="Views\DigitalDesk\ViewApprovedApplications.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

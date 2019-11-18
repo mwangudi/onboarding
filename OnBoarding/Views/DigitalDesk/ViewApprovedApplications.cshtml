@@ -1,13 +1,13 @@
 ﻿@model OnBoarding.ViewModels.AdminApproveViewModel
 <script src="@Url.Content("~/Assets/fwizard/form-wizard.js")"></script>
 <div class="form-row form-wizard">
-    <!-- Form Wizard -->
-    <form class="mt-0 w_full" role="form" id="ApplicationForm" action="" method="POST" accept-charset="utf-8">
-        <!-- Form Step 1 -->
-        <fieldset>
-            <h6>Company Details</h6><hr />
-            <div class="form-group">
-                <div class="table-responsive">
+	<!-- Form Wizard -->
+	<form class="mt-0" role="form" id="ApplicationForm" action="" method="POST" accept-charset="utf-8">
+		<!-- Form Step 1 -->
+		<fieldset>
+			<h6>Company Details</h6><hr />
+			<div class="form-group">
+				<div class="table-responsive">
 					<table class="table table-bordered">
 						<tr class="success">
 							<th>Business Account :</th>
@@ -177,179 +177,39 @@
 									<th>Date Approved</th>
 									<th>Comments</th>
 									<tbody>
-										<td>@ViewData["OPSNames"]</td>
-										<td>@ViewData["OPSEmail"]</td>
-										<td>@ViewData["OPSPhone"]</td>
-										<td>@ViewData["OPSDateApproved"]</td>
-										<td>@ViewData["PoaComments"]</td>
+									<td>@ViewData["OPSNames"]</td>
+									<td>@ViewData["OPSEmail"]</td>
+									<td>@ViewData["OPSPhone"]</td>
+									<td>@ViewData["OPSDateApproved"]</td>
+									<td>@ViewData["PoaComments"]</td>
+									</tbody>
+								</table>
+							</td>
+						</tr>
+						<tr>
+							<th> POA Approval:</th>
+							<td id="OpsApproved" name="OpsApproved" colspan="2">
+								<table class="custom-table">
+									<th>Full Names</th>
+									<th>Email</th>
+									<th>Phone Extension</th>
+									<th>Date Approved</th>
+									<th>Comments</th>
+									<tbody>
+									<td>@ViewData["POANames"]</td>
+									<td>@ViewData["POAEmail"]</td>
+									<td>@ViewData["POAPhone"]</td>
+									<td>@ViewData["POADateApproved"]</td>
+									<td>@ViewData["POAComments"]</td>
 									</tbody>
 								</table>
 							</td>
 						</tr>
 					</table>
-                </div>
-                <div class="form-wizard-buttons">
-                    <div class="col-md-6">
-                        <div class="input-group accept-terms">
-                            <input type="hidden" id="ApplicationId" name="ApplicationId" value="@ViewData["ApplicationId"]" class="form-control">
-                            <input type="hidden" id="CompanyEmail" name="CompanyEmail" value="@ViewData["CompanyEmail"]" class="form-control">
-                            <input type="hidden" id="POACanApprove" name="POACanApprove" value="@ViewData["POACanApprove"]" class="form-control">
-                        </div>
-                    </div>
-                </div>
-                <div class="row hide-this">
-                    <div class="col-12 col-md-12">
-                        <h5>Provide notes upon approval or decline (if any) </h5>
-                        <div class="form-group">
-                            <textarea cols="12" rows="4" placeholder="Approval Notes ..." id="Comments" name="Comments" class="form-control"></textarea>
-                        </div>
-                    </div>
-                </div>
-                <div class="row hide-this">
-                    <div class="col-md-12">
-                        <div class="form-wizard-buttons">
-                            <button type="submit" class="btn btn-danger btnDecline"><i class="fa fa-trash"></i> Decline </button>
-                            <button type="submit" class="btn btn-submit btnApprove"><i class="fa fa-check-circle"></i> Approve </button>
-                        </div>
-                    </div>
-                </div>
-            </div><br />
-        </fieldset>
-        <!-- End Form Step 2 -->
-    </form>
-    <!-- End Form Wizard -->
-    <!--Processing Submission -->
-    <div class="col-lg-12 d_none" id="Loading_Div">
-        <center class="r_corners m_top_20">
-            <h4 class="m_top_20 m_bottom_20">Please wait... Processing Your Submission</h4>
-            <img src="~/Content/images/loading-bar.gif" class="img-thumbnail m_bottom_20" alt="Loading" style="max-width:160px;">
-        </center>
-    </div>
-    <!--End Submission Processing -->
+				</div>
+			</div><br />
+		</fieldset>
+		<!-- End Form Step 2 -->
+	</form>
+	<!-- End Form Wizard -->
 </div>
-<script type="text/javascript">
-    jQuery().ready(function () {
-        var v = jQuery("#ApplicationForm").validate({
-            rules: {
-                Comments: {
-                    minlength: 4,
-                    maxlength: 200
-                }
-            },
-            errorElement: "span",
-            errorClass: "help-inline-error",
-        });
-    });
-
-    $(document).ready(function () {
-        //Close modal
-        $('#closemodal').on('click', function () {
-            $('#LoadUpModal').modal('hide');
-        })
-        //Hide show approve buttons
-        if ($('#POACanApprove').val() == 0) {
-            $('.hide-this').addClass('d_none');
-        }
-        else {
-            $('.hide-this').removeClass('d_none');
-        }
-
-		//Submit Form (Approve Action)
-		$('.btnApprove').on('click', function (e) {
-			e.preventDefault();
-			if ($('#ApplicationForm').valid()) {
-				Swal.fire({
-					title: 'Are you sure?',
-					text: "You won't be able to revert this!",
-					icon: 'warning',
-					showCancelButton: true,
-					confirmButtonColor: '#28a745;',
-					cancelButtonColor: '#d33',
-					confirmButtonText: 'Yes, approve application',
-					cancelButtonText: 'No, cancel',
-				}).then((result) => {
-					if (result.value) {
-						var formData = new FormData($("#ApplicationForm")[0]);
-						$.ajax({
-							url: "/Poa/ApproveApplication",
-							type: 'POST',
-							data: formData,
-							async: true,
-							success: function (XmlHttpRequest) {
-								if (XmlHttpRequest === 'success') {
-									Swal.fire(
-										'Success!',
-										'Application has been approved',
-										'success'
-									)
-									window.location.reload();
-								}
-								else {
-									Swal.fire({
-										icon: 'error',
-										text: XmlHttpRequest
-									})
-								}
-							},
-							cache: false,
-							contentType: false,
-							processData: false
-						})
-					}
-				})
-			}
-			else {
-				Swal.fire('Please correct form errors to proceed!')
-			}
-		});
-
-		//Submit Form (Decline Action)
-		$('.btnDecline').on('click', function (e) {
-			e.preventDefault();
-			if ($('#ApplicationForm').valid()) {
-				Swal.fire({
-					title: 'Are you sure?',
-					text: "You won't be able to revert this!",
-					icon: 'warning',
-					showCancelButton: true,
-					confirmButtonColor: '#28a745;',
-					cancelButtonColor: '#d33',
-					confirmButtonText: 'Yes, decline application',
-					cancelButtonText: 'No, cancel',
-				}).then((result) => {
-					if (result.value) {
-						var formData = new FormData($("#ApplicationForm")[0]);
-						$.ajax({
-							url: "/Poa/DeclineApplication",
-							type: 'POST',
-							data: formData,
-							async: true,
-							success: function (XmlHttpRequest) {
-								if (XmlHttpRequest === 'success') {
-									Swal.fire(
-										'Success!',
-										'Application has been declined',
-										'success'
-									)
-									window.location.reload();
-								}
-								else {
-									Swal.fire({
-										icon: 'error',
-										text: XmlHttpRequest
-									})
-								}
-							},
-							cache: false,
-							contentType: false,
-							processData: false
-						})
-					}
-				})
-			}
-			else {
-				Swal.fire('Please correct form errors to proceed!')
-			}
-		});
-    });
-</script>

@@ -168,4 +168,16 @@ namespace OnBoarding.ViewModels
         public string IsGM { get; set; }
         public string IsEMTUser { get; set; }
     }
+
+    public class ClientCompaniesViewModel
+    {
+        public int Id {  get; set; }
+        public string CompanyName {  get; set; }
+        public string CompanyRegNumber {  get; set; }
+        public string CompanyEmail {  get; set; }
+        public int Status {  get; set; }
+        public DateTime DateCreated {  get; set; }
+        public bool HasApplication {  get; set; }
+
+    }
 }

@@ -40,7 +40,7 @@
 				<div class="card-cta al"> <a href="/Gmo/ViewAll"> View All <i class="ion ion-ios-arrow-right"></i> </a></div> 
 			</div>
 		</div>
-		<div class="col-lg-4 col-md-4 col-12">
+		<div class="col-lg-4 col-md-4 col-12 d-none">
 			<div class="card card-sm-4">
 				<div class="card-icon bg-warning">
 					<i class="ion ion-paper-airplane"></i>
@@ -56,20 +56,20 @@
 				<div class="card-cta"> <a href="/Gmo/InCompleteApplications"> View All <i class="ion ion-ios-arrow-right"></i> </a></div> 
 			</div>
 		</div>
-		<div class="col-lg-3 col-md-6 col-12 d-none">
+		<div class="col-lg-4 col-md-4 col-12">
 			<div class="card card-sm-4">
 				<div class="card-icon bg-danger">
 					<i class="ion ion-ios-paper-outline"></i>
 				</div>
 				<div class="card-wrap">
 					<div class="card-header">
-					 <h4>Pending OPS Approval</h4>
+					 <h4>Clients Settlement Instructions</h4>
 					</div>
 					<div class="card-body">
-					  @ViewData["PendingOpsApprovals"]
+					  @ViewData["ClientSSI"]
 					</div>
 				</div>
-				<div class="card-cta"> <a href="/Gmo/PendingOpsApproval"> View All <i class="ion ion-ios-arrow-right"></i> </a></div> 
+				<div class="card-cta"> <a href="/Gmo/ClientSettlements"> View All <i class="ion ion-ios-arrow-right"></i> </a></div> 
 			</div>
 		</div>
 	</div><hr/>
@@ -121,8 +121,8 @@
 							</tr> 
 							<tr>
 								<th scope="row"><span class="step">4</span></th>
-								<td> View Uploaded Clients</td>
-								<td><a href="/Gmo/ApproveUploads"> Uploaded Clients </a></td>
+								<td> View Client Settlements</td>
+								<td><a href="/Gmo/ClientSettlements"> Client Settlements </a></td>
 							</tr>
 						</tbody>
 					</table>
