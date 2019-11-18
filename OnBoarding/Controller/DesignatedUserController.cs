@@ -131,7 +131,7 @@ namespace OnBoarding.Controllers
                     var _userDetails = db.AspNetUsers.SingleOrDefault(e => e.Id == currentUserId);
                     var _action = "ApproveNomination";
                     var userClientId = db.DesignatedUsers.First(c => c.Email == _userDetails.Email && c.CompanyID == model.CompanyID);
-                    
+                                       
                     //1. Upload Signature
                     if (inputFile != null)
                     {
@@ -196,12 +196,13 @@ namespace OnBoarding.Controllers
                         //3. Log Signatory Approval
                         try
                         {
-                            var LogApproval = db.SignatoryApprovals.Create();
-                            LogApproval.ApplicationID = model.ApplicationID;
-                            LogApproval.SignatoryID = userClientId.Id;
-                            LogApproval.AcceptedTerms = model.terms;
-                            LogApproval.DateApproved = DateTime.Now;
-                            db.SignatoryApprovals.Add(LogApproval);
+                            var signatoryClientId = db.ClientSignatories.First(c => c.EmailAddress == _userDetails.Email && c.CompanyID == model.CompanyID);
+                            var LogSigApproval = db.SignatoryApprovals.Create();
+                            LogSigApproval.ApplicationID = model.ApplicationID;
+                            LogSigApproval.SignatoryID = signatoryClientId.Id;
+                            LogSigApproval.AcceptedTerms = model.terms;
+                            LogSigApproval.DateApproved = DateTime.Now;
+                            db.SignatoryApprovals.Add(LogSigApproval);
                             var savedItem = db.SaveChanges();
                             if (savedItem > 0)
                             {
@@ -211,9 +212,9 @@ namespace OnBoarding.Controllers
                                 db.SaveChanges();
                             }
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
-                            return Json("Error! Unable to log signatory approval", JsonRequestBehavior.AllowGet);
+                            return Json("Error! Unable to log signatory approval" + ex.Message, JsonRequestBehavior.AllowGet);
                         }
 
                         //4. Update Application ID
