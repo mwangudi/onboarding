@@ -38,6 +38,7 @@ namespace OnBoarding.ViewModels
         public int NominationStatus { get; set; }
         public string Status { get; set; }
         public string OPSComments { get; set; }
+        public string DeclinedBy { get; set; }
         public bool AcceptedTAC { get; set; }
         public bool OPSApproved { get; set; }
         public bool OPSDeclined { get; set; }
