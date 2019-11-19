@@ -223,9 +223,22 @@
 					url: "/Client/ExcludeSignatoryFromApplication",
 					data: JSON.stringify({ SignatoryId: signatoryId, ApplicationId: applicationId }),
 					contentType: "application/json; charset=utf-8",
-					dataType: "html",
-					success: function (data) {
-						$('.students-data').html(data);
+					dataType: "json",
+					success: function (XmlHttpRequest) {
+						if (XmlHttpRequest === 'success') {
+							Swal.fire(
+								'Success!',
+								'Signatory has been successfully removed from application',
+								'success'
+							)
+							window.location.reload();
+						}
+						else {
+							Swal.fire({
+								icon: 'error',
+								text: 'Unable to remove signatory from application'
+							})
+						}
 					},
 					error: function (xhr, textStatus, errorThrown) {
 						if (textStatus === 'error') {
@@ -253,12 +266,25 @@
 				var applicationId = $('#ApplicationId').val();
 				$.ajax({
 					type: "POST",
-					url: "/Client/LoadDeleteRepresentative",
+					url: "/Client/ExcludeRepresentativeFromApplication",
 					data: JSON.stringify({ RepresentativeId: representativeId, ApplicationId: applicationId }),
 					contentType: "application/json; charset=utf-8",
-					dataType: "html",
-					success: function (data) {
-						$('.students-data').html(data);
+					dataType: "json",
+					success: function (XmlHttpRequest) {
+						if (XmlHttpRequest === 'success') {
+							Swal.fire(
+								'Success!',
+								'Representative has been successfully removed from application',
+								'success'
+							)
+							window.location.reload();
+						}
+						else {
+							Swal.fire({
+								icon: 'error',
+								text: 'Unable to remove representative from application'
+							})
+						}
 					},
 					error: function (xhr, textStatus, errorThrown) {
 						if (textStatus === 'error') {

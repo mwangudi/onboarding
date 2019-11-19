@@ -997,37 +997,41 @@ namespace OnBoarding.Controllers
                             throw (ex);
                         }
 
-                        //Update Designated User with OTP to Login
+                        //1. Update Designated User with OTP to Login
                         var _OTPCode = OTPGenerator.GetUniqueKey(6);
                         string OTPCode = Shuffle.StringMixer(_OTPCode);
                         var UserToUpdate = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.UserEmail1.ToLower() && c.CompanyID == model.CompanyID);
                         UserToUpdate.OTP = Functions.GenerateMD5Hash(OTPCode);
                         db.SaveChanges();
 
-                        //Send Email To Authorized Representative
-                        var callbackUrl = Url.Action("DesignatedUserConfirmation", "Account", null, Request.Url.Scheme);
-                        string EmailBodyRep = string.Empty;
-                        using (StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/RepresentativeNomination.html")))
-                        {
-                            EmailBodyRep = reader.ReadToEnd();
-                        }
-                        EmailBodyRep = EmailBodyRep.Replace("{RepresentativeName}", model.UserOthernames1);
-                        EmailBodyRep = EmailBodyRep.Replace("{ActivationCode}", OTPCode);
-                        EmailBodyRep = EmailBodyRep.Replace("{URL}", callbackUrl);
+                        //2. Send Email To Authorized Representative
+                        var emailExists = db.AspNetUsers.Any(x => x.Email.ToLower() == model.UserEmail1.ToLower());
+                        if(!emailExists)
+                        { 
+                            var callbackUrl = Url.Action("DesignatedUserConfirmation", "Account", null, Request.Url.Scheme);
+                            string EmailBodyRep = string.Empty;
+                            using (StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/RepresentativeNomination.html")))
+                            {
+                                EmailBodyRep = reader.ReadToEnd();
+                            }
+                            EmailBodyRep = EmailBodyRep.Replace("{RepresentativeName}", model.UserOthernames1);
+                            EmailBodyRep = EmailBodyRep.Replace("{ActivationCode}", OTPCode);
+                            EmailBodyRep = EmailBodyRep.Replace("{URL}", callbackUrl);
 
-                        var EmailToRepresentative = MailHelper.SendMailMessage(MailHelper.EmailFrom, model.UserEmail1.ToLower(), "Authorized Representative Confirmation", EmailBodyRep);
-                        if (EmailToRepresentative == true)
-                        {
-                            //Log email sent notification
-                            LogNotification.AddSucsessNotification(MailHelper.EmailFrom, EmailBodyRep, model.UserEmail1.ToLower(), _action);
-                        }
-                        else
-                        {
-                            //Log Email failed notification
-                            LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBodyRep, model.UserEmail1.ToLower(), _action);
+                            var EmailToRepresentative = MailHelper.SendMailMessage(MailHelper.EmailFrom, model.UserEmail1.ToLower(), "Authorized Representative Confirmation", EmailBodyRep);
+                            if (EmailToRepresentative == true)
+                            {
+                                //Log email sent notification
+                                LogNotification.AddSucsessNotification(MailHelper.EmailFrom, EmailBodyRep, model.UserEmail1.ToLower(), _action);
+                            }
+                            else
+                            {
+                                //Log Email failed notification
+                                LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBodyRep, model.UserEmail1.ToLower(), _action);
+                            }
                         }
 
-                        //Send Application Complete Email to Company Email
+                        //3. Send Application Complete Email to Company Email
                         string EmailBody = string.Empty;
                         using (StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/SoleSignatoryApplication.html")))
                         {
@@ -1048,7 +1052,7 @@ namespace OnBoarding.Controllers
                             LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBody, CompanyEmail, _action);
                         }
 
-                        //Send Email to Digital Desk Users and OPS for approval
+                        //4. Send Email to Digital Desk Users and OPS for approval
                         var DDUserRole = (from p in db.AspNetUserRoles
                                           join e in db.AspNetUsers on p.UserId equals e.Id
                                           where p.RoleId == "03d5e1e3-a8a9-441e-9122-30c3aafccccc" && p.RoleId == "05bdc847-b94d-4d2f-957e-8de1d563106a"
