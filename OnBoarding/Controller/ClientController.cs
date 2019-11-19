@@ -982,10 +982,24 @@ namespace OnBoarding.Controllers
                             var applicationSaved = db.SaveChanges();
                             if (applicationSaved > 0)
                             {
-                                //Mark HasApplication True for Client Company
+                                //1. Mark HasApplication True for Client Company
                                 var updateClientCompany = db.ClientCompanies.SingleOrDefault(c => c.Id == model.CompanyID);
                                 updateClientCompany.HasApplication = true;
                                 db.SaveChanges();
+
+                                //2. Log Nomination Details For representative
+                                var _repDetails = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.UserEmail1.ToLower() && c.CompanyID == model.CompanyID);
+                                var newNomination = db.ApplicationNominations.Create();
+                                newNomination.ApplicationID = newApplication.Id;
+                                newNomination.ClientID = _repDetails.ClientID;
+                                newNomination.CompanyID = model.CompanyID;
+                                newNomination.NomineeEmail = _repDetails.Email;
+                                newNomination.NominationType = 2;
+                                newNomination.NominationStatus = 0;
+                                newNomination.DateCreated = DateTime.Now;
+                                db.ApplicationNominations.Add(newNomination);
+                                db.SaveChanges();
+
                             }
                             else
                             {
