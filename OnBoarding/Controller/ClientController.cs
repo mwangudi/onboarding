@@ -2497,6 +2497,7 @@ namespace OnBoarding.Controllers
         {
             using (DBModel db = new DBModel())
             {
+                //1. Remove Signaory from signatories Table
                 var ClientSignatoriesExist = db.ClientSignatories.Any(c => c.EmailAddress == email && c.CompanyID == companyId);
                 if (ClientSignatoriesExist)
                 {
@@ -2625,63 +2626,30 @@ namespace OnBoarding.Controllers
         }
         
         //
-        //POST //LoadDeleteSignatory 
-        public ActionResult LoadDeleteSignatory(int getSignatoryId)
-        {
-            using (DBModel db = new DBModel())
-            {
-                var getSignatoryInfo = db.ClientSignatories.SingleOrDefault(c => c.Id == getSignatoryId && c.Status == 1);
-                //Data For View Display
-                ViewData["Names"] = getSignatoryInfo.Surname + " " + getSignatoryInfo.OtherNames;
-                ViewData["EmailAddress"] = getSignatoryInfo.EmailAddress;
-                ViewData["UserId"] = getSignatoryInfo.Id;
-                ViewData["ClientId"] = getSignatoryInfo.ClientID;
-            }
-            return PartialView();
-        }
-
-        //
-        //POST //LoadDeleteRepresentative
-        public ActionResult LoadDeleteRepresentative(int getRepresentativeId)
-        {
-            using (DBModel db = new DBModel())
-            {
-                var getRepresentativeInfo = db.DesignatedUsers.SingleOrDefault(c => c.Id == getRepresentativeId && c.Status == 1);
-                
-                //Data For View Display
-                ViewData["Names"] = getRepresentativeInfo.Surname + " " + getRepresentativeInfo.Othernames;
-                ViewData["EmailAddress"] = getRepresentativeInfo.Email;
-                ViewData["UserId"] = getRepresentativeInfo.Id;
-                ViewData["ClientId"] = getRepresentativeInfo.ClientID;
-            }
-            return PartialView();
-        }
-
-        //
         //POST //ExcludeSignatoryFromApplication
-        public ActionResult ExcludeSignatoryFromApplication(DeleteSignatoryViewModel model)
+        public ActionResult ExcludeSignatoryFromApplication(int SignatoryId, int ApplicationId)
         {
             using (DBModel db = new DBModel())
             {
                 try
                 {
                     //Mark Signatory as Deleted
-                    var getSignatoryToExclude = db.ClientSignatories.SingleOrDefault(c => c.Id == model.SignatoryId);
+                    var getSignatoryToExclude = db.ClientSignatories.SingleOrDefault(c => c.Id == SignatoryId);
                     getSignatoryToExclude.Status = 4;
                     var userDeleted = db.SaveChanges();
                     if (userDeleted > 0)
                     {
-                        bool isThereApproval = db.SignatoryApprovals.Any(c => c.SignatoryID == model.SignatoryId);
+                        bool isThereApproval = db.SignatoryApprovals.Any(c => c.SignatoryID == SignatoryId);
                         if (isThereApproval)
                         {
                             //Remove accepted nomination details if exist
-                            db.SignatoryApprovals.RemoveRange(db.SignatoryApprovals.Where(r => r.SignatoryID == model.SignatoryId));
+                            db.SignatoryApprovals.RemoveRange(db.SignatoryApprovals.Where(r => r.SignatoryID == SignatoryId && r.ApplicationID == ApplicationId));
                             var nominationDeleted = db.SaveChanges();
                             if (nominationDeleted > 0)
                             {
                                 //Reduce the number of signatories in application
-                                var applicationId = db.SignatoryApprovals.SingleOrDefault(c => c.ApplicationID == model.SignatoryId);
-                                var applicationToEdit = db.EMarketApplications.SingleOrDefault(c => c.Id == applicationId.ApplicationID && c.Status == 1);
+                                var applicationId = db.SignatoryApprovals.SingleOrDefault(c => c.ApplicationID == SignatoryId);
+                                var applicationToEdit = db.EMarketApplications.SingleOrDefault(c => c.Id == ApplicationId && c.Status == 1);
                                 applicationToEdit.Signatories = applicationToEdit.Signatories - 1;
                                 var applicationEdited = db.SaveChanges();
                                 if (applicationEdited > 0)
@@ -2702,7 +2670,7 @@ namespace OnBoarding.Controllers
                         else
                         {
                             //2. If user has not yet approved nomination
-                            var applicationToEdit = db.EMarketApplications.SingleOrDefault(c => c.ClientID == model.ClientId && c.Status == 1);
+                            var applicationToEdit = db.EMarketApplications.SingleOrDefault(c => c.Id == ApplicationId && c.Status == 1);
                             applicationToEdit.Signatories = applicationToEdit.Signatories - 1;
                             var applicationEdited = db.SaveChanges();
                             if (applicationEdited > 0)
@@ -2730,30 +2698,30 @@ namespace OnBoarding.Controllers
 
         //
         //POST //ExcludeSignatoryFromApplication
-        public ActionResult ExcludeRepresentativeFromApplication(DeleteSignatoryViewModel model)
+        public ActionResult ExcludeRepresentativeFromApplication(int RepresentativeId, int ApplicationId)
         {
             using (DBModel db = new DBModel())
             {
                 try
                 {
                     //Mark Signatory as Deleted
-                    var getSignatoryToExclude = db.DesignatedUsers.SingleOrDefault(c => c.Id == model.SignatoryId);
+                    var getSignatoryToExclude = db.DesignatedUsers.SingleOrDefault(c => c.Id == RepresentativeId);
                     getSignatoryToExclude.Status = 4;
                     var userDeleted = db.SaveChanges();
                     if (userDeleted > 0)
                     {
-                        bool isThereApproval = db.DesignatedUserApprovals.Any(c => c.UserID == model.SignatoryId);
+                        bool isThereApproval = db.DesignatedUserApprovals.Any(c => c.UserID == RepresentativeId);
                         if (isThereApproval)
                         {
                             //1. If user has approved nomination
                             //Remove accepted nomination details if exist
-                            db.DesignatedUserApprovals.RemoveRange(db.DesignatedUserApprovals.Where(r => r.UserID == model.SignatoryId));
+                            db.DesignatedUserApprovals.RemoveRange(db.DesignatedUserApprovals.Where(r => r.UserID == RepresentativeId && r.ApplicationID == ApplicationId));
                             var nominationDeleted = db.SaveChanges();
                             if (nominationDeleted > 0)
                             {
                                 //Reduce the number of signatories in application by Id
-                                var applicationId = db.DesignatedUserApprovals.SingleOrDefault(c => c.ApplicationID == model.SignatoryId);
-                                var applicationToEdit = db.EMarketApplications.SingleOrDefault(c => c.Id == applicationId.ApplicationID && c.Status == 1);
+                                var applicationId = db.DesignatedUserApprovals.SingleOrDefault(c => c.ApplicationID == RepresentativeId);
+                                var applicationToEdit = db.EMarketApplications.SingleOrDefault(c => c.Id == ApplicationId && c.Status == 1);
                                 applicationToEdit.Signatories = applicationToEdit.DesignatedUsers - 1;
                                 var applicationEdited = db.SaveChanges();
                                 if (applicationEdited > 0)
@@ -2774,7 +2742,7 @@ namespace OnBoarding.Controllers
                         else
                         {
                             //2. If user has not yet approved nomination
-                            var applicationToEdit = db.EMarketApplications.SingleOrDefault(c => c.ClientID == model.ClientId && c.Status == 1);
+                            var applicationToEdit = db.EMarketApplications.SingleOrDefault(c => c.Id == ApplicationId && c.Status == 1);
                             applicationToEdit.DesignatedUsers = applicationToEdit.DesignatedUsers - 1;
                             var applicationEdited = db.SaveChanges();
                             if (applicationEdited > 0)

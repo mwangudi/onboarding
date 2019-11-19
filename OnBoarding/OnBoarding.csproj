@@ -3103,8 +3103,6 @@
     <Content Include="Views\Account\PasswordChanged.cshtml" />
     <Content Include="Views\Client\AddCompanies.cshtml" />
     <Content Include="Views\Client\_LoadCompanyDetails.cshtml" />
-    <Content Include="Views\Client\LoadDeleteRepresentative.cshtml" />
-    <Content Include="Views\Client\LoadDeleteSignatory.cshtml" />
     <Content Include="Views\DigitalDesk\LoadDeleteSignatory.cshtml" />
     <Content Include="Views\DigitalDesk\PendingApprovals.cshtml" />
     <Content Include="Views\Shared\_AdminOldLayout.cshtml" />

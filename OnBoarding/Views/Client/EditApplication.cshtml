@@ -204,46 +204,73 @@
 	<!--End Submission Processing -->
 </div>
 <script type="text/javascript">
-	//Function Load modal
-	function LoadUpDeleteModal(getSignatoryId) {
-		$('#LoadUpDeleteModal').modal({ backdrop: 'static', keyboard: false });
-		$.ajax({
-			type: "POST",
-			url: "/Client/LoadDeleteSignatory",
-			data: '{getSignatoryId: "' + getSignatoryId + '" }',
-			contentType: "application/json; charset=utf-8",
-			dataType: "html",
-			success: function (data) {
-				$('.students-data').html(data);
-			},
-			error: function (xhr, textStatus, errorThrown) {
-				if (textStatus === 'error') {
-					toastr.error('Error!. Code: ' + xhr.status + ', Details: ' + errorThrown);
-				}
+	//Function Load swal modal to delete Signatory 
+	function LoadUpDeleteModal(signatoryId) {
+		Swal.fire({
+			title: 'Are you sure?',
+			text: "You won't be able to revert this!",
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#28a745;',
+			cancelButtonColor: '#d33',
+			confirmButtonText: 'Yes, remove signatory',
+			cancelButtonText: 'No, cancel',
+		}).then((result) => {
+			if (result.value) {
+				var applicationId = $('#ApplicationId').val();
+				$.ajax({
+					type: "POST",
+					url: "/Client/ExcludeSignatoryFromApplication",
+					data: JSON.stringify({ SignatoryId: signatoryId, ApplicationId: applicationId }),
+					contentType: "application/json; charset=utf-8",
+					dataType: "html",
+					success: function (data) {
+						$('.students-data').html(data);
+					},
+					error: function (xhr, textStatus, errorThrown) {
+						if (textStatus === 'error') {
+							toastr.error('Error!. Code: ' + xhr.status + ', Details: ' + errorThrown);
+						}
+					}
+				});
 			}
-		});
+		})
 	}
 
-	//LoadUpDeleteRepresentativeModal
-	function LoadUpDeleteRepresentativeModal(getRepresentativeId) {
-		$('#LoadUpDeleteModal').modal({ backdrop: 'static', keyboard: false });
-		$.ajax({
-			type: "POST",
-			url: "/Client/LoadDeleteRepresentative",
-			data: '{getRepresentativeId: "' + getRepresentativeId + '" }',
-			contentType: "application/json; charset=utf-8",
-			dataType: "html",
-			success: function (data) {
-				$('.students-data').html(data);
-			},
-			error: function (xhr, textStatus, errorThrown) {
-				if (textStatus === 'error') {
-					toastr.error('Error!. Code: ' + xhr.status + ', Details: ' + errorThrown);
-				}
+	//Load DeleteRepresentative Swal Modal
+	function LoadUpDeleteRepresentativeModal(representativeId) {
+		Swal.fire({
+			title: 'Are you sure?',
+			text: "You won't be able to revert this!",
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#28a745;',
+			cancelButtonColor: '#d33',
+			confirmButtonText: 'Yes, remove representative',
+			cancelButtonText: 'No, cancel',
+		}).then((result) => {
+			if (result.value) {
+				var applicationId = $('#ApplicationId').val();
+				$.ajax({
+					type: "POST",
+					url: "/Client/LoadDeleteRepresentative",
+					data: JSON.stringify({ RepresentativeId: representativeId, ApplicationId: applicationId }),
+					contentType: "application/json; charset=utf-8",
+					dataType: "html",
+					success: function (data) {
+						$('.students-data').html(data);
+					},
+					error: function (xhr, textStatus, errorThrown) {
+						if (textStatus === 'error') {
+							toastr.error('Error!. Code: ' + xhr.status + ', Details: ' + errorThrown);
+						}
+					}
+				});
 			}
-		});
+		})
 	}
 
+	//Enable /Disable Remove button on approval by Ops
 	if ($('#Approved').val() == 0) {
         $('.remove-signatory').addClass('d_none');
         $('.remove-representative').addClass('d_none');
