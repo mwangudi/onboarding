@@ -29,9 +29,8 @@ namespace OnBoarding.Controllers
                 var Approvals = db.EMarketApplications.Count(a => (a.OPSApproved == true && a.POAApproved == true));
                 var PendingOpsApprovals = db.EMarketApplications.Count(a => a.Signatories == a.SignatoriesApproved && a.DesignatedUsers == a.UsersApproved && (a.OPSApproved == false && a.OPSDeclined == false));
                 var PendingPOAApprovals = db.EMarketApplications.Count(a => (a.OPSApproved == true && a.Status == 1 && (a.POAApproved == false && a.POADeclined == false)));
-                //var PendingApprovals = db.EMarketApplications.Count(a => (a.OPSApproved == false || a.POAApproved == false) && (a.POAApproved == false && a.POADeclined == false));
                 var PendingApprovals = PendingOpsApprovals + PendingPOAApprovals;
-                var DeclinedApplications = db.EMarketApplications.Count(a => a.Signatories == a.SignatoriesApproved && a.DesignatedUsers == a.UsersApproved && (a.POADeclined == true || a.OPSDeclined == true));
+                var DeclinedApplications = db.EMarketApplications.Count(a => a.Signatories == a.SignatoriesApproved && a.DesignatedUsers == a.UsersApproved && (a.POADeclined == true || a.OPSDeclined == true || a.DigitalDeskDeclined == true));
 
                 ViewData["RegisteredClients"] = RegisteredClients;
                 ViewData["CompletedApplications"] = CompletedApplications;
