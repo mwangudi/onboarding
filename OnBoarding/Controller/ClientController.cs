@@ -1000,7 +1000,7 @@ namespace OnBoarding.Controllers
                         //Update Designated User with OTP to Login
                         var _OTPCode = OTPGenerator.GetUniqueKey(6);
                         string OTPCode = Shuffle.StringMixer(_OTPCode);
-                        var UserToUpdate = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.UserEmail1.ToLower());
+                        var UserToUpdate = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.UserEmail1.ToLower() && c.CompanyID == model.CompanyID);
                         UserToUpdate.OTP = Functions.GenerateMD5Hash(OTPCode);
                         db.SaveChanges();
 
