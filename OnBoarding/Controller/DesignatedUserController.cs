@@ -404,7 +404,7 @@ namespace OnBoarding.Controllers
                             {
                                 var SignatoryApprovals = ApplicationUpdate.SignatoriesApproved;
                                 var UsersApprovals = ApplicationUpdate.UsersApproved;
-                                ApplicationUpdate.SignatoriesApproved = SignatoryApprovals + 1;
+                                //ApplicationUpdate.SignatoriesApproved = SignatoryApprovals + 1;
                                 ApplicationUpdate.UsersApproved = UsersApprovals + 1;
                                 ApplicationUpdate.SignatoriesDateApproved = DateTime.Now;
                                 ApplicationUpdate.UsersDateApproved = DateTime.Now;
