@@ -1044,6 +1044,30 @@ namespace OnBoarding.Controllers
                                 LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBodyRep, model.UserEmail1.ToLower(), _action);
                             }
                         }
+                        else
+                        {
+                            //Send email to login and approve
+                            var _action2 = "ExistingRepresentativeNomination";
+                            var callbackUrl2 = Url.Action("Index", "Home", null, Request.Url.Scheme);
+                            string EmailBodyExistingRep = string.Empty;
+                            using (StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/ExistingRepresentativeNomination.html")))
+                            {
+                                EmailBodyExistingRep = reader.ReadToEnd();
+                            }
+                            EmailBodyExistingRep = EmailBodyExistingRep.Replace("{RepresentativeName}", model.UserOthernames1);
+                            EmailBodyExistingRep = EmailBodyExistingRep.Replace("{Url}", callbackUrl2);
+                            var EmailToRepresentative = MailHelper.SendMailMessage(MailHelper.EmailFrom, model.UserEmail1.ToLower(), "Authorized Representative Nomination", EmailBodyExistingRep);
+                            if (EmailToRepresentative == true)
+                            {
+                                //Log email sent notification
+                                LogNotification.AddSucsessNotification(MailHelper.EmailFrom, EmailBodyExistingRep, model.UserEmail1.ToLower(), _action2);
+                            }
+                            else
+                            {
+                                //Log Email failed notification
+                                LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBodyExistingRep, model.UserEmail1.ToLower(), _action2);
+                            }
+                        }
 
                         //3. Send Application Complete Email to Company Email
                         string EmailBody = string.Empty;
