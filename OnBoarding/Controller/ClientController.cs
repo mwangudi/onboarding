@@ -2627,7 +2627,7 @@ namespace OnBoarding.Controllers
         
         //
         //POST //ExcludeSignatoryFromApplication
-        public ActionResult ExcludeSignatoryFromApplication(int SignatoryId, int ApplicationId)
+        public JsonResult ExcludeSignatoryFromApplication(int SignatoryId, int ApplicationId)
         {
             using (DBModel db = new DBModel())
             {
@@ -2639,7 +2639,7 @@ namespace OnBoarding.Controllers
                     var userDeleted = db.SaveChanges();
                     if (userDeleted > 0)
                     {
-                        bool isThereApproval = db.SignatoryApprovals.Any(c => c.SignatoryID == SignatoryId);
+                        bool isThereApproval = db.SignatoryApprovals.Any(c => c.SignatoryID == SignatoryId && c.ApplicationID == ApplicationId);
                         if (isThereApproval)
                         {
                             //Remove accepted nomination details if exist
@@ -2648,7 +2648,6 @@ namespace OnBoarding.Controllers
                             if (nominationDeleted > 0)
                             {
                                 //Reduce the number of signatories in application
-                                var applicationId = db.SignatoryApprovals.SingleOrDefault(c => c.ApplicationID == SignatoryId);
                                 var applicationToEdit = db.EMarketApplications.SingleOrDefault(c => c.Id == ApplicationId && c.Status == 1);
                                 applicationToEdit.Signatories = applicationToEdit.Signatories - 1;
                                 var applicationEdited = db.SaveChanges();
@@ -2698,7 +2697,7 @@ namespace OnBoarding.Controllers
 
         //
         //POST //ExcludeSignatoryFromApplication
-        public ActionResult ExcludeRepresentativeFromApplication(int RepresentativeId, int ApplicationId)
+        public JsonResult ExcludeRepresentativeFromApplication(int RepresentativeId, int ApplicationId)
         {
             using (DBModel db = new DBModel())
             {
@@ -2710,7 +2709,7 @@ namespace OnBoarding.Controllers
                     var userDeleted = db.SaveChanges();
                     if (userDeleted > 0)
                     {
-                        bool isThereApproval = db.DesignatedUserApprovals.Any(c => c.UserID == RepresentativeId);
+                        bool isThereApproval = db.DesignatedUserApprovals.Any(c => c.UserID == RepresentativeId && c.ApplicationID == ApplicationId);
                         if (isThereApproval)
                         {
                             //1. If user has approved nomination
@@ -2720,7 +2719,6 @@ namespace OnBoarding.Controllers
                             if (nominationDeleted > 0)
                             {
                                 //Reduce the number of signatories in application by Id
-                                var applicationId = db.DesignatedUserApprovals.SingleOrDefault(c => c.ApplicationID == RepresentativeId);
                                 var applicationToEdit = db.EMarketApplications.SingleOrDefault(c => c.Id == ApplicationId && c.Status == 1);
                                 applicationToEdit.Signatories = applicationToEdit.DesignatedUsers - 1;
                                 var applicationEdited = db.SaveChanges();
