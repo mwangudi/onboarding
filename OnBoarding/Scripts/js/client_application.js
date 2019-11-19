@@ -1246,13 +1246,13 @@ $(document).ready(function () {
 						}
                     }
 				},
-				error: function (xhr, textStatus, errorThrown) {
+				/*error: function (xhr, textStatus, errorThrown) {
 					if (textStatus === 'error') {
 						$("#Loading_Div").hide('fast');
 						$('#form').show("fast");
 						toastr.error('Submission error!. Code: ' + xhr.status + ', Details: ' + errorThrown);
 					}
-				},
+				},*/
                 cache: false,
                 contentType: false,
                 processData: false

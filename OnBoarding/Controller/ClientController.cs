@@ -961,7 +961,7 @@ namespace OnBoarding.Controllers
                         try
                         { 
                             //Mark Signatory 1 as status 1
-                            var updateSignatory1 = db.ClientSignatories.SingleOrDefault(c => c.EmailAddress == model.SignatoryEmail1.ToLower());
+                            var updateSignatory1 = db.ClientSignatories.SingleOrDefault(c => c.EmailAddress == model.SignatoryEmail1.ToLower() && c.CompanyID == model.CompanyID);
                             updateSignatory1.Status = 1;
                             updateSignatory1.AcceptedTerms = true;
                             db.SaveChanges();

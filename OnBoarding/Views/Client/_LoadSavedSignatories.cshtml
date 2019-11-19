@@ -67,6 +67,7 @@ else
 	$('#btnEditSignatories').on('click', function (e) {
 		e.preventDefault();
 		var companyId = $('#CompanyID').val();
+		$('#SignatoryCount').val("0");
 		$.ajax({
 			url: '/Client/ClearSignatories',
 			type: 'POST',

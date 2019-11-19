@@ -749,7 +749,7 @@ namespace OnBoarding.Controllers
                         {
                             // does not match
                             var UpdateCommentColumn = db.ExistingClientsUploads.SingleOrDefault(c => c.Id == item);
-                            UpdateCommentColumn.Status = 3;
+                            UpdateCommentColumn.Status = 2;
                             UpdateCommentColumn.ErrorComments = "Invalid Stanbic Account Number";
                             UpdateCommentColumn.ApprovedBy = User.Identity.GetUserId();
                             UpdateCommentColumn.DateApproved = DateTime.Now;
@@ -779,7 +779,7 @@ namespace OnBoarding.Controllers
                             catch (Exception e)
                             {
                                 var UpdateCommentColumn = db.ExistingClientsUploads.SingleOrDefault(c => c.Id == item);
-                                UpdateCommentColumn.Status = 3;
+                                UpdateCommentColumn.Status = 2;
                                 UpdateCommentColumn.ErrorComments = e.Message;
                                 UpdateCommentColumn.ApprovedBy = User.Identity.GetUserId();
                                 UpdateCommentColumn.DateApproved = DateTime.Now;
@@ -806,7 +806,7 @@ namespace OnBoarding.Controllers
                         catch (Exception e)
                         {
                             var UpdateCommentColumn = db.ExistingClientsUploads.SingleOrDefault(c => c.Id == item);
-                            UpdateCommentColumn.Status = 3;
+                            UpdateCommentColumn.Status = 2;
                             UpdateCommentColumn.ErrorComments = e.Message;
                             UpdateCommentColumn.ApprovedBy = User.Identity.GetUserId();
                             UpdateCommentColumn.DateApproved = DateTime.Now;
@@ -836,7 +836,7 @@ namespace OnBoarding.Controllers
                             catch (Exception e)
                             {
                                 var UpdateCommentColumn = db.ExistingClientsUploads.SingleOrDefault(c => c.Id == item);
-                                UpdateCommentColumn.Status = 3;
+                                UpdateCommentColumn.Status = 2;
                                 UpdateCommentColumn.ErrorComments = e.Message;
                                 UpdateCommentColumn.ApprovedBy = User.Identity.GetUserId();
                                 UpdateCommentColumn.DateApproved = DateTime.Now;
@@ -847,39 +847,58 @@ namespace OnBoarding.Controllers
                         }
 
                         //D. Check if Representative exists and create if not
+                        bool validEmail = Regex.IsMatch(RecordToUpdate.RepresentativeEmail,
+                                            @"^(?("")("".+?(?<!\\)""@)|(([0-9a-z]((\.(?!\.))|[-!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-z])@))" +
+                                            @"(?(\[)(\[(\d{1,3}\.){3}\d{1,3}\])|(([0-9a-z][-0-9a-z]*[0-9a-z]*\.)+[a-z0-9][\-a-z0-9]{0,22}[a-z0-9]))$",
+                                            RegexOptions.IgnoreCase);
                         var RepExists = db.DesignatedUsers.SingleOrDefault(c => c.Email == RecordToUpdate.RepresentativeEmail && c.ClientID == clientId && c.CompanyID == companyId && c.Status == 1);
-                        if (RepExists == null)
+                        if (validEmail)
                         {
-                            try
+                            if (RepExists == null)
                             {
-                                var EMTSignUp = (RecordToUpdate.IsEMTUser == "YES" || RecordToUpdate.IsEMTUser == "Yes" || RecordToUpdate.IsEMTUser == "yes") ? true : false;
-                                var GMRep = (RecordToUpdate.IsGM == "YES" || RecordToUpdate.IsGM == "Yes" || RecordToUpdate.IsGM == "yes") ? true : false;
-                                var newRepresentative = db.DesignatedUsers.Create();
-                                newRepresentative.Surname = RecordToUpdate.RepresentativeName;
-                                newRepresentative.TradingLimit = RecordToUpdate.RepresentativeLimit;
-                                newRepresentative.Mobile = RecordToUpdate.RepresentativePhonenumber;
-                                newRepresentative.Email = RecordToUpdate.RepresentativeEmail;
-                                newRepresentative.ClientID = clientId;
-                                newRepresentative.CompanyID = companyId;
-                                newRepresentative.Status = 1;
-                                newRepresentative.EMarketSignUp = EMTSignUp;
-                                newRepresentative.GMRepresentative = GMRep;
-                                newRepresentative.AcceptedTerms = true;
-                                newRepresentative.DateCreated = DateTime.Now;
-                                db.DesignatedUsers.Add(newRepresentative);
-                                repSaved = db.SaveChanges();
+                                try
+                                {
+                                    var EMTSignUp = (RecordToUpdate.IsEMTUser == "YES" || RecordToUpdate.IsEMTUser == "Yes" || RecordToUpdate.IsEMTUser == "yes") ? true : false;
+                                    var GMRep = (RecordToUpdate.IsGM == "YES" || RecordToUpdate.IsGM == "Yes" || RecordToUpdate.IsGM == "yes") ? true : false;
+                                    var newRepresentative = db.DesignatedUsers.Create();
+                                    newRepresentative.Surname = RecordToUpdate.RepresentativeName;
+                                    newRepresentative.TradingLimit = RecordToUpdate.RepresentativeLimit;
+                                    newRepresentative.Mobile = RecordToUpdate.RepresentativePhonenumber;
+                                    newRepresentative.Email = RecordToUpdate.RepresentativeEmail;
+                                    newRepresentative.ClientID = clientId;
+                                    newRepresentative.CompanyID = companyId;
+                                    newRepresentative.Status = 1;
+                                    newRepresentative.EMarketSignUp = EMTSignUp;
+                                    newRepresentative.GMRepresentative = GMRep;
+                                    newRepresentative.AcceptedTerms = true;
+                                    newRepresentative.DateCreated = DateTime.Now;
+                                    db.DesignatedUsers.Add(newRepresentative);
+                                    repSaved = db.SaveChanges();
+                                }
+                                catch (Exception e)
+                                {
+                                    var UpdateCommentColumn = db.ExistingClientsUploads.SingleOrDefault(c => c.Id == item);
+                                    UpdateCommentColumn.Status = 2;
+                                    UpdateCommentColumn.ErrorComments = e.Message;
+                                    UpdateCommentColumn.ApprovedBy = User.Identity.GetUserId();
+                                    UpdateCommentColumn.DateApproved = DateTime.Now;
+                                    db.SaveChanges();
+                                    errorFlag = errorFlag + 1;
+                                    continue;
+                                }
                             }
-                            catch (Exception e)
-                            {
-                                var UpdateCommentColumn = db.ExistingClientsUploads.SingleOrDefault(c => c.Id == item);
-                                UpdateCommentColumn.Status = 3;
-                                UpdateCommentColumn.ErrorComments = e.Message;
-                                UpdateCommentColumn.ApprovedBy = User.Identity.GetUserId();
-                                UpdateCommentColumn.DateApproved = DateTime.Now;
-                                db.SaveChanges();
-                                errorFlag = errorFlag + 1;
-                                continue;
-                            }
+                        }
+                        else
+                        {
+                            //Mark Record as Declined
+                            var UpdateCommentColumn = db.ExistingClientsUploads.SingleOrDefault(c => c.Id == item);
+                            UpdateCommentColumn.Status = 2;
+                            UpdateCommentColumn.ErrorComments = "Invalid Email Address";
+                            UpdateCommentColumn.ApprovedBy = User.Identity.GetUserId();
+                            UpdateCommentColumn.DateApproved = DateTime.Now;
+                            db.SaveChanges();
+                            errorFlag = errorFlag + 1;
+                            continue;
                         }
 
                         //2. Log approval details
@@ -896,7 +915,7 @@ namespace OnBoarding.Controllers
                             catch (Exception e)
                             {
                                 var UpdateCommentColumn = db.ExistingClientsUploads.SingleOrDefault(c => c.Id == item);
-                                UpdateCommentColumn.Status = 3;
+                                UpdateCommentColumn.Status = 2;
                                 UpdateCommentColumn.ErrorComments = e.Message;
                                 UpdateCommentColumn.ApprovedBy = User.Identity.GetUserId();
                                 UpdateCommentColumn.DateApproved = DateTime.Now;
@@ -908,7 +927,7 @@ namespace OnBoarding.Controllers
                         else
                         {
                             var UpdateCommentColumn = db.ExistingClientsUploads.SingleOrDefault(c => c.Id == item);
-                            UpdateCommentColumn.Status = 3;
+                            UpdateCommentColumn.Status = 2;
                             UpdateCommentColumn.ApprovedBy = User.Identity.GetUserId();
                             UpdateCommentColumn.DateApproved = DateTime.Now;
                             db.SaveChanges();
@@ -921,11 +940,8 @@ namespace OnBoarding.Controllers
                         if (!match.Success)
                         {
                             // does not match
-                            //return Json("Error! Invalid Stanbic Bank Account Number", JsonRequestBehavior.AllowGet);
-                            // does not match
-                            //return Json("Error! Invalid Stanbic Bank Account Number", JsonRequestBehavior.AllowGet);
                             var UpdateCommentColumn = db.ExistingClientsUploads.SingleOrDefault(c => c.Id == item);
-                            UpdateCommentColumn.Status = 3;
+                            UpdateCommentColumn.Status = 2;
                             UpdateCommentColumn.ErrorComments = "Invalid Stanbic Account Number";
                             UpdateCommentColumn.ApprovedBy = User.Identity.GetUserId();
                             UpdateCommentColumn.DateApproved = DateTime.Now;
@@ -958,7 +974,7 @@ namespace OnBoarding.Controllers
                                 catch (Exception e)
                                 {
                                     var UpdateCommentColumn = db.ExistingClientsUploads.SingleOrDefault(c => c.Id == item);
-                                    UpdateCommentColumn.Status = 3;
+                                    UpdateCommentColumn.Status = 2;
                                     UpdateCommentColumn.ErrorComments = e.Message;
                                     UpdateCommentColumn.ApprovedBy = User.Identity.GetUserId();
                                     UpdateCommentColumn.DateApproved = DateTime.Now;
@@ -998,7 +1014,7 @@ namespace OnBoarding.Controllers
                             catch (Exception e)
                             {
                                 var UpdateCommentColumn = db.ExistingClientsUploads.SingleOrDefault(c => c.Id == item);
-                                UpdateCommentColumn.Status = 3;
+                                UpdateCommentColumn.Status = 2;
                                 UpdateCommentColumn.ErrorComments = e.Message;
                                 UpdateCommentColumn.ApprovedBy = User.Identity.GetUserId();
                                 UpdateCommentColumn.DateApproved = DateTime.Now;
@@ -1022,7 +1038,7 @@ namespace OnBoarding.Controllers
                             catch (Exception e)
                             {
                                 var UpdateCommentColumn = db.ExistingClientsUploads.SingleOrDefault(c => c.Id == item);
-                                UpdateCommentColumn.Status = 3;
+                                UpdateCommentColumn.Status = 2;
                                 UpdateCommentColumn.ErrorComments = e.Message;
                                 UpdateCommentColumn.ApprovedBy = User.Identity.GetUserId();
                                 UpdateCommentColumn.DateApproved = DateTime.Now;
@@ -1034,7 +1050,7 @@ namespace OnBoarding.Controllers
                         else
                         {
                             var UpdateCommentColumn = db.ExistingClientsUploads.SingleOrDefault(c => c.Id == item);
-                            UpdateCommentColumn.Status = 3;
+                            UpdateCommentColumn.Status = 2;
                             db.SaveChanges();
                             errorFlag = errorFlag + 1;
                             continue;
