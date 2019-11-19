@@ -183,7 +183,7 @@ namespace OnBoarding.Controllers
                             if (savedItem > 0)
                             {
                                 //Log Representative approval
-                                var nominationToUpdate = db.ApplicationNominations.SingleOrDefault(c => c.NomineeEmail == userClientId.Email && c.CompanyID == model.CompanyID && c.NominationType == 2);
+                                var nominationToUpdate = db.ApplicationNominations.SingleOrDefault(c => c.NomineeEmail == userClientId.Email && c.ApplicationID == model.ApplicationID && c.CompanyID == model.CompanyID && c.NominationType == 2);
                                 nominationToUpdate.NominationStatus = 1;
                                 db.SaveChanges();
                             }
@@ -207,7 +207,7 @@ namespace OnBoarding.Controllers
                             if (savedItem > 0)
                             {
                                 //Log nomination
-                                var nominationToUpdate = db.ApplicationNominations.SingleOrDefault(c => c.NomineeEmail == userClientId.Email && c.CompanyID == model.CompanyID && c.NominationType == 1);
+                                var nominationToUpdate = db.ApplicationNominations.SingleOrDefault(c => c.NomineeEmail == userClientId.Email && c.ApplicationID == model.ApplicationID && c.CompanyID == model.CompanyID && c.NominationType == 1);
                                 nominationToUpdate.NominationStatus = 1;
                                 db.SaveChanges();
                             }
@@ -386,7 +386,7 @@ namespace OnBoarding.Controllers
                             if (savedItem > 0)
                             {
                                 //Log Representative approval
-                                var nominationToUpdate = db.ApplicationNominations.SingleOrDefault(c => c.NomineeEmail == userClientId.Email && c.CompanyID == model.CompanyID && c.NominationType == 2);
+                                var nominationToUpdate = db.ApplicationNominations.SingleOrDefault(c => c.NomineeEmail == userClientId.Email && c.ApplicationID == model.ApplicationID && c.CompanyID == model.CompanyID && c.NominationType == 2);
                                 nominationToUpdate.NominationStatus = 1;
                                 db.SaveChanges();
                             }
@@ -548,7 +548,7 @@ namespace OnBoarding.Controllers
                     if (savedItem > 0)
                     {
                         //Log signatory approval
-                        var nominationToUpdate = db.ApplicationNominations.SingleOrDefault(c => c.NomineeEmail == userClientId.Email && c.CompanyID == model.CompanyID && c.NominationType == 2);
+                        var nominationToUpdate = db.ApplicationNominations.SingleOrDefault(c => c.NomineeEmail == userClientId.Email && c.ApplicationID == model.ApplicationID && c.CompanyID == model.CompanyID && c.NominationType == 2);
                         nominationToUpdate.NominationStatus = 2;
                         db.SaveChanges();
                     }
