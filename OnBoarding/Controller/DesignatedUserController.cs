@@ -162,12 +162,12 @@ namespace OnBoarding.Controllers
                     var representativeIsASignatory = db.ClientSignatories.Any(c => c.EmailAddress == getUserInfo.Email && c.CompanyID == model.CompanyID);
                     if (representativeIsASignatory)
                     {
-                        var representativeClientId = db.ClientSignatories.First(c => c.UserAccountID == currentUserId);
-                        
-                        //1. Update representative's signature
-                        var RepresentativeToUpdate = db.ClientSignatories.First(c => c.EmailAddress == representativeClientId.EmailAddress && c.CompanyID == model.CompanyID);
-                        RepresentativeToUpdate.Signature = representativeClientId.Signature;
-                        RepresentativeToUpdate.PhoneNumber = model.VerifyPhone; //Update phone number
+                        var representativeClientId = db.ClientSignatories.First(c => c.EmailAddress == getUserInfo.Email);
+
+                        //1. Update signatory's signature
+                        var SignatoryToUpdate = db.ClientSignatories.First(c => c.EmailAddress == representativeClientId.EmailAddress && c.CompanyID == model.CompanyID);
+                        SignatoryToUpdate.Signature = representativeClientId.Signature;
+                        SignatoryToUpdate.PhoneNumber = model.VerifyPhone; //Update phone number
                         db.SaveChanges();
 
                         //2. Log Representative's Approval
