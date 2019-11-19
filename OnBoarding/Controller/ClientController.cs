@@ -1026,6 +1026,53 @@ namespace OnBoarding.Controllers
                             //Log Email failed notification
                             LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBodyRep, model.UserEmail1.ToLower(), _action);
                         }
+
+                        //Send Application Complete Email to Company Email
+                        string EmailBody = string.Empty;
+                        using (StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/SoleSignatoryApplication.html")))
+                        {
+                            EmailBody = reader.ReadToEnd();
+                        }
+                        EmailBody = EmailBody.Replace("{CompanyName}", userInfo.OtherNames);
+
+                        var ApplicationCompleteEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, CompanyEmail, "Application Complete", EmailBody);
+
+                        if (ApplicationCompleteEmail == true)
+                        {
+                            //Log email sent notification
+                            LogNotification.AddSucsessNotification(MailHelper.EmailFrom, EmailBody, CompanyEmail, _action);
+                        }
+                        else
+                        {
+                            //Log Email failed notification
+                            LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBody, CompanyEmail, _action);
+                        }
+
+                        //Send Email to Digital Desk Users and OPS for approval
+                        var DDUserRole = (from p in db.AspNetUserRoles
+                                          join e in db.AspNetUsers on p.UserId equals e.Id
+                                          where p.RoleId == "03d5e1e3-a8a9-441e-9122-30c3aafccccc" && p.RoleId == "05bdc847-b94d-4d2f-957e-8de1d563106a"
+                                          select new
+                                          {
+                                              EmailID = e.Email
+                                          });
+                        foreach (var email in DDUserRole.ToList())
+                        {
+                            var DDMessageBody = "Dear Team <br/><br/> Kindly note that the following client has successfully completed an application at Global Markets Onboarding portal. <br/>" +
+                                            "Company Name: " + model.CompanyName + ", Company Email: " + CompanyEmail + ", Application Date: " + DateTime.Now + " " +
+                                            "<br/><br/> Kind Regards,<br/><img src=\"https://e-documents.stanbicbank.co.ke/Content/images/EmailSignature.png\"/>";
+                            var SendDDNotificationEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, email.EmailID, "Application Complete", DDMessageBody);
+                            if (SendDDNotificationEmail == true)
+                            {
+                                //Log email sent notification
+                                LogNotification.AddSucsessNotification(MailHelper.EmailFrom, DDMessageBody, email.EmailID, _action);
+                            }
+                            else
+                            {
+                                //Log Email failed notification
+                                LogNotification.AddFailureNotification(MailHelper.EmailFrom, DDMessageBody, email.EmailID, _action);
+                            }
+                        }
                     }
                     return Json("success", JsonRequestBehavior.AllowGet);
                 }
