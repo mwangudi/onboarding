@@ -82,21 +82,24 @@
 								width: '10%',
 								display: function (data) {
 									var approved = data.record.Status;
-									if (approved == 1) {
-										return '<center><p class="text-success"><i class="fa fa-check-circle"></i> Approved </p></center>';
-									}
-									else if (approved == 2) {
-										return '<center><p class="text-danger"><i class="fa fa-times-circle"></i> Declined </p></center>';
-									}
-									else if (approved == 3) {
-										return '<center><p class="text-danger"><i class="fa fa-times-circle"></i> Approved with Error </p></center>';
-									}
-									else if (approved == 4) {
-										return '<center><p class="text-danger"><i class="fa fa-times-circle"></i> Deleted </p></center>';
-									}
-									else {
-										return '<center><p class="text-warning"><i class="fa fa-check-circle"></i> Pending Approval </p></center>';
-									}
+                                    if (approved == 1) {
+                                        return '<center><p class="text-success"><i class="fa fa-check-circle"></i> Approved </p></center>';
+                                    }
+                                    else if (approved == 2) {
+                                        return '<center><p class="text-danger"><i class="fa fa-times-circle"></i> Declined </p></center>';
+                                    }
+                                    else if (approved == 3) {
+                                        return '<center><p class="text-danger"><i class="fa fa-times-circle"></i> Error </p></center>';
+                                    }
+                                    else if (approved == 4) {
+                                        return '<center><p class="text-danger"><i class="fa fa-trash"></i> Deleted </p></center>';
+                                    }
+                                    else if (approved == 0) {
+                                        return '<center><p class="text-warning"><i class="fa fa-check-circle"></i> Pending </p></center>';
+                                    }
+                                    else {
+                                        return '<center><i class="fa fa-shield-alt fa-x" style="color:red;"></i></center>';
+                                    }
 								}
 							}
 						}
