@@ -162,10 +162,10 @@ namespace OnBoarding.Controllers
                     var representativeIsASignatory = db.ClientSignatories.Any(c => c.EmailAddress == getUserInfo.Email && c.CompanyID == model.CompanyID);
                     if (representativeIsASignatory)
                     {
-                        var representativeClientId = db.ClientSignatories.First(c => c.EmailAddress == getUserInfo.Email);
+                        var representativeClientId = db.DesignatedUsers.First(c => c.Email == getUserInfo.Email && c.CompanyID == model.CompanyID);
 
                         //1. Update signatory's signature
-                        var SignatoryToUpdate = db.ClientSignatories.First(c => c.EmailAddress == representativeClientId.EmailAddress && c.CompanyID == model.CompanyID);
+                        var SignatoryToUpdate = db.ClientSignatories.First(c => c.EmailAddress == representativeClientId.Email && c.CompanyID == model.CompanyID);
                         SignatoryToUpdate.Signature = representativeClientId.Signature;
                         SignatoryToUpdate.PhoneNumber = model.VerifyPhone; //Update phone number
                         db.SaveChanges();
@@ -190,7 +190,7 @@ namespace OnBoarding.Controllers
                         }
                         catch (Exception)
                         {
-                            return Json("Error! Unable to log representatives details", JsonRequestBehavior.AllowGet);
+                            return Json("Error! Unable to log signatory details", JsonRequestBehavior.AllowGet);
                         }
 
                         //3. Log Signatory Approval
