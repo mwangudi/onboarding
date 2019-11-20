@@ -15,7 +15,6 @@ namespace OnBoarding.Controllers
     {
         private bool? EMarketSignUp;
         private bool SSI;
-        //private int LastApplicationId;
 
         private dynamic ConfirmationLinkURL => Url.Action("CompleteRegistration", "Account", null, Request.Url.Scheme);
         
@@ -170,8 +169,6 @@ namespace OnBoarding.Controllers
                 return View();
             }
         }
-
-
 
         //
         // POST: Applications
@@ -770,7 +767,7 @@ namespace OnBoarding.Controllers
                         var Representative4ToUpdateStatus = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.UserEmail4 && c.CompanyID == model.CompanyID);
                         Representative4ToUpdateStatus.Status = 0;
                         db.SaveChanges();
-                    }
+                    } 
                 }
 
                 //Log authorised Representative (Representative 5)
@@ -825,7 +822,7 @@ namespace OnBoarding.Controllers
                     {
                         try
                         {
-                            //Update representative signature
+                            //1. Update representative signature
                             if (inputFile != null)
                             {
                                 var fileName = DateTime.Now.ToString("yyyyMMdd") + RegisteredClientId + inputFile.FileName;
@@ -842,17 +839,17 @@ namespace OnBoarding.Controllers
                                 db.SaveChanges();
                             }
 
-                            //Mark Signatory 1 as status 1
+                            //2. Mark Signatory 1 as status 1
                             var updateSignatory1 = db.ClientSignatories.SingleOrDefault(c => c.EmailAddress == model.SignatoryEmail1.ToLower() && c.CompanyID == model.CompanyID);
                             updateSignatory1.Status = 1;
                             db.SaveChanges();
 
-                            //Mark Representative 1 as status 1
+                            //3. Mark Representative 1 as status 1
                             var updateRepresentative1 = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.SignatoryEmail1.ToLower() && c.CompanyID == model.CompanyID);
                             updateRepresentative1.Status = 1;
                             db.SaveChanges();
 
-                            //Log new application
+                            //4. Log new application
                             var newApplication = db.EMarketApplications.Create();
                             newApplication.AcceptedTAC = true;
                             newApplication.CompanyID = model.CompanyID;
@@ -888,15 +885,15 @@ namespace OnBoarding.Controllers
                                     newDesignatedUserApproval.ApplicationID = applicationSaved;
                                     newDesignatedUserApproval.Status = 1;
                                     db.SaveChanges();
-                                    
+
                                     //Mark HasApplication True for Client Company
                                     var updateClientCompany = db.ClientCompanies.SingleOrDefault(c => c.Id == model.CompanyID);
                                     updateClientCompany.HasApplication = true;
                                     db.SaveChanges();
                                 }
-                                catch(Exception ex)
+                                catch (Exception ex)
                                 {
-                                    return Json(""+ ex.Message +"", JsonRequestBehavior.AllowGet);
+                                    return Json("" + ex.Message + "", JsonRequestBehavior.AllowGet);
                                 }
                             }
                             else
@@ -909,14 +906,14 @@ namespace OnBoarding.Controllers
                             throw (ex);
                         }
 
-                        //Send Application Complete Email to Company Email
+                        //5. Send Application Complete Email to Company Email
                         string EmailBody = string.Empty;
                         using (StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/SoleSignatoryApplication.html")))
                         {
                             EmailBody = reader.ReadToEnd();
                         }
-                        EmailBody = EmailBody.Replace("{CompanyName}",userInfo.OtherNames);
-                            
+                        EmailBody = EmailBody.Replace("{CompanyName}", userInfo.OtherNames);
+
                         var ApplicationCompleteEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, CompanyEmail, "Application Complete", EmailBody);
 
                         if (ApplicationCompleteEmail == true)
@@ -930,14 +927,14 @@ namespace OnBoarding.Controllers
                             LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBody, CompanyEmail, _action);
                         }
 
-                        //Send Email to Digital Desk Users and OPS for approval
+                        //6. Send Email to Digital Desk Users and OPS for approval
                         var DDUserRole = (from p in db.AspNetUserRoles
-                                        join e in db.AspNetUsers on p.UserId equals e.Id
-                                        where p.RoleId == "03d5e1e3-a8a9-441e-9122-30c3aafccccc" && p.RoleId == "05bdc847-b94d-4d2f-957e-8de1d563106a"
-                                        select new
-                                        {
-                                            EmailID = e.Email
-                                        });
+                                          join e in db.AspNetUsers on p.UserId equals e.Id
+                                          where p.RoleId == "03d5e1e3-a8a9-441e-9122-30c3aafccccc" && p.RoleId == "05bdc847-b94d-4d2f-957e-8de1d563106a"
+                                          select new
+                                          {
+                                              EmailID = e.Email
+                                          });
                         foreach (var email in DDUserRole.ToList())
                         {
                             var DDMessageBody = "Dear Team <br/><br/> Kindly note that the following client has successfully completed an application at Global Markets Onboarding portal. <br/>" +
@@ -959,13 +956,14 @@ namespace OnBoarding.Controllers
                     else
                     {
                         try
-                        { 
-                            //Mark Signatory 1 as status 1
+                        {
+                            //1. Mark Signatory 1 as status 1
                             var updateSignatory1 = db.ClientSignatories.SingleOrDefault(c => c.EmailAddress == model.SignatoryEmail1.ToLower() && c.CompanyID == model.CompanyID);
                             updateSignatory1.Status = 1;
                             updateSignatory1.AcceptedTerms = true;
                             db.SaveChanges();
 
+                            //2. Add new applicaion
                             var newApplication = db.EMarketApplications.Create();
                             newApplication.AcceptedTAC = true; //model.terms;
                             newApplication.ClientID = RegisteredClientId;
@@ -1011,17 +1009,18 @@ namespace OnBoarding.Controllers
                             throw (ex);
                         }
 
-                        //1. Update Designated User with OTP to Login
-                        var _OTPCode = OTPGenerator.GetUniqueKey(6);
-                        string OTPCode = Shuffle.StringMixer(_OTPCode);
-                        var UserToUpdate = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.UserEmail1.ToLower() && c.CompanyID == model.CompanyID);
-                        UserToUpdate.OTP = Functions.GenerateMD5Hash(OTPCode);
-                        db.SaveChanges();
-
-                        //2. Send Email To Authorized Representative
+                        //3. Check if Authorized Representative exist and send email with otp
                         var emailExists = db.AspNetUsers.Any(x => x.Email.ToLower() == model.UserEmail1.ToLower());
-                        if(!emailExists)
-                        { 
+                        if (!emailExists)
+                        {
+                            //1. Update Designated User with OTP to Login
+                            var _OTPCode = OTPGenerator.GetUniqueKey(6);
+                            string OTPCode = Shuffle.StringMixer(_OTPCode);
+                            var UserToUpdate = db.DesignatedUsers.SingleOrDefault(c => c.Email == model.UserEmail1.ToLower() && c.CompanyID == model.CompanyID);
+                            UserToUpdate.OTP = Functions.GenerateMD5Hash(OTPCode);
+                            db.SaveChanges();
+
+                            //2. Send Email with OTP
                             var callbackUrl = Url.Action("DesignatedUserConfirmation", "Account", null, Request.Url.Scheme);
                             string EmailBodyRep = string.Empty;
                             using (StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/RepresentativeNomination.html")))
@@ -1069,7 +1068,7 @@ namespace OnBoarding.Controllers
                             }
                         }
 
-                        //3. Send Application Complete Email to Company Email
+                        //4. Send Application Complete Email to Company Email
                         string EmailBody = string.Empty;
                         using (StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/SoleSignatoryApplication.html")))
                         {
@@ -1090,7 +1089,7 @@ namespace OnBoarding.Controllers
                             LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBody, CompanyEmail, _action);
                         }
 
-                        //4. Send Email to Digital Desk Users and OPS for approval
+                        //5. Send Email to Digital Desk Users and OPS for approval
                         var DDUserRole = (from p in db.AspNetUserRoles
                                           join e in db.AspNetUsers on p.UserId equals e.Id
                                           where p.RoleId == "03d5e1e3-a8a9-441e-9122-30c3aafccccc" && p.RoleId == "05bdc847-b94d-4d2f-957e-8de1d563106a"
@@ -1118,7 +1117,7 @@ namespace OnBoarding.Controllers
                     }
                     return Json("success", JsonRequestBehavior.AllowGet);
                 }
-                
+
                 //2). Scenario 2 (Sole signatory and representatives)
                 //If signatory is one (sole) and representatives are more than one
                 //Signatory is marked as approved and an email is sent to the representatives except the sole is also nominated under representatives
@@ -1131,18 +1130,18 @@ namespace OnBoarding.Controllers
                         var signatoryIsARepresentative = db.DesignatedUsers.Any(c => c.Email == model.SignatoryEmail1.ToLower() && c.CompanyID == model.CompanyID);
                         if (signatoryIsARepresentative)
                         {
-                            //Update representative signature
+                            //1. Update representative signature
                             var RepresentativeToUpdate = db.DesignatedUsers.First(c => c.Email == model.SignatoryEmail1.ToLower() && c.CompanyID == model.CompanyID);
                             var signatoryToUpdate = db.ClientSignatories.First(c => c.EmailAddress == model.SignatoryEmail1.ToLower() && c.CompanyID == model.CompanyID);
                             RepresentativeToUpdate.Signature = signatoryToUpdate.Signature;
                             db.SaveChanges();
 
-                            //Mark Signatory 1 as status 1
+                            //2. Mark Signatory 1 as status 1
                             var updateSignatory1 = db.ClientSignatories.SingleOrDefault(c => c.EmailAddress == model.SignatoryEmail1.ToLower() && c.CompanyID == model.CompanyID);
                             updateSignatory1.Status = 1;
                             db.SaveChanges();
 
-                            //Add new Application
+                            //3. Add new Application
                             newApplication.AcceptedTAC = true;//model.terms;
                             newApplication.ClientID = RegisteredClientId;
                             newApplication.CompanyID = model.CompanyID;
@@ -1170,7 +1169,7 @@ namespace OnBoarding.Controllers
                                 return Json("Error! Unable to add new application", JsonRequestBehavior.AllowGet);
                             }
 
-                            //Log Nomination Details For all saved representatives
+                            //4. Log Nomination Details For all saved representatives
                             var _registeredClient = db.RegisteredClients.SingleOrDefault(c => c.Id == RegisteredClientId);
                             var AllClientRepresentatives = (from p in db.DesignatedUsers
                                                             where p.ClientID == model.ClientID && p.CompanyID == model.CompanyID && p.Email != _registeredClient.EmailAddress
@@ -1199,7 +1198,7 @@ namespace OnBoarding.Controllers
                         }
                         else
                         {
-                            //Mark Signatory 1 as status 1
+                            //1. Mark Signatory 1 as status 1
                             var updateSignatory1 = db.ClientSignatories.SingleOrDefault(c => c.EmailAddress == model.SignatoryEmail1.ToLower() && c.CompanyID == model.CompanyID);
                             updateSignatory1.Status = 1;
                             db.SaveChanges();
@@ -1229,7 +1228,7 @@ namespace OnBoarding.Controllers
                                 return Json("Error! Unable to add new application", JsonRequestBehavior.AllowGet);
                             }
 
-                            //Log Nomination Details For all saved representatives
+                            //2. Log Nomination Details For all saved representatives
                             var AllClientRepresentatives = (from p in db.DesignatedUsers
                                                             where p.ClientID == model.ClientID && p.CompanyID == model.CompanyID
                                                             select new
@@ -1262,38 +1261,65 @@ namespace OnBoarding.Controllers
                     }
 
                     //2. Send email to other representatives excluding the sole signatory
-                    var _dontSendEmail = db.AspNetUsers.Select(x => x.Email).ToList();
                     var UserToExclude = db.RegisteredClients.SingleOrDefault(c => c.Id == RegisteredClientId);
-                    foreach (var email in db.DesignatedUsers.Where(c => c.ClientID == RegisteredClientId && c.CompanyID == model.CompanyID && !_dontSendEmail.Contains(c.Email) && c.Email != UserToExclude.EmailAddress).ToList())
+                    var emailExists = db.AspNetUsers.Any(x => x.Email.ToLower() == model.UserEmail1.ToLower());
+                    foreach (var email in db.DesignatedUsers.Where(c => c.ClientID == RegisteredClientId && c.CompanyID == model.CompanyID && c.Email != UserToExclude.EmailAddress).ToList())
                     {
-                        //Update Designated User with OTP to Login
-                        var _OTPCode = OTPGenerator.GetUniqueKey(6);
-                        string OTPCode = Shuffle.StringMixer(_OTPCode);
-                        var UserToUpdate = db.DesignatedUsers.SingleOrDefault(c => c.Email == email.Email);
-                        UserToUpdate.OTP = Functions.GenerateMD5Hash(OTPCode);
-                        db.SaveChanges();
-
-                        //Send Email
-                        var callbackUrl = Url.Action("DesignatedUserConfirmation", "Account", null, Request.Url.Scheme);
-                        string EmailBodyRep = string.Empty;
-                        using (StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/RepresentativeNomination.html")))
+                        if (!emailExists)
                         {
-                            EmailBodyRep = reader.ReadToEnd();
-                        }
-                        EmailBodyRep = EmailBodyRep.Replace("{RepresentativeName}", email.Othernames);
-                        EmailBodyRep = EmailBodyRep.Replace("{ActivationCode}", OTPCode);
-                        EmailBodyRep = EmailBodyRep.Replace("{URL}", callbackUrl);
+                            //1. Update Designated User with OTP to Login
+                            var _OTPCode = OTPGenerator.GetUniqueKey(6);
+                            string OTPCode = Shuffle.StringMixer(_OTPCode);
+                            var UserToUpdate = db.DesignatedUsers.SingleOrDefault(c => c.Email == email.Email);
+                            UserToUpdate.OTP = Functions.GenerateMD5Hash(OTPCode);
+                            db.SaveChanges();
 
-                        var EmailToRepresentative = MailHelper.SendMailMessage(MailHelper.EmailFrom, email.Email.ToLower(), "Authorized Representative Confirmation", EmailBodyRep);
-                        if (EmailToRepresentative == true)
-                        {
-                            //Log email sent notification
-                            LogNotification.AddSucsessNotification(MailHelper.EmailFrom, EmailBodyRep, email.Email.ToLower(), _action);
+                            //2. Send Email with OTP
+                            var callbackUrl = Url.Action("DesignatedUserConfirmation", "Account", null, Request.Url.Scheme);
+                            string EmailBodyRep = string.Empty;
+                            using (StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/RepresentativeNomination.html")))
+                            {
+                                EmailBodyRep = reader.ReadToEnd();
+                            }
+                            EmailBodyRep = EmailBodyRep.Replace("{RepresentativeName}", email.Othernames);
+                            EmailBodyRep = EmailBodyRep.Replace("{ActivationCode}", OTPCode);
+                            EmailBodyRep = EmailBodyRep.Replace("{URL}", callbackUrl);
+
+                            var EmailToRepresentative = MailHelper.SendMailMessage(MailHelper.EmailFrom, email.Email.ToLower(), "Authorized Representative Confirmation", EmailBodyRep);
+                            if (EmailToRepresentative == true)
+                            {
+                                //Log email sent notification
+                                LogNotification.AddSucsessNotification(MailHelper.EmailFrom, EmailBodyRep, email.Email.ToLower(), _action);
+                            }
+                            else
+                            {
+                                //Log Email failed notification
+                                LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBodyRep, email.Email.ToLower(), _action);
+                            }
                         }
                         else
                         {
-                            //Log Email failed notification
-                            LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBodyRep, email.Email.ToLower(), _action);
+                            //Send Email without OTP
+                            var callbackUrl = Url.Action("Index", "Home", null, Request.Url.Scheme);
+                            string EmailBodyRep = string.Empty;
+                            using (StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/ExistingRepresentativeNomination.html")))
+                            {
+                                EmailBodyRep = reader.ReadToEnd();
+                            }
+                            EmailBodyRep = EmailBodyRep.Replace("{RepresentativeName}", email.Othernames);
+                            EmailBodyRep = EmailBodyRep.Replace("{URL}", callbackUrl);
+
+                            var EmailToRepresentative = MailHelper.SendMailMessage(MailHelper.EmailFrom, email.Email.ToLower(), "Authorized Representative Confirmation", EmailBodyRep);
+                            if (EmailToRepresentative == true)
+                            {
+                                //Log email sent notification
+                                LogNotification.AddSucsessNotification(MailHelper.EmailFrom, EmailBodyRep, email.Email.ToLower(), _action);
+                            }
+                            else
+                            {
+                                //Log Email failed notification
+                                LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBodyRep, email.Email.ToLower(), _action);
+                            }
                         }
                     }
 
@@ -1319,12 +1345,12 @@ namespace OnBoarding.Controllers
 
                     //4. Send Email to Digital Desk Users
                     var DDUserRole = (from p in db.AspNetUserRoles
-                                        join e in db.AspNetUsers on p.UserId equals e.Id
-                                        where p.RoleId == "03d5e1e3-a8a9-441e-9122-30c3aafccccc"
-                                        select new
-                                        {
-                                            EmailID = e.Email
-                                        });
+                                      join e in db.AspNetUsers on p.UserId equals e.Id
+                                      where p.RoleId == "03d5e1e3-a8a9-441e-9122-30c3aafccccc"
+                                      select new
+                                      {
+                                          EmailID = e.Email
+                                      });
                     foreach (var email in DDUserRole.ToList())
                     {
                         var DDMessageBody = "Dear Team <br/><br/> Kindly note that the following client has successfully submitted an application. <br/>" +
@@ -1344,7 +1370,7 @@ namespace OnBoarding.Controllers
                     }
                     return Json("success", JsonRequestBehavior.AllowGet);
                 }
-                
+
                 //3) Scenario 3 (Multiple signatories and representatives -- including first signatory)
                 //If signatory are more than 1 including sole and representatives are also more than one
                 //Signatory will approve after  which the representatives will be invited to complete registration and also approve
@@ -1393,13 +1419,13 @@ namespace OnBoarding.Controllers
                             //Log Nomination Details For all saved signatories
                             var _registeredClient = db.RegisteredClients.SingleOrDefault(c => c.Id == RegisteredClientId);
                             var AllClientSignatories = (from p in db.ClientSignatories
-                                                            where p.ClientID == model.ClientID && p.CompanyID == model.CompanyID && p.EmailAddress != _registeredClient.EmailAddress
-                                                            select new
-                                                            {
-                                                                p.EmailAddress,
-                                                                p.CompanyID,
-                                                                p.ClientID
-                                                            });
+                                                        where p.ClientID == model.ClientID && p.CompanyID == model.CompanyID && p.EmailAddress != _registeredClient.EmailAddress
+                                                        select new
+                                                        {
+                                                            p.EmailAddress,
+                                                            p.CompanyID,
+                                                            p.ClientID
+                                                        });
                             if (AllClientSignatories != null)
                             {
                                 foreach (var _repDetails in AllClientSignatories.ToList())
@@ -1535,7 +1561,71 @@ namespace OnBoarding.Controllers
                         }
                     }
 
-                    //3. Send Application Complete Email to Company Email
+                    //4. Send All Nominated Signatories an email
+                    var _dontSendEmail = db.AspNetUsers.Select(x => x.Email).ToList();
+                    foreach (var email in db.ClientSignatories.Where(c => c.ClientID == RegisteredClientId && c.CompanyID == model.CompanyID && !_dontSendEmail.Contains(c.EmailAddress)).ToList())
+                    {
+                        //Check if signatory is an existing user
+                        var emailExists = db.AspNetUsers.Any(x => x.Email.ToLower() == email.EmailAddress.ToLower());
+                        var SignatoryToUpdate = db.ClientSignatories.SingleOrDefault(c => c.EmailAddress == email.EmailAddress && c.Status == 0 && c.ClientID == model.ClientID && c.CompanyID == model.CompanyID);
+                        if (!emailExists)
+                        {
+                            //1. Update OTP field
+                            var _OTPCode = OTPGenerator.GetUniqueKey(6);
+                            string OTPCode = Shuffle.StringMixer(_OTPCode);
+                            SignatoryToUpdate.OTP = Functions.GenerateMD5Hash(OTPCode);
+                            db.SaveChanges();
+
+                            //2. Send Email With OTP
+                            var callbackUrl = Url.Action("SignatoryConfirmation", "Account", null, Request.Url.Scheme);
+                            string EmailBody2 = string.Empty;
+                            using (StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/SignatoryNomination.html")))
+                            {
+                                EmailBody2 = reader.ReadToEnd();
+                            }
+                            EmailBody2 = EmailBody2.Replace("{SignatoryName}", SignatoryToUpdate.OtherNames);
+                            EmailBody2 = EmailBody2.Replace("{URL}", callbackUrl);
+                            EmailBody2 = EmailBody2.Replace("{ActivationCode}", OTPCode);
+
+                            var EmailToSignatory2 = MailHelper.SendMailMessage(MailHelper.EmailFrom, SignatoryToUpdate.EmailAddress.ToLower(), "Signatory Confirmation", EmailBody2);
+                            if (EmailToSignatory2 == true)
+                            {
+                                //Log email sent notification
+                                LogNotification.AddSucsessNotification(MailHelper.EmailFrom, EmailBody2, SignatoryToUpdate.EmailAddress.ToLower(), _action);
+                            }
+                            else
+                            {
+                                //Log Email failed notification
+                                LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBody2, SignatoryToUpdate.EmailAddress.ToLower(), _action);
+                            }
+                        }
+                        else
+                        {
+                            //1 Send Email Without OTP
+                            var callbackUrl = Url.Action("Index", "Home", null, Request.Url.Scheme);
+                            string EmailBody2 = string.Empty;
+                            using (StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/ExistingSignatoryNomination.html")))
+                            {
+                                EmailBody2 = reader.ReadToEnd();
+                            }
+                            EmailBody2 = EmailBody2.Replace("{SignatoryName}", SignatoryToUpdate.OtherNames);
+                            EmailBody2 = EmailBody2.Replace("{URL}", callbackUrl);
+
+                            var EmailToSignatory2 = MailHelper.SendMailMessage(MailHelper.EmailFrom, SignatoryToUpdate.EmailAddress.ToLower(), "Signatory Confirmation ", EmailBody2);
+                            if (EmailToSignatory2 == true)
+                            {
+                                //Log email sent notification
+                                LogNotification.AddSucsessNotification(MailHelper.EmailFrom, EmailBody2, SignatoryToUpdate.EmailAddress.ToLower(), _action);
+                            }
+                            else
+                            {
+                                //Log Email failed notification
+                                LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBody2, SignatoryToUpdate.EmailAddress.ToLower(), _action);
+                            }
+                        }
+                    }
+
+                    //4. Send Application Complete Email to Company Email
                     string ApplicationCompleteEmailMessage = string.Empty;
                     using (StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/ApplicationSubmitted.html")))
                     {
@@ -1553,50 +1643,6 @@ namespace OnBoarding.Controllers
                     {
                         //Log Email failed notification
                         LogNotification.AddFailureNotification(MailHelper.EmailFrom, ApplicationCompleteEmailMessage, CompanyEmail, _action);
-                    }
-
-                    //4. Send All Nominated Saved Signatories an email (With CompanyID and ClientID)
-                    var _dontSendEmail = db.AspNetUsers.Select(x => x.Email).ToList();
-                    var SavedSignatories = (from p in db.ClientSignatories
-                                            join e in db.RegisteredClients on p.ClientID equals e.Id
-                                            where p.Status == 0 && p.ClientID == model.ClientID && p.CompanyID == model.CompanyID && !_dontSendEmail.Contains(p.EmailAddress)
-                                            select new
-                                            {
-                                                EmailID = p.EmailAddress
-                                            });
-                    if (SavedSignatories != null)
-                    {
-                        foreach (var email in SavedSignatories.ToList())
-                        {
-                            var _OTPCode = OTPGenerator.GetUniqueKey(6);
-                            string OTPCode = Shuffle.StringMixer(_OTPCode);
-                            var SignatoryToUpdate = db.ClientSignatories.SingleOrDefault(c => c.EmailAddress == email.EmailID && c.Status == 0 && c.ClientID == model.ClientID && c.CompanyID == model.CompanyID);
-                            SignatoryToUpdate.OTP = Functions.GenerateMD5Hash(OTPCode);
-                            db.SaveChanges();
-
-                            //Send Email With OTP logins
-                            var callbackUrl = Url.Action("SignatoryConfirmation", "Account", null, Request.Url.Scheme);
-                            string EmailBody2 = string.Empty;
-                            using (StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/SignatoryNomination.html")))
-                            {
-                                EmailBody2 = reader.ReadToEnd();
-                            }
-                            EmailBody2 = EmailBody2.Replace("{SignatoryName}", SignatoryToUpdate.OtherNames);
-                            EmailBody2 = EmailBody2.Replace("{URL}", callbackUrl);
-                            EmailBody2 = EmailBody2.Replace("{ActivationCode}", OTPCode);
-
-                            var EmailToSignatory2 = MailHelper.SendMailMessage(MailHelper.EmailFrom, SignatoryToUpdate.EmailAddress.ToLower(), "Confirm Signatory", EmailBody2);
-                            if (EmailToSignatory2 == true)
-                            {
-                                //Log email sent notification
-                                LogNotification.AddSucsessNotification(MailHelper.EmailFrom, EmailBody2, SignatoryToUpdate.EmailAddress.ToLower(), _action);
-                            }
-                            else
-                            {
-                                //Log Email failed notification
-                                LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBody2, SignatoryToUpdate.EmailAddress.ToLower(), _action);
-                            }
-                        }
                     }
 
                     //5. Send Email to Digital Desk Users
