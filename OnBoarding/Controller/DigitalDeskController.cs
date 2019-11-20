@@ -30,7 +30,7 @@ namespace OnBoarding.Controllers
                 var PendingOpsApprovals = db.EMarketApplications.Count(a => a.Signatories == a.SignatoriesApproved && a.DesignatedUsers == a.UsersApproved && (a.OPSApproved == false && a.OPSDeclined == false));
                 var PendingPOAApprovals = db.EMarketApplications.Count(a => (a.OPSApproved == true && a.Status == 1 && (a.POAApproved == false && a.POADeclined == false)));
                 var PendingApprovals = PendingOpsApprovals + PendingPOAApprovals;
-                var DeclinedApplications = db.EMarketApplications.Count(a => a.Signatories == a.SignatoriesApproved && a.DesignatedUsers == a.UsersApproved && (a.POADeclined == true || a.OPSDeclined == true || a.DigitalDeskDeclined == true));
+                var DeclinedApplications = db.EMarketApplications.Count(a => a.Status == 4);
 
                 ViewData["RegisteredClients"] = RegisteredClients;
                 ViewData["CompletedApplications"] = CompletedApplications;

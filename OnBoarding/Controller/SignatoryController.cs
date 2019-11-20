@@ -51,7 +51,7 @@ namespace OnBoarding.Controllers
                 var currentUserId = User.Identity.GetUserId();
                 var _userDetails = db.AspNetUsers.SingleOrDefault(e => e.Id == currentUserId);
 
-                var Query = db.Database.SqlQuery<ClientApplicationsViewModel>("SELECT c.ApplicationID, c.ClientID, c.CompanyID, o.CompanyName Client, c.NominationType, c.NominationStatus, CAST(c.DateCreated AS DATETIME) DateCreated FROM ApplicationNominations c INNER JOIN ClientCompanies o ON o.Id = c.CompanyID WHERE c.NomineeEmail = " + "'" + _userDetails.Email + "'" + " ORDER BY c.Id DESC");
+                var Query = db.Database.SqlQuery<ClientApplicationsViewModel>("SELECT c.ApplicationID, c.ClientID, c.CompanyID, o.CompanyName Client, c.NominationType, c.NominationStatus, CAST(c.DateCreated AS DATETIME) DateCreated FROM ApplicationNominations c INNER JOIN EMarketApplications e ON e.Id = c.ApplicationID INNER JOIN ClientCompanies o ON o.Id = c.CompanyID WHERE e.Status = 1 AND c.NomineeEmail = " + "'" + _userDetails.Email + "'" + " ORDER BY c.Id DESC");
                 return Query.ToList();
             }
         }
