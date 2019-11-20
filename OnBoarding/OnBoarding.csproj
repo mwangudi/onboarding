@@ -2411,6 +2411,7 @@
     <Content Include="Content\emails\ClientRegistrationEmail.html" />
     <Content Include="Content\emails\DigitalDeskApplicationDeclined.html" />
     <Content Include="Content\emails\ExistingRepresentativeNomination.html" />
+    <Content Include="Content\emails\ExistingSignatoryNomination.html" />
     <Content Include="Content\emails\PasswordChange.html" />
     <Content Include="Content\emails\PasswordReset.html" />
     <Content Include="Content\emails\PasswordResetSuccess.html" />

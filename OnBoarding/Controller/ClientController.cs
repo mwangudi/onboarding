@@ -1261,10 +1261,9 @@ namespace OnBoarding.Controllers
                     }
 
                     //2. Send email to other representatives excluding the sole signatory
-                    var UserToExclude = db.RegisteredClients.SingleOrDefault(c => c.Id == RegisteredClientId);
-                    var emailExists = db.AspNetUsers.Any(x => x.Email.ToLower() == model.UserEmail1.ToLower());
-                    foreach (var email in db.DesignatedUsers.Where(c => c.ClientID == RegisteredClientId && c.CompanyID == model.CompanyID && c.Email != UserToExclude.EmailAddress).ToList())
+                    foreach (var email in db.DesignatedUsers.Where(c => c.ClientID == RegisteredClientId && c.CompanyID == model.CompanyID).ToList())
                     {
+                        var emailExists = db.AspNetUsers.Any(x => x.Email.ToLower() == model.UserEmail1.ToLower());
                         if (!emailExists)
                         {
                             //1. Update Designated User with OTP to Login
@@ -1562,8 +1561,7 @@ namespace OnBoarding.Controllers
                     }
 
                     //4. Send All Nominated Signatories an email
-                    var _dontSendEmail = db.AspNetUsers.Select(x => x.Email).ToList();
-                    foreach (var email in db.ClientSignatories.Where(c => c.ClientID == RegisteredClientId && c.CompanyID == model.CompanyID && !_dontSendEmail.Contains(c.EmailAddress)).ToList())
+                    foreach (var email in db.ClientSignatories.Where(c => c.ClientID == RegisteredClientId && c.CompanyID == model.CompanyID).ToList())
                     {
                         //Check if signatory is an existing user
                         var emailExists = db.AspNetUsers.Any(x => x.Email.ToLower() == email.EmailAddress.ToLower());
