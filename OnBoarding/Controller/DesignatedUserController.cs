@@ -62,7 +62,7 @@ namespace OnBoarding.Controllers
                     ViewData["Approved"] = null;
                 }
 
-                var Query = db.Database.SqlQuery<ClientApplicationsViewModel>("SELECT c.ApplicationID, c.ClientID, c.CompanyID, o.CompanyName Client, c.NominationType, c.NominationStatus, CAST(c.DateCreated AS DATETIME) DateCreated FROM ApplicationNominations c INNER JOIN ClientCompanies o ON o.Id = c.CompanyID WHERE c.NomineeEmail = " + "'" + _userDetails.Email + "'" + " ORDER BY c.DateCreated DESC, c.NominationType ASC");
+                var Query = db.Database.SqlQuery<ClientApplicationsViewModel>("SELECT c.ApplicationID, c.ClientID, c.CompanyID, o.CompanyName Client, c.NominationType, c.NominationStatus, CAST(c.DateCreated AS DATETIME) DateCreated FROM ApplicationNominations c INNER JOIN ClientCompanies O ON O.Id = c.CompanyID INNER JOIN EMarketApplications e ON e.Id = c.ApplicationID WHERE e.Status = 1 AND c.NomineeEmail = " + "'" + _userDetails.Email + "'" + " ORDER BY c.DateCreated DESC, c.NominationType ASC");
                 return Query.ToList();
             }
         }
