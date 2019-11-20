@@ -190,7 +190,7 @@ namespace OnBoarding.Controllers
                         }
                         catch (Exception)
                         {
-                            return Json("Error! Unable to log signatory details", JsonRequestBehavior.AllowGet);
+                            return Json("Error! Unable to log representative's details", JsonRequestBehavior.AllowGet);
                         }
 
                         //3. Log Signatory Approval
