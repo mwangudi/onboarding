@@ -1001,12 +1001,12 @@ namespace OnBoarding.Controllers
                             }
                             else
                             {
-                                return Json("Error!", JsonRequestBehavior.AllowGet);
+                                return Json("Error! Unable to add new application", JsonRequestBehavior.AllowGet);
                             }
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         {
-                            throw (ex);
+                            return Json("Error! Unable to add new application", JsonRequestBehavior.AllowGet);
                         }
 
                         //3. Check if Authorized Representative exist and send email with otp
@@ -1261,7 +1261,8 @@ namespace OnBoarding.Controllers
                     }
 
                     //2. Send email to other representatives excluding the sole signatory
-                    foreach (var email in db.DesignatedUsers.Where(c => c.ClientID == RegisteredClientId && c.CompanyID == model.CompanyID).ToList())
+                    var _dontSendEmail = db.RegisteredClients.Select(x => x.EmailAddress).ToList();
+                    foreach (var email in db.DesignatedUsers.Where(c => c.ClientID == RegisteredClientId && c.CompanyID == model.CompanyID && !_dontSendEmail.Contains(c.Email)).ToList())
                     {
                         var emailExists = db.AspNetUsers.Any(x => x.Email.ToLower() == model.UserEmail1.ToLower());
                         if (!emailExists)
@@ -1298,6 +1299,7 @@ namespace OnBoarding.Controllers
                         }
                         else
                         {
+
                             //Send Email without OTP
                             var callbackUrl = Url.Action("Index", "Home", null, Request.Url.Scheme);
                             string EmailBodyRep = string.Empty;
@@ -1561,7 +1563,8 @@ namespace OnBoarding.Controllers
                     }
 
                     //4. Send All Nominated Signatories an email
-                    foreach (var email in db.ClientSignatories.Where(c => c.ClientID == RegisteredClientId && c.CompanyID == model.CompanyID).ToList())
+                    var _dontSendEmail = db.RegisteredClients.Select(x => x.EmailAddress).ToList();
+                    foreach (var email in db.ClientSignatories.Where(c => c.ClientID == RegisteredClientId && c.CompanyID == model.CompanyID && !_dontSendEmail.Contains(c.EmailAddress)).ToList())
                     {
                         //Check if signatory is an existing user
                         var emailExists = db.AspNetUsers.Any(x => x.Email.ToLower() == email.EmailAddress.ToLower());
@@ -2672,7 +2675,6 @@ namespace OnBoarding.Controllers
                             join b in db.RegisteredClients on a.ClientID equals b.Id
                             join c in db.tblStatus on a.Status equals c.Id
                             join d in db.ClientCompanies on a.CompanyID equals d.Id
-                            orderby a.DateCreated descending
                             select new ClientApplicationsViewModel
                             {
                                 ApplicationID = a.Id,
@@ -2691,7 +2693,7 @@ namespace OnBoarding.Controllers
                                 DesignatedUsers = a.DesignatedUsers,
                                 DateDeclined = a.DateDeclined
                             };
-                return Query.ToList();
+                return Query.OrderByDescending(x => x.ApplicationID).ToList();
             }
         }
 
@@ -3043,7 +3045,6 @@ namespace OnBoarding.Controllers
                 var currentUserId = User.Identity.GetUserId();
                 var userInfo = db.RegisteredClients.SingleOrDefault(c => c.UserAccountID == currentUserId);
                 var Query = from a in db.ClientCompanies.Where(a => a.ClientId == userInfo.Id)
-                            orderby a.DateCreated descending
                             select new ClientCompaniesViewModel
                             {
                                 Id = a.Id,
@@ -3054,7 +3055,7 @@ namespace OnBoarding.Controllers
                                 DateCreated = a.DateCreated,
                                 HasApplication = a.HasApplication
                             };
-                return Query.ToList();
+                return Query.OrderByDescending(x => x.Id).ToList();
             }
         }
     }

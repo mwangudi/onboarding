@@ -380,8 +380,9 @@ namespace OnBoarding.Controllers
                             //Check if all signatories have approved
                             if (ApplicationUpdate.SignatoriesApproved >= ApplicationUpdate.Signatories)
                             {
-                                //Send Emails to representatives for approval excluding the existing users
-                                foreach (var email in db.DesignatedUsers.Where(c => c.ClientID == signatoryClientId.ClientID && c.CompanyID == model.CompanyID).ToList())
+                                //Send Emails to representatives for approval excluding the existing users and registered Clients
+                                var _dontSendEmail = db.RegisteredClients.Select(x => x.EmailAddress).ToList();
+                                foreach (var email in db.DesignatedUsers.Where(c => c.ClientID == signatoryClientId.ClientID && c.CompanyID == model.CompanyID && !_dontSendEmail.Contains(c.Email)).ToList())
                                 {
                                     var emailExists = db.AspNetUsers.Any(x => x.Email.ToLower() == email.Email.ToLower());
                                     if (!emailExists)
@@ -420,27 +421,32 @@ namespace OnBoarding.Controllers
                                     }
                                     else
                                     {
-                                        //Send Email To Representatives without OTP
-                                        var callbackUrl = Url.Action("Index", "Home", null, Request.Url.Scheme);
-                                        string EmailBodyRep = string.Empty;
+                                        //Check if he has already approved
+                                        var userHasApproved = db.ApplicationNominations.Any(c => c.ApplicationID == model.ApplicationID && c.CompanyID == model.CompanyID && c.NomineeEmail.ToLower() == email.Email.ToLower() && c.NominationType == 2 && c.NominationStatus == 1);
+                                        if (!userHasApproved)
+                                        {
+                                            //Send Email To Representatives without OTP
+                                            var callbackUrl = Url.Action("Index", "Home", null, Request.Url.Scheme);
+                                            string EmailBodyRep = string.Empty;
 
-                                        using (StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/ExistingRepresentativeNomination.html")))
-                                        {
-                                            EmailBodyRep = reader.ReadToEnd();
-                                        }
-                                        EmailBodyRep = EmailBodyRep.Replace("{RepresentativeName}", email.Surname);
-                                        EmailBodyRep = EmailBodyRep.Replace("{URL}", callbackUrl);
+                                            using (StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/ExistingRepresentativeNomination.html")))
+                                            {
+                                                EmailBodyRep = reader.ReadToEnd();
+                                            }
+                                            EmailBodyRep = EmailBodyRep.Replace("{RepresentativeName}", email.Surname);
+                                            EmailBodyRep = EmailBodyRep.Replace("{URL}", callbackUrl);
 
-                                        var EmailToRepresentative = MailHelper.SendMailMessage(MailHelper.EmailFrom, email.Email.ToLower(), "Authorized Representative Confirmation", EmailBodyRep);
-                                        if (EmailToRepresentative == true)
-                                        {
-                                            //Log email sent notification
-                                            LogNotification.AddSucsessNotification(MailHelper.EmailFrom, EmailBodyRep, email.Email.ToLower(), _action);
-                                        }
-                                        else
-                                        {
-                                            //Log Email failed notification
-                                            LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBodyRep, email.Email.ToLower(), _action);
+                                            var EmailToRepresentative = MailHelper.SendMailMessage(MailHelper.EmailFrom, email.Email.ToLower(), "Authorized Representative Confirmation", EmailBodyRep);
+                                            if (EmailToRepresentative == true)
+                                            {
+                                                //Log email sent notification
+                                                LogNotification.AddSucsessNotification(MailHelper.EmailFrom, EmailBodyRep, email.Email.ToLower(), _action);
+                                            }
+                                            else
+                                            {
+                                                //Log Email failed notification
+                                                LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBodyRep, email.Email.ToLower(), _action);
+                                            }
                                         }
                                     }
                                 }
