@@ -63,10 +63,11 @@ namespace OnBoarding.Controllers
                 var TotalUsers = db.AspNetUsers.Count(a => a.Status == 1);
                 var TotalUserRoles = db.AspNetRoles.Count(a => a.Status == 1);
                 var TotalLockedDisabledUsers = db.AspNetUsers.Count(a => a.Status != 1);
+                var queryCount = db.Database.SqlQuery<UserListViewModel>("SELECT u.Id FROM AspNetUsers u LEFT JOIN AspNetUserRoles ur ON ur.UserId = u.Id LEFT JOIN AspNetRoles r ON r.Id = ur.RoleId INNER JOIN tblStatus s ON s.Id = u.Status WHERE u.LockoutEndDateUtc IS NOT NULL AND r.Id NOT IN ('8f70018b-22c2-4ef8-b465-ceefc7df3afb','aa145382-378e-49df-bf06-c96e081d2466','d97260b8-3879-403e-9f08-b388e91c0a25')");
 
                 ViewData["TotalUsers"] = TotalUsers;
                 ViewData["TotalUserRoles"] = TotalUserRoles;
-                ViewData["TotalLockedDisabledUsers"] = TotalLockedDisabledUsers;
+                ViewData["TotalLockedDisabledUsers"] = queryCount.Count();
             }
             return View();
         }
@@ -250,7 +251,7 @@ namespace OnBoarding.Controllers
             using (var db = new DBModel())
             {
                 var UserId = User.Identity.GetUserId();
-                var Query = db.Database.SqlQuery<UserRolesViewModel>("SELECT count(a.id) count FROM AspNetRoles a INNER JOIN tblStatus s ON s.Id = a.Status;");
+                var Query = db.Database.SqlQuery<UserRolesViewModel>("SELECT a.id FROM AspNetRoles a INNER JOIN tblStatus s ON s.Id = a.Status;");
                 return Query.Count();
             }
         }
