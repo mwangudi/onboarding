@@ -26,6 +26,24 @@ namespace OnBoarding.Controllers
                 ViewData["Declined"] = TotalDeclined;
                 ViewData["PendingApprovals"] = PendingApprovals;
                 ViewData["TotalApprovedAndCompleted"] = TotalApprovedAndCompleted;
+
+                // Bar Graph Statistics
+                var janStats = db.EMarketApplications.Count(e => e.Status == 1 && e.OPSApproved == true && e.POAApproved == true && e.DateCreated.Month == 1 && e.DateCreated.Year == DateTime.Now.Year);
+                var febStats = db.EMarketApplications.Count(e => e.Status == 1 && e.OPSApproved == true && e.POAApproved == true && e.DateCreated.Month == 2 && e.DateCreated.Year == DateTime.Now.Year);
+                var marStats = db.EMarketApplications.Count(e => e.Status == 1 && e.OPSApproved == true && e.POAApproved == true && e.DateCreated.Month == 3 && e.DateCreated.Year == DateTime.Now.Year);
+                var aprStats = db.EMarketApplications.Count(e => e.Status == 1 && e.OPSApproved == true && e.POAApproved == true && e.DateCreated.Month == 4 && e.DateCreated.Year == DateTime.Now.Year);
+                var mayStats = db.EMarketApplications.Count(e => e.Status == 1 && e.OPSApproved == true && e.POAApproved == true && e.DateCreated.Month == 5 && e.DateCreated.Year == DateTime.Now.Year);
+                var junStats = db.EMarketApplications.Count(e => e.Status == 1 && e.OPSApproved == true && e.POAApproved == true && e.DateCreated.Month == 6 && e.DateCreated.Year == DateTime.Now.Year);
+                var julStats = db.EMarketApplications.Count(e => e.Status == 1 && e.OPSApproved == true && e.POAApproved == true && e.DateCreated.Month == 7 && e.DateCreated.Year == DateTime.Now.Year);
+                var augStats = db.EMarketApplications.Count(e => e.Status == 1 && e.OPSApproved == true && e.POAApproved == true && e.DateCreated.Month == 8 && e.DateCreated.Year == DateTime.Now.Year);
+                var sepStats = db.EMarketApplications.Count(e => e.Status == 1 && e.OPSApproved == true && e.POAApproved == true && e.DateCreated.Month == 9 && e.DateCreated.Year == DateTime.Now.Year);
+                var octStats = db.EMarketApplications.Count(e => e.Status == 1 && e.OPSApproved == true && e.POAApproved == true && e.DateCreated.Month == 10 && e.DateCreated.Year == DateTime.Now.Year);
+                var novStats = db.EMarketApplications.Count(e => e.Status == 1 && e.OPSApproved == true && e.POAApproved == true && e.DateCreated.Month == 11 && e.DateCreated.Year == DateTime.Now.Year);
+                var decStats = db.EMarketApplications.Count(e => e.Status == 1 && e.OPSApproved == true && e.POAApproved == true && e.DateCreated.Month == 12 && e.DateCreated.Year == DateTime.Now.Year);
+
+                //Chart ViewData
+                ViewData["Chart1Data"] = "[" + janStats + ", " + febStats + ", " + marStats + ", " + aprStats + ", " + mayStats + ", " + junStats + ", " + julStats + ", " + augStats + ", " + sepStats + ", " + octStats + ", " + novStats + ", " + decStats + "]";
+
             }
             return View();
         }
@@ -274,7 +292,7 @@ namespace OnBoarding.Controllers
                             ApplicationUpdate.POAComments = model.Comments;
                             db.SaveChanges();
 
-                            //Send Emails to Client
+                            //Send Email to Client
                             string EmailBody = string.Empty;
                             using (System.IO.StreamReader reader = new StreamReader(Server.MapPath("~/Content/emails/ApplicationApproved.html")))
                             {

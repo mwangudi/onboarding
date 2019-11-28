@@ -3,120 +3,170 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<section class="section">
-    <h3 class="section-header">
-        Dashboard
-    </h3>
-	<div class="row">
-		
-		<div class="col-lg-3 col-md-6 col-12">
-			<div class="card card-sm-4">
-				<div class="card-icon bg-danger">
-					<i class="ion ion-paper-airplane"></i>
+	<section class="section">
+		<h3 class="section-header">
+			Dashboard
+		</h3>
+		<div class="row">
+
+			<div class="col-lg-3 col-md-6 col-12">
+				<div class="card card-sm-4">
+					<div class="card-icon bg-danger">
+						<i class="ion ion-paper-airplane"></i>
+					</div>
+					<div class="card-wrap">
+						<div class="card-header">
+							<h4>Pending Approvals</h4>
+						</div>
+						<div class="card-body">
+							@ViewData["PendingApprovals"]
+						</div>
+					</div>
+					<div class="card-cta"> <a href="Poa/ViewAll"> View All <i class="ion ion-ios-arrow-right"></i> </a></div>
 				</div>
-				<div class="card-wrap">
+			</div>
+
+			<div class="col-lg-3 col-md-6 col-12">
+				<div class="card card-sm-4">
+					<div class="card-icon bg-success">
+						<i class="ion ion-ios-paper-outline"></i>
+					</div>
+					<div class="card-wrap">
+						<div class="card-header">
+							<h4> Total POA Approvals </h4>
+						</div>
+						<div class="card-body">
+							@ViewData["Approvals"]
+						</div>
+					</div>
+					<div class="card-cta"> <a href="Poa/PoaApprovals"> View All <i class="ion ion-ios-arrow-right"></i> </a></div>
+				</div>
+			</div>
+
+			<div class="col-lg-3 col-md-6 col-12">
+				<div class="card card-sm-4">
+					<div class="card-icon bg-danger">
+						<i class="ion ion-ios-paper-outline"></i>
+					</div>
+					<div class="card-wrap">
+						<div class="card-header">
+							<h4> Total Declined Applications </h4>
+						</div>
+						<div class="card-body">
+							@ViewData["Declined"]
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-lg-3 col-md-6 col-12">
+				<div class="card card-sm-4">
+					<div class="card-icon bg-success">
+						<i class="ion ion-ios-paper-outline"></i>
+					</div>
+					<div class="card-wrap">
+						<div class="card-header">
+							<h4> Total Completed Applications </h4>
+						</div>
+						<div class="card-body">
+							@ViewData["TotalApprovedAndCompleted"]
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div><hr class="m_top_10" />
+		<!-- /.row -->
+		<div class="row">
+			<div class="col-12 col-lg-6 col-md-6">
+				<div class="card">
 					<div class="card-header">
-					  <h4>Pending Approvals</h4>
+						<h4>Menu Quicklinks</h4>
 					</div>
 					<div class="card-body">
-					  @ViewData["PendingApprovals"]
+						<div class="bd-example">
+							<table class="table table-striped">
+								<thead>
+									<tr>
+										<th scope="col"></th>
+										<th scope="col">Menu</th>
+										<th scope="col">Quick Link</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<th scope="row"><span class="step">1</span></th>
+										<td> My Pending Approvals </td>
+										<td><a href="/Poa/ViewAll"> Poa/ViewAll </a></td>
+									</tr>
+									<tr>
+										<th scope="row"><span class="step">2</span></th>
+										<td> Approved Applications </td>
+										<td><a href="/Poa/PoaApprovals"> Poa/PoaApprovals </a></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
 					</div>
 				</div>
-				<div class="card-cta"> <a href="Poa/ViewAll"> View All <i class="ion ion-ios-arrow-right"></i> </a></div> 
 			</div>
-		</div>
-		
-		<div class="col-lg-3 col-md-6 col-12">
-			<div class="card card-sm-4">
-				<div class="card-icon bg-success">
-					<i class="ion ion-ios-paper-outline"></i>
-				</div>
-				<div class="card-wrap">
+			<div class="col-12 col-md-6 col-lg-6">
+				<div class="card">
 					<div class="card-header">
-					 <h4> Total POA Approvals </h4>
+						<div class="float-right"><button id="save-bar-graph" class="btn btn-primary"> <i class="fa fa-save"></i> Save </button></div>
+						<h4> Client Applications </h4>
 					</div>
 					<div class="card-body">
-					  @ViewData["Approvals"]
-					</div>
-				</div>
-				<div class="card-cta"> <a href="Poa/PoaApprovals"> View All <i class="ion ion-ios-arrow-right"></i> </a></div> 
-			</div>
-		</div>
-		
-		<div class="col-lg-3 col-md-6 col-12">
-			<div class="card card-sm-4">
-				<div class="card-icon bg-danger">
-					<i class="ion ion-ios-paper-outline"></i>
-				</div>
-				<div class="card-wrap">
-					<div class="card-header">
-					 <h4> Total Declined Applications </h4>
-					</div>
-					<div class="card-body">
-					  @ViewData["Declined"]
+						<canvas id="myChart1"></canvas>
 					</div>
 				</div>
 			</div>
 		</div>
-		
-		<div class="col-lg-3 col-md-6 col-12">
-			<div class="card card-sm-4">
-				<div class="card-icon bg-success">
-					<i class="ion ion-ios-paper-outline"></i>
-				</div>
-				<div class="card-wrap">
-					<div class="card-header">
-					 <h4> Total Completed Applications </h4>
-					</div>
-					<div class="card-body">
-					  @ViewData["TotalApprovedAndCompleted"]
-					</div>
-				</div> 
-			</div>
-		</div>
-		
-	</div><hr class="m_top_10" />
-	<!-- /.row -->
-	<div class="row">
-		<div class="col-lg-6 col-md-6 col-12">
-			<div class="card">
-				<div class="card-header">
-					<h4>Menu Quicklinks</h4>
-				</div>
-				<div class="card-body">
-					<div class="bd-example">
-						<table class="table table-striped">
-							<thead>
-								<tr>
-									<th scope="col"></th>
-									<th scope="col">Menu</th>
-									<th scope="col">Quick Link</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<th scope="row"><span class="step">1</span></th>
-									<td> My Pending Approvals </td>
-									<td><a href="/Poa/ViewAll"> Poa/ViewAll </a></td>
-								</tr>
-								<tr>
-									<th scope="row"><span class="step">2</span></th>
-									<td> Approved Applications </td>
-									<td><a href="/Poa/PoaApprovals"> Poa/PoaApprovals </a></td>
-								</tr> 
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- /.row -->
-</section>
+		<!-- /.row -->
+	</section>
 <script type="text/javascript">
 	$(document).ready(function () {
 		$(function () {
 			toastr.success('@ViewBag.Message');
+		});
+
+		var ctx = document.getElementById("myChart1").getContext('2d');
+		var myChart = new Chart(ctx, {
+			type: 'bar',
+			data: {
+				labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+				datasets: [{
+					label: 'Approved Applications',
+					data: @ViewData["Chart1Data"],
+					borderWidth: 2,
+					backgroundColor: 'rgb(87,75,144)',
+					borderColor: 'rgb(87,75,144)',
+					borderWidth: 2.5,
+					pointBackgroundColor: '#ffffff',
+					pointRadius: 4
+				}]
+			},
+			options: {
+				legend: {
+					display: false
+				},
+				scales: {
+					yAxes: [{
+						ticks: {
+							beginAtZero: true,
+							stepSize: 5
+						}
+					}],
+					xAxes: [{
+						ticks: {
+							display: true
+						},
+						gridLines: {
+							display: false
+						}
+					}]
+				},
+			}
 		});
 	});
 </script>
