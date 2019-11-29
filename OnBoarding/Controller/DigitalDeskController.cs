@@ -745,7 +745,6 @@ namespace OnBoarding.Controllers
                     var UserEmail = db.AspNetUsers.SingleOrDefault(a => a.Id == userId);
                     var getClientInfo = db.RegisteredClients.SingleOrDefault(c => c.Id == clientId);
 
-                    //Delete From Registered Client Table
                     //LogAuditTrail
                     var LogAuditTrail = Functions.LogAuditTrail(clientId, "Delete", "RegisteredClients", null, UserEmail.Email, getClientInfo.Surname + " " + getClientInfo.OtherNames, getClientInfo.EmailAddress, getClientInfo.PhoneNumber);
 
@@ -753,11 +752,19 @@ namespace OnBoarding.Controllers
                     {
                         //Delete RegisteredClient/Company
                         db.ClientCompanies.RemoveRange(db.ClientCompanies.Where(r => r.ClientId == clientId));
-                        db.RegisteredClients.RemoveRange(db.RegisteredClients.Where(r => r.Id == clientId));
                         var deletedCompany = db.SaveChanges();
                         if (deletedCompany > 0)
                         {
-                            return Json("success", JsonRequestBehavior.AllowGet);
+                            db.RegisteredClients.RemoveRange(db.RegisteredClients.Where(r => r.Id == clientId));
+                            var deletedClient = db.SaveChanges();
+                            if (deletedClient > 0)
+                            {
+                                return Json("success", JsonRequestBehavior.AllowGet);
+                            }
+                            else
+                            {
+                                return Json("Error! Unable to delete client details", JsonRequestBehavior.AllowGet);
+                            }
                         }
                         else
                         {
@@ -766,12 +773,12 @@ namespace OnBoarding.Controllers
                     }
                     else
                     {
-                        return Json("Error! Unable to delete client details", JsonRequestBehavior.AllowGet);
+                        return Json("Error! Unable to delete client", JsonRequestBehavior.AllowGet);
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    return Json("Error! Unable to delete user details, "+ ex +" ", JsonRequestBehavior.AllowGet);
+                    return Json("Error! Unable to delete user details", JsonRequestBehavior.AllowGet);
                 }
             }
         }
