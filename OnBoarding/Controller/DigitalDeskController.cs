@@ -751,29 +751,17 @@ namespace OnBoarding.Controllers
 
                     if (LogAuditTrail)
                     {
-                        var ClientToUpdate = db.RegisteredClients.SingleOrDefault(b => b.Id == clientId);
-                        ClientToUpdate.Status = 2;
-                        var deletedClient = db.SaveChanges();
-                        if (deletedClient > 0)
+                        //Delete RegisteredClient/Company
+                        db.ClientCompanies.RemoveRange(db.ClientCompanies.Where(r => r.ClientId == clientId));
+                        db.RegisteredClients.RemoveRange(db.RegisteredClients.Where(r => r.Id == clientId));
+                        var deletedCompany = db.SaveChanges();
+                        if (deletedCompany > 0)
                         {
-                            //Delete client company
-                            var CompanyToUpdate = db.ClientCompanies.SingleOrDefault(b => b.ClientId == clientId);
-                            CompanyToUpdate.Status = 2;
-                            CompanyToUpdate.DateDeleted = DateTime.Now;
-                            CompanyToUpdate.DeletedBy = UserEmail.Email;
-                            var deletedCompany = db.SaveChanges();
-                            if (deletedCompany > 0)
-                            {
-                                return Json("success", JsonRequestBehavior.AllowGet);
-                            }
-                            else
-                            {
-                                return Json("Error! Unable to delete company details", JsonRequestBehavior.AllowGet);
-                            }
+                            return Json("success", JsonRequestBehavior.AllowGet);
                         }
                         else
                         {
-                            return Json("Error! Unable to delete client details", JsonRequestBehavior.AllowGet);
+                            return Json("Error! Unable to delete company details", JsonRequestBehavior.AllowGet);
                         }
                     }
                     else
@@ -781,9 +769,9 @@ namespace OnBoarding.Controllers
                         return Json("Error! Unable to delete client details", JsonRequestBehavior.AllowGet);
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    return Json("Error! Unable to delete user details", JsonRequestBehavior.AllowGet);
+                    return Json("Error! Unable to delete user details, "+ ex +" ", JsonRequestBehavior.AllowGet);
                 }
             }
         }
