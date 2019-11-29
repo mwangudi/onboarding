@@ -269,7 +269,7 @@ namespace OnBoarding.Controllers
             // Instance of DatabaseContext  
             using (DBModel db = new DBModel())
             {
-                IEnumerable<RegisteredClient> query = db.Database.SqlQuery<RegisteredClient>("SELECT * FROM RegisteredClients r WHERE r.Status = 1;");
+                IEnumerable<RegisteredClient> query = db.Database.SqlQuery<RegisteredClient>("SELECT * FROM RegisteredClients r WHERE r.Status < 2;");
 
                 //Search
                 if (!string.IsNullOrEmpty(searchMessage) && !string.IsNullOrEmpty(searchFromDate) && !string.IsNullOrEmpty(searchToDate))
@@ -732,30 +732,10 @@ namespace OnBoarding.Controllers
         }
 
         //
-        //POST LoadDeleteClient
-        [HttpPost]
-        [AllowAnonymous]
-        public PartialViewResult LoadDeleteClient(int getClientId)
-        {
-            using (DBModel db = new DBModel())
-            {
-                var getClientInfo = db.RegisteredClients.SingleOrDefault(c => c.Id == getClientId);
-
-                //Data For View Display
-                ViewData["CompanyName"] = getClientInfo.Surname + " " + getClientInfo.Surname;
-                ViewData["EmailAddress"] = getClientInfo.EmailAddress;
-                ViewData["ClientId"] = getClientInfo.Id;
-                ViewData["UserAccountId"] = getClientInfo.UserAccountID;
-            }
-
-            return PartialView();
-        }
-
-        //
         //Delete ClientSignatories
         [HttpPost]
         [AllowAnonymous]
-        public ActionResult DeleteClient(DeleteClientViewModel model)
+        public ActionResult DeleteClient(int clientId)
         {
             using (DBModel db = new DBModel())
             {
@@ -763,45 +743,42 @@ namespace OnBoarding.Controllers
                 {
                     var userId = User.Identity.GetUserId();
                     var UserEmail = db.AspNetUsers.SingleOrDefault(a => a.Id == userId);
-                    var getClientInfo = db.RegisteredClients.SingleOrDefault(c => c.Id == model.ClientId);
+                    var getClientInfo = db.RegisteredClients.SingleOrDefault(c => c.Id == clientId);
 
                     //Delete From Registered Client Table
                     //LogAuditTrail
-                    var LogAuditTrail = Functions.LogAuditTrail(model.ClientId, "Delete", "RegisteredClients, AspNetUsers", model.UserAccountId, UserEmail.Email, getClientInfo.Surname + " " + getClientInfo.OtherNames, getClientInfo.EmailAddress, getClientInfo.PhoneNumber);
+                    var LogAuditTrail = Functions.LogAuditTrail(clientId, "Delete", "RegisteredClients", null, UserEmail.Email, getClientInfo.Surname + " " + getClientInfo.OtherNames, getClientInfo.EmailAddress, getClientInfo.PhoneNumber);
 
                     if (LogAuditTrail)
                     {
-                        db.RegisteredClients.RemoveRange(db.RegisteredClients.Where(r => r.Id == model.ClientId));
+                        var ClientToUpdate = db.RegisteredClients.SingleOrDefault(b => b.Id == clientId);
+                        ClientToUpdate.Status = 2;
                         var deletedClient = db.SaveChanges();
                         if (deletedClient > 0)
                         {
-                            //Delete User login Account
-                            if (getClientInfo.Status == 1)
+                            //Delete client company
+                            var CompanyToUpdate = db.ClientCompanies.SingleOrDefault(b => b.ClientId == clientId);
+                            CompanyToUpdate.Status = 2;
+                            CompanyToUpdate.DateDeleted = DateTime.Now;
+                            CompanyToUpdate.DeletedBy = UserEmail.Email;
+                            var deletedCompany = db.SaveChanges();
+                            if (deletedCompany > 0)
                             {
-                                db.AspNetUsers.RemoveRange(db.AspNetUsers.Where(r => r.Id == model.UserAccountId));
-                                var deletedUser = db.SaveChanges();
-                                if (deletedUser > 0)
-                                {
-                                    return Json("success", JsonRequestBehavior.AllowGet);
-                                }
-                                else
-                                {
-                                    return Json("Error! Unable to delete user account", JsonRequestBehavior.AllowGet);
-                                }
+                                return Json("success", JsonRequestBehavior.AllowGet);
                             }
                             else
                             {
-                                return Json("success", JsonRequestBehavior.AllowGet);
+                                return Json("Error! Unable to delete company details", JsonRequestBehavior.AllowGet);
                             }
                         }
                         else
                         {
-                            return Json("Error! Unable to delete user account", JsonRequestBehavior.AllowGet);
+                            return Json("Error! Unable to delete client details", JsonRequestBehavior.AllowGet);
                         }
                     }
                     else
                     {
-                        return Json("Error! Unable to delete user account", JsonRequestBehavior.AllowGet);
+                        return Json("Error! Unable to delete client details", JsonRequestBehavior.AllowGet);
                     }
                 }
                 catch (Exception)

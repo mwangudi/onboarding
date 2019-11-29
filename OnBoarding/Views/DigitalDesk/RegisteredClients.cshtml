@@ -129,9 +129,14 @@
 											title: 'View',
 											display: function (data) {
 												var uploaded = data.record.UploadedBy;
-												if (uploaded) {
-													return '<center><button class="btn btn-outline-primary w_full btn-small" onclick="LoadUpModal(' + data.record.Id + ')">' +
-                                                    '<span class="fa fa-check-circle"></span> View Details </button></center>';
+												var isActive = data.record.Status;
+												if (isActive === 1 && uploaded) {
+													 return '<center><button class="btn btn-outline-primary w_full btn-small" onclick="LoadUpModal(' + data.record.Id + ')">' +
+														'<span class="fa fa-check-circle"></span> View Details </button></center>';
+												}
+												else if (isActive === 0) {
+													return '<center><button class="btn btn-outline-danger w_full btn-small" onclick="DeleteClientFunction(' + data.record.Id + ')">' +
+													'<span class="fa fa-trash"></span> Delete </button></center>';
 												}
 												else {
 													var $img = $('<center><button class="btn btn-outline-primary w_full btn-small"> <i class="fa fa-list"></i> Companies </button></center>');
@@ -294,13 +299,64 @@
 				$('#RMDLoading_ID').hide();
 				$('.item-data-retrived').show();
 				$('.item-data-retrived').html(data);
-
-				//btnRemoveRepresentative
-				$("#btnDeleteClient").click(function (e) {
-					e.preventDefault();
-				});
+			},
+			error: function (xhr, textStatus, errorThrown) {
+				if (textStatus === 'error') {
+					$('#RMDLoading_ID').hide('fast');
+					window.location.reload();
+					toastr.error('Submission error! Code: ' + xhr.status + ' Details: ' + errorThrown);
+				}
 			}
 		});
+	}
+
+	//Delete Client Function
+	function DeleteClientFunction(clientId) {
+		Swal.fire({
+			title: 'Are you sure?',
+			text: "You won't be able to revert this!",
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#28a745;',
+			cancelButtonColor: '#d33',
+			confirmButtonText: 'Yes, delete client',
+			cancelButtonText: 'No, cancel',
+		}).then((result) => {
+			if (result.value) {
+				$.ajax({
+					url: "/DigitalDesk/DeleteClient",
+					type: 'POST',
+					data: JSON.stringify({ clientId: clientId }),
+					async: true,
+					contentType: "application/json; charset=utf-8",
+					dataType: "json",
+					success: function (XmlHttpRequest) {
+						if (XmlHttpRequest === 'success') {
+							Swal.fire(
+								'Success!',
+								'Client had been deleted successfully',
+								'success'
+							)
+							//reload jTable
+							$('#RegisteredClientsTableContainer').jtable('load');
+						}
+						else {
+							Swal.fire({
+								icon: 'error',
+								text: XmlHttpRequest
+							})
+							$('#RegisteredClientsTableContainer').jtable('load');
+						}
+					},
+					error: function (xhr, textStatus, errorThrown) {
+						if (textStatus === 'error') {
+							$('#RegisteredClientsTableContainer').jtable('load');
+							toastr.error('Submission error! Code: ' + xhr.status + ' Details: ' + errorThrown);
+						}
+					}
+				})
+			}
+		})
 	}
 
 	//Get CSV Report

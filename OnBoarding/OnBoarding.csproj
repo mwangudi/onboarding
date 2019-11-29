@@ -3097,7 +3097,6 @@
     <Content Include="Views\Admin\ManageInternalUsers.cshtml" />
     <Content Include="Views\Admin\ManageUserRoles.cshtml" />
     <Content Include="Views\Admin\UnlockUsers.cshtml" />
-    <Content Include="Views\DigitalDesk\LoadDeleteClient.cshtml" />
     <Content Include="Views\Gmo\ClientSettlements.cshtml" />
     <Content Include="Views\Gmo\ViewClient.cshtml" />
     <Content Include="Views\DigitalDesk\ApprovedApplications.cshtml" />

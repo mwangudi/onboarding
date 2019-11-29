@@ -556,134 +556,134 @@ body.sidebar-gone .main-content {
     margin-bottom: 10px;
 }
 
-    .main-sidebar .sidebar-user .sidebar-user-picture {
-        float: left;
-        margin-right: 10px;
-    }
+.main-sidebar .sidebar-user .sidebar-user-picture {
+    float: left;
+    margin-right: 10px;
+}
 
-        .main-sidebar .sidebar-user .sidebar-user-picture img {
-            width: 220px;
-            border-radius: 0%;
-        }
+.main-sidebar .sidebar-user .sidebar-user-picture img {
+    width: 220px;
+    border-radius: 0%;
+}
 
-    .main-sidebar .sidebar-user .sidebar-user-details .user-name {
-        white-space: nowrap;
-        -o-text-overflow: ellipsis;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        margin-top: 7px;
-        margin-bottom: 3px;
-        font-weight: 600;
-        color: #505c66;
-    }
+.main-sidebar .sidebar-user .sidebar-user-details .user-name {
+    white-space: nowrap;
+    -o-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    margin-top: 7px;
+    margin-bottom: 3px;
+    font-weight: 600;
+    color: #505c66;
+}
 
-    .main-sidebar .sidebar-user .sidebar-user-details .user-role {
-        font-size: 12px;
-        font-weight: 400;
-        letter-spacing: .3;
-        color: #868e96;
-        font-family: inherit;
-        /*font-family: 'Montserrat';*/
-        font-size: 10px;
-        letter-spacing: .5px;
-    }
+.main-sidebar .sidebar-user .sidebar-user-details .user-role {
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: .3;
+    color: #868e96;
+    font-family: inherit;
+    /*font-family: 'Montserrat';*/
+    font-size: 10px;
+    letter-spacing: .5px;
+}
 
 .main-sidebar .sidebar-menu {
     padding: 0;
     margin: 0;
 }
 
-    .main-sidebar .sidebar-menu li {
-        display: block;
+.main-sidebar .sidebar-menu li {
+display: block;
+}
+
+.main-sidebar .sidebar-menu li.menu-header {
+    padding: 7px 15px;
+    color: #cbcbcb;
+    font-family: 'Montserrat';
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 600;
+}
+
+.main-sidebar .sidebar-menu li a {
+    display: inline-block;
+    width: 100%;
+    padding: 15px 25px;
+    color: #868e96;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.main-sidebar .sidebar-menu li a .badge {
+    float: right;
+    padding: 5px 10px;
+    margin-top: 2px;
+}
+
+.main-sidebar .sidebar-menu li a i {
+    width: 20px;
+    margin-right: 25px;
+    font-size: 20px;
+    text-align: center;
+    float: left;
+}
+
+.main-sidebar .sidebar-menu li a:hover {
+    background-color: #F6F6F6;
+}
+
+.main-sidebar .sidebar-menu li.active a {
+    background-color: #f9f9f9;
+    color: #574B90;
+    font-weight: 600;
+}
+
+.main-sidebar .sidebar-menu li a.has-dropdown:after {
+    content: '\f123';
+    font-family: 'Ionicons';
+    float: right;
+    font-size: 12px;
+    margin-top: 3px;
+}
+
+.main-sidebar .sidebar-menu li.active ul.menu-dropdown {
+    display: block;
+}
+
+.main-sidebar .sidebar-menu li ul.menu-dropdown {
+    padding: 0;
+    margin: 0;
+    display: none;
+}
+
+.main-sidebar .sidebar-menu li ul.menu-dropdown li a {
+    padding-top: 8px;
+    padding-bottom: 8px;
+    font-size: .8rem;
+    color: #505c66;
+    font-weight: 400;
+}
+
+    .main-sidebar .sidebar-menu li ul.menu-dropdown li a:hover {
+        color: #574B90;
     }
 
-        .main-sidebar .sidebar-menu li.menu-header {
-            padding: 7px 15px;
-            color: #cbcbcb;
-            font-family: 'Montserrat';
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            font-weight: 600;
-        }
+.main-sidebar .sidebar-menu li ul.menu-dropdown li.active a {
+    color: #574B90;
+    font-weight: 600;
+}
 
-        .main-sidebar .sidebar-menu li a {
-            display: inline-block;
-            width: 100%;
-            padding: 15px 25px;
-            color: #868e96;
-            font-weight: 500;
-            text-decoration: none;
-        }
+.main-sidebar .sidebar-menu li ul.menu-dropdown li a i {
+    font-size: 16px;
+    margin-top: 1px;
+    text-align: center;
+}
 
-            .main-sidebar .sidebar-menu li a .badge {
-                float: right;
-                padding: 5px 10px;
-                margin-top: 2px;
-            }
-
-            .main-sidebar .sidebar-menu li a i {
-                width: 20px;
-                margin-right: 25px;
-                font-size: 20px;
-                text-align: center;
-                float: left;
-            }
-
-            .main-sidebar .sidebar-menu li a:hover {
-                background-color: #F6F6F6;
-            }
-
-        .main-sidebar .sidebar-menu li.active a {
-            background-color: #f9f9f9;
-            color: #574B90;
-            font-weight: 600;
-        }
-
-        .main-sidebar .sidebar-menu li a.has-dropdown:after {
-            content: '\f123';
-            font-family: 'Ionicons';
-            float: right;
-            font-size: 12px;
-            margin-top: 3px;
-        }
-
-        .main-sidebar .sidebar-menu li.active ul.menu-dropdown {
-            display: block;
-        }
-
-        .main-sidebar .sidebar-menu li ul.menu-dropdown {
-            padding: 0;
-            margin: 0;
-            display: none;
-        }
-
-            .main-sidebar .sidebar-menu li ul.menu-dropdown li a {
-                padding-top: 8px;
-                padding-bottom: 8px;
-                font-size: .8rem;
-                color: #505c66;
-                font-weight: 400;
-            }
-
-                .main-sidebar .sidebar-menu li ul.menu-dropdown li a:hover {
-                    color: #574B90;
-                }
-
-            .main-sidebar .sidebar-menu li ul.menu-dropdown li.active a {
-                color: #574B90;
-                font-weight: 600;
-            }
-
-            .main-sidebar .sidebar-menu li ul.menu-dropdown li a i {
-                font-size: 16px;
-                margin-top: 1px;
-                text-align: center;
-            }
-
-            .main-sidebar .sidebar-menu li ul.menu-dropdown li ul.menu-dropdown {
-                padding-left: 10px;
-            }
+.main-sidebar .sidebar-menu li ul.menu-dropdown li ul.menu-dropdown {
+    padding-left: 10px;
+}
 
 .main-content {
     /*padding-left: 280px;
@@ -694,15 +694,16 @@ body.sidebar-gone .main-content {
 }
 
 .main-footer {
-    font-family: inherit;
-    /*padding: 20px 30px 20px 280px;*/
-    font-size: 10px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-top: 40px;
-    background-color: #fff;
-    color: #999;
+	font-family: inherit;
+	/*padding: 20px 30px 20px 280px;*/
+	font-size: 10px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	margin-top: 40px;
+	background-color: #fff;
+	color: #999;
+	text-align: center;
 }
 /* end layout */
 
