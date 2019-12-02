@@ -164,49 +164,6 @@
 
 <script type="text/javascript">
 
-	$(document).ready(function () {
-		//Initialize Date picker
-		$('.datepicker').datepicker({
-			format: "yyyy-mm-dd",
-			autoclose: true,
-		}).on('changeDate', function (e) {
-			$(this).datepicker('hide');
-		});
-	});
-
-	//select-another-item
-	$('#selectanother').click(function (e) {
-		e.preventDefault();
-		$('.item-data-retrived').hide('fast');
-		$('.item-data-retriving').hide('fast');
-		$('#RMDLoading_ID').hide('fast');
-		$('#searchform').show();
-		$('#ViewAll').show('fast');
-	});
-
-	//Function Load modal
-	function LoadUpModal(applicationId) {
-		// Hide Default DIV's
-		$('#searchform').hide();
-		$('#ViewAll').hide();
-		$('#RMDLoading_ID').show('fast');
-		$('.item-data-retriving').show();
-		// LoadUp User Data
-		$.ajax({
-			type: "POST",
-			url: "/DigitalDesk/ViewApproval",
-			data: '{applicationId: "' + applicationId + '" }',
-			async: true,
-			contentType: "application/json; charset=utf-8",
-			dataType: "html",
-			success: function (data) {
-				$('#RMDLoading_ID').hide();
-				$('.item-data-retrived').show();
-				$('.item-data-retrived').html(data);
-			}
-		});
-	}
-
 	//Get CSV Report
 	function GetCSVReport(){
 		var searchText = $('#searchMessage').val();

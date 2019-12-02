@@ -291,7 +291,7 @@
 		$.ajax({
 			type: "POST",
 			url: "/DigitalDesk/ViewClient",
-			data: '{clientId: "' + clientId + '" }',
+			data: JSON.stringify({ clientId: clientId }),
 			async: true,
 			contentType: "application/json; charset=utf-8",
 			dataType: "html",

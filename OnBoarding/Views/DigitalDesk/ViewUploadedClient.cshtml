@@ -149,8 +149,9 @@
 				$.ajax({
 					url: "/DigitalDesk/DeleteSelected",
 					type: 'POST',
-					data: 'Id=' + getDelID,
+					data: JSON.stringify({ Id: getDelID }),
 					async: true,
+					contentType: "application/json; charset=utf-8",
 					success: function (XmlHttpRequest) {
 						if (XmlHttpRequest === 'success') {
 							Swal.fire(
@@ -165,6 +166,11 @@
 								icon: 'error',
 								text: XmlHttpRequest
 							})
+						}
+					},
+					error: function (xhr, textStatus, errorThrown) {
+						if (textStatus === 'error') {
+							toastr.error('Error! Code: ' + xhr.status + ' Details: ' + errorThrown);
 						}
 					}
 				})

@@ -142,11 +142,16 @@
 		$.ajax({
 			type: "POST",
 			url: "/DigitalDesk/LoadResendNotification",
-			data: '{getNotificationId: "' + getNotificationId + '" }',
+			data: JSON.stringify({ getNotificationId: getNotificationId }),
 			contentType: "application/json; charset=utf-8",
 			dataType: "html",
 			success: function (data) {
 				$('.students-data').html(data);
+			},
+			error: function (xhr, textStatus, errorThrown) {
+				if (textStatus === 'error') {
+					toastr.error('Error! Code: ' + xhr.status + ' Details: ' + errorThrown);
+				}
 			}
 		});
 	}

@@ -294,6 +294,13 @@
 							window.location.reload();
 						}
 					},
+					error: function (xhr, textStatus, errorThrown) {
+						if (textStatus === 'error') {
+							$("#Loading_Div").hide('fast');
+							$('#ApplicationForm').show();
+							toastr.error('Error! Code: ' + xhr.status + ' Details: ' + errorThrown);
+						}
+					},
 					cache: false,
 					contentType: false,
 					processData: false
@@ -320,6 +327,13 @@
 							$("#Loading_Div").hide('fast');
 							$('#Success_Div').show("fast");
 							window.location.reload();
+						}
+					},
+					error: function (xhr, textStatus, errorThrown) {
+						if (textStatus === 'error') {
+							$("#Loading_Div").hide('fast');
+							$('#ApplicationForm').show();
+							toastr.error('Error! Code: ' + xhr.status + ' Details: ' + errorThrown);
 						}
 					},
 					cache: false,

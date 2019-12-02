@@ -285,7 +285,7 @@
 		$.ajax({
 			type: "POST",
 			url: "/Gmo/ViewClient",
-			data: '{clientId: "' + clientId + '" }',
+			data: JSON.stringify({ clientId: clientId }),
 			async: true,
 			contentType: "application/json; charset=utf-8",
 			dataType: "html",
@@ -293,7 +293,6 @@
 				$('#RMDLoading_ID').hide();
 				$('.item-data-retrived').show();
 				$('.item-data-retrived').html(data);
-
 				//btnRemoveRepresentative
 				$("#btnDeleteClient").click(function (e) {
 					e.preventDefault();

@@ -128,7 +128,7 @@
         $.ajax({
             type: "POST",
             url: "/DigitalDesk/LoadResetClientOTP",
-            data: '{getClientId: "' + getClientId + '" }',
+			data: JSON.stringify({ getClientId: getClientId }),
             contentType: "application/json; charset=utf-8",
             dataType: "html",
             success: function (data) {

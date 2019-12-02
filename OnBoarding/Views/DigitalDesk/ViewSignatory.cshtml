@@ -32,23 +32,4 @@
 			</tr>
 		</tbody>
 	</table>
-	
 </div>
-<script type="text/javascript">
-
-	//Function Load modal
-	function LoadUpDeleteClientModal(getSignatoryId) {
-		$('#LoadUpDeleteModal').modal({ backdrop: 'static', keyboard: false });
-		$.ajax({
-			type: "POST",
-			url: "/DigitalDesk/LoadDeleteSignatory",
-			data: '{getSignatoryId: "' + getSignatoryId + '" }',
-			contentType: "application/json; charset=utf-8",
-			dataType: "html",
-			success: function (data) {
-				$('.students-data').html(data);
-			}
-		});
-	}
-
-</script>

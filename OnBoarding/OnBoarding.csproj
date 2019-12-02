@@ -3076,7 +3076,6 @@
     <Content Include="Views\DigitalDesk\ViewCompletedApplication.cshtml" />
     <Content Include="Views\DigitalDesk\ViewRepresentative.cshtml" />
     <Content Include="Views\DigitalDesk\ViewSignatory.cshtml" />
-    <Content Include="Views\DigitalDesk\ViewUploadedClients.cshtml" />
     <Content Include="Views\DigitalDesk\ViewInCompleteApplication.cshtml" />
     <Content Include="Views\DigitalDesk\DeclinedApplications.cshtml" />
     <Content Include="Views\DigitalDesk\ViewDeclinedApplication.cshtml" />
@@ -3104,7 +3103,6 @@
     <Content Include="Views\Account\PasswordChanged.cshtml" />
     <Content Include="Views\Client\AddCompanies.cshtml" />
     <Content Include="Views\Client\_LoadCompanyDetails.cshtml" />
-    <Content Include="Views\DigitalDesk\LoadDeleteSignatory.cshtml" />
     <Content Include="Views\DigitalDesk\PendingApprovals.cshtml" />
     <Content Include="Views\Shared\_AdminOldLayout.cshtml" />
     <Content Include="Views\Gmo\ApproveUploads.cshtml" />

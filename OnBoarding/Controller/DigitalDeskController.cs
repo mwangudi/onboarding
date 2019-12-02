@@ -1188,35 +1188,6 @@ namespace OnBoarding.Controllers
         }
 
         //
-        //
-        [HttpPost]
-        [AllowAnonymous]
-        public PartialViewResult ViewUploadedClients()
-        {
-            return PartialView(GetAllUploadedUsers());
-        }
-
-        //
-        //Get All Uploaded Users from table
-        private IEnumerable<UploadedUsersViewModel> GetAllUploadedUsers()
-        {
-            using (DBModel db = new DBModel())
-            {
-                //Query List
-                var userid = User.Identity.GetUserId();
-                var Query = from a in db.RegisteredClients.Where(r => r.UploadedBy == userid && DbFunctions.DiffMinutes(r.DateCreated, DateTime.Now) <= 1)
-                            select new UploadedUsersViewModel
-                            {
-                                AccountName = a.AccountName,
-                                //CompanyName = a.CompanyName,
-                                EmailAddress = a.EmailAddress.ToLower(),
-                                DateCreated = a.DateCreated
-                            };
-                return Query.ToList();
-            }
-        }
-
-        //
         //Get All Uploaded Users from table
         public JsonResult SendOTPToUploadedUsers()
         {

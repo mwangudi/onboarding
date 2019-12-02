@@ -127,11 +127,17 @@
 		$.ajax({
 			type: "POST",
 			url: "/DigitalDesk/LoadResetSignatoryOTP",
-			data: '{getSignatoryId: "' + getSignatoryId + '" }',
+			data: JSON.stringify({ getSignatoryId: getSignatoryId }),
 			contentType: "application/json; charset=utf-8",
 			dataType: "html",
 			success: function (data) {
 				$('.students-data').html(data);
+			},
+			error: function (xhr, textStatus, errorThrown) {
+				if (textStatus === 'error') {
+					$('#LoadResetModal').modal('hide');
+					toastr.error('Submission error! Code: ' + xhr.status + ' Details: ' + errorThrown);
+				}
 			}
 		});
 	}

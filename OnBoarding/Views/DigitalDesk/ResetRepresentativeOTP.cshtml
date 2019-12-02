@@ -127,11 +127,16 @@
 		$.ajax({
 			type: "POST",
 			url: "/DigitalDesk/LoadResetRepresentativesOTP",
-			data: '{getRepresentativeId: "' + getRepresentativeId + '" }',
+			data: JSON.stringify({ getRepresentativeId: getRepresentativeId }),
 			contentType: "application/json; charset=utf-8",
 			dataType: "html",
 			success: function (data) {
 				$('.students-data').html(data);
+			},
+			error: function (xhr, textStatus, errorThrown) {
+				if (textStatus === 'error') {
+					toastr.error('Error! Code: ' + xhr.status + ' Details: ' + errorThrown);
+				}
 			}
 		});
 	}

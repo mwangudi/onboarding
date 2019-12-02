@@ -258,7 +258,7 @@
 		$.ajax({
 			type: "POST",
 			url: "/DigitalDesk/ViewUploadedClient",
-			data: '{fileName: "' + FileName + '" }',
+			data: JSON.stringify({ fileName: FileName }),
 			async: true,
 			contentType: "application/json; charset=utf-8",
 			dataType: "html",
