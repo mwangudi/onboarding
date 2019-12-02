@@ -1,5 +1,5 @@
 ﻿@model OnBoarding.ViewModels.EditRoleViewModel
-<form action="" enctype="multipart/form-data" method="post" id="ResendMessageFRM" name="ResendMessageFRM" data-fv-message="This value is not valid" data-fv-icon-validating="glyphicon glyphicon-refresh">
+<form action="" enctype="multipart/form-data" method="post" id="EditUserRoleFRM" name="EditUserRoleFRM" data-fv-message="This value is not valid" data-fv-icon-validating="glyphicon glyphicon-refresh">
 	<div class="form-group form-row mb-0" style="margin: 0px">
 		<div class="col-12 col-sm-6 col-lg-6">
 			<div class="form-group">
@@ -57,11 +57,11 @@
 
 	$(document).ready(function () {
 		//Submit Form Action
-		$("form#ResendMessageFRM").submit(function (e) {
+		$("form#EditUserRoleFRM").submit(function (e) {
 			e.preventDefault();
-			if ($('#ResendMessageFRM').valid()) {
+			if ($('#EditUserRoleFRM').valid()) {
 				$("#ModalLoadingDiv").show('fast');
-				$('#ResendMessageFRM').hide("fast");
+				$('#EditUserRoleFRM').hide("fast");
 				var formData = new FormData($(this)[0]);
 				$.ajax({
 					url: "/Admin/EditUserRoles",
@@ -79,6 +79,13 @@
 							$('#LoadUpModal').modal('hide').effect('explode');
 							$('.EditSuccess').hide("fast");
 							$('#UserRolesTableContainer').jtable('load');
+						}
+					},
+					error: function (xhr, textStatus, errorThrown) {
+						if (textStatus === 'error') {
+							$("#ModalLoadingDiv").hide('fast');
+							$('#EditUserRoleFRM').show("fast");
+							toastr.error('Error! Code: ' + xhr.status + ' Details: ' + errorThrown);
 						}
 					},
 					cache: false,

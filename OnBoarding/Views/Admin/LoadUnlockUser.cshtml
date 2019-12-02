@@ -77,7 +77,14 @@
                             $('.EditSuccess').hide("fast");
 							$('#NotificationsTableContainer').jtable('load');
                         }
-                    },
+					},
+					error: function (xhr, textStatus, errorThrown) {
+						if (textStatus === 'error') {
+							$("#ModalLoadingDiv").hide('fast');
+							$('#DeleteUserFRM').show("fast");
+							toastr.error('Error! Code: ' + xhr.status + ' Details: ' + errorThrown);
+						}
+					},
                     cache: false,
                     contentType: false,
                     processData: false

@@ -273,7 +273,7 @@
         $.ajax({
             type: "POST",
             url: "/Admin/LoadEditUser",
-            data: '{getUserId: "'+ getUserId + '" }',
+			data: JSON.stringify({ getUserId: getUserId }),
             async: true,
             contentType: "application/json; charset=utf-8",
             dataType: "html",
@@ -281,7 +281,16 @@
                 $('#RMDLoading_ID').hide();
                 $('.item-data-retrived').show();
                 $('.item-data-retrived').html(data);
-            }
+			},
+			error: function (xhr, textStatus, errorThrown) {
+				if (textStatus === 'error') {
+					$('#RMDLoading_ID').hide();
+					$('.item-data-retrived').hide();
+					$('#searchform').show();
+					$('#ViewAll').show();
+					toastr.error('Error! Code: ' + xhr.status + ' Details: ' + errorThrown);
+				}
+			}
         });
 	}
 	

@@ -151,11 +151,16 @@
 		$.ajax({
 			type: "POST",
 			url: "/Admin/LoadEditUserRoles",
-			data: '{getRoleId: "' + getRoleId + '" }',
+			data: JSON.stringify({ getRoleId: getRoleId }),
 			contentType: "application/json; charset=utf-8",
 			dataType: "html",
 			success: function (data) {
 				$('.students-data').html(data);
+			},
+			error: function (xhr, textStatus, errorThrown) {
+				if (textStatus === 'error') {
+					toastr.error('Error! Code: ' + xhr.status + ' Details: ' + errorThrown);
+				}
 			}
 		});
 	}
@@ -201,6 +206,13 @@
 								$('#Add_Role_FRM').show("fast");
 								toastr.error(XmlHttpRequest);
 							}
+						}
+					},
+					error: function (xhr, textStatus, errorThrown) {
+						if (textStatus === 'error') {
+							$("#Loading_ID").hide('fast');
+							$('#Add_Role_FRM').show("fast");
+							toastr.error('Error! Code: ' + xhr.status + ' Details: ' + errorThrown);
 						}
 					},
 					cache: false,
