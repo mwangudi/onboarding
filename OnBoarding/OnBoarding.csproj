@@ -2990,7 +2990,6 @@
     <Content Include="Views\Account\_ExternalLoginsListPartial.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Manage\AddPhoneNumber.cshtml" />
     <Content Include="Views\Manage\ChangePassword.cshtml" />
     <Content Include="Views\Manage\Index.cshtml" />
@@ -3022,7 +3021,6 @@
     <Content Include="Views\Account\SignatoryConfirmation.cshtml" />
     <Content Include="Views\Signatory\Index.cshtml" />
     <Content Include="Views\Signatory\ViewAll.cshtml" />
-    <Content Include="Views\Shared\_NotificationPanel.cshtml" />
     <Content Include="Views\Account\ForgotPassword.cshtml" />
     <Content Include="Views\Account\ResetPassword.cshtml" />
     <Content Include="Views\Account\ResetPasswordConfirmation.cshtml" />
@@ -3104,7 +3102,6 @@
     <Content Include="Views\Client\AddCompanies.cshtml" />
     <Content Include="Views\Client\_LoadCompanyDetails.cshtml" />
     <Content Include="Views\DigitalDesk\PendingApprovals.cshtml" />
-    <Content Include="Views\Shared\_AdminOldLayout.cshtml" />
     <Content Include="Views\Gmo\ApproveUploads.cshtml" />
     <Content Include="Views\Gmo\ViewUploadedClient.cshtml" />
     <Content Include="Views\DigitalDesk\ViewUploadedClient.cshtml" />
