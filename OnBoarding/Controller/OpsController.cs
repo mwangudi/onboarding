@@ -170,20 +170,52 @@ namespace OnBoarding.Controllers
             {
                 using (DBModel db = new DBModel())
                 {
-                    //Update application Details
+                    //1. Update application Details
                     var currentUserId = User.Identity.GetUserId();
                     var ApplicationUpdate = db.EMarketApplications.SingleOrDefault(c => c.Id == model.ApplicationID);
+                    var ClientDetails = db.RegisteredClients.SingleOrDefault(s => s.Id == ApplicationUpdate.ClientID);
+                    var CompanyDetails = db.ClientCompanies.SingleOrDefault(s => s.Id == ApplicationUpdate.CompanyID);
+                    var _action = "ApproveApplication";
+
                     if (ApplicationUpdate != null)
                     {
                         try
                         {
-                            //Update application status
+                            //2. Update application status
                             ApplicationUpdate.OPSApproved = true;
                             ApplicationUpdate.OPSDateApproved = DateTime.Now;
                             ApplicationUpdate.OPSWhoApproved = currentUserId;
                             ApplicationUpdate.OPSApprovalStatus = 1;
                             ApplicationUpdate.OPSComments = model.Comments;
-                            db.SaveChanges();
+                            var savedApplicationDetails = db.SaveChanges();
+                            if (savedApplicationDetails > 0)
+                            {
+                                //3. Send email notification to Poa for approval
+                                var DDUserRole = (from p in db.AspNetUserRoles
+                                                  join e in db.AspNetUsers on p.UserId equals e.Id
+                                                  where p.RoleId == "1f477b75-8a56-4662-b4d1-48551bed6111"
+                                                  select new
+                                                  {
+                                                      EmailID = e.Email
+                                                  }).ToList();
+                                foreach (var email in DDUserRole)
+                                {
+                                    var DDMessageBody = "Dear Team <br/><br/> Kindly note that the following client's application has been approved by the Operations Team. <br/>" +
+                                                  "Company Name: " + CompanyDetails.CompanyName + ", Company Email: " + CompanyDetails.BusinessEmailAddress + " " +
+                                                  "<br/><br/> Kind Regards,<br/><img src=\"https://e-documents.stanbicbank.co.ke/Content/images/EmailSignature.png\"/>";
+                                    var SendDDNotificationEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, email.EmailID, "Ops Approved Application", DDMessageBody);
+                                    if (SendDDNotificationEmail == true)
+                                    {
+                                        //Log email sent notification
+                                        LogNotification.AddSucsessNotification(MailHelper.EmailFrom, DDMessageBody, email.EmailID, _action);
+                                    }
+                                    else
+                                    {
+                                        //Log Email failed notification
+                                        LogNotification.AddFailureNotification(MailHelper.EmailFrom, DDMessageBody, email.EmailID, _action);
+                                    }
+                                }
+                            }
                         }
                         catch (Exception ex)
                         {
@@ -219,7 +251,6 @@ namespace OnBoarding.Controllers
                     var ApplicationUpdate = db.EMarketApplications.SingleOrDefault(c => c.Id == model.ApplicationId);
                     var ClientDetails = db.RegisteredClients.SingleOrDefault(s => s.Id == ApplicationUpdate.ClientID);
                     var CompanyDetails = db.ClientCompanies.SingleOrDefault(s => s.Id == ApplicationUpdate.CompanyID);
-
                     var _action = "DeclineApplication";
                     if (ApplicationUpdate != null)
                     {
