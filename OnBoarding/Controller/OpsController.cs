@@ -173,7 +173,6 @@ namespace OnBoarding.Controllers
                     //1. Update application Details
                     var currentUserId = User.Identity.GetUserId();
                     var ApplicationUpdate = db.EMarketApplications.SingleOrDefault(c => c.Id == model.ApplicationID);
-                    var ClientDetails = db.RegisteredClients.SingleOrDefault(s => s.Id == ApplicationUpdate.ClientID);
                     var CompanyDetails = db.ClientCompanies.SingleOrDefault(s => s.Id == ApplicationUpdate.CompanyID);
                     var _action = "ApproveApplication";
 
