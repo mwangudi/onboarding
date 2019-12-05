@@ -218,7 +218,7 @@ namespace OnBoarding.Controllers
                                     //Send Email to Digital Desk Users
                                     var DDUserRole = (from p in db.AspNetUserRoles
                                                       join e in db.AspNetUsers on p.UserId equals e.Id
-                                                      where p.RoleId == "03d5e1e3-a8a9-441e-9122-30c3aafccccc"
+                                                      where p.RoleId == "03d5e1e3-a8a9-441e-9122-30c3aafccccc" && e.Status == 1
                                                       select new
                                                       {
                                                           EmailID = e.Email
@@ -359,7 +359,7 @@ namespace OnBoarding.Controllers
                                 //Send Email to Digital Desk Users
                                 var DDUserRole = (from p in db.AspNetUserRoles
                                                   join e in db.AspNetUsers on p.UserId equals e.Id
-                                                  where p.RoleId == "03d5e1e3-a8a9-441e-9122-30c3aafccccc"
+                                                  where p.RoleId == "03d5e1e3-a8a9-441e-9122-30c3aafccccc" && e.Status == 1
                                                   select new
                                                   {
                                                       EmailID = e.Email

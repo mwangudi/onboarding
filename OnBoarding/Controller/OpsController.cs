@@ -192,7 +192,7 @@ namespace OnBoarding.Controllers
                                 //3. Send email notification to Poa for approval
                                 var DDUserRole = (from p in db.AspNetUserRoles
                                                   join e in db.AspNetUsers on p.UserId equals e.Id
-                                                  where p.RoleId == "1f477b75-8a56-4662-b4d1-48551bed6111"
+                                                  where p.RoleId == "1f477b75-8a56-4662-b4d1-48551bed6111" && e.Status == 1
                                                   select new
                                                   {
                                                       EmailID = e.Email
@@ -307,7 +307,7 @@ namespace OnBoarding.Controllers
                                 //7. Send email notification to Digital Desk
                                 var DDUserRole = (from p in db.AspNetUserRoles
                                                   join e in db.AspNetUsers on p.UserId equals e.Id
-                                                  where p.RoleId == "03d5e1e3-a8a9-441e-9122-30c3aafccccc"
+                                                  where p.RoleId == "03d5e1e3-a8a9-441e-9122-30c3aafccccc" && e.Status == 1
                                                   select new
                                                   {
                                                       EmailID = e.Email

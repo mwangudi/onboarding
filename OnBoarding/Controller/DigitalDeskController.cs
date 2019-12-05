@@ -1394,7 +1394,7 @@ namespace OnBoarding.Controllers
                     var _action = "UploadExistingUser";
                     var DDUserRole = (from p in db.AspNetUserRoles
                                       join e in db.AspNetUsers on p.UserId equals e.Id
-                                      where p.RoleId == "1ee65809-e6c4-4c6e-9cb4-99c71e7e7516"
+                                      where p.RoleId == "1ee65809-e6c4-4c6e-9cb4-99c71e7e7516" && e.Status == 1
                                       select new
                                       {
                                           EmailID = e.Email

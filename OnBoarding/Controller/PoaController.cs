@@ -404,7 +404,7 @@ namespace OnBoarding.Controllers
                                 //7. Send email notification to Digital Desk
                                 var DDUserRole = (from p in db.AspNetUserRoles
                                                   join e in db.AspNetUsers on p.UserId equals e.Id
-                                                  where p.RoleId == "03d5e1e3-a8a9-441e-9122-30c3aafccccc"
+                                                  where p.RoleId == "03d5e1e3-a8a9-441e-9122-30c3aafccccc" && e.Status == 1
                                                   select new
                                                   {
                                                       EmailID = e.Email
