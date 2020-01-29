@@ -20,7 +20,7 @@ namespace OnBoarding.ViewModels
         public string AccountName { get; set; }
         public string CompanyName { get; set; }
         public string EmailAddress { get; set; }
-        public bool UploadedBy { get; set; }
+        public string UploadedBy { get; set; }
         public DateTime DateCreated { get; set; }
     }
 

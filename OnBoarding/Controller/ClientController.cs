@@ -212,7 +212,7 @@ namespace OnBoarding.Controllers
                         return Json("Unable to save your application company details", JsonRequestBehavior.AllowGet);
                     }
                 }
-
+                                
                 //Log Settlement Account Details when yes is selected
                 if (model.HaveSettlementAccount == "Yes")
                 {
@@ -889,6 +889,17 @@ namespace OnBoarding.Controllers
                                     //Mark HasApplication True for Client Company
                                     var updateClientCompany = db.ClientCompanies.SingleOrDefault(c => c.Id == model.CompanyID);
                                     updateClientCompany.HasApplication = true;
+                                    //Update Company Details
+                                    updateClientCompany.CompanyRegNumber = model.CompanyRegistration;
+                                    updateClientCompany.CompanyBuilding = model.Building;
+                                    updateClientCompany.CompanyStreet = model.Street;
+                                    updateClientCompany.CompanyTownCity = model.CompanyTownCity;
+                                    updateClientCompany.BusinessEmailAddress = model.BusinessEmailAddress;
+                                    updateClientCompany.AttentionTo = model.AttentionTo;
+                                    updateClientCompany.Fax = model.CompanyFax;
+                                    updateClientCompany.PostalAddress = model.PostalAddress;
+                                    updateClientCompany.PostalCode = model.PostalCode;
+                                    updateClientCompany.TownCity = model.AddressTownCity;
                                     db.SaveChanges();
                                 }
                                 catch (Exception ex)
@@ -983,6 +994,17 @@ namespace OnBoarding.Controllers
                                 //1. Mark HasApplication True for Client Company
                                 var updateClientCompany = db.ClientCompanies.SingleOrDefault(c => c.Id == model.CompanyID);
                                 updateClientCompany.HasApplication = true;
+                                //Update Company Details
+                                updateClientCompany.CompanyRegNumber = model.CompanyRegistration;
+                                updateClientCompany.CompanyBuilding = model.Building;
+                                updateClientCompany.CompanyStreet = model.Street;
+                                updateClientCompany.CompanyTownCity = model.CompanyTownCity;
+                                updateClientCompany.BusinessEmailAddress = model.BusinessEmailAddress;
+                                updateClientCompany.AttentionTo = model.AttentionTo;
+                                updateClientCompany.Fax = model.CompanyFax;
+                                updateClientCompany.PostalAddress = model.PostalAddress;
+                                updateClientCompany.PostalCode = model.PostalCode;
+                                updateClientCompany.TownCity = model.AddressTownCity;
                                 db.SaveChanges();
 
                                 //2. Log Nomination Details For representative
@@ -1162,6 +1184,17 @@ namespace OnBoarding.Controllers
                                 //Mark HasApplication True for Client Company
                                 var updateClientCompany = db.ClientCompanies.SingleOrDefault(c => c.Id == model.CompanyID);
                                 updateClientCompany.HasApplication = true;
+                                //Update company Details
+                                updateClientCompany.CompanyRegNumber = model.CompanyRegistration;
+                                updateClientCompany.CompanyBuilding = model.Building;
+                                updateClientCompany.CompanyStreet = model.Street;
+                                updateClientCompany.CompanyTownCity = model.CompanyTownCity;
+                                updateClientCompany.BusinessEmailAddress = model.BusinessEmailAddress;
+                                updateClientCompany.AttentionTo = model.AttentionTo;
+                                updateClientCompany.Fax = model.CompanyFax;
+                                updateClientCompany.PostalAddress = model.PostalAddress;
+                                updateClientCompany.PostalCode = model.PostalCode;
+                                updateClientCompany.TownCity = model.AddressTownCity;
                                 db.SaveChanges();
                             }
                             else
@@ -1221,6 +1254,17 @@ namespace OnBoarding.Controllers
                                 //Mark HasApplication True for Client Company
                                 var updateClientCompany = db.ClientCompanies.SingleOrDefault(c => c.Id == model.CompanyID);
                                 updateClientCompany.HasApplication = true;
+                                //Update Company Details
+                                updateClientCompany.CompanyRegNumber = model.CompanyRegistration;
+                                updateClientCompany.CompanyBuilding = model.Building;
+                                updateClientCompany.CompanyStreet = model.Street;
+                                updateClientCompany.CompanyTownCity = model.CompanyTownCity;
+                                updateClientCompany.BusinessEmailAddress = model.BusinessEmailAddress;
+                                updateClientCompany.AttentionTo = model.AttentionTo;
+                                updateClientCompany.Fax = model.CompanyFax;
+                                updateClientCompany.PostalAddress = model.PostalAddress;
+                                updateClientCompany.PostalCode = model.PostalCode;
+                                updateClientCompany.TownCity = model.AddressTownCity;
                                 db.SaveChanges();
                             }
                             else
@@ -1410,6 +1454,17 @@ namespace OnBoarding.Controllers
                                 //Mark HasApplication True for Client Company
                                 var updateClientCompany = db.ClientCompanies.SingleOrDefault(c => c.Id == model.CompanyID);
                                 updateClientCompany.HasApplication = true;
+                                //Update Company Details
+                                updateClientCompany.CompanyRegNumber = model.CompanyRegistration;
+                                updateClientCompany.CompanyBuilding = model.Building;
+                                updateClientCompany.CompanyStreet = model.Street;
+                                updateClientCompany.CompanyTownCity = model.CompanyTownCity;
+                                updateClientCompany.BusinessEmailAddress = model.BusinessEmailAddress;
+                                updateClientCompany.AttentionTo = model.AttentionTo;
+                                updateClientCompany.Fax = model.CompanyFax;
+                                updateClientCompany.PostalAddress = model.PostalAddress;
+                                updateClientCompany.PostalCode = model.PostalCode;
+                                updateClientCompany.TownCity = model.AddressTownCity;
                                 db.SaveChanges();
                             }
                             else
@@ -1501,6 +1556,17 @@ namespace OnBoarding.Controllers
                             //Mark HasApplication True for Client Company
                             var updateClientCompany = db.ClientCompanies.SingleOrDefault(c => c.Id == model.CompanyID);
                             updateClientCompany.HasApplication = true;
+                            //Update company Details
+                            updateClientCompany.CompanyRegNumber = model.CompanyRegistration;
+                            updateClientCompany.CompanyBuilding = model.Building;
+                            updateClientCompany.CompanyStreet = model.Street;
+                            updateClientCompany.CompanyTownCity = model.CompanyTownCity;
+                            updateClientCompany.BusinessEmailAddress = model.BusinessEmailAddress;
+                            updateClientCompany.AttentionTo = model.AttentionTo;
+                            updateClientCompany.Fax = model.CompanyFax;
+                            updateClientCompany.PostalAddress = model.PostalAddress;
+                            updateClientCompany.PostalCode = model.PostalCode;
+                            updateClientCompany.TownCity = model.AddressTownCity;
                             db.SaveChanges();
                         }
                         else
