@@ -7,12 +7,29 @@
 	<h5 class="section-header"> My Company List <small><i><a href="~/Client/NewApplications">Click here to submit another application</a></i></small> </h5>
 	<div class="row">
 		<div class="col-12">
-			<div class="card" id="ViewAll">
+			<div class="card">
 				<div class="card-header">
 					<h4>Company List</h4>
 				</div>
 				<div class="card-body">
-					<div class="table-responsive">
+					<div class="item-data-retriving d_none">
+						<div class="form-group form-row" style="margin-left: 0px !important;">
+							<div class="col-12 col-sm-9 col-lg-9">
+								<h6><i class="fa fa-adjust"></i> Edit Company Details </h6>
+							</div>
+							<div class="col-12 col-sm-3 col-lg-3">
+								<button id="selectanother" class="btn btn-danger w_full" type="button"><i class="fa fa-check-circle"></i> Select Another Company </button>
+							</div>
+						</div>
+					</div><hr />
+					<!--Load Up Data -->
+					<center id="RMDLoading_ID" class="r_corners d_none">
+						<h6 class="m_top_20 m_bottom_20"> Please wait... Fetching Company Details </h6>
+						<img src="~/Content/images/loading-bar.gif" class="img-thumbnail" alt="Loading" style="max-width:160px;">
+					</center>
+					<!--End Loading Up Data -->
+					<div class="item-data-retrived"></div>
+					<div id="ViewAll">
 						<table id="CompanyList" class="table table-striped table-bordered dataTable" style="width:100%">
 							<thead>
 								<tr>
@@ -55,7 +72,9 @@
 										<td> @Convert.ToDateTime(item.DateCreated).ToString("dd/MM/yyyy")</td>
 										<td>
 											<center>
-												<i class="fa fa-shield-alt fa-2x" style="color:red;"></i>
+												<button data-cid="@item.Id" type="submit" name="submit" class="btn btn-outline-primary btn-md btn-agent-id w_full">
+													<span class="fa fa-edit"></span> Edit Company Details
+												</button>
 											</center>
 										</td>
 									</tr>
@@ -76,5 +95,44 @@
 		$('#CompanyList').DataTable({
 			responsive: true
 		});
+
+		//select-another-item
+		$('#selectanother').click(function (e) {
+			e.preventDefault();
+			$('.item-data-retrived').hide('fast');
+			$('.item-data-retriving').hide('fast');
+			$('#RMDLoading_ID').hide('fast');
+			$('#ViewAll').show('fast');
+		});
+
+		//Client Edit Companies
+		$('.btn-agent-id').click(function (e) {
+			e.preventDefault();
+			var CompanyID = $(this).attr('data-cid');
+			$('#ViewAll').hide('fast');
+			$('#RMDLoading_ID').show();
+			$('.item-data-retriving').show('fast');
+			$.ajax({
+				type: "POST",
+				url: "/Client/_LoadEditCompanyDetails",
+				data: '{companyId: "' + CompanyID + '" }',
+				contentType: "application/json; charset=utf-8",
+				dataType: "html",
+				success: function (data) {
+					$('#RMDLoading_ID').hide();
+					$('.item-data-retrived').show();
+					$('.item-data-retrived').html(data);
+				},
+				error: function (xhr, textStatus, errorThrown) {
+					if (textStatus === 'error') {
+						$('#RMDLoading_ID').hide();
+						$('.item-data-retriving').hide('fast');
+						$('#ViewAll').show('fast');
+						toastr.error('Submission error!. Code: ' + xhr.status + ', Details: ' + errorThrown);
+					}
+				}
+			});
+		});
 	});
+
 </script>

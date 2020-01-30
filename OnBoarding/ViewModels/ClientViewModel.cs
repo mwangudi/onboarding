@@ -181,4 +181,19 @@ namespace OnBoarding.ViewModels
         public bool HasApplication {  get; set; }
 
     }
+    public class EditClientCompanyViewModel
+    {
+        public int CompanyID { get; set; }
+        public string EditCompanyName { get; set; }
+        public string EditCompanyRegistration { get; set; }
+        public string EditCompanyBuilding { get; set; }
+        public string EditCompanyStreet { get; set; }
+        public string EditCompanyTownCity { get; set; }
+        public string EditCompanyEmail { get; set; }
+        public string EditAttentionTo { get; set; }
+        public string EditCompanyFax { get; set; }
+        public string EditPostalAddress { get; set; }
+        public string EditPostalCode { get; set; }
+        public string EditAddressTownCity { get; set; }
+    }
 }

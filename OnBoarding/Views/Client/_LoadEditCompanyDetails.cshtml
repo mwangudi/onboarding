@@ -1,0 +1,137 @@
+﻿@model OnBoarding.ViewModels.EditClientCompanyViewModel
+
+	<form id="EditCompanyFRM" enctype="multipart/form-data" method="post" class="needs-validation" novalidate="">
+		<div class="list-group">
+			<div class="list-group-item py-3" data-acc-step>
+				<div data-acc-content>
+					<div class="my-3 form-group form-row">
+						<div class="col-12 col-sm-6 col-lg-6">
+							<label>Company Name: <span>*</span></label>
+							<input type="text" id="EditCompanyName" name="EditCompanyName" placeholder="Company Name" class="form-control" value="@ViewBag.CompanyDetails.CompanyName"/>
+							<input name="__RequestVerificationToken" type="hidden" value="<token_generated_here>">
+							<input name="CompanyID" id="CompanyID" type="hidden" value="@ViewBag.CompanyDetails.Id">
+						</div>
+						<div class="col-12 col-sm-6 col-lg-6">
+							<label>Company Registration Number: <span>*</span></label>
+							<input type="text" id="EditCompanyRegistration" name="EditCompanyRegistration" placeholder="Company Registration Number" class="form-control required" value="@ViewBag.CompanyDetails.CompanyRegNumber" />
+						</div>
+					</div>
+					<div class="my-3 form-group form-row">
+						<div class="col-12 col-sm-4 col-lg-4">
+							<label>Company Building: <span>*</span></label>
+							<input type="text" id="EditCompanyBuilding" name="EditCompanyBuilding" placeholder="Company Building" class="form-control required" value="@ViewBag.CompanyDetails.CompanyBuilding" />
+						</div>
+						<div class="col-12 col-sm-4 col-lg-4">
+							<label>Company Street: <span>*</span></label>
+							<input type="text" id="EditCompanyStreet" name="EditCompanyStreet" placeholder="Company Street" class="form-control required" value="@ViewBag.CompanyDetails.CompanyStreet" />
+						</div>
+						<div class="col-12 col-sm-4 col-lg-4">
+							<label>Company Town/City: <span>*</span></label>
+							<input type="text" id="EditCompanyTownCity" name="EditCompanyTownCity" placeholder="Company Town/City" class="form-control" value="@ViewBag.CompanyDetails.CompanyTownCity" />
+						</div>
+					</div>
+					<div class="my-3 form-group form-row">
+						<div class="col-12 col-sm-4 col-lg-4">
+							<label>Business Email Address: <span>*</span></label>
+							<input type="text" id="EditCompanyEmail" name="EditCompanyEmail" placeholder="Business Email" class="form-control required" value="@ViewBag.CompanyDetails.BusinessEmailAddress" />
+						</div>
+						<div class="col-12 col-sm-4 col-lg-4">
+							<label>Atention To: <span>*</span></label>
+							<input type="text" id="EditAttentionTo" name="EditAttentionTo" placeholder="Attention To" class="form-control required" value="@ViewBag.CompanyDetails.AttentionTo" />
+						</div>
+						<div class="col-12 col-sm-4 col-lg-4">
+							<label>Company Fax:</label>
+							<input type="text" id="EditCompanyFax" name="EditCompanyFax" placeholder="Company Fax" class="form-control" value="@ViewBag.CompanyDetails.Fax" />
+						</div>
+						<div class="col-12 col-sm-4 col-lg-4">
+							<label>Postal Address: <span>*</span></label>
+							<input type="text" id="EditPostalAddress" name="EditPostalAddress" placeholder="Postal Address" class="form-control required" value="@ViewBag.CompanyDetails.PostalAddress" />
+						</div>
+						<div class="col-12 col-sm-4 col-lg-4">
+							<label>Postal Code: <span>*</span></label>
+							<input type="text" id="EditPostalCode" name="EditPostalCode" placeholder="Postal Code" class="form-control required" value="@ViewBag.CompanyDetails.PostalAddress" />
+						</div>
+						<div class="col-12 col-sm-4 col-lg-4">
+							<label>Town/City: <span>*</span></label>
+							<input type="text" id="EditAddressTownCity" name="EditAddressTownCity" placeholder="Town/City" class="form-control required" value="@ViewBag.CompanyDetails.TownCity" />
+						</div>
+					</div><hr />
+					<div class="my-3 form-group form-row">
+						<div class="col-12 col-sm-8 col-lg-8"></div>
+						<div class="col-12 col-sm-4 col-lg-4">
+							<button type="submit" id="editCompany" name="editCompany" class="btn btn-primary w-100"><i class="fa fa-check-circle"></i> Edit Company Details </button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+	<!--Processing Submission -->
+	<div id="ModalLoadingDiv" class="col-12 col-lg-12 col-md-12 d_none m_bottom_20" style="background:#fff;">
+		<center class="r_corners m_top_20 m_bottom_20">
+			<h4 class="m_top_20 m_bottom_20">Please wait... Processing Your Submission</h4>
+			<img src="~/Content/images/loading-bar.gif" class="img-thumbnail m_bottom_20" alt="Loading" style="max-width:160px;">
+		</center>
+	</div>
+	<!--End Submission Processing -->
+	<script type="text/javascript">
+		$(document).ready(function () {
+			//Submit Form Action
+			$("form#EditCompanyFRM").submit(function (e) {
+				e.preventDefault();
+				if ($('#EditCompanyFRM').valid()) {
+					$("#ModalLoadingDiv").show('fast');
+					$('#EditCompanyFRM').hide("fast");
+					var formData = new FormData($(this)[0]);
+					$.ajax({
+						url: "/Client/EditCompanyDetails",
+						type: 'POST',
+						data: formData,
+						async: true,
+						success: function (XmlHttpRequest) {
+							window.setTimeout(close, 1500);
+							window.setTimeout(reload, 3500);
+							function close() {
+								if (XmlHttpRequest === 'success') {
+									$('#EditCompanyFRM')[0].reset();
+									$("#ModalLoadingDiv").hide('fast');
+									$('#EditCompanyFRM').show("fast");
+									toastr.success("Company details edited successfully");
+								}
+								else {
+									$("#ModalLoadingDiv").hide('fast');
+									$('#EditCompanyFRM').show("fast");
+									toastr.error(XmlHttpRequest);
+								}
+							}
+							function reload() {
+								window.location.reload();
+							}
+						},
+						error: function (xhr, textStatus, errorThrown) {
+							if (textStatus === 'error') {
+								$("#ModalLoadingDiv").hide('fast');
+								$('#EditCompanyFRM').show("fast");
+								toastr.error('Error! Code: ' + xhr.status + ' Details: ' + errorThrown);
+							}
+						},
+						cache: false,
+						contentType: false,
+						processData: false
+					});
+				}
+			});
+
+			//Cancel Modal btn
+			$('.cancel_edit_btn').on('click', function (e) {
+				e.preventDefault();
+				$('#LoadUpModal').modal('hide');
+			})
+
+			$('#closemodalup').on('click', function (e) {
+				e.preventDefault();
+				$('#LoadUpModal').modal('hide');
+			})
+		});
+
+	</script>

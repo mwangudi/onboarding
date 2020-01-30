@@ -3111,6 +3111,7 @@
     <Content Include="Views\Client\_LoadSavedRepresentatives.cshtml" />
     <Content Include="Views\Client\CompanyList.cshtml" />
     <Content Include="Views\DigitalDesk\ViewApprovedApplications.cshtml" />
+    <Content Include="Views\Client\_LoadEditCompanyDetails.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

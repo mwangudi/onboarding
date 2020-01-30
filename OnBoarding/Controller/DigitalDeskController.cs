@@ -269,28 +269,28 @@ namespace OnBoarding.Controllers
             // Instance of DatabaseContext  
             using (DBModel db = new DBModel())
             {
-                IEnumerable<RegisteredClient> query = db.Database.SqlQuery<RegisteredClient>("SELECT * FROM RegisteredClients r WHERE r.Status < 2;");
+                IEnumerable<RegisteredClient> query = db.Database.SqlQuery<RegisteredClient>("SELECT * FROM RegisteredClients r LEFT JOIN ClientCompanies c ON c.ClientId = r.Id WHERE r.Status < 2;");
 
                 //Search
                 if (!string.IsNullOrEmpty(searchMessage) && !string.IsNullOrEmpty(searchFromDate) && !string.IsNullOrEmpty(searchToDate))
                 {
-                    query = db.Database.SqlQuery<RegisteredClient>("SELECT * FROM RegisteredClients n WHERE (n.Surname LIKE '%" + searchMessage + "%' OR n.OtherNames LIKE '%" + searchMessage + "%' OR n.EmailAddress LIKE '%" + searchMessage + "%') AND n.Status = 1 AND (n.DateCreated >= CAST('" + searchFromDate + "' AS DATE) AND n.DateCreated <= CAST('" + searchToDate + "' AS DATE));");
+                    query = db.Database.SqlQuery<RegisteredClient>("SELECT * FROM RegisteredClients n LEFT JOIN ClientCompanies c ON c.ClientId = n.Id WHERE (n.Surname LIKE '%" + searchMessage + "%' OR n.OtherNames LIKE '%" + searchMessage + "%' OR n.EmailAddress LIKE '%" + searchMessage + "%' OR c.CompanyName LIKE '%" + searchMessage + "%') AND n.Status = 1 AND (n.DateCreated >= CAST('" + searchFromDate + "' AS DATE) AND n.DateCreated <= CAST('" + searchToDate + "' AS DATE));");
                 }
                 else if (!string.IsNullOrEmpty(searchMessage) && string.IsNullOrEmpty(searchFromDate) && string.IsNullOrEmpty(searchToDate))
                 {
-                    query = db.Database.SqlQuery<RegisteredClient>("SELECT * FROM RegisteredClients n WHERE (n.Surname LIKE '%" + searchMessage + "%' OR n.OtherNames LIKE '%" + searchMessage + "%' OR n.EmailAddress LIKE '%" + searchMessage + "%') AND n.Status = 1;");
+                    query = db.Database.SqlQuery<RegisteredClient>("SELECT * FROM RegisteredClients n LEFT JOIN ClientCompanies c ON c.ClientId = n.Id WHERE (n.Surname LIKE '%" + searchMessage + "%' OR n.OtherNames LIKE '%" + searchMessage + "%' OR n.EmailAddress LIKE '%" + searchMessage + "%' OR c.CompanyName LIKE '%" + searchMessage + "%') AND n.Status = 1;");
                 }
                 else if (!string.IsNullOrEmpty(searchMessage) && !string.IsNullOrEmpty(searchFromDate) && string.IsNullOrEmpty(searchToDate))
                 {
-                    query = db.Database.SqlQuery<RegisteredClient>("SELECT * FROM RegisteredClients n WHERE (n.Surname LIKE '%" + searchMessage + "%' OR n.OtherNames LIKE '%" + searchMessage + "%' OR n.EmailAddress LIKE '%" + searchMessage + "%') AND n.Status = 1 AND n.DateCreated >= CAST('" + searchFromDate + "' AS DATE);");
+                    query = db.Database.SqlQuery<RegisteredClient>("SELECT * FROM RegisteredClients n LEFT JOIN ClientCompanies c ON c.ClientId = n.Id WHERE (n.Surname LIKE '%" + searchMessage + "%' OR n.OtherNames LIKE '%" + searchMessage + "%' OR n.EmailAddress LIKE '%" + searchMessage + "%' OR c.CompanyName LIKE '%" + searchMessage + "%') AND n.Status = 1 AND n.DateCreated >= CAST('" + searchFromDate + "' AS DATE);");
                 }
                 else if (!string.IsNullOrEmpty(searchMessage) && string.IsNullOrEmpty(searchFromDate) && !string.IsNullOrEmpty(searchToDate))
                 {
-                    query = db.Database.SqlQuery<RegisteredClient>("SELECT * FROM RegisteredClients n WHERE (n.Surname LIKE '%" + searchMessage + "%' OR n.OtherNames LIKE '%" + searchMessage + "%' OR n.EmailAddress LIKE '%" + searchMessage + "%') AND n.Status = 1 AND n.DateCreated <= CAST('" + searchToDate + "' AS DATE);");
+                    query = db.Database.SqlQuery<RegisteredClient>("SELECT * FROM RegisteredClients n LEFT JOIN ClientCompanies c ON c.ClientId = n.Id WHERE (n.Surname LIKE '%" + searchMessage + "%' OR n.OtherNames LIKE '%" + searchMessage + "%' OR n.EmailAddress LIKE '%" + searchMessage + "%' OR c.CompanyName LIKE '%" + searchMessage + "%') AND n.Status = 1 AND n.DateCreated <= CAST('" + searchToDate + "' AS DATE);");
                 }
                 else if (string.IsNullOrEmpty(searchMessage) && !string.IsNullOrEmpty(searchFromDate) && !string.IsNullOrEmpty(searchToDate))
                 {
-                    query = db.Database.SqlQuery<RegisteredClient>("SELECT * FROM RegisteredClients n WHERE n.Status = 1 AND (n.DateCreated >= CAST('" + searchFromDate + "' AS DATE) AND n.DateCreated <= CAST('" + searchToDate + "' AS DATE));");
+                    query = db.Database.SqlQuery<RegisteredClient>("SELECT * FROM RegisteredClients n LEFT JOIN ClientCompanies c ON c.ClientId = n.Id WHERE n.Status = 1 AND (n.DateCreated >= CAST('" + searchFromDate + "' AS DATE) AND n.DateCreated <= CAST('" + searchToDate + "' AS DATE));");
                 }
                 else
                 {

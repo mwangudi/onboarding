@@ -3124,5 +3124,60 @@ namespace OnBoarding.Controllers
                 return Query.OrderByDescending(x => x.Id).ToList();
             }
         }
+
+        //
+        // POST: /Client/LoadEditCompanyDetails
+        [HttpPost]
+        [AllowAnonymous]
+        public PartialViewResult _LoadEditCompanyDetails(int companyId)
+        {
+            using (DBModel db = new DBModel())
+            {
+                var getCompanyInfo = db.ClientCompanies.SingleOrDefault(c => c.Id == companyId);
+                ViewBag.CompanyDetails = getCompanyInfo;
+            }
+            return PartialView();
+        }
+
+        //
+        // POST: /Client/EditCompanyDetails
+        [HttpPost]
+        [AllowAnonymous]
+        public JsonResult EditCompanyDetails(EditClientCompanyViewModel model)
+        {
+            using (DBModel db = new DBModel())
+            {
+                try
+                {
+                    //Update User Details
+                    var getCompanyUpdate = db.ClientCompanies.SingleOrDefault(c => c.Id == model.CompanyID);
+                    getCompanyUpdate.CompanyName = model.EditCompanyName;
+                    getCompanyUpdate.CompanyRegNumber = model.EditCompanyRegistration;
+                    getCompanyUpdate.CompanyBuilding = model.EditCompanyBuilding;
+                    getCompanyUpdate.KRAPin = model.EditCompanyEmail;
+                    getCompanyUpdate.CompanyStreet = model.EditCompanyStreet;
+                    getCompanyUpdate.CompanyTownCity = model.EditCompanyTownCity;
+                    getCompanyUpdate.BusinessEmailAddress = model.EditCompanyEmail;
+                    getCompanyUpdate.AttentionTo = model.EditAttentionTo;
+                    getCompanyUpdate.Fax = model.EditCompanyFax;
+                    getCompanyUpdate.PostalAddress = model.EditPostalAddress;
+                    getCompanyUpdate.PostalCode = model.EditPostalCode;
+                    getCompanyUpdate.TownCity = model.EditAddressTownCity;
+                    var savedCompanyInfo = db.SaveChanges();
+                    if(savedCompanyInfo > 0)
+                    {
+                        return Json("success", JsonRequestBehavior.AllowGet);
+                    }
+                    else
+                    {
+                        return Json("Error! Unable to edit company details", JsonRequestBehavior.AllowGet);
+                    }
+                }
+                catch (Exception)
+                {
+                    return Json("Error! Unable to edit company details", JsonRequestBehavior.AllowGet);
+                }
+            }
+        }
     }
 }
