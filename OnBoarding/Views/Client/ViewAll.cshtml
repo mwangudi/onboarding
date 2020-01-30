@@ -7,103 +7,106 @@
 	<h5 class="section-header"> My Applications <small><i><a href="~/Client/NewApplications">Click here to submit another application</a></i></small> </h5> 
 	<div class="row">
 		<div class="col-12">
-			<div class="item-data-retriving d_none">
-				<div class="float-right">
-					<button class="btn btn-danger select-another-item">
-						<i class="fa fa ion-android-cancel"></i> Cancel
-					</button>
-				</div>
-				<h6><i class="fa fa-adjust"></i> Application Details </h6>
-				<hr />
-				<!--Load Up Data -->
-				<center id="RMDLoading_ID" class="d_none r_corners">
-					<h4 class="m_top_20 m_bottom_20"> Please wait... Fetching Application Details </h4>
-					<img src="~/Content/images/loading-bar.gif" class="img-thumbnail" alt="Loading" style="max-width:160px;">
-				</center>
-				<!--End Loading Up Data -->
-			</div>
-			<div class="item-data-retrived"></div>
-			<div class="card" id="ViewAll">
+			<div class="card">
 				<div class="card-header">
 					<h4>Application List</h4>
 				</div>
 				<div class="card-body">
-					<div class="table-responsive">
-						<table id="ApplicationsList" class="table table-striped table-bordered dataTable" style="width:100%">
-							<thead>
-								<tr>
-									<th>Company</th>
-									<th>Signatories</th>
-									<th>Representatives</th>
-									<th>Date</th>
-									<th>Comments</th>
-									<th>Approval</th>
-									<th>Date-Approved</th>
-									<th>Action</th>
-								</tr>
-							</thead>
-							<tbody>
-								@foreach (var item in Model)
-								{
+					<div class="item-data-retriving d_none">
+						<div class="form-group form-row" style="margin-left: 0px !important;">
+							<div class="col-12 col-sm-9 col-lg-9">
+								<h6><i class="fa fa-adjust"></i> View Application Details </h6>
+							</div>
+							<div class="col-12 col-sm-3 col-lg-3">
+								<button id="selectanother" class="btn btn-danger w_full" type="button"><i class="fa fa-check-circle"></i> Select Another Application </button>
+							</div>
+						</div><hr />
+						<!--Load Up Data -->
+						<center id="RMDLoading_ID" class="d_none r_corners">
+							<h4 class="m_top_20 m_bottom_20"> Please wait... Fetching Application Details </h4>
+							<img src="~/Content/images/loading-bar.gif" class="img-thumbnail" alt="Loading" style="max-width:160px;">
+						</center>
+						<!--End Loading Up Data -->
+					</div>
+					<div class="item-data-retrived"></div>
+					<div id="ViewAll">
+						<div class="table-responsive">
+							<table id="ApplicationsList" class="table table-striped table-bordered dataTable" style="width:100%">
+								<thead>
 									<tr>
-										<td> @item.Client</td>
-										<td> @item.Signatories</td>
-										<td> @item.DesignatedUsers</td>
-										<td> @Convert.ToDateTime(item.DateCreated).ToString("dd/MM/yyyy")</td>
-										<td> @item.OPSComments</td>
-										<td>
-											@if (item.POAApproved)
-											{
-												<center>Approved</center>
-											}
-											else if ((!item.POAApproved || !item.OPSApproved) && item.Status == "Declined")
-											{
-												<center>Declined</center>
-											}
-											else
-											{
-												<center>Pending</center>
-											}
-										</td>
-										<td>
-											@if (item.Status == "Declined")
-											{
-												<center>@Convert.ToDateTime(item.DateDeclined).ToString("dd/MM/yyyy")</center>
-											}
-											else
-											{
-												if (item.POADateApproved.ToString() != "")
-												{
-													<center>@Convert.ToDateTime(item.POADateApproved).ToString("dd/MM/yyyy")</center>
-												}
-											}
-										</td>
-										<td>
-											@if (item.Status == "Declined")
-											{
-												<center>
-													<i class="fa fa-shield-alt fa-2x" style="color:red;"></i>
-												</center>
-
-											}
-											else if (item.POAApproved)
-											{
-												<center>
-													<i class="fa fa-shield-alt fa-2x" style="color:red;"></i>
-												</center>
-											}
-											else if ((!item.POAApproved || !item.OPSApproved) && item.Status != "Declined")
-											{
-												<button data-id='@item.ApplicationID' data-cid="@item.CompanyID" type="submit" name="submit" class="btn btn-outline-primary btn-md btn-agent-id w_full">
-													<span class="fa fa-edit"></span> View
-												</button>
-											}
-										</td>
+										<th>Company</th>
+										<th>Signatories</th>
+										<th>Representatives</th>
+										<th>Date</th>
+										<th>Comments</th>
+										<th>Approval</th>
+										<th>DateApproved</th>
+										<th>Action</th>
 									</tr>
-								}
-							</tbody>
-							<tfoot></tfoot>
-						</table>
+								</thead>
+								<tbody>
+									@foreach (var item in Model)
+									{
+										<tr>
+											<td> @item.Client</td>
+											<td> @item.Signatories</td>
+											<td> @item.DesignatedUsers</td>
+											<td> @Convert.ToDateTime(item.DateCreated).ToString("dd/MM/yyyy")</td>
+											<td> @item.OPSComments</td>
+											<td>
+												@if (item.POAApproved)
+												{
+													<center>Approved</center>
+												}
+												else if ((!item.POAApproved || !item.OPSApproved) && item.Status == "Declined")
+												{
+													<center>Declined</center>
+												}
+												else
+												{
+													<center>Pending</center>
+												}
+											</td>
+											<td>
+												@if (item.Status == "Declined")
+												{
+													<center>@Convert.ToDateTime(item.DateDeclined).ToString("dd/MM/yyyy")</center>
+												}
+												else
+												{
+													if (item.POADateApproved.ToString() != "")
+													{
+														<center>@Convert.ToDateTime(item.POADateApproved).ToString("dd/MM/yyyy")</center>
+													}
+												}
+											</td>
+											<td>
+												@if (item.Status == "Declined")
+												{
+													<center>
+														<i class="fa fa-shield-alt fa-2x" style="color:red;"></i>
+													</center>
+
+												}
+												else if (item.POAApproved)
+												{
+													<center>
+														<i class="fa fa-shield-alt fa-2x" style="color:red;"></i>
+													</center>
+												}
+												else if ((!item.POAApproved || !item.OPSApproved) && item.Status != "Declined")
+												{
+													<button data-id='@item.ApplicationID' data-cid="@item.CompanyID" type="submit" name="submit" class="btn btn-outline-primary btn-md btn-agent-id w_full">
+														<span class="fa fa-edit"></span> View
+													</button>
+												}
+											</td>
+										</tr>
+									}
+								</tbody>
+								<tfoot></tfoot>
+							</table>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -119,7 +122,7 @@
 		});
 
 		//select-another-item
-		$('.select-another-item').click(function (e) {
+		$('#selectanother').click(function (e) {
 			e.preventDefault();
 			$('.item-data-retrived').hide('fast');
 			$('.item-data-retriving').hide('fast');
