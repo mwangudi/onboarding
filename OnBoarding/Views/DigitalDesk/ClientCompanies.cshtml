@@ -62,13 +62,14 @@
 									defaultSorting: 'DateCreated DESC',
 									actions:
 									{
-										listAction: '/DigitalDesk/GetRegisteredClients'
+										listAction: '/DigitalDesk/GetClientCompanies'
 									},
 									fields: {
 										Id: {
 											key: true,
 											list: false
 										},
+
 										CompanyName: {
 											title: 'Company Name',
 											width: '20%'
@@ -81,27 +82,28 @@
 											title: 'Building',
 											width: '15%'
 										},
-										EmailAddress: {
+										BusinessEmailAddress: {
 											title: 'Business Email',
 											width: '20%'
 										},
 										Status: {
 											title: 'Status',
-											width: '10%',
+											width: '7%',
 											options: { '1': 'Active', '0': 'InActive', '4': 'Deleted' }
 										},
 										DateCreated: {
 											title: 'DateCreated',
-											width: '10%',
+											width: '7%',
 											type: 'date',
 											displayFormat: 'yy-mm-dd'
 										},
-										AcceptedTerms: {
+										HasApplication: {
 											title: 'HasApplication',
 											width: '10%',
 											display: function (data) {
-												var accepted = data.record.AcceptedTerms;
-												if (accepted) {
+												var hasApplication = data.record.HasApplication;
+												var applicationStatus = data.record.Status;
+												if (hasApplication && applicationStatus == 1) {
 													return '<center><p class="text-success"><i class="fa fa-check-circle"></i> Yes </p></center>';
 												}
 												else {
@@ -113,8 +115,14 @@
 											title: 'Action',
 											width: '10%',
 											display: function (data) {
-												return '<center><button class="btn btn-outline-primary w_full btn-small" onclick="LoadUpModal(' + data.record.Id + ')">' +
-													'<span class="fa fa-check-circle"></span> View Application </button></center>';
+												var hasApplication = data.record.HasApplication;
+												if (hasApplication) {
+													return '<center><button class="btn btn-outline-primary w_full btn-small" onclick="LoadUpModal(' + data.record.Id + ')">' +
+														'<span class="fa fa-check-circle"></span> View Application </button></center>';
+												}
+												else {
+													return '<center><i class="fa fa-shield-alt fa-x" style="color:red;"></i></center>';
+												}
 											}
 										},
 									}
@@ -182,7 +190,7 @@
 	});
 
 	//Function Load modal
-	function LoadUpModal(clientId) {
+	function LoadUpModal(companyId) {
 		// Hide Default DIV's
 		$('#searchform').hide();
 		$('#ViewAll').hide();
@@ -191,8 +199,8 @@
 		// LoadUp User Data
 		$.ajax({
 			type: "POST",
-			url: "/DigitalDesk/ViewClient",
-			data: JSON.stringify({ clientId: clientId }),
+			url: "/DigitalDesk/ViewCompanyDetails",
+			data: JSON.stringify({ companyId: companyId }),
 			async: true,
 			contentType: "application/json; charset=utf-8",
 			dataType: "html",
@@ -209,55 +217,6 @@
 				}
 			}
 		});
-	}
-
-	//Delete Client Function
-	function DeleteClientFunction(clientId) {
-		Swal.fire({
-			title: 'Are you sure?',
-			text: "You won't be able to revert this!",
-			icon: 'warning',
-			showCancelButton: true,
-			confirmButtonColor: '#28a745;',
-			cancelButtonColor: '#d33',
-			confirmButtonText: 'Yes, delete client',
-			cancelButtonText: 'No, cancel',
-		}).then((result) => {
-			if (result.value) {
-				$.ajax({
-					url: "/DigitalDesk/DeleteClient",
-					type: 'POST',
-					data: JSON.stringify({ clientId: clientId }),
-					async: true,
-					contentType: "application/json; charset=utf-8",
-					dataType: "json",
-					success: function (XmlHttpRequest) {
-						if (XmlHttpRequest === 'success') {
-							Swal.fire(
-								'Success!',
-								'Client had been deleted successfully',
-								'success'
-							)
-							//reload jTable
-							$('#RegisteredClientsTableContainer').jtable('load');
-						}
-						else {
-							Swal.fire({
-								icon: 'error',
-								text: XmlHttpRequest
-							})
-							$('#RegisteredClientsTableContainer').jtable('load');
-						}
-					},
-					error: function (xhr, textStatus, errorThrown) {
-						if (textStatus === 'error') {
-							$('#RegisteredClientsTableContainer').jtable('load');
-							toastr.error('Submission error! Code: ' + xhr.status + ' Details: ' + errorThrown);
-						}
-					}
-				})
-			}
-		})
 	}
 
 	//Get CSV Report

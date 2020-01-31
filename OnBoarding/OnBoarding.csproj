@@ -3113,6 +3113,7 @@
     <Content Include="Views\DigitalDesk\ViewApprovedApplications.cshtml" />
     <Content Include="Views\Client\_LoadEditCompanyDetails.cshtml" />
     <Content Include="Views\DigitalDesk\ClientCompanies.cshtml" />
+    <Content Include="Views\DigitalDesk\ViewCompanyDetails.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

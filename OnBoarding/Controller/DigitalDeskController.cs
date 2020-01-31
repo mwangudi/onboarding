@@ -4032,19 +4032,18 @@ namespace OnBoarding.Controllers
 
         //
         //GET /Get Currencies List
-        public List<RegisteredClient> GetClientCompaniesList(string searchMessage, int jtStartIndex, int count, string jtSorting)
+        public List<ClientCompany> GetClientCompaniesList(string searchMessage, int jtStartIndex, int count, string jtSorting)
         {
             // Instance of DatabaseContext  
             using (DBModel db = new DBModel())
             {
-                IEnumerable<RegisteredClient> query = db.Database.SqlQuery<RegisteredClient>("SELECT * FROM RegisteredClients r LEFT JOIN ClientCompanies c ON c.ClientId = r.Id WHERE r.Status < 2;");
+                IEnumerable<ClientCompany> query = db.Database.SqlQuery<ClientCompany>("SELECT * FROM ClientCompanies c LEFT JOIN EMarketApplications e ON c.Id = e.CompanyID WHERE c.Status = 1;");
 
                 //Search
                 if (!string.IsNullOrEmpty(searchMessage))
                 {
-                    query = db.Database.SqlQuery<RegisteredClient>("SELECT * FROM ClientCompanies c INNER JOIN EMarketApplications e ON c.Id = e.CompanyID WHERE c.CompanyName LIKE '%" + searchMessage + "%' OR c.CompanyRegNumber LIKE '%" + searchMessage + "%' OR n.BusinessEmailAddress LIKE '%" + searchMessage + "%' OR n.CompanyBuilding LIKE '%" + searchMessage + "%' OR c.AttentionTo LIKE '%" + searchMessage + "%') AND n.Status = 1;");
+                    query = db.Database.SqlQuery<ClientCompany>("SELECT * FROM ClientCompanies c LEFT JOIN EMarketApplications e ON c.Id = e.CompanyID WHERE (c.CompanyName LIKE '%" + searchMessage + "%' OR c.CompanyRegNumber LIKE '%" + searchMessage + "%' OR c.BusinessEmailAddress LIKE '%" + searchMessage + "%' OR c.CompanyBuilding LIKE '%" + searchMessage + "%' OR c.AttentionTo LIKE '%" + searchMessage + "%') AND c.Status = 1;");
                 }
-                
                 else
                 {
                     query = query.OrderByDescending(p => p.Id);
@@ -4059,13 +4058,37 @@ namespace OnBoarding.Controllers
                 {
                     query = query.OrderByDescending(p => p.DateCreated);
                 }
-                else if (jtSorting.Equals("EmailAddress ASC"))
+                else if (jtSorting.Equals("CompanyRegNumber ASC"))
                 {
-                    query = query.OrderBy(p => p.EmailAddress);
+                    query = query.OrderBy(p => p.CompanyRegNumber);
                 }
-                else if (jtSorting.Equals("EmailAddress DESC"))
+                else if (jtSorting.Equals("CompanyRegNumber DESC"))
                 {
-                    query = query.OrderByDescending(p => p.EmailAddress);
+                    query = query.OrderByDescending(p => p.CompanyRegNumber);
+                }
+                else if (jtSorting.Equals("CompanyBuilding ASC"))
+                {
+                    query = query.OrderBy(p => p.CompanyBuilding);
+                }
+                else if (jtSorting.Equals("CompanyBuilding DESC"))
+                {
+                    query = query.OrderByDescending(p => p.CompanyBuilding);
+                }
+                else if (jtSorting.Equals("BusinessEmailAddress ASC"))
+                {
+                    query = query.OrderBy(p => p.BusinessEmailAddress);
+                }
+                else if (jtSorting.Equals("BusinessEmailAddress DESC"))
+                {
+                    query = query.OrderByDescending(p => p.BusinessEmailAddress);
+                }
+                else if (jtSorting.Equals("HasApplication ASC"))
+                {
+                    query = query.OrderBy(p => p.HasApplication);
+                }
+                else if (jtSorting.Equals("HasApplication DESC"))
+                {
+                    query = query.OrderByDescending(p => p.HasApplication);
                 }
                 else if (jtSorting.Equals("Status ASC"))
                 {
@@ -4074,14 +4097,6 @@ namespace OnBoarding.Controllers
                 else if (jtSorting.Equals("Status DESC"))
                 {
                     query = query.OrderByDescending(p => p.Status);
-                }
-                else if (jtSorting.Equals("AcceptedTAC ASC"))
-                {
-                    query = query.OrderBy(p => p.AcceptedTerms);
-                }
-                else if (jtSorting.Equals("AcceptedTAC DESC"))
-                {
-                    query = query.OrderByDescending(p => p.AcceptedTerms);
                 }
                 else
                 {
@@ -4097,43 +4112,54 @@ namespace OnBoarding.Controllers
         //
         //GET //Gets the  
         [HttpPost]
-        public JsonResult GetRegisteredClients(string searchMessage = "", string searchFromDate = "", string searchToDate = "", int jtStartIndex = 0, int jtPageSize = 0, string jtSorting = null)
+        public JsonResult GetClientCompanies(string searchMessage = "", int jtStartIndex = 0, int jtPageSize = 0, string jtSorting = null)
         {
             using (var db = new DBModel())
             {
-                var data = GetRegisteredClientsList(searchMessage, searchFromDate, searchToDate, jtStartIndex, jtPageSize, jtSorting);
+                var data = GetClientCompaniesList(searchMessage, jtStartIndex, jtPageSize, jtSorting);
                 //Search  
-                if (!string.IsNullOrEmpty(searchMessage) && !string.IsNullOrEmpty(searchFromDate) && !string.IsNullOrEmpty(searchToDate))
+                if (!string.IsNullOrEmpty(searchMessage))
                 {
-                    var count = db.Database.SqlQuery<int>("SELECT COUNT(n.Id) AS COUNT FROM RegisteredClients n WHERE (n.Surname LIKE '%" + searchMessage + "%' OR n.OtherNames LIKE '%" + searchMessage + "%' OR n.EmailAddress LIKE '%" + searchMessage + "%') AND (n.DateCreated >= CAST('" + searchFromDate + "' AS DATE) AND n.DateCreated <= CAST('" + searchToDate + "' AS DATE)) AND n.Status = 1;").First();
-                    return Json(new { Result = "OK", Records = data, TotalRecordCount = count });
-                }
-                else if (!string.IsNullOrEmpty(searchMessage) && string.IsNullOrEmpty(searchFromDate) && string.IsNullOrEmpty(searchToDate))
-                {
-                    var count = db.Database.SqlQuery<int>("SELECT COUNT(n.Id) AS COUNT FROM RegisteredClients n WHERE (n.Surname LIKE '%" + searchMessage + "%' OR n.OtherNames LIKE '%" + searchMessage + "%' OR n.EmailAddress LIKE '%" + searchMessage + "%') AND n.Status = 1;").First();
-                    return Json(new { Result = "OK", Records = data, TotalRecordCount = count });
-                }
-                else if (!string.IsNullOrEmpty(searchMessage) && !string.IsNullOrEmpty(searchFromDate) && string.IsNullOrEmpty(searchToDate))
-                {
-                    var count = db.Database.SqlQuery<int>("SELECT COUNT(n.Id) AS COUNT FROM RegisteredClients n WHERE (n.Surname LIKE '%" + searchMessage + "%' OR n.OtherNames LIKE '%" + searchMessage + "%' OR n.EmailAddress LIKE '%" + searchMessage + "%') AND n.DateCreated >= CAST('" + searchFromDate + "' AS DATE) AND n.Status = 1;").First();
-                    return Json(new { Result = "OK", Records = data, TotalRecordCount = count });
-                }
-                else if (!string.IsNullOrEmpty(searchMessage) && string.IsNullOrEmpty(searchFromDate) && !string.IsNullOrEmpty(searchToDate))
-                {
-                    var count = db.Database.SqlQuery<int>("SELECT COUNT(n.Id) AS COUNT FROM RegisteredClients n WHERE (n.Surname LIKE '%" + searchMessage + "%' OR n.OtherNames LIKE '%" + searchMessage + "%' OR n.EmailAddress LIKE '%" + searchMessage + "%') AND n.DateCreated <= CAST('" + searchToDate + "' AS DATE) AND n.Status = 1;").First();
-                    return Json(new { Result = "OK", Records = data, TotalRecordCount = count });
-                }
-                else if (string.IsNullOrEmpty(searchMessage) && !string.IsNullOrEmpty(searchFromDate) && !string.IsNullOrEmpty(searchToDate))
-                {
-                    var count = db.Database.SqlQuery<int>("SELECT COUNT(n.Id) AS COUNT FROM RegisteredClients n WHERE (n.DateCreated >= CAST('" + searchFromDate + "' AS DATE) AND n.DateCreated <= CAST('" + searchToDate + "' AS DATE)) AND n.Status = 1;").First();
+                    var count = db.Database.SqlQuery<int>("SELECT COUNT(c.Id) AS COUNT FROM ClientCompanies c WHERE (c.CompanyName LIKE '%" + searchMessage + "%' OR c.CompanyRegNumber LIKE '%" + searchMessage + "%' OR c.BusinessEmailAddress LIKE '%" + searchMessage + "%' OR c.CompanyBuilding LIKE '%" + searchMessage + "%' OR c.AttentionTo LIKE '%" + searchMessage + "%') AND c.Status = 1;").First();
                     return Json(new { Result = "OK", Records = data, TotalRecordCount = count });
                 }
                 else
                 {
-                    var count = GetRegisteredClientsCount();
+                    var count = GetClientCompaniesCount();
                     return Json(new { Result = "OK", Records = data, TotalRecordCount = count });
                 }
             }
+        }
+
+        //
+        //GET //ViewCompletedApplication
+        [HttpPost]
+        [AllowAnonymous]
+        public PartialViewResult ViewCompanyDetails(int companyId)
+        {
+            using (DBModel db = new DBModel())
+            {
+                var getApplicationInfo = db.EMarketApplications.SingleOrDefault(c => c.CompanyID == companyId && c.Status == 1);
+                var clientID = getApplicationInfo.ClientID;
+                var clientDetails = db.RegisteredClients.SingleOrDefault(s => s.Id == clientID);
+                var companyDetails = db.ClientCompanies.SingleOrDefault(s => s.Id == companyId);
+                ViewBag.ApplicationInfo = clientDetails;
+                ViewBag.CompanyInfo = companyDetails;
+
+                //Signatories List
+                List<ClientSignatory> SignatoryList = db.ClientSignatories.Where(a => a.ClientID == clientID && a.CompanyID == companyId).ToList();
+                ViewBag.ClientSignatory = SignatoryList;
+
+                //Designated Users List
+                List<DesignatedUser> DesignatedUsersList = db.DesignatedUsers.Where(a => a.ClientID == clientID && a.CompanyID == companyId).ToList();
+                ViewBag.DesignatedUser = DesignatedUsersList;
+
+                //Get the list of all client's settlement accounts
+                var Query = db.Database.SqlQuery<SettlementAccountsViewModel>("SELECT c.CurrencyName, s.AccountNumber FROM ClientSettlementAccounts s INNER JOIN Currencies c ON c.Id = s.CurrencyID WHERE s.ClientID =  " + "'" + getApplicationInfo.ClientID + "'" + " AND s.CompanyID =  " + "'" + companyId + "'" + " AND s.Status = 1");
+                ViewBag.SettlementAccounts = Query.ToList();
+            }
+
+            return PartialView();
         }
     }
 }
