@@ -4013,5 +4013,127 @@ namespace OnBoarding.Controllers
 
             }
         }
+
+        //POST ClientCompanies
+        public ActionResult ClientCompanies()
+        {
+            return View();
+        }
+
+        //
+        //GET /Get Notifications Count
+        public int GetClientCompaniesCount()
+        {
+            using (DBModel db = new DBModel())
+            {
+                return db.ClientCompanies.Where(e => e.Status == 1).Count();
+            }
+        }
+
+        //
+        //GET /Get Currencies List
+        public List<RegisteredClient> GetClientCompaniesList(string searchMessage, int jtStartIndex, int count, string jtSorting)
+        {
+            // Instance of DatabaseContext  
+            using (DBModel db = new DBModel())
+            {
+                IEnumerable<RegisteredClient> query = db.Database.SqlQuery<RegisteredClient>("SELECT * FROM RegisteredClients r LEFT JOIN ClientCompanies c ON c.ClientId = r.Id WHERE r.Status < 2;");
+
+                //Search
+                if (!string.IsNullOrEmpty(searchMessage))
+                {
+                    query = db.Database.SqlQuery<RegisteredClient>("SELECT * FROM ClientCompanies c INNER JOIN EMarketApplications e ON c.Id = e.CompanyID WHERE c.CompanyName LIKE '%" + searchMessage + "%' OR c.CompanyRegNumber LIKE '%" + searchMessage + "%' OR n.BusinessEmailAddress LIKE '%" + searchMessage + "%' OR n.CompanyBuilding LIKE '%" + searchMessage + "%' OR c.AttentionTo LIKE '%" + searchMessage + "%') AND n.Status = 1;");
+                }
+                
+                else
+                {
+                    query = query.OrderByDescending(p => p.Id);
+                }
+
+                //Sorting Ascending and Descending  
+                if (string.IsNullOrEmpty(jtSorting) || jtSorting.Equals("DateCreated ASC"))
+                {
+                    query = query.OrderBy(p => p.DateCreated);
+                }
+                else if (jtSorting.Equals("DateCreated DESC"))
+                {
+                    query = query.OrderByDescending(p => p.DateCreated);
+                }
+                else if (jtSorting.Equals("EmailAddress ASC"))
+                {
+                    query = query.OrderBy(p => p.EmailAddress);
+                }
+                else if (jtSorting.Equals("EmailAddress DESC"))
+                {
+                    query = query.OrderByDescending(p => p.EmailAddress);
+                }
+                else if (jtSorting.Equals("Status ASC"))
+                {
+                    query = query.OrderBy(p => p.Status);
+                }
+                else if (jtSorting.Equals("Status DESC"))
+                {
+                    query = query.OrderByDescending(p => p.Status);
+                }
+                else if (jtSorting.Equals("AcceptedTAC ASC"))
+                {
+                    query = query.OrderBy(p => p.AcceptedTerms);
+                }
+                else if (jtSorting.Equals("AcceptedTAC DESC"))
+                {
+                    query = query.OrderByDescending(p => p.AcceptedTerms);
+                }
+                else
+                {
+                    //Default!
+                    query = query.OrderByDescending(p => p.Id);
+                }
+                return count > 0
+                           ? query.Skip(jtStartIndex).Take(count).ToList()  //Paging  
+                           : query.ToList(); //No paging  
+            }
+        }
+
+        //
+        //GET //Gets the  
+        [HttpPost]
+        public JsonResult GetRegisteredClients(string searchMessage = "", string searchFromDate = "", string searchToDate = "", int jtStartIndex = 0, int jtPageSize = 0, string jtSorting = null)
+        {
+            using (var db = new DBModel())
+            {
+                var data = GetRegisteredClientsList(searchMessage, searchFromDate, searchToDate, jtStartIndex, jtPageSize, jtSorting);
+                //Search  
+                if (!string.IsNullOrEmpty(searchMessage) && !string.IsNullOrEmpty(searchFromDate) && !string.IsNullOrEmpty(searchToDate))
+                {
+                    var count = db.Database.SqlQuery<int>("SELECT COUNT(n.Id) AS COUNT FROM RegisteredClients n WHERE (n.Surname LIKE '%" + searchMessage + "%' OR n.OtherNames LIKE '%" + searchMessage + "%' OR n.EmailAddress LIKE '%" + searchMessage + "%') AND (n.DateCreated >= CAST('" + searchFromDate + "' AS DATE) AND n.DateCreated <= CAST('" + searchToDate + "' AS DATE)) AND n.Status = 1;").First();
+                    return Json(new { Result = "OK", Records = data, TotalRecordCount = count });
+                }
+                else if (!string.IsNullOrEmpty(searchMessage) && string.IsNullOrEmpty(searchFromDate) && string.IsNullOrEmpty(searchToDate))
+                {
+                    var count = db.Database.SqlQuery<int>("SELECT COUNT(n.Id) AS COUNT FROM RegisteredClients n WHERE (n.Surname LIKE '%" + searchMessage + "%' OR n.OtherNames LIKE '%" + searchMessage + "%' OR n.EmailAddress LIKE '%" + searchMessage + "%') AND n.Status = 1;").First();
+                    return Json(new { Result = "OK", Records = data, TotalRecordCount = count });
+                }
+                else if (!string.IsNullOrEmpty(searchMessage) && !string.IsNullOrEmpty(searchFromDate) && string.IsNullOrEmpty(searchToDate))
+                {
+                    var count = db.Database.SqlQuery<int>("SELECT COUNT(n.Id) AS COUNT FROM RegisteredClients n WHERE (n.Surname LIKE '%" + searchMessage + "%' OR n.OtherNames LIKE '%" + searchMessage + "%' OR n.EmailAddress LIKE '%" + searchMessage + "%') AND n.DateCreated >= CAST('" + searchFromDate + "' AS DATE) AND n.Status = 1;").First();
+                    return Json(new { Result = "OK", Records = data, TotalRecordCount = count });
+                }
+                else if (!string.IsNullOrEmpty(searchMessage) && string.IsNullOrEmpty(searchFromDate) && !string.IsNullOrEmpty(searchToDate))
+                {
+                    var count = db.Database.SqlQuery<int>("SELECT COUNT(n.Id) AS COUNT FROM RegisteredClients n WHERE (n.Surname LIKE '%" + searchMessage + "%' OR n.OtherNames LIKE '%" + searchMessage + "%' OR n.EmailAddress LIKE '%" + searchMessage + "%') AND n.DateCreated <= CAST('" + searchToDate + "' AS DATE) AND n.Status = 1;").First();
+                    return Json(new { Result = "OK", Records = data, TotalRecordCount = count });
+                }
+                else if (string.IsNullOrEmpty(searchMessage) && !string.IsNullOrEmpty(searchFromDate) && !string.IsNullOrEmpty(searchToDate))
+                {
+                    var count = db.Database.SqlQuery<int>("SELECT COUNT(n.Id) AS COUNT FROM RegisteredClients n WHERE (n.DateCreated >= CAST('" + searchFromDate + "' AS DATE) AND n.DateCreated <= CAST('" + searchToDate + "' AS DATE)) AND n.Status = 1;").First();
+                    return Json(new { Result = "OK", Records = data, TotalRecordCount = count });
+                }
+                else
+                {
+                    var count = GetRegisteredClientsCount();
+                    return Json(new { Result = "OK", Records = data, TotalRecordCount = count });
+                }
+            }
+        }
     }
 }
