@@ -132,8 +132,6 @@
 									e.preventDefault();
 									$('#RegisteredClientsTableContainer').jtable('load', {
 										searchMessage: $('#searchMessage').val(),
-										searchFromDate: $('#searchFromDate').val(),
-										searchToDate: $('#searchToDate').val()
 									});
 								});
 								//Load list from server
@@ -222,9 +220,7 @@
 	//Get CSV Report
 	function GetCSVReport(){
 		var searchText = $('#searchMessage').val();
-		var DateFrom = $('#searchFromDate').val();
-		var DateTo = $('#searchToDate').val();
-		window.location = "/Gmo/ExportRegisteredClients?searchText=" + searchText + "&DateFrom=" + DateFrom + "&DateTo=" + DateTo;
+		window.location = "/DigitalDesk/ExportClientCompanies?searchText=" + searchText;
 	};
 
 </script>

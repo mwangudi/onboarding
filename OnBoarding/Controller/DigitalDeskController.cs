@@ -4161,5 +4161,74 @@ namespace OnBoarding.Controllers
 
             return PartialView();
         }
+
+        //GET //ExportClientSettlements
+        [HttpGet]
+        public void ExportClientCompanies(string searchText)
+        {
+            string constr = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+            using (SqlConnection con = new SqlConnection(constr))
+            {
+                var searchString = searchText;
+                var query = "";
+                if (!string.IsNullOrEmpty(searchString))
+                {
+                    var customquery = "SELECT c.CompanyName, c.CompanyRegNumber, c.CompanyBuilding, c.CompanyStreet, c.CompanyTownCity, c.BusinessEmailAddress, c.AttentionTo, c.PostalAddress, c.PostalCode, c.TownCity, CASE WHEN c.HasApplication = 1 THEN 'HasApplication' ELSE 'NO-Application' END AS HasApplication, e.DateCreated ApplicationDate FROM ClientCompanies c LEFT JOIN EMarketApplications e ON c.Id = e.CompanyID WHERE (c.CompanyName LIKE '%" + searchString + "%' OR c.CompanyRegNumber LIKE '%" + searchString + "%' OR c.BusinessEmailAddress LIKE '%" + searchString + "%' OR c.CompanyBuilding LIKE '%" + searchString + "%' OR c.AttentionTo LIKE '%" + searchString + "%') AND c.Status = 1;";
+                    query = customquery;
+                }
+                else
+                {
+                    var customquery = "SELECT c.CompanyName, c.CompanyRegNumber, c.CompanyBuilding, c.CompanyStreet, c.CompanyTownCity, c.BusinessEmailAddress, c.AttentionTo, c.PostalAddress, c.PostalCode, c.TownCity, CASE WHEN c.HasApplication = 1 THEN 'HasApplication' ELSE 'NO-Application' END AS HasApplication, e.DateCreated ApplicationDate FROM ClientCompanies c LEFT JOIN EMarketApplications e ON c.Id = e.CompanyID WHERE c.Status = 1;";
+                    query = customquery;
+                }
+
+                using (SqlCommand cmd = new SqlCommand(query))
+                {
+                    using (SqlDataAdapter sda = new SqlDataAdapter())
+                    {
+                        cmd.Connection = con;
+                        sda.SelectCommand = cmd;
+                        using (DataTable dt = new DataTable())
+                        {
+                            sda.Fill(dt);
+
+                            //Build the CSV file data as a Comma separated string.
+                            string csv = string.Empty;
+
+                            foreach (DataColumn column in dt.Columns)
+                            {
+                                //Add the Header row for CSV file.
+                                csv += column.ColumnName + ',';
+                            }
+
+                            //Add new line.
+                            csv += "\r\n";
+
+                            foreach (DataRow row in dt.Rows)
+                            {
+                                foreach (DataColumn column in dt.Columns)
+                                {
+                                    //Add the Data rows.
+                                    csv += row[column.ColumnName].ToString().Replace(",", ";") + ',';
+                                }
+
+                                //Add new line.
+                                csv += "\r\n";
+                            }
+
+                            //Download the CSV file.
+                            Response.Clear();
+                            Response.Buffer = true;
+                            Response.AddHeader("content-disposition", "attachment;filename=GMOnBoarding_ClientCompanies.csv");
+                            Response.Charset = "";
+                            Response.ContentType = "application/text";
+                            Response.Output.Write(csv);
+                            Response.Flush();
+                            Response.End();
+                        }
+                    }
+                }
+            }
+        }
     }
 }
