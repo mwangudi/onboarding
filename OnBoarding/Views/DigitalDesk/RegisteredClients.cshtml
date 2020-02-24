@@ -126,7 +126,8 @@
 											displayFormat: 'yy-mm-dd'
 										},
 										Companies: {
-											title: 'View',
+                                            title: 'View',
+                                            list: false,
 											display: function (data) {
 												var uploaded = data.record.UploadedBy;
 												var isActive = data.record.Status;
@@ -210,10 +211,9 @@
 										MyButton: {
 											title: 'Action',
 											width: '10%',
-											list: false,
 											display: function (data) {
 												return '<center><button class="btn btn-outline-primary w_full btn-small" onclick="LoadUpModal(' + data.record.Id + ')">' +
-													'<span class="fa fa-check-circle"></span> View Details </button></center>';
+													'<span class="fa fa-check-circle"></span> View </button></center>';
 											}
 										},
 									}
@@ -281,7 +281,7 @@
 	});
 
 	//Function Load modal
-	function LoadUpModal(clientId) {
+	function LoadUpModal(clientID) {
 		// Hide Default DIV's
 		$('#searchform').hide();
 		$('#ViewAll').hide();
@@ -291,7 +291,7 @@
 		$.ajax({
 			type: "POST",
 			url: "/DigitalDesk/ViewClient",
-			data: JSON.stringify({ clientId: clientId }),
+			data: JSON.stringify({ clientId: clientID }),
 			async: true,
 			contentType: "application/json; charset=utf-8",
 			dataType: "html",

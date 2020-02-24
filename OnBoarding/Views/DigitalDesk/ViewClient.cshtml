@@ -20,7 +20,7 @@
 							<th>Company Name:</th>
 							<td id="CompanyName" name="CompanyName">@ViewBag.CompanyInfo.CompanyName</td>
 						</tr>
-						<!--<tr class="success">
+						<tr class="success">
 							<th>Company Details:</th>
 							<td style="text-align: right;"><i class="fa fa fa-building fa-x"></i></td>
 						</tr>
@@ -55,7 +55,7 @@
 						<tr>
 							<th>Attention where notices will be sent:</th>
 							<td id="AttentionTo" name="AttentionTo">@ViewBag.CompanyInfo.AttentionTo</td>
-						</tr>-->
+						</tr>
 						<tr class="success">
 							<th>Company Settlements:</th>
 							<td style="text-align: right;"><i class="fa fa fa-location-arrow fa-x"></i></td>
@@ -81,86 +81,6 @@
 								{
 									<table class="custom-table">No Settlement Accounts</table>
 								}
-							</td>
-						</tr>
-						<tr class="success">
-							<th>Signatories Details:</th>
-							<td style="text-align: right;"><i class="fa fa fa-users fa-x"></i></td>
-						</tr>
-						<tr>
-							<th>Signatories:</th>
-							<td colspan="2" id="Signatories" name="Signatories">
-								@if (ViewBag.ClientSignatory.Count != 0)
-								{
-									<table class="custom-table">
-										<th> Full Names</th>
-										<th> Designation </th>
-										<th> Phone </th>
-										<th> Email </th>
-										<th> Signature </th>
-										@foreach (var item in ViewBag.ClientSignatory)
-										{
-											<tbody>
-											<td>@(item.Surname + " " + item.OtherNames)</td>
-											<td>@item.Designation</td>
-											<td>@item.PhoneNumber</td>
-											<td>@item.EmailAddress</td>
-											<td>
-												@if (item.Signature == null || item.Signature == "")
-												{
-													<img width="100" height="80" src="~/Content/images/signatures/no-signature-17.jpg" />
-												}
-												else
-												{
-													<img width="100" height="80" src="~/Content/images/signatures/@item.Signature" />
-												}
-											</td>
-											</tbody>
-										}
-									</table>
-								}
-								else
-								{
-									<table class="custom-table">No Signatories </table>
-								}
-							</td>
-						</tr>
-						<tr class="success">
-							<th>Authorized Representatives:</th>
-							<td style="text-align: right;"><i class="fa fa fa-users fa-x"></i></td>
-						</tr>
-						<tr>
-							<td colspan="2" id="Representatives" name="Representatives">
-								<table class="custom-table">
-									<th> Representative Names</th>
-									<th> Email Address </th>
-									<th> Phone </th>
-									<th> Trading Limit </th>
-									<th> EMarket SignUp </th>
-									<th> GM Representative </th>
-									<th class="d-none"> Signature </th>
-									@foreach (var item in ViewBag.DesignatedUser)
-									{
-										<tbody>
-										<td>@(item.Surname + " " + item.Othernames)</td>
-										<td>@item.Email</td>
-										<td>@item.Mobile</td>
-										<td>@item.TradingLimit</td>
-										<td>@(item.EMarketSignUp ? "Yes" : "No")</td>
-										<td>@(item.GMRepresentative ? "Yes" : "No")</td>
-										<td class="d-none">
-											@if (item.Signature == null || item.Signature == "")
-											{
-												<img width="100" height="80" src="~/Content/images/signatures/no-signature-17.jpg" />
-											}
-											else
-											{
-												<img width="100" height="80" src="~/Content/images/signatures/@item.Signature" />
-											}
-										</td>
-										</tbody>
-									}
-								</table>
 							</td>
 						</tr>
 					</table>
