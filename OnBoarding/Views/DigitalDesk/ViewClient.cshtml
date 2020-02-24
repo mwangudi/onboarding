@@ -1,4 +1,5 @@
-﻿<script src="@Url.Content("~/Assets/fwizard/form-wizard.js")"></script>
+﻿@model OnBoarding.ViewModels.DeleteRegisteredClientViewModel
+<script src="@Url.Content("~/Assets/fwizard/form-wizard.js")"></script>
 <div class="form-row form-wizard">
 	<!-- Form Wizard -->
 	<form class="mt-0 w_full" role="form" id="ApplicationForm" action="" method="POST" accept-charset="utf-8">
@@ -9,161 +10,51 @@
 				<div class="table-responsive">
 					<table class="table table-bordered">
 						<tr class="success">
-							<th>Uploaded Company Details :</th>
+							<th>Client Details :</th>
 							<td style="text-align: right;"><i class="fa fa-archive"></i></td>
 						</tr>
-						<tr class="d-none">
-							<th>Company Account Number:</th>
+						<tr>
+							<th>Client Account Number:</th>
 							<td id="AccountNumber" name="AccountNumber">@ViewBag.RegisteredClientInfo.AccountNumber</td>
 						</tr>
 						<tr>
-							<th>Company Name:</th>
-							<td id="CompanyName" name="CompanyName">@ViewBag.CompanyInfo.CompanyName</td>
+							<th>Client Names:</th>
+							<td id="Surname" name="Surname">@ViewBag.RegisteredClientInfo.Surname -  @ViewBag.RegisteredClientInfo.OtherNames </td>
 						</tr>
-						<!--<tr class="success">
-							<th>Company Details:</th>
+						<tr>
+							<th>Client Email:</th>
+							<td id="EmailAddress" name="EmailAddress">@ViewBag.RegisteredClientInfo.EmailAddress </td>
+						</tr>
+						<tr class="success">
+							<th>Companies:</th>
 							<td style="text-align: right;"><i class="fa fa fa-building fa-x"></i></td>
 						</tr>
 						<tr>
-							<th>Company Registration Number:</th>
-							<td id="ConfirmRegistration" name="ConfirmRegistration">@ViewBag.RegisteredClientInfo.IDRegNumber</td>
-						</tr>
-						<tr class="success">
-							<th>Principal Place of Business:</th>
-							<td style="text-align: right;"><i class="fa fa fa-location-arrow fa-x"></i></td>
-						</tr>
-						<tr>
-							<th>Company Building:</th>
-							<td id="Building" name="Building">@ViewBag.CompanyInfo.CompanyBuilding</td>
-						</tr>
-						<tr>
-							<th>Street:</th>
-							<td id="Street" name="Street">@ViewBag.CompanyInfo.CompanyStreet</td>
-						</tr>
-						<tr>
-							<th>Company Town/City:</th>
-							<td id="CompanyTownCity" name="CompanyTownCity">@ViewBag.CompanyInfo.CompanyTownCity</td>
-						</tr>
-						<tr>
-							<th>Postal Address:</th>
-							<td id="PostalAddress" name="PostalAddress">@ViewBag.CompanyInfo.PostalAddress - @ViewBag.CompanyInfo.PostalCode - @ViewBag.CompanyInfo.TownCity</td>
-						</tr>
-						<tr>
-							<th>Business Email Address:</th>
-							<td id="BusinessEmailAddress" name="BusinessEmailAddress">@ViewBag.CompanyInfo.BusinessEmailAddress</td>
-						</tr>
-						<tr>
-							<th>Attention where notices will be sent:</th>
-							<td id="AttentionTo" name="AttentionTo">@ViewBag.CompanyInfo.AttentionTo</td>
-						</tr>-->
-						<tr class="success">
-							<th>Company Settlements:</th>
-							<td style="text-align: right;"><i class="fa fa fa-location-arrow fa-x"></i></td>
-						</tr>
-						<tr>
-							<th>Settlement Accounts:</th>
-							<td id="SettlementAccounts" name="SettlementAccounts">
-								@if (ViewBag.SettlementAccounts.Count != 0)
+							<td>
+							</td>
+							<td>
+								@if (ViewBag.clientHasApplication)
 								{
-									<table class="custom-table">
-										<th> Account Number</th>
-										<th> Currency</th>
-										@foreach (var item in ViewBag.SettlementAccounts)
-										{
-											<tbody>
-												<td>@item.AccountNumber</td>
-												<td>@item.OtherCurrency</td>
-											</tbody>
-										}
-									</table>
 								}
 								else
 								{
-									<table class="custom-table">No Settlement Accounts</table>
+									<centre>
+										<button class="btn btn-danger w_full btn-small" id="deleteBtn">
+											<span class="fa fa-trash"></span> Delete
+										</button>
+									</centre>
 								}
-							</td>
-						</tr>
-						<tr class="success">
-							<th>Signatories Details:</th>
-							<td style="text-align: right;"><i class="fa fa fa-users fa-x"></i></td>
-						</tr>
-						<tr>
-							<th>Signatories:</th>
-							<td colspan="2" id="Signatories" name="Signatories">
-								@if (ViewBag.ClientSignatory.Count != 0)
-								{
-									<table class="custom-table">
-										<th> Full Names</th>
-										<th> Designation </th>
-										<th> Phone </th>
-										<th> Email </th>
-										<th> Signature </th>
-										@foreach (var item in ViewBag.ClientSignatory)
-										{
-											<tbody>
-											<td>@(item.Surname + " " + item.OtherNames)</td>
-											<td>@item.Designation</td>
-											<td>@item.PhoneNumber</td>
-											<td>@item.EmailAddress</td>
-											<td>
-												@if (item.Signature == null || item.Signature == "")
-												{
-													<img width="100" height="80" src="~/Content/images/signatures/no-signature-17.jpg" />
-												}
-												else
-												{
-													<img width="100" height="80" src="~/Content/images/signatures/@item.Signature" />
-												}
-											</td>
-											</tbody>
-										}
-									</table>
-								}
-								else
-								{
-									<table class="custom-table">No Signatories </table>
-								}
-							</td>
-						</tr>
-						<tr class="success">
-							<th>Authorized Representatives:</th>
-							<td style="text-align: right;"><i class="fa fa fa-users fa-x"></i></td>
-						</tr>
-						<tr>
-							<td colspan="2" id="Representatives" name="Representatives">
-								<table class="custom-table">
-									<th> Representative Names</th>
-									<th> Email Address </th>
-									<th> Phone </th>
-									<th> Trading Limit </th>
-									<th> EMarket SignUp </th>
-									<th> GM Representative </th>
-									<th class="d-none"> Signature </th>
-									@foreach (var item in ViewBag.DesignatedUser)
-									{
-										<tbody>
-										<td>@(item.Surname + " " + item.Othernames)</td>
-										<td>@item.Email</td>
-										<td>@item.Mobile</td>
-										<td>@item.TradingLimit</td>
-										<td>@(item.EMarketSignUp ? "Yes" : "No")</td>
-										<td>@(item.GMRepresentative ? "Yes" : "No")</td>
-										<td class="d-none">
-											@if (item.Signature == null || item.Signature == "")
-											{
-												<img width="100" height="80" src="~/Content/images/signatures/no-signature-17.jpg" />
-											}
-											else
-											{
-												<img width="100" height="80" src="~/Content/images/signatures/@item.Signature" />
-											}
-										</td>
-										</tbody>
-									}
-								</table>
 							</td>
 						</tr>
 					</table>
+					<div class="form-wizard-buttons">
+						<div class="col-md-6">
+							<div class="input-group accept-terms">
+								<input type="hidden" id="ClientID" name="ClientID" value="@ViewBag.RegisteredClientInfo.Id" class="form-control">
+								<input type="hidden" id="ClientEmail" name="ClientEmail" value="@ViewBag.RegisteredClientInfo.EmailAddress" class="form-control">
+							</div>
+						</div>
+					</div>
 				</div>
 			</div><br />
 		</fieldset>
@@ -171,3 +62,56 @@
 	</form>
 	<!-- End Form Wizard -->
 </div>
+
+<script type="text/javascript">
+	jQuery().ready(function () {
+		$('#deleteBtn').on('click', function (e) {
+			e.preventDefault();
+			Swal.fire({
+				title: 'Are you sure?',
+				text: "You won't be able to revert this!",
+				icon: 'warning',
+				showCancelButton: true,
+				confirmButtonColor: '#28a745;',
+				cancelButtonColor: '#d33',
+				confirmButtonText: 'Yes, Registered Client',
+				cancelButtonText: 'No, cancel',
+			}).then((result) => {
+				if (result.value) {
+					var clientId = $('#ClientID').val();
+					var clientEmail = $('#ClientEmail').val();
+					$.ajax({
+						url: "/DigitalDesk/DeleteRegisteredClient",
+						type: 'POST',
+						data: JSON.stringify({ clientId: clientId,  clientEmail: clientEmail}),
+                        async: true,
+						contentType: "application/json; charset=utf-8",
+						dataType: "json",
+						success: function (XmlHttpRequest) {
+							if (XmlHttpRequest === 'success') {
+								Swal.fire(
+									'Success!',
+									'Registered Client has been deleted',
+									'success'
+								)
+								window.location.reload();
+							}
+							else {
+								Swal.fire({
+									icon: 'error',
+									text: XmlHttpRequest
+								})
+							}
+                        },
+						error: function (xhr, textStatus, errorThrown) {
+							if (textStatus === 'error') {
+								$('#RegisteredClientsTableContainer').jtable('load');
+								toastr.error('Submission error! Code: ' + xhr.status + ' Details: ' + errorThrown);
+							}
+						}
+					})
+				}
+			})
+		});
+	});
+</script>

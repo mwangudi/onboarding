@@ -196,4 +196,9 @@ namespace OnBoarding.ViewModels
         public string EditPostalCode { get; set; }
         public string EditAddressTownCity { get; set; }
     }
+
+    public class DeleteRegisteredClientViewModel
+    {
+
+    }
 }

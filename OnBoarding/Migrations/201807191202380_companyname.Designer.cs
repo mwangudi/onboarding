@@ -7,9 +7,9 @@ namespace OnBoarding.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.0-30225")]
-    public sealed partial class companyname : IMigrationMetadata
+    public sealed partial class Companyname : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(companyname));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(Companyname));
         
         string IMigrationMetadata.Id
         {
