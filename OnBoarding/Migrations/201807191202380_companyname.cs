@@ -1,9 +1,9 @@
+using System;
+using System.Data.Entity.Migrations;
+
 namespace OnBoarding.Migrations
 {
-    using System;
-    using System.Data.Entity.Migrations;
-    
-    public partial class companyname : DbMigration
+    public partial class Companyname : DbMigration
     {
         public override void Up()
         {

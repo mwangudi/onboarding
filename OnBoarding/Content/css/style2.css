@@ -19,6 +19,43 @@ body {
     outline: none;
 }
 /* end remove box shadow */
+.btn-register {
+    color: #fff;
+    border-color: #37A956;
+    background-color: #37A956;
+}
+.btn-register:hover {
+    color: #fff;
+    background-color: #37A956;
+    border-color: #37A956;
+}
+
+.btn-primary {
+    color: #fff;
+    border-color: #574B90;
+}
+
+.btn-primary:hover {
+    color: #fff;
+    background-color: #574B90;
+    border-color: #574B90;
+}
+
+.btn-outline-primary {
+    color: #574B90;
+    border-color: #574B90;
+}
+
+.btn-outline-primary:hover {
+    color: #fff;
+    background-color: #574B90;
+    border-color: #574B90;
+}
+
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+    color: #fff;
+    background-color: #574B90;
+}
 
 /* hyperlink */
 a {

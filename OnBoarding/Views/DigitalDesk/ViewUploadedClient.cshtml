@@ -1,180 +1,138 @@
-﻿@model OnBoarding.ViewModels.UploadedClientViewModel
-<div class="row">
-	<div class="col-12">
-		<div class="row" id="ViewAllUploads">
-			<div class="col-lg-12 col-md-12 col-12">
-				<div id="UploadsTableContainer"></div>
-			</div>
-			<script>
-				$(document).ready(function () {
-					var fileName = '@ViewData["FileName"]';
-					$('#UploadsTableContainer').jtable({
-						title: '<i class="fa fa-list"></i> Uploaded Clients <div class="jTableTitleDiv float-right"></div>',
-						paging: true,
-						pageSize: 10,
-						sorting: true,
-						defaultSorting: 'Id DESC',
-						/*selecting: true, //Enable selecting
-						multiselect: true, //Allow multiple selecting
-						selectingCheckboxes: true, //Show checkboxes on first column
-						selectOnRowClick: true, //Enable this to only select using checkboxes*/
-						actions:
-						{
-							listAction: '/DigitalDesk/GetUploadApprovals?FileName=' + fileName,
-						},
-						fields: {
-							Id: {
-								key: true,
-								create: false,
-								edit: false,
-								list: false
-							},
-							CompanyName: {
-								title: 'CompanyName',
-								width: '25%'
-							},
-							AcceptedTerms: {
-								title: 'Terms',
-								width: '10%'
-							},
-							EMTSignUp: {
-								title: 'EMT',
-								width: '10%'
-							},
-							SSI: {
-								title: 'SSI',
-								width: '7%'
-							},
-							AccountNumber: {
-								title: 'Account-Number',
-								width: '15%'
-							},
-							Currency: {
-								title: 'Currency',
-								width: '10%'
-							},
-							RepresentativeName: {
-								title: 'RepresentativeName',
-								width: '20%'
-							},
-							RepresentativePhonenumber: {
-								title: 'Phone',
-								width: '20%'
-							},
-							RepresentativeLimit: {
-								title: 'Limit($)',
-								width: '10%'
-							},
-							IsGM: {
-								title: 'ISGM',
-								width: '10%'
-							},
-							IsEMTUser: {
-								title: 'EMTUSer',
-								width: '10%'
-							},
-							DateOfContract: {
-								title: 'DateOfContract',
-								width: '10%'
-							},
-							ErrorComments: {
-								title: 'Error',
-								width: '10%'
-							},
-							Status: {
-								title: 'Status',
-								width: '10%',
-								display: function (data) {
-									var approved = data.record.Status;
-									if (approved == 1) {
-										return '<center><p class="text-success"><i class="fa fa-check-circle"></i> Approved </p></center>';
-									}
-									else if (approved == 2) {
-										return '<center><p class="text-danger"><i class="fa fa-times-circle"></i> Declined </p></center>';
-									}
-									else if (approved == 3) {
-										return '<center><p class="text-danger"><i class="fa fa-times-circle"></i> Error </p></center>';
-									}
-									else if (approved == 4) {
-										return '<center><p class="text-danger"><i class="fa fa-trash"></i> Deleted </p></center>';
-									}
-                                    else if (approved == 0){
-                                        return '<center><p class="text-warning"><i class="fa fa-check-circle"></i> Pending </p></center>';
+﻿<script src="@Url.Content("~/Assets/fwizard/form-wizard.js")"></script>
+<div class="form-row form-wizard">
+    <!-- Form Wizard -->
+    <form class="mt-0 w_full" role="form" id="ApplicationForm" action="" method="POST" accept-charset="utf-8">
+        <!-- Form Step 1 -->
+        <fieldset>
+            <h6>Company Details</h6><hr />
+            <div class="form-group">
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <tr class="success">
+                            <th>Uploaded Company Details :</th>
+                            <td style="text-align: right;"><i class="fa fa-archive"></i></td>
+                        </tr>
+                        <tr class="d-none">
+                            <th>Company Account Number:</th>
+                            <td id="AccountNumber" name="AccountNumber">@ViewBag.RegisteredClientInfo.AccountNumber</td>
+                        </tr>
+                        <tr>
+                            <th>Company Name:</th>
+                            <td id="CompanyName" name="CompanyName">@ViewBag.CompanyInfo.CompanyName</td>
+                        </tr>
+                        <tr class="success">
+                            <th>Company Settlements:</th>
+                            <td style="text-align: right;"><i class="fa fa fa-location-arrow fa-x"></i></td>
+                        </tr>
+                        <tr>
+                            <th>Settlement Accounts:</th>
+                            <td id="SettlementAccounts" name="SettlementAccounts">
+                                @if (ViewBag.SettlementAccounts.Count != 0)
+                                {
+                                    <table class="custom-table">
+                                        <th> Account Number</th>
+                                        <th> Currency</th>
+                                        @foreach (var item in ViewBag.SettlementAccounts)
+                                        {
+                                            <tbody>
+                                                <td>@item.AccountNumber</td>
+                                                <td>@item.OtherCurrency</td>
+                                            </tbody>
+                                        }
+                                    </table>
+                                }
+                                else
+                                {
+                                    <table class="custom-table">No Settlement Accounts</table>
+                                }
+                            </td>
+                        </tr>
+                        <tr class="success">
+                            <th>Signatories Details:</th>
+                            <td style="text-align: right;"><i class="fa fa fa-users fa-x"></i></td>
+                        </tr>
+                        <tr>
+                            <th>Signatories:</th>
+                            <td colspan="2" id="Signatories" name="Signatories">
+                                @if (ViewBag.ClientSignatory.Count != 0)
+                                {
+                                    <table class="custom-table">
+                                        <th> Full Names</th>
+                                        <th> Designation </th>
+                                        <th> Phone </th>
+                                        <th> Email </th>
+                                        <th> Signature </th>
+                                        @foreach (var item in ViewBag.ClientSignatory)
+                                        {
+                                            <tbody>
+                                                <td>@(item.Surname + " " + item.OtherNames)</td>
+                                                <td>@item.Designation</td>
+                                                <td>@item.PhoneNumber</td>
+                                                <td>@item.EmailAddress</td>
+                                                <td>
+                                                    @if (item.Signature == null || item.Signature == "")
+                                                    {
+                                                        <img width="100" height="80" src="~/Content/images/signatures/no-signature-17.jpg" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <img width="100" height="80" src="~/Content/images/signatures/@item.Signature" />
+                                                    }
+                                                </td>
+                                            </tbody>
+                                        }
+                                    </table>
+                                }
+                                else
+                                {
+                                    <table class="custom-table">No Signatories </table>
+                                }
+                            </td>
+                        </tr>
+                        <tr class="success">
+                            <th>Authorized Representatives:</th>
+                            <td style="text-align: right;"><i class="fa fa fa-users fa-x"></i></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td colspan="2" id="Representatives" name="Representatives">
+                                <table class="custom-table">
+                                    <th> Representative Names</th>
+                                    <th> Email Address </th>
+                                    <th> Phone </th>
+                                    <th> Trading Limit </th>
+                                    <th> EMarket SignUp </th>
+                                    <th> GM Representative </th>
+                                    <th class="d-none"> Signature </th>
+                                    @foreach (var item in ViewBag.DesignatedUser)
+                                    {
+                                        <tbody>
+                                        <td>@(item.Surname + " " + item.Othernames)</td>
+                                        <td>@item.Email</td>
+                                        <td>@item.Mobile</td>
+                                        <td>@item.TradingLimit</td>
+                                        <td>@(item.EMarketSignUp ? "Yes" : "No")</td>
+                                        <td>@(item.GMRepresentative ? "Yes" : "No")</td>
+                                        <td class="d-none">
+                                            @if (item.Signature == null || item.Signature == "")
+                                            {
+                                                <img width="100" height="80" src="~/Content/images/signatures/no-signature-17.jpg" />
+                                            }
+                                            else
+                                            {
+                                                <img width="100" height="80" src="~/Content/images/signatures/@item.Signature" />
+                                            }
+                                        </td>
+                                        </tbody>
                                     }
-                                    else {
-                                        return '<center><i class="fa fa-shield-alt fa-x" style="color:red;"></i></center>';
-                                    }
-								}
-							},
-							MyButton: {
-								title: 'Action',
-								width: '10%',
-								display: function (data) {
-									var approved = data.record.Status;
-									if (approved == 0) {
-										return '<center><button class="btn btn-outline-danger w_full btn-small" onclick="LoadUpDeleteModal(\'' + data.record.Id + '\')">' +
-											'<span class="fa fa-check-circle"></span> Delete </button></center>';
-									}
-									else
-									{
-										return '<center><i class="fa fa-shield-alt fa-x" style="color:red;"></i></center>';
-									}
-								}
-							}
-						}
-					});
-
-					//Load list from server
-					$('#UploadsTableContainer').jtable('load');
-										
-				});
-			</script>
-		</div>
-	</div>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div><br />
+        </fieldset>
+        <!-- End Form Step 2 -->
+    </form>
+    <!-- End Form Wizard -->
 </div>
-<script type="text/javascript">
-	//Decline selected items
-	function LoadUpDeleteModal(getDelID) {
-		Swal.fire({
-			title: 'Are you sure?',
-			text: "You won't be able to revert this!",
-			icon: 'warning',
-			showCancelButton: true,
-			confirmButtonColor: '#28a745;',
-			cancelButtonColor: '#d33',
-			confirmButtonText: 'Yes, delete record',
-			cancelButtonText: 'No, cancel',
-		}).then((result) => {
-			if (result.value) {
-				$.ajax({
-					url: "/DigitalDesk/DeleteSelected",
-					type: 'POST',
-					data: JSON.stringify({ Id: getDelID }),
-					async: true,
-					contentType: "application/json; charset=utf-8",
-					success: function (XmlHttpRequest) {
-						if (XmlHttpRequest === 'success') {
-							Swal.fire(
-								'Success!',
-								'Your record has been successfully deleted',
-								'success'
-							)
-							$('#UploadsTableContainer').jtable('load');
-						}
-						else {
-							Swal.fire({
-								icon: 'error',
-								text: XmlHttpRequest
-							})
-						}
-					},
-					error: function (xhr, textStatus, errorThrown) {
-						if (textStatus === 'error') {
-							toastr.error('Error! Code: ' + xhr.status + ' Details: ' + errorThrown);
-						}
-					}
-				})
-			}
-		})
-	}
-</script>

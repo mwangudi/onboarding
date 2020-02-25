@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -24,7 +23,6 @@
     <Use64BitIISExpress />
     <UseGlobalApplicationHostFile />
     <TargetFrameworkProfile />
-    <TypeScriptToolsVersion>3.6</TypeScriptToolsVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -152,6 +150,12 @@
     <Reference Include="WebGrease, Version=1.5.2.14234, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\WebGrease.1.5.2\lib\WebGrease.dll</HintPath>
     </Reference>
+    <Reference Include="WebMatrix.Data">
+      <HintPath>..\..\GMOnboarding\GMOnboarding\bin\WebMatrix.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="WebMatrix.WebData">
+      <HintPath>..\..\GMOnboarding\GMOnboarding\bin\WebMatrix.WebData.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
@@ -225,6 +229,8 @@
     <Compile Include="ViewModels\SignatoryViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\bootstrap-social\.gitignore" />
+    <Content Include="Assets\bootstrap-social\bootstrap-social.css" />
     <Content Include="Assets\bootstrap\.babelrc.js" />
     <Content Include="Assets\bootstrap\build\banner.js" />
     <Content Include="Assets\bootstrap\build\build-plugins.js" />
@@ -447,8 +453,6 @@
     <Content Include="Assets\bootstrap\site\_layouts\examples.html" />
     <Content Include="Assets\bootstrap\site\_layouts\home.html" />
     <Content Include="Assets\bootstrap\site\_layouts\simple.html" />
-    <Content Include="Assets\bootstrap-social\.gitignore" />
-    <Content Include="Assets\bootstrap-social\bootstrap-social.css" />
     <Content Include="Assets\datatables\DataTables-1.10.16\css\dataTables.bootstrap.css" />
     <Content Include="Assets\datatables\DataTables-1.10.16\css\dataTables.bootstrap.min.css" />
     <Content Include="Assets\datatables\DataTables-1.10.16\css\dataTables.bootstrap4.css" />
@@ -2566,16 +2570,6 @@
     <Content Include="Assets\toastr\build\toastr.min.css" />
     <Content Include="Assets\toastr\build\toastr.min.js" />
     <Content Include="Assets\toastr\toastr-icon.png" />
-    <Content Include="Content\bootstrap-grid.css" />
-    <Content Include="Content\bootstrap-grid.min.css" />
-    <Content Include="Content\bootstrap-reboot.css" />
-    <Content Include="Content\bootstrap-reboot.min.css" />
-    <Content Include="Content\bootstrap.css" />
-    <Content Include="Content\bootstrap.min.css" />
-    <Content Include="Content\css\bootstrap\bootstrap-theme.css" />
-    <Content Include="Content\css\bootstrap\bootstrap-theme.min.css" />
-    <Content Include="Content\css\bootstrap\bootstrap.css" />
-    <Content Include="Content\css\bootstrap\bootstrap.min.css" />
     <Content Include="Content\css\custom.css" />
     <Content Include="Content\css\demo.css" />
     <Content Include="Content\css\style.css" />
@@ -2590,33 +2584,15 @@
     <Content Include="Content\documents\Merged GTCs and eMT Agreement\files\background7.jpg" />
     <Content Include="Content\documents\Merged GTCs and eMT Agreement\files\background8.jpg" />
     <Content Include="Content\documents\Merged GTCs and eMT Agreement\files\background9.jpg" />
-    <Content Include="Content\emails\ApplicationApproved.html" />
-    <Content Include="Content\emails\ApplicationDeclined.html" />
-    <Content Include="Content\emails\ClientConfirmationApproval.html" />
-    <Content Include="Content\emails\ClientConfirmationRepresentativeDecline.html" />
-    <Content Include="Content\emails\ClientConfirmationSignatoryDecline.html" />
     <Content Include="Content\emails\ClientRegistrationEmail.html" />
-    <Content Include="Content\emails\DigitalDeskApplicationDeclined.html" />
-    <Content Include="Content\emails\ExistingRepresentativeNomination.html" />
-    <Content Include="Content\emails\ExistingSignatoryNomination.html" />
     <Content Include="Content\emails\PasswordChange.html" />
-    <Content Include="Content\emails\PasswordReset.html" />
-    <Content Include="Content\emails\PasswordResetSuccess.html" />
-    <Content Include="Content\emails\ApplicationDeclined.html" />
-    <Content Include="Content\emails\RepresentativeApproval.html" />
-    <Content Include="Content\emails\RepresentativeDecline.html" />
-    <Content Include="Content\emails\RequestResendOTP.html" />
     <Content Include="Content\emails\ResendOTP.html" />
     <Content Include="Content\emails\ConfirmRegistration.html" />
     <Content Include="Content\emails\ApplicationSubmitted.html" />
     <Content Include="Content\emails\RepresentativeNomination.html" />
-    <Content Include="Content\emails\SignatoryApproval.html" />
-    <Content Include="Content\emails\SignatoryDecline.html" />
     <Content Include="Content\emails\SignatoryNominationWithoutOTP.html" />
     <Content Include="Content\emails\SignatoryNomination.html" />
-    <Content Include="Content\emails\SignatoryRepresentativeApproval.html" />
     <Content Include="Content\emails\SoleSignatoryApplication.html" />
-    <Content Include="Content\emails\UnlockAccount.html" />
     <Content Include="Content\images\bg_lock.jpg" />
     <Content Include="Content\images\bg_lock_over.jpg" />
     <Content Include="Content\images\btn_interest.jpg" />
@@ -2911,15 +2887,7 @@
     <Content Include="Assets\summernote\font\summernote.woff" />
     <Content Include="Assets\toastr\build\toastr.js.map" />
     <Content Include="Assets\toastr\LICENSE" />
-    <Content Include="Content\css\bootstrap\bootstrap-theme.css.map" />
-    <Content Include="Content\css\bootstrap\bootstrap.css.map" />
     <Content Include="Assets\jasny-bootstrap\jasny-bootstrap.css.map" />
-    <Content Include="Content\bootstrap.min.css.map" />
-    <Content Include="Content\bootstrap.css.map" />
-    <Content Include="Content\bootstrap-reboot.min.css.map" />
-    <Content Include="Content\bootstrap-reboot.css.map" />
-    <Content Include="Content\bootstrap-grid.min.css.map" />
-    <Content Include="Content\bootstrap-grid.css.map" />
     <Content Include="Assets\bootstrap\.browserslistrc" />
     <Content Include="Assets\bootstrap\.editorconfig" />
     <Content Include="Assets\bootstrap\.eslintignore" />
@@ -3331,6 +3299,7 @@
     <Content Include="Views\Account\_ExternalLoginsListPartial.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Manage\AddPhoneNumber.cshtml" />
     <Content Include="Views\Manage\ChangePassword.cshtml" />
     <Content Include="Views\Manage\Index.cshtml" />
@@ -3362,6 +3331,7 @@
     <Content Include="Views\Account\SignatoryConfirmation.cshtml" />
     <Content Include="Views\Signatory\Index.cshtml" />
     <Content Include="Views\Signatory\ViewAll.cshtml" />
+    <Content Include="Views\Shared\_NotificationPanel.cshtml" />
     <Content Include="Views\Account\ForgotPassword.cshtml" />
     <Content Include="Views\Account\ResetPassword.cshtml" />
     <Content Include="Views\Account\ResetPasswordConfirmation.cshtml" />
@@ -3375,14 +3345,17 @@
     <Content Include="Views\Poa\Index.cshtml" />
     <Content Include="Views\Poa\ViewAll.cshtml" />
     <Content Include="Views\Poa\ViewApproval.cshtml" />
+    <Content Include="Views\Poa\ViewApproved.cshtml" />
     <Content Include="Views\Gmo\Index.cshtml" />
     <Content Include="Views\Gmo\ViewAll.cshtml" />
     <Content Include="Views\Gmo\ViewApproval.cshtml" />
     <Content Include="Views\Client\EditApplication.cshtml" />
     <Content Include="Views\Account\LoadResendOTP.cshtml" />
     <Content Include="Views\Ops\Index.cshtml" />
+    <Content Include="Views\Ops\LoadDeclineApplication.cshtml" />
     <Content Include="Views\Ops\ViewAll.cshtml" />
     <Content Include="Views\Ops\ViewApproval.cshtml" />
+    <Content Include="Views\Ops\ViewApproved.cshtml" />
     <Content Include="Views\Shared\_LayoutWithoutVideo.cshtml" />
     <Content Include="Views\Client\NewApplications.cshtml" />
     <Content Include="Views\Account\LoadResendSignatoryOTP.cshtml" />
@@ -3415,6 +3388,7 @@
     <Content Include="Views\DigitalDesk\ViewCompletedApplication.cshtml" />
     <Content Include="Views\DigitalDesk\ViewRepresentative.cshtml" />
     <Content Include="Views\DigitalDesk\ViewSignatory.cshtml" />
+    <Content Include="Views\DigitalDesk\ViewUploadedClients.cshtml" />
     <Content Include="Views\DigitalDesk\ViewInCompleteApplication.cshtml" />
     <Content Include="Views\DigitalDesk\DeclinedApplications.cshtml" />
     <Content Include="Views\DigitalDesk\ViewDeclinedApplication.cshtml" />
@@ -3426,6 +3400,9 @@
     <Content Include="Views\Ops\OpsApprovals.cshtml" />
     <Content Include="Views\Poa\PoaApprovals.cshtml" />
     <Content Include="Views\Account\ResetAccount.cshtml" />
+    <Content Include="Views\Gmo\IncompleteApplications.cshtml" />
+    <Content Include="Views\Gmo\PendingOpsApproval.cshtml" />
+    <Content Include="Views\Gmo\PendingPoaApproval.cshtml" />
     <Content Include="Views\Gmo\RegisteredClients.cshtml" />
     <Content Include="Views\Admin\Index.cshtml" />
     <Content Include="Views\Admin\LoadDeleteUser.cshtml" />
@@ -3435,33 +3412,32 @@
     <Content Include="Views\Admin\ManageInternalUsers.cshtml" />
     <Content Include="Views\Admin\ManageUserRoles.cshtml" />
     <Content Include="Views\Admin\UnlockUsers.cshtml" />
+    <Content Include="Views\DigitalDesk\LoadDeleteClient.cshtml" />
     <Content Include="Views\Gmo\ClientSettlements.cshtml" />
     <Content Include="Views\Gmo\ViewClient.cshtml" />
+    <Content Include="Views\Gmo\ViewInCompleteApplication.cshtml" />
     <Content Include="Views\DigitalDesk\ApprovedApplications.cshtml" />
     <Content Include="Views\Account\ChangePassword.cshtml" />
     <Content Include="Views\Account\PasswordChanged.cshtml" />
     <Content Include="Views\Client\AddCompanies.cshtml" />
     <Content Include="Views\Client\_LoadCompanyDetails.cshtml" />
+    <Content Include="Views\Client\LoadDeleteRepresentative.cshtml" />
+    <Content Include="Views\Client\LoadDeleteSignatory.cshtml" />
+    <Content Include="Views\DigitalDesk\LoadDeleteSignatory.cshtml" />
     <Content Include="Views\DigitalDesk\PendingApprovals.cshtml" />
+    <Content Include="Views\Shared\_AdminOldLayout.cshtml" />
     <Content Include="Views\Gmo\ApproveUploads.cshtml" />
     <Content Include="Views\Gmo\ViewUploadedClient.cshtml" />
-    <Content Include="Views\DigitalDesk\ViewUploadedClient.cshtml" />
-    <Content Include="Views\Gmo\ViewApprovedEntiries.cshtml" />
-    <Content Include="Views\Client\_LoadSavedSettlements.cshtml" />
-    <Content Include="Views\Client\_LoadSavedSignatories.cshtml" />
-    <Content Include="Views\Client\_LoadSavedRepresentatives.cshtml" />
-    <Content Include="Views\Client\CompanyList.cshtml" />
     <Content Include="Views\DigitalDesk\ViewApprovedApplications.cshtml" />
-    <Content Include="Views\Client\_LoadEditCompanyDetails.cshtml" />
-    <Content Include="Views\DigitalDesk\ClientCompanies.cshtml" />
     <Content Include="Views\DigitalDesk\ViewCompanyDetails.cshtml" />
+    <Content Include="Views\DigitalDesk\ClientCompanies.cshtml" />
+    <Content Include="Views\DigitalDesk\ViewUploadedClient.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\clientuploads\" />
   </ItemGroup>
   <ItemGroup>
-    <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
@@ -3474,7 +3450,6 @@
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets')" />
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
   <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">

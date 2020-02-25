@@ -7,5 +7,6 @@
         public string CurrencyName { get; set; }
         public string OtherCurrency { get; set; }
         public string AccountNumber { get; set; }
+        public string CompanyName { get; set; }
     }
 }

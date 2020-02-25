@@ -408,32 +408,58 @@ namespace OnBoarding.Controllers
         }
 
         //
-        // POST: //ViewClient
+        // POST: //ViewUploadedClient
         [HttpPost]
         [AllowAnonymous]
-        public PartialViewResult ViewClient(int clientID)
+        public PartialViewResult ViewUploadedClient(int clientId)
         {
             using (DBModel db = new DBModel())
             {
-                var clientDetails = db.RegisteredClients.SingleOrDefault(s => s.Id == clientID);
+                var clientDetails = db.RegisteredClients.SingleOrDefault(s => s.Id == clientId);
                 ViewBag.RegisteredClientInfo = clientDetails;
 
-                var companyDetails = db.ClientCompanies.SingleOrDefault(s => s.ClientId == clientID);
+                var companyDetails = db.ClientCompanies.SingleOrDefault(s => s.ClientId == clientId);
                 ViewBag.CompanyInfo = companyDetails;
 
                 //Signatories List
-                /*List<ClientSignatory> SignatoryList = db.ClientSignatories.Where(a => a.ClientID == clientID && a.CompanyID == companyDetails.Id).ToList();
+                List<ClientSignatory> SignatoryList = db.ClientSignatories.Where(a => a.ClientID == clientId && a.CompanyID == companyDetails.Id).ToList();
                 ViewBag.ClientSignatory = SignatoryList;
 
                 //Designated Users List
-                List<DesignatedUser> DesignatedUsersList = db.DesignatedUsers.Where(a => a.ClientID == clientID && a.CompanyID == companyDetails.Id).ToList();
-                ViewBag.DesignatedUser = DesignatedUsersList;*/
+                List<DesignatedUser> DesignatedUsersList = db.DesignatedUsers.Where(a => a.ClientID == clientId && a.CompanyID == companyDetails.Id).ToList();
+                ViewBag.DesignatedUser = DesignatedUsersList;
 
                 //Get the list of all client's settlement accounts
-                var Query = db.Database.SqlQuery<SettlementAccountsViewModel>("SELECT c.CurrencyName, s.AccountNumber, s.OtherCurrency FROM ClientSettlementAccounts s INNER JOIN Currencies c ON c.Id = s.CurrencyID WHERE s.ClientID =  " + "'" + clientID + "'" + " AND s.CompanyID =  " + "'" + companyDetails.Id + "'" + " AND s.Status = 1");
+                var Query = db.Database.SqlQuery<SettlementAccountsViewModel>("SELECT c.CurrencyName, s.AccountNumber, s.OtherCurrency FROM ClientSettlementAccounts s INNER JOIN Currencies c ON c.Id = s.CurrencyID WHERE s.ClientID =  " + "'" + clientId + "'" + " AND s.CompanyID =  " + "'" + companyDetails.Id + "'" + " AND s.Status = 1");
                 ViewBag.SettlementAccounts = Query.ToList();
 
-                var clientHasApplication = db.EMarketApplications.Any(s => s.ClientID == clientID);
+                var clientHasApplication = db.EMarketApplications.Any(s => s.ClientID == clientId);
+                ViewBag.clientHasApplication = clientHasApplication;
+            }
+
+            return PartialView();
+        }
+
+        //
+        // POST: //ViewClient
+        [HttpPost]
+        [AllowAnonymous]
+        public PartialViewResult ViewClient(int clientId)
+        {
+            using (DBModel db = new DBModel())
+            {
+                var clientDetails = db.RegisteredClients.SingleOrDefault(s => s.Id == clientId);
+                ViewBag.RegisteredClientInfo = clientDetails;
+
+                //Companies List
+                List<ClientCompany> companyDetails = db.ClientCompanies.Where(s => s.ClientId == clientId && s.Status == 1).ToList();
+                ViewBag.CompanyInfo = companyDetails;
+
+                //Get the list of all client's settlement accounts
+                var Query = db.Database.SqlQuery<SettlementAccountsViewModel>("SELECT c.CurrencyName, s.AccountNumber, s.OtherCurrency, cc.CompanyName FROM ClientSettlementAccounts s INNER JOIN Currencies c ON c.Id = s.CurrencyID INNER JOIN ClientCompanies cc ON cc.ClientId = s.ClientID WHERE s.ClientID =  " + "'" + clientId + "'" + " AND s.Status = 1");
+                ViewBag.SettlementAccounts = Query.ToList();
+
+                var clientHasApplication = db.EMarketApplications.Any(s => s.ClientID == clientId);
                 ViewBag.clientHasApplication = clientHasApplication;
             }
 
@@ -1375,7 +1401,7 @@ namespace OnBoarding.Controllers
                             //Add audit trail
                             var LogAuditTrail = Functions.LogAuditTrail(1, "Upload Existing Clients", "ExistingClientsUploads", null, User.Identity.GetUserId(), filePath, null, null);
                         }
-                        catch (Exception e)
+                        catch (Exception)
                         {
                             return Json("Error uploading your csv file, please check the individual field formats and reupload", JsonRequestBehavior.AllowGet);
                         }
@@ -3966,16 +3992,6 @@ namespace OnBoarding.Controllers
         }
 
         //
-        //GET //ViewUploadedClient
-        [HttpPost]
-        [AllowAnonymous]
-        public PartialViewResult ViewUploadedClient(string fileName)
-        {
-            ViewData["FileName"] = fileName;
-            return PartialView();
-        }
-
-        //
         //POST //Gets the list and returns a Json object
         [HttpPost]
         public JsonResult GetUploadApprovals(int jtStartIndex = 0, int jtPageSize = 0, int count = 0, string jtSorting = null, string fileName = null)
@@ -4230,5 +4246,87 @@ namespace OnBoarding.Controllers
                 }
             }
         }
+
+        //
+        //POST //DeleteRegisteredClient
+        public JsonResult DeleteRegisteredClient(int clientId, string clientEmail)
+        {
+            using (DBModel db = new DBModel())
+            {
+                var userId = User.Identity.GetUserId();
+                var UserEmail = db.AspNetUsers.SingleOrDefault(a => a.Id == userId);
+                try
+                {
+                    //1. Delete Companies
+                    int deletedCompany = 0;
+                    var clientDetails = db.RegisteredClients.SingleOrDefault(s => s.Id == clientId);
+                    var getClientCompanyIds = (from p in db.ClientCompanies
+                                      where (p.ClientId == clientId)
+                                      select new
+                                      {
+                                          companyId = p.Id,
+                                          companyName = p.CompanyName,
+                                          companyRegNumber = p.CompanyRegNumber,
+                                          companyStreet = p.CompanyStreet,
+                                          companyTownCity = p.CompanyTownCity
+                                      });
+                    foreach (var company in getClientCompanyIds.ToList())
+                    {
+                        db.ClientCompanies.RemoveRange(db.ClientCompanies.Where(r => r.Id == company.companyId));
+                        deletedCompany = db.SaveChanges();
+                        if (deletedCompany >= 1)
+                        {
+                            //LogAuditTrail
+                            var LogAuditTrail = Functions.LogAuditTrail(company.companyId, "Delete", "Client Company", null, UserEmail.Email, company.companyName + " " + company.companyRegNumber, company.companyStreet, company.companyTownCity);
+                        }
+                        else
+                        {
+                            return Json("Error! Unable to delete company details", JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                        
+                    //2. Delete Registered Clients
+                    db.RegisteredClients.RemoveRange(db.RegisteredClients.Where(r => r.Id == clientId));
+                    var deletedRegisteredClient = db.SaveChanges();
+                    if (deletedRegisteredClient >= 1)
+                    {
+                        //LogAuditTrail
+                        var LogAuditTrail = Functions.LogAuditTrail(clientId, "Delete", "RegisteredClient", null, UserEmail.Email, clientDetails.Surname + " " + clientDetails.OtherNames, clientDetails.EmailAddress, clientDetails.PhoneNumber);
+                    }
+                    else
+                    {
+                        return Json("Error! Unable to delete company details", JsonRequestBehavior.AllowGet);
+                    }
+
+                    //Delete User
+                    db.AspNetUsers.RemoveRange(db.AspNetUsers.Where(r => r.Email == clientEmail));
+                    var deletedUserAccount = db.SaveChanges();
+                    if (deletedUserAccount >= 1)
+                    {
+                        //LogAuditTrail
+                        var LogAuditTrail = Functions.LogAuditTrail(clientId, "Delete", "Delete UserAccount", null, UserEmail.Email, clientDetails.Surname + " " + clientDetails.OtherNames, clientDetails.EmailAddress, clientDetails.PhoneNumber);
+                    }
+                    else
+                    {
+                        return Json("Error! Unable to delete company details", JsonRequestBehavior.AllowGet);
+                    }
+
+                    //Finally
+                    if (deletedCompany >= 1 && deletedRegisteredClient >= 1 && deletedUserAccount >= 1)
+                    {
+                        return Json("success", JsonRequestBehavior.AllowGet);
+                    }
+                    else
+                    {
+                        return Json("Error! Unable to delete client details", JsonRequestBehavior.AllowGet);
+                    }
+                }
+                catch (Exception)
+                {
+                    return Json("Error! Unable to delete user details", JsonRequestBehavior.AllowGet);
+                }
+            }
+        }
+
     }
 }

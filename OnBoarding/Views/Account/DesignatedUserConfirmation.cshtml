@@ -290,24 +290,24 @@
 						<div class="form-group">
 							@Html.LabelFor(m => m.SignatoryEmail)  <br />
 							@Html.ValidationMessageFor(m => m.SignatoryEmail, "", new { @class = "text-danger" })
-							@Html.TextBoxFor(m => m.SignatoryEmail, new { @class = "form-control", @placeholder = "Email Address" })
+							@Html.TextBoxFor(m => m.SignatoryEmail, new { @class = "form-control", @placeholder = "Email Address", @autocomplete = "off" })
 						</div>
 						<div class="form-group">
 							@Html.LabelFor(m => m.OTP)  <br />
 							@Html.ValidationMessageFor(m => m.OTP, "", new { @class = "text-danger" })
-							@Html.TextBoxFor(m => m.OTP, new { @class = "form-control", @placeholder = "One time pin", @Type = "password" })
+							@Html.TextBoxFor(m => m.OTP, new { @class = "form-control", @placeholder = "One time pin", @Type = "password", @autocomplete = "off" })
 							<small id="emailHelp" class="form-text text-muted">Provide the OTP sent earlier via email.</small>
 						</div>
 						<div class="form-group">
 							@Html.LabelFor(m => m.Password)  <br />
 							@Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
-							@Html.TextBoxFor(m => m.Password, new { @class = "form-control", autocomplete = "new-password", @placeholder = "Create New Password", @Type = "password" })
+							@Html.TextBoxFor(m => m.Password, new { @class = "form-control", @autocomplete = "off", @placeholder = "Create New Password", @Type = "password" })
 							<small id="passwordHelp" class="form-text" style="color: #0267FF;">Password should be atleast 8 apha-numeric characters including special character.</small>
 						</div>
 						<div class="form-group">
 							@Html.LabelFor(m => m.ConfirmPassword)  <br />
 							@Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger" })
-							@Html.TextBoxFor(m => m.ConfirmPassword, new { @class = "form-control", autocomplete = "new-password", @placeholder = "Confirm Password", @Type = "password" })
+							@Html.TextBoxFor(m => m.ConfirmPassword, new { @class = "form-control", @autocomplete = "off", @placeholder = "Confirm Password", @Type = "password" })
 						</div>
 						<div class="form-group">
 							<span>I agree with the <a class="hyperlink"><u>Terms and Conditions</u></a>: </span>
