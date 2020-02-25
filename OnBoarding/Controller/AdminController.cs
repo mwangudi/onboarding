@@ -759,5 +759,92 @@ namespace OnBoarding.Controllers
                 }
             }
         }
+
+        //
+        //Get: AuditTrail
+        public ActionResult AuditTrail()
+        {
+            return View();
+        }
+
+        // POST //GetAuditTrailInfo
+        //
+        //GET /Get Notifications Count
+        public int GetAuditTrailCount()
+        {
+            using (var db = new DBModel())
+            {
+                return db.AuditTrails.Count();
+            }
+        }
+
+        //
+        //GET /Get Notifications List
+        public List<AuditTrailViewModel> GetAuditTrailInfoList(string searchMessage, int jtStartIndex, int jtPageSize, int count, string jtSorting)
+        {
+            // Instance of DatabaseContext  
+            using (var db = new DBModel())
+            {
+                IEnumerable<AuditTrailViewModel> query = db.Database.SqlQuery<AuditTrailViewModel>("SELECT * FROM AuditTrails a WHERE (a.EntityEmail LIKE '%" + searchMessage + "%' OR a.ActionType LIKE '%" + searchMessage + "%' OR a.DoneBy LIKE '%" + searchMessage + "%') ORDER BY a.Id DESC OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY");
+
+                //Search 
+                if (!string.IsNullOrEmpty(searchMessage))
+                {
+                    query = db.Database.SqlQuery<AuditTrailViewModel>("SELECT * FROM AuditTrails a WHERE (a.EntityEmail LIKE '%" + searchMessage + "%' OR a.ActionType LIKE '%" + searchMessage + "%' OR a.DoneBy LIKE '%" + searchMessage + "%') ORDER BY a.Id DESC OFFSET " + jtStartIndex + " ROWS FETCH NEXT " + jtPageSize + " ROWS ONLY");
+                }
+                else
+                {
+                    query = query.OrderByDescending(p => p.Id);
+                }
+
+                //Sorting Ascending and Descending  
+                if (string.IsNullOrEmpty(jtSorting) || jtSorting.Equals("DateCreated ASC"))
+                {
+                    query = query.OrderBy(p => p.DateCreated);
+                }
+                else if (jtSorting.Equals("DateCreated ASC"))
+                {
+                    query = query.OrderByDescending(p => p.DateCreated);
+                }
+                else if (jtSorting.Equals("DoneBy ASC"))
+                {
+                    query = query.OrderByDescending(p => p.DoneBy);
+                }
+                else if (jtSorting.Equals("DoneBy DESC"))
+                {
+                    query = query.OrderByDescending(p => p.DoneBy);
+                }
+                else
+                {
+                    query = query.OrderByDescending(p => p.DateCreated); //Default!  
+                }
+                //StatusName RoleName
+                return count > 0
+                           ? query.Skip(jtStartIndex).Take(count).ToList()  //Paging  
+                           : query.ToList(); //No paging 
+            }
+        }
+
+        //
+        //GET //Gets the  
+        [HttpPost]
+        public JsonResult GetAuditTrailInfo(string searchMessage = "", int jtStartIndex = 0, int jtPageSize = 0, int count = 0, string jtSorting = null)
+        {
+            using (var db = new DBModel())
+            {
+                var data = GetAuditTrailInfoList(searchMessage, jtStartIndex, jtPageSize, count, jtSorting);
+                //Search  
+                if (!string.IsNullOrEmpty(searchMessage))
+                {
+                    var recordCount = db.Database.SqlQuery<int>("SELECT COUNT(a.Id) count FROM AuditTrails a WHERE (a.EntityEmail LIKE '%" + searchMessage + "%' OR a.ActionType LIKE '%" + searchMessage + "%' OR a.DoneBy LIKE '%" + searchMessage + "%');").First();
+                    return Json(new { Result = "OK", Records = data, TotalRecordCount = recordCount });
+                }
+                else
+                {
+                    var recordCount = GetAuditTrailCount();
+                    return Json(new { Result = "OK", Records = data, TotalRecordCount = recordCount });
+                }
+            }
+        }
     }
 }

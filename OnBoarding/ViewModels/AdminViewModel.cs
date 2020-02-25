@@ -179,6 +179,20 @@ namespace OnBoarding.ViewModels
         public string text { get; set; }
     }
 
+    public class AuditTrailViewModel
+    {
+        public int Id { get; set; }
+        public int EntityId { get; set; }
+        public string EntityUId { get; set; }
+        public string EntityTable { get; set; }
+        public string EntityName { get; set; }
+        public string EntityEmail { get; set; }
+        public string EntityPhone { get; set; }
+        public string DoneBy { get; set; }
+        public string ActionType { get; set; }
+        public DateTime DateCreated { get; set; }
+    }
+
     public class SystemNotificationsViewModel
     {
         public int Id { get; set; }

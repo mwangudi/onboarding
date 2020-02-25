@@ -3432,6 +3432,7 @@
     <Content Include="Views\DigitalDesk\ViewCompanyDetails.cshtml" />
     <Content Include="Views\DigitalDesk\ClientCompanies.cshtml" />
     <Content Include="Views\DigitalDesk\ViewUploadedClient.cshtml" />
+    <Content Include="Views\Admin\AuditTrail.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
