@@ -19,11 +19,11 @@
 					<div class="my-3 form-group form-row">
 						<div class="col-12 col-sm-4 col-lg-4">
 							<label>Company Building: <span>*</span></label>
-							<input type="text" id="EditCompanyBuilding" name="EditCompanyBuilding" placeholder="Company Building" class="form-control required" value="@ViewBag.CompanyDetails.CompanyBuilding" />
+							<input type="text" id="EditCompanyBuilding" name="EditCompanyBuilding" placeholder="Company Building" class="form-control" value="@ViewBag.CompanyDetails.CompanyBuilding" />
 						</div>
 						<div class="col-12 col-sm-4 col-lg-4">
 							<label>Company Street: <span>*</span></label>
-							<input type="text" id="EditCompanyStreet" name="EditCompanyStreet" placeholder="Company Street" class="form-control required" value="@ViewBag.CompanyDetails.CompanyStreet" />
+							<input type="text" id="EditCompanyStreet" name="EditCompanyStreet" placeholder="Company Street" class="form-control" value="@ViewBag.CompanyDetails.CompanyStreet" />
 						</div>
 						<div class="col-12 col-sm-4 col-lg-4">
 							<label>Company Town/City: <span>*</span></label>
@@ -33,11 +33,11 @@
 					<div class="my-3 form-group form-row">
 						<div class="col-12 col-sm-4 col-lg-4">
 							<label>Business Email Address: <span>*</span></label>
-							<input type="text" id="EditCompanyEmail" name="EditCompanyEmail" placeholder="Business Email" class="form-control required" value="@ViewBag.CompanyDetails.BusinessEmailAddress" />
+							<input type="text" id="EditCompanyEmail" name="EditCompanyEmail" placeholder="Business Email" class="form-control" value="@ViewBag.CompanyDetails.BusinessEmailAddress" />
 						</div>
 						<div class="col-12 col-sm-4 col-lg-4">
 							<label>Atention To: <span>*</span></label>
-							<input type="text" id="EditAttentionTo" name="EditAttentionTo" placeholder="Attention To" class="form-control required" value="@ViewBag.CompanyDetails.AttentionTo" />
+							<input type="text" id="EditAttentionTo" name="EditAttentionTo" placeholder="Attention To" class="form-control" value="@ViewBag.CompanyDetails.AttentionTo" />
 						</div>
 						<div class="col-12 col-sm-4 col-lg-4">
 							<label>Company Fax:</label>
@@ -45,15 +45,15 @@
 						</div>
 						<div class="col-12 col-sm-4 col-lg-4">
 							<label>Postal Address: <span>*</span></label>
-							<input type="text" id="EditPostalAddress" name="EditPostalAddress" placeholder="Postal Address" class="form-control required" value="@ViewBag.CompanyDetails.PostalAddress" />
+							<input type="text" id="EditPostalAddress" name="EditPostalAddress" placeholder="Postal Address" class="form-control" value="@ViewBag.CompanyDetails.PostalAddress" />
 						</div>
 						<div class="col-12 col-sm-4 col-lg-4">
 							<label>Postal Code: <span>*</span></label>
-							<input type="text" id="EditPostalCode" name="EditPostalCode" placeholder="Postal Code" class="form-control required" value="@ViewBag.CompanyDetails.PostalAddress" />
+							<input type="text" id="EditPostalCode" name="EditPostalCode" placeholder="Postal Code" class="form-control" value="@ViewBag.CompanyDetails.PostalCode" />
 						</div>
 						<div class="col-12 col-sm-4 col-lg-4">
 							<label>Town/City: <span>*</span></label>
-							<input type="text" id="EditAddressTownCity" name="EditAddressTownCity" placeholder="Town/City" class="form-control required" value="@ViewBag.CompanyDetails.TownCity" />
+							<input type="text" id="EditAddressTownCity" name="EditAddressTownCity" placeholder="Town/City" class="form-control" value="@ViewBag.CompanyDetails.TownCity" />
 						</div>
 					</div><hr />
 					<div class="my-3 form-group form-row">
@@ -75,6 +75,20 @@
 	</div>
 	<!--End Submission Processing -->
 	<script type="text/javascript">
+        jQuery().ready(function () {
+			//Form Validation
+			var v = jQuery("#EditCompanyFRM").validate({
+				rules: {
+					EditCompanyName: { required: true, maxlength: 50 },
+                    EditCompanyTownCity: { required: true, maxlength: 50 },
+                    EditCompanyBuilding: { required: true, maxlength: 50 },
+                    EditCompanyStreet: { required: true, maxlength: 50 },
+                    EditPostalAddress: {required: true, maxlength: 50},
+					EditPostalCode: { number: true, maxlength: 50 }
+				},
+			});
+        });
+
 		$(document).ready(function () {
 			//Submit Form Action
 			$("form#EditCompanyFRM").submit(function (e) {

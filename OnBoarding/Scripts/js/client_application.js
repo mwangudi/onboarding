@@ -148,11 +148,32 @@ $(document).ready(function () {
     var v = jQuery("#form").validate({
         rules: {
             BusinessEmailAddress: {
-                email: true
+                email: true,
+                required: true
             },
-			CompanyName: { required: true },CompanyTownCity: { required: true },
+            CompanyName: {
+                required: true,
+                maxlength: 50
+            },
+            CompanyTownCity: {
+                required: true,
+                maxlength: 50
+            },
             PostalCode: {
-                number: true
+                number: true,
+                maxlength: 50
+            },
+            Building: {
+                maxlength: 50
+            },
+            Street: {
+                maxlength: 50
+            },
+            PostalAddress: {
+                maxlength: 50
+            },
+            AddressTownCity: {
+                maxlength: 50
             },
             "terms[]": {
                 required: true,
@@ -244,6 +265,7 @@ $(document).ready(function () {
 				email: true,
 				notEqualTo: "#SignatoryEmail1"
             },
+            UserPOBox1: { maxlength: 50 }, UserPOBox2: { maxlength: 50 }, UserPOBox3: { maxlength: 50 }, UserPOBox4: { maxlength: 50 }, UserPOBox5: { maxlength: 50 },
             UserZipCode1: { number:true }, UserZipCode2: {  number: true  },  UserZipCode3: {  number: true }, UserZipCode4: {  number: true }, UserZipCode5: { number: true },
 			TransactionLimit1: { number: true }, TransactionLimit2: { number: true }, TransactionLimit3: { number: true }, TransactionLimit4: { number: true }, TransactionLimit5: { number: true },
 			TransactionLimitQ1: { required: true }, TransactionLimitQ2: { required: true }, TransactionLimitQ3: { required: true }, TransactionLimitQ4: { required: true }, TransactionLimitQ5: { required: true },

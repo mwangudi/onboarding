@@ -3769,16 +3769,16 @@ namespace OnBoarding.Controllers
                     EmailBody = EmailBody.Replace("{CompanyName}", getUserToUnlock.CompanyName);
                     EmailBody = EmailBody.Replace("{Url}", callbackUrl);
 
-                    var unlockEmailSent = MailHelper.SendMailMessage(MailHelper.EmailFrom, getUserToUnlock.CompanyName, "Account Unlocked", EmailBody);
+                    var unlockEmailSent = MailHelper.SendMailMessage(MailHelper.EmailFrom, getUserToUnlock.Email, "Account Unlocked", EmailBody);
                     if (unlockEmailSent == true)
                     {
                         //Log email sent notification
-                        LogNotification.AddSucsessNotification(MailHelper.EmailFrom, EmailBody, getUserToUnlock.CompanyName, _action);
+                        LogNotification.AddSucsessNotification(MailHelper.EmailFrom, EmailBody, getUserToUnlock.Email, _action);
                     }
                     else
                     {
                         //Log Email failed notification
-                        LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBody, getUserToUnlock.CompanyName, _action);
+                        LogNotification.AddFailureNotification(MailHelper.EmailFrom, EmailBody, getUserToUnlock.Email, _action);
                     }
                 }
             }

@@ -88,10 +88,13 @@
 			//Form Validation
 			var v = jQuery("#AddCompanyFRM").validate({
 				rules: {
-					BusinessEmailAddress: { email: true },
-					CompanyName: { required: true },
-					CompanyTownCity: { required: true },
-					PostalCode: { number: true },
+					BusinessEmailAddress: { email: true, required: true },
+					CompanyName: { required: true, maxlength: 50 },
+                    CompanyTownCity: { required: true, maxlength: 50 },
+                    PostalAddress: {required: true, maxlength: 50},
+                    Street: {required: true, maxlength: 50},
+                    Building: {required: true, maxlength: 50},
+					PostalCode: { required: true, number: true, maxlength: 50 }
 				},
 			});
 		});

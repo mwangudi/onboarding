@@ -3152,10 +3152,7 @@
     <Content Include="Assets\jquery\jquery-3.4.1.slim.min.js" />
     <Content Include="Assets\jquery\jquery-3.4.1.slim.min.map" />
     <Content Include="Assets\jquery\jquery-3.4.1.min.map" />
-    <None Include="Assets\jquery\jquery.validate-vsdoc.js" />
     <Content Include="Assets\jquery\jquery-ui-1.12.1.min.js" />
-    <Content Include="Assets\jquery\jquery.validate.js" />
-    <Content Include="Assets\jquery\jquery.validate.unobtrusive.js" />
     <Content Include="Assets\jtable\extensions\jquery.jtable.aspnetpagemethods.js" />
     <Content Include="Assets\jtable\extensions\jquery.jtable.aspnetpagemethods.min.js" />
     <Content Include="Assets\jtable\external\json2.js" />
@@ -3266,6 +3263,9 @@
     <Content Include="Assets\jtable\themes\metro\red\jtable.css" />
     <Content Include="Assets\jtable\themes\metro\red\jtable.min.css" />
     <Content Include="Assets\jtable\themes\metro\red\loading.gif" />
+    <None Include="Assets\jquery\jquery.validate-vsdoc.js" />
+    <Content Include="Assets\jquery\jquery.validate.js" />
+    <Content Include="Assets\jquery\jquery.validate.min.js" />
     <Content Include="Scripts\js\additional-methods.min.js" />
     <Content Include="Scripts\js\app.js" />
     <Content Include="Scripts\js\chart.min.js" />
@@ -3331,7 +3331,6 @@
     <Content Include="Views\Account\SignatoryConfirmation.cshtml" />
     <Content Include="Views\Signatory\Index.cshtml" />
     <Content Include="Views\Signatory\ViewAll.cshtml" />
-    <Content Include="Views\Shared\_NotificationPanel.cshtml" />
     <Content Include="Views\Account\ForgotPassword.cshtml" />
     <Content Include="Views\Account\ResetPassword.cshtml" />
     <Content Include="Views\Account\ResetPasswordConfirmation.cshtml" />
@@ -3433,6 +3432,11 @@
     <Content Include="Views\DigitalDesk\ClientCompanies.cshtml" />
     <Content Include="Views\DigitalDesk\ViewUploadedClient.cshtml" />
     <Content Include="Views\Admin\AuditTrail.cshtml" />
+    <Content Include="Views\Client\_LoadEditCompanyDetails.cshtml" />
+    <Content Include="Views\Client\_LoadSavedRepresentatives.cshtml" />
+    <Content Include="Views\Client\_LoadSavedSettlements.cshtml" />
+    <Content Include="Views\Client\_LoadSavedSignatories.cshtml" />
+    <Content Include="Views\Client\CompanyList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

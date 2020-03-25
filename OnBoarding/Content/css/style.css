@@ -1855,6 +1855,10 @@ table tr:hover .table-links {
 .badge.badge-warning {
 	color: #fff;
 }
+.badge-primary {
+    color: #fff;
+    background-color: #574B90;
+}
 /* end badge */
 
 /* btn group */
