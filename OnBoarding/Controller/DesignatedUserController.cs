@@ -373,7 +373,7 @@ namespace OnBoarding.Controllers
                             var companyInfo = db.ClientCompanies.SingleOrDefault(c => c.Id == model.CompanyID);
                             foreach (var email in DDUserRole)
                             {
-                                var DDMessageBody = "Dear Team <br/><br/> Kindly note that the all signatories and representatives of " + companyInfo.CompanyName + " have approved their nomination. <br/>" +
+                                var DDMessageBody = "Dear Team <br/><br/> Kindly note that all the signatories and representatives of " + companyInfo.CompanyName + " have approved their nomination. <br/>" +
                                               "<br/><br/> Kind Regards, <br /><img src=\"https://e-documents.stanbicbank.co.ke/Content/images/EmailSignature.png\"/>";
                                 var SendDDNotificationEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, email.EmailID, "Application Completed", DDMessageBody);
                                 if (SendDDNotificationEmail == true)
@@ -498,7 +498,7 @@ namespace OnBoarding.Controllers
                             var companyInfo = db.ClientCompanies.SingleOrDefault(c => c.Id == model.CompanyID);
                             foreach (var email in DDUserRole)
                             {
-                                var DDMessageBody = "Dear Team <br/><br/> Kindly note that the all signatories and representatives of " + companyInfo.CompanyName + " have approved their nomination. <br/>" +
+                                var DDMessageBody = "Dear Team <br/><br/> Kindly note that all the signatories and representatives of " + companyInfo.CompanyName + " have approved their nomination. <br/>" +
                                               "<br/><br/> Kind Regards, <br /><img src=\"https://e-documents.stanbicbank.co.ke/Content/images/EmailSignature.png\"/>";
                                 var SendDDNotificationEmail = MailHelper.SendMailMessage(MailHelper.EmailFrom, email.EmailID, "Application Completed", DDMessageBody);
                                 if (SendDDNotificationEmail == true)
