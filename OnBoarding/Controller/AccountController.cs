@@ -1049,6 +1049,11 @@ namespace OnBoarding.Controllers
                         var result = await UserManager.ResetPasswordAsync(UserExists.Id, code, model.Password);
                         if (result.Succeeded)
                         {
+                            //Update last password changed date
+                            var UserToUpdate = db.AspNetUsers.SingleOrDefault(b => b.Id == UserExists.Id);
+                            UserToUpdate.LastPasswordChangedDate = DateTime.Now;
+                            var _passChanged = db.SaveChanges();
+
                             //Send Password reset success email
                             var callbackUrl = Url.Action("Index", "Home", null, protocol: Request.Url.Scheme);
                             string EmailBody = string.Empty;
